@@ -1,0 +1,271 @@
+<!-- Modern Individual Details Component - Display Only with Document Upload -->
+<div class="individual-details-container">
+  <!-- Hero Header Section -->
+  <div class="hero-header">
+    <div class="hero-content">
+      <div class="profile-section">
+        <div class="profile-avatar">
+          <mat-icon class="avatar-icon">person</mat-icon>
+        </div>
+        <div class="profile-info">
+          <h1 class="profile-name">
+            {{ individual()?.firstName }} {{ individual()?.middleName }} {{ individual()?.surname }}
+          </h1>
+          <p class="profile-subtitle">{{ individual()?.identityType }} • {{ individual()?.identityNo }}</p>
+        </div>
+      </div>
+      <div class="action-buttons">
+        <button mat-fab matTooltip="{{ 'edit' | translate }}" color="primary" (click)="individualDetailsEdit()">
+          <mat-icon fontIcon="edit" aria-hidden="false" aria-label="edit"></mat-icon>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  @if (loading()) {
+    <div class="loading-overlay">
+      <app-loader [isLoading]="loading()" [size]="2" [message]="loaderMessage()"></app-loader>
+    </div>
+  } @else {
+    <div class="content-container">
+      <!-- Individual Information Section -->
+      <div class="info-section-wrapper">
+        <mat-card class="info-section modern-card">
+          <mat-card-header class="modern-header">
+            <div class="section-header">
+              <div class="section-icon">
+                <mat-icon>account_circle</mat-icon>
+              </div>
+              <div class="section-title">
+                <h3>{{ 'basic.information' | translate }}</h3>
+                <p class="section-subtitle">Personal details and contact information</p>
+              </div>
+            </div>
+          </mat-card-header>
+          <mat-card-content class="modern-content">
+            <div class="info-grid modern-grid">
+              <div class="info-card">
+                <div class="info-item">
+                  <label class="info-label">{{ 'first.name' | translate }}</label>
+                  <div class="info-value">{{ individual()?.firstName || '-' }}</div>
+                </div>
+              </div>
+
+              <div class="info-card">
+                <div class="info-item">
+                  <label class="info-label">{{ 'middle.name' | translate }}</label>
+                  <div class="info-value">{{ individual()?.middleName || '-' }}</div>
+                </div>
+              </div>
+
+              <div class="info-card">
+                <div class="info-item">
+                  <label class="info-label">{{ 'surname' | translate }}</label>
+                  <div class="info-value">{{ individual()?.surname || '-' }}</div>
+                </div>
+              </div>
+
+              <div class="info-card">
+                <div class="info-item">
+                  <label class="info-label">{{ 'identity.type' | translate }}</label>
+                  <div class="info-value identity-badge">{{ individual()?.identityType || '-' }}</div>
+                </div>
+              </div>
+
+              <div class="info-card">
+                <div class="info-item">
+                  <label class="info-label">{{ 'identity.no' | translate }}</label>
+                  <div class="info-value identity-number">{{ individual()?.identityNo || '-' }}</div>
+                </div>
+              </div>
+
+              <div class="info-card">
+                <div class="info-item">
+                  <label class="info-label">{{ 'phone.numbers' | translate }}</label>
+                  <div class="info-value">
+                    @if (individual()?.phoneNumbers && individual()?.phoneNumbers.length > 0) {
+                      <div class="phone-list modern-chips">
+                        @for (phone of individual()?.phoneNumbers; track $index) {
+                          <span class="phone-chip modern-chip">
+                            <mat-icon class="chip-icon">phone</mat-icon>
+                            {{ phone }}
+                          </span>
+                        }
+                      </div>
+                    } @else {
+                      <span class="empty-value">-</span>
+                    }
+                  </div>
+                </div>
+              </div>
+
+              <div class="info-card full-width">
+                <div class="info-item">
+                  <label class="info-label">{{ 'email.address' | translate }}</label>
+                  <div class="info-value email-value">
+                    @if (individual()?.emailAddress) {
+                      <mat-icon class="value-icon">email</mat-icon>
+                      {{ individual()?.emailAddress }}
+                    } @else {
+                      <span class="empty-value">-</span>
+                    }
+                  </div>
+                </div>
+              </div>
+
+              <div class="info-card full-width">
+                <div class="info-item">
+                  <label class="info-label">{{ 'postal.address' | translate }}</label>
+                  <div class="info-value address-value">
+                    @if (individual()?.postalAddress) {
+                      <mat-icon class="value-icon">location_on</mat-icon>
+                      {{ individual()?.postalAddress }}
+                    } @else {
+                      <span class="empty-value">-</span>
+                    }
+                  </div>
+                </div>
+              </div>
+
+              <div class="info-card full-width">
+                <div class="info-item">
+                  <label class="info-label">{{ 'physical.address' | translate }}</label>
+                  <div class="info-value address-value">
+                    @if (individual()?.physicalAddress) {
+                      <mat-icon class="value-icon">home</mat-icon>
+                      {{ individual()?.physicalAddress }}
+                    } @else {
+                      <span class="empty-value">-</span>
+                    }
+                  </div>
+                </div>
+              </div>
+            </div>
+          </mat-card-content>
+        </mat-card>
+      </div>
+
+      <!-- Document Upload Section -->
+      <div class="document-section-wrapper">
+        <mat-card class="document-section modern-card">
+          <mat-card-header class="modern-header">
+            <div class="section-header">
+              <div class="section-icon">
+                <mat-icon>folder_shared</mat-icon>
+              </div>
+              <div class="section-title">
+                <h3>{{ 'individual.documents' | translate }}</h3>
+                <p class="section-subtitle">{{ 'individual.documents.description' | translate }}</p>
+              </div>
+            </div>
+          </mat-card-header>
+          <mat-card-content class="modern-content">
+            @if (individualDocumentTypes() && individualDocumentTypes().length > 0) {
+              <div class="document-upload-grid modern-document-grid">
+                @for (docType of individualDocumentTypes(); track docType.id) {
+                  <div class="document-card modern-document-card">
+                    <div class="document-header">
+                      <div class="document-icon">
+                        <mat-icon>description</mat-icon>
+                      </div>
+                      <div class="document-info">
+                        <h4 class="document-title">{{ docType.name }}</h4>
+                        @if (docType.description) {
+                          <p class="document-description">{{ docType.description }}</p>
+                        }
+                      </div>
+                    </div>
+
+                    <div class="document-content">
+                      <div
+                        class="upload-area modern-upload-area"
+                        (dragover)="onDragOver($event)"
+                        (dragleave)="onDragLeave($event)"
+                        (drop)="onFileDropped($event, docType)"
+                      >
+                        <input
+                          type="file"
+                          #fileInput
+                          (change)="onFileSelected($event, docType)"
+                          accept=".pdf,.jpg,.jpeg,.png,.doc,.docx"
+                          style="display: none"
+                        />
+
+                        @if (getUploadedDocument(docType.id)) {
+                          <!-- Existing Document Display -->
+                          <div class="uploaded-document modern-uploaded-doc">
+                            <div class="file-preview">
+                              <mat-icon class="file-icon">insert_drive_file</mat-icon>
+                              <div class="file-details">
+                                <div class="file-name">{{ getUploadedDocument(docType.id)?.fileName }}</div>
+                                <div class="file-meta">
+                                  <span class="file-status">Uploaded</span>
+                                  <span class="file-size">{{ formatFileSize(getUploadedDocument(docType.id)?.metadata?.fileSize || 0) }}</span>
+                                </div>
+                              </div>
+                            </div>
+                            <div class="file-actions">
+                              <button
+                                mat-icon-button
+                                color="primary"
+                                matTooltip="{{ 'download' | translate }}"
+                                (click)="
+                                  getUploadedDocument(docType.id) && downloadDocument(getUploadedDocument(docType.id)!)
+                                "
+                                class="action-btn download-btn"
+                              >
+                                <mat-icon>download</mat-icon>
+                              </button>
+                              <button
+                                mat-icon-button
+                                color="warn"
+                                matTooltip="{{ 'delete' | translate }}"
+                                (click)="deleteDocument(docType.id)"
+                                class="action-btn delete-btn"
+                              >
+                                <mat-icon>delete</mat-icon>
+                              </button>
+                            </div>
+                          </div>
+                        } @else {
+                          <!-- Upload Area -->
+                          <div class="upload-placeholder modern-upload-placeholder" (click)="fileInput.click()">
+                            <div class="upload-icon-wrapper">
+                              <mat-icon class="upload-icon">cloud_upload</mat-icon>
+                            </div>
+                            <div class="upload-text">
+                              <h5>{{ 'upload.document' | translate }}</h5>
+                              <p class="upload-hint">{{ 'upload.hint' | translate }}</p>
+                            </div>
+                          </div>
+                        }
+
+                        @if (isUploading(docType.id)) {
+                          <div class="upload-progress modern-progress">
+                            <mat-progress-bar mode="determinate" [value]="getUploadProgress(docType.id)">
+                            </mat-progress-bar>
+                            <div class="progress-text">
+                              {{ getUploadProgress(docType.id) }}% {{ 'uploading' | translate }}
+                            </div>
+                          </div>
+                        }
+                      </div>
+                    </div>
+                  </div>
+                }
+              </div>
+            } @else {
+              <div class="no-documents modern-no-documents">
+                <div class="empty-state">
+                  <mat-icon class="empty-icon">folder_open</mat-icon>
+                  <h4>{{ 'no.document.types.configured' | translate }}</h4>
+                  <p>No document types have been configured for upload.</p>
+                </div>
+              </div>
+            }
+          </mat-card-content>
+        </mat-card>
+      </div>
+    </div>
+  }
+</div>

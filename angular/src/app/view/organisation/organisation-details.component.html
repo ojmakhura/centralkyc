@@ -1,0 +1,207 @@
+<!-- Redesigned Organisation Details Component - Display Only -->
+@defer (when organisation()) {
+  <div class="details-container">
+    <!-- Header Section -->
+    <mat-card class="header-card" appearance="outlined">
+      <mat-card-header>
+        <div class="header-content">
+          <div class="title-section">
+            <mat-icon class="title-icon">business</mat-icon>
+            <div class="title-text">
+              <h1 class="item-title">{{ organisation().name }}</h1>
+            </div>
+          </div>
+
+          <div class="action-buttons">
+            <button mat-raised-button color="primary" (click)="organisationDetailsEdit()" class="action-button">
+              <mat-icon>edit</mat-icon>
+              {{ 'edit' | translate }}
+            </button>
+            <button mat-stroked-button color="primary" (click)="organisationDetailsFormReset()" class="action-button">
+              <mat-icon>refresh</mat-icon>
+              {{ 'refresh' | translate }}
+            </button>
+          </div>
+        </div>
+      </mat-card-header>
+    </mat-card>
+
+    <!-- Loading State -->
+    @if (loading()) {
+      <div class="loading-container">
+        <app-loader [isLoading]="loading()" [size]="2" [message]="loaderMessage()"></app-loader>
+      </div>
+    }
+
+    <!-- Main Content -->
+    <div class="item-display">
+      <!-- Status Section -->
+      <mat-card class="section-card status-section" appearance="outlined">
+        <mat-card-content>
+          <div class="display-item">
+            <div class="display-label">
+              <mat-icon class="field-icon">flag</mat-icon>
+              <span>{{ 'status' | translate }}</span>
+            </div>
+            <div class="display-value">
+              <mat-chip class="status-chip" [ngClass]="'status-' + organisation().status">
+                {{ GeneralStatusT[organisation().status] || 'N/A' }}
+              </mat-chip>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <!-- Basic Information Section -->
+      <mat-card class="section-card basic-info-section" appearance="outlined">
+        <mat-card-header>
+          <mat-card-title>
+            <mat-icon class="section-icon">business_center</mat-icon>
+            {{ 'basic.information' | translate }}
+          </mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="display-grid">
+            <div class="display-item">
+              <div class="display-label">
+                <mat-icon class="field-icon">assignment</mat-icon>
+                <span>{{ 'registration.no' | translate }}</span>
+              </div>
+              <div class="display-value">
+                {{ organisation().registrationNo || 'N/A' }}
+              </div>
+            </div>
+
+            <div class="display-item">
+              <div class="display-label">
+                <mat-icon class="field-icon">qr_code</mat-icon>
+                <span>{{ 'code' | translate }}</span>
+              </div>
+              <div class="display-value">
+                {{ organisation().code || 'N/A' }}
+              </div>
+            </div>
+            <div class="display-item full-width">
+              <div class="display-label">
+                <mat-icon class="field-icon">description</mat-icon>
+                <span>{{ 'description' | translate }}</span>
+              </div>
+              <div class="display-value description-value">
+                {{ organisation().description || 'N/A' }}
+              </div>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <!-- Contact Information Section -->
+      <mat-card class="section-card contact-info-section" appearance="outlined">
+        <mat-card-header>
+          <mat-card-title>
+            <mat-icon class="section-icon">contact_phone</mat-icon>
+            {{ 'contact.information' | translate }}
+          </mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="display-item">
+            <div class="display-label">
+              <mat-icon class="field-icon">phone</mat-icon>
+              <span>{{ 'phone.numbers' | translate }}</span>
+            </div>
+            <div class="display-value">
+              <div class="phone-numbers">
+                {{ organisation().phoneNumbers || 'N/A' }}
+              </div>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <!-- Address Information Section -->
+      <mat-card class="section-card address-info-section" appearance="outlined">
+        <mat-card-header>
+          <mat-card-title>
+            <mat-icon class="section-icon">location_on</mat-icon>
+            {{ 'address.information' | translate }}
+          </mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="address-display">
+            <div class="display-item">
+              <div class="display-label">
+                <mat-icon class="field-icon">mail</mat-icon>
+                <span>{{ 'postal.address' | translate }}</span>
+              </div>
+              <div class="display-value address-value">
+                {{ organisation().postalAddress || 'N/A' }}
+              </div>
+            </div>
+
+            <div class="display-item">
+              <div class="display-label">
+                <mat-icon class="field-icon">place</mat-icon>
+                <span>{{ 'physical.address' | translate }}</span>
+              </div>
+              <div class="display-value address-value">
+                {{ organisation().physicalAddress || 'N/A' }}
+              </div>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <!-- Branches Section -->
+      <mat-card class="section-card branches-section" appearance="outlined">
+        <mat-card-header>
+          <mat-card-title>
+            <mat-icon class="section-icon">account_tree</mat-icon>
+            {{ 'organisation.branches' | translate }}
+          </mat-card-title>
+          <div class="branch-actions">
+            <button mat-raised-button color="accent" (click)="addNewBranch()" class="branch-action-button">
+              <mat-icon>add</mat-icon>
+              {{ 'add.branch' | translate }}
+            </button>
+            <button mat-stroked-button color="primary" (click)="refreshBranches()" class="branch-action-button">
+              <mat-icon>refresh</mat-icon>
+              {{ 'refresh' | translate }}
+            </button>
+          </div>
+        </mat-card-header>
+        <mat-card-content>
+          @if (branchesLoading()) {
+            <div class="branches-loading">
+              <app-loader
+                [isLoading]="branchesLoading()"
+                [size]="1"
+                [message]="'Loading branches...' | translate"
+              ></app-loader>
+            </div>
+          } @else if (branches() && branches().length > 0) {
+            <app-table
+              #organisationsTable
+              [dataColumns]="branchesTableColumns"
+              [showActions]="true"
+              [paged]="false"
+              [actions]="branchesTableColumnsActions"
+              (actionClicked)="branchesTableActionClicked($event)"
+              [dataSignal]="branches">
+            </app-table>
+          } @else {
+            <div class="no-branches">
+              <div class="no-branches-content">
+                <mat-icon class="no-branches-icon">account_tree</mat-icon>
+                <h3>{{ 'no.branches.found' | translate }}</h3>
+                <p>{{ 'no.branches.message' | translate }}</p>
+                <button mat-raised-button color="primary" (click)="addNewBranch()" class="add-first-branch-button">
+                  <mat-icon>add</mat-icon>
+                  {{ 'add.first.branch' | translate }}
+                </button>
+              </div>
+            </div>
+          }
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </div>
+}
