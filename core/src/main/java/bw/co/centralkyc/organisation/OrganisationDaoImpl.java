@@ -7,6 +7,8 @@
 package bw.co.centralkyc.organisation;
 
 import bw.co.centralkyc.document.DocumentRepository;
+import bw.co.centralkyc.document.type.DocumentTypeRepository;
+import bw.co.centralkyc.individual.employment.EmploymentRecordRepository;
 import bw.co.centralkyc.organisation.branch.BranchRepository;
 import jakarta.persistence.EntityNotFoundException;
 
@@ -19,18 +21,11 @@ import org.springframework.stereotype.Repository;
 public class OrganisationDaoImpl
     extends OrganisationDaoBase
 {
-    
-    public OrganisationDaoImpl(
-        DocumentRepository documentRepository,
-        BranchRepository branchRepository,
-        OrganisationRepository organisationRepository
-    ) {
-
-        super(
-            documentRepository,
-            branchRepository,
-            organisationRepository
-        );
+    public OrganisationDaoImpl(DocumentRepository documentRepository, BranchRepository branchRepository,
+            DocumentTypeRepository documentTypeRepository, EmploymentRecordRepository employmentRecordRepository,
+            OrganisationRepository organisationRepository) {
+        super(documentRepository, branchRepository, documentTypeRepository, employmentRecordRepository, organisationRepository);
+        //TODO Auto-generated constructor stub
     }
 
     /**

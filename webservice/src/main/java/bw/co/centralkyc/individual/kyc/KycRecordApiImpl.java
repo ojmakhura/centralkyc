@@ -6,114 +6,135 @@
 package bw.co.centralkyc.individual.kyc;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+
+import bw.co.centralkyc.AuditTracker;
+import bw.co.centralkyc.RestApiResponse;
+
+import java.util.Collection;
+
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 
 @org.springframework.web.bind.annotation.RestController
 public class KycRecordApiImpl extends KycRecordApiBase {
     
     public KycRecordApiImpl(
-        bw.co.centralkyc.individual.kyc.KycRecordService kycRecordService    ) {
+        KycRecordService kycRecordService    ) {
         
         super(
             kycRecordService        );
     }
 
 
+
     @Override
-    public ResponseEntity<bw.co.centralkyc.individual.kyc.KycRecordDTO> handleFindById(java.lang.String id) {
-        RestApiResponse<bw.co.centralkyc.individual.kyc.KycRecordDTO> responseData = new RestApiResponse<>();
-        responseData.setData(null);
+    public ResponseEntity<RestApiResponse<KycRecordDTO>> handleFindById(String id) throws Exception {
+        RestApiResponse<KycRecordDTO> responseData = new RestApiResponse<>();
+        responseData.setData(kycRecordService.findById(id));
         responseData.setStatus(HttpStatus.OK.value());
-        responseData.setMessage(String.format("Operation successful."));
-        ResponseEntity<RestApiResponse<bw.co.centralkyc.individual.kyc.KycRecordDTO>> response = ResponseEntity.status(HttpStatus.OK).body(responseData);
+        responseData.setMessage(String.format("KYC record for %s has been found.", responseData.getData().getName()));
+        ResponseEntity<RestApiResponse<KycRecordDTO>> response = ResponseEntity.status(HttpStatus.OK).body(responseData);
 
         return response;
     }
 
+
     @Override
-    public ResponseEntity<java.util.Collection<bw.co.centralkyc.individual.kyc.KycRecordDTO>> handleFindByIdentityNo(java.lang.String identityNo) {
-        RestApiResponse<java.util.Collection<bw.co.centralkyc.individual.kyc.KycRecordDTO>> responseData = new RestApiResponse<>();
-        responseData.setData(null);
+    public ResponseEntity<RestApiResponse<Collection<KycRecordDTO>>> handleFindByIdentityNo(String identityNo) throws Exception {
+        RestApiResponse<Collection<KycRecordDTO>> responseData = new RestApiResponse<>();
+        responseData.setData(kycRecordService.findByIdentityNo(identityNo));
         responseData.setStatus(HttpStatus.OK.value());
         responseData.setMessage(String.format("Operation successful."));
-        ResponseEntity<RestApiResponse<java.util.Collection<bw.co.centralkyc.individual.kyc.KycRecordDTO>>> response = ResponseEntity.status(HttpStatus.OK).body(responseData);
+        ResponseEntity<RestApiResponse<Collection<KycRecordDTO>>> response = ResponseEntity.status(HttpStatus.OK).body(responseData);
 
         return response;
     }
 
+
     @Override
-    public ResponseEntity<java.util.Collection<bw.co.centralkyc.individual.kyc.KycRecordDTO>> handleFindByIndividual(java.lang.String individualId) {
-        RestApiResponse<java.util.Collection<bw.co.centralkyc.individual.kyc.KycRecordDTO>> responseData = new RestApiResponse<>();
-        responseData.setData(null);
+    public ResponseEntity<RestApiResponse<Collection<KycRecordDTO>>> handleFindByIndividual(String individualId) throws Exception {
+        RestApiResponse<Collection<KycRecordDTO>> responseData = new RestApiResponse<>();
+        responseData.setData(kycRecordService.findByIndividual(individualId));
         responseData.setStatus(HttpStatus.OK.value());
         responseData.setMessage(String.format("Operation successful."));
-        ResponseEntity<RestApiResponse<java.util.Collection<bw.co.centralkyc.individual.kyc.KycRecordDTO>>> response = ResponseEntity.status(HttpStatus.OK).body(responseData);
+        ResponseEntity<RestApiResponse<Collection<KycRecordDTO>>> response = ResponseEntity.status(HttpStatus.OK).body(responseData);
 
         return response;
     }
 
+
     @Override
-    public ResponseEntity<java.util.Collection<bw.co.centralkyc.individual.kyc.KycRecordDTO>> handleGetAll() {
-        RestApiResponse<java.util.Collection<bw.co.centralkyc.individual.kyc.KycRecordDTO>> responseData = new RestApiResponse<>();
-        responseData.setData(null);
+    public ResponseEntity<RestApiResponse<Collection<KycRecordDTO>>> handleGetAll() throws Exception {
+        RestApiResponse<Collection<KycRecordDTO>> responseData = new RestApiResponse<>();
+        responseData.setData(kycRecordService.getAll());
         responseData.setStatus(HttpStatus.OK.value());
         responseData.setMessage(String.format("Operation successful."));
-        ResponseEntity<RestApiResponse<java.util.Collection<bw.co.centralkyc.individual.kyc.KycRecordDTO>>> response = ResponseEntity.status(HttpStatus.OK).body(responseData);
+        ResponseEntity<RestApiResponse<Collection<KycRecordDTO>>> response = ResponseEntity.status(HttpStatus.OK).body(responseData);
 
         return response;
     }
 
+
     @Override
-    public ResponseEntity<org.springframework.data.domain.Page<bw.co.centralkyc.individual.kyc.KycRecordDTO>> handleGetAllPaged(java.lang.Integer pageNumber, java.lang.Integer pageSize) {
-        RestApiResponse<org.springframework.data.domain.Page<bw.co.centralkyc.individual.kyc.KycRecordDTO>> responseData = new RestApiResponse<>();
-        responseData.setData(null);
+    public ResponseEntity<RestApiResponse<Page<KycRecordDTO>>> handleGetAllPaged(Integer pageNumber, Integer pageSize) throws Exception {
+        RestApiResponse<Page<KycRecordDTO>> responseData = new RestApiResponse<>();
+        responseData.setData(kycRecordService.getAll(pageNumber, pageSize));
         responseData.setStatus(HttpStatus.OK.value());
         responseData.setMessage(String.format("Operation successful."));
-        ResponseEntity<RestApiResponse<org.springframework.data.domain.Page<bw.co.centralkyc.individual.kyc.KycRecordDTO>>> response = ResponseEntity.status(HttpStatus.OK).body(responseData);
+        ResponseEntity<RestApiResponse<Page<KycRecordDTO>>> response = ResponseEntity.status(HttpStatus.OK).body(responseData);
 
         return response;
     }
 
+
     @Override
-    public ResponseEntity<org.springframework.data.domain.Page<bw.co.centralkyc.individual.kyc.KycRecordDTO>> handlePagedSearch(java.lang.String criteria, java.lang.Integer pageNumber, java.lang.Integer pageSize) {
-        RestApiResponse<org.springframework.data.domain.Page<bw.co.centralkyc.individual.kyc.KycRecordDTO>> responseData = new RestApiResponse<>();
-        responseData.setData(null);
+    public ResponseEntity<RestApiResponse<Page<KycRecordDTO>>> handlePagedSearch(String criteria, Integer pageNumber, Integer pageSize) throws Exception {
+        RestApiResponse<Page<KycRecordDTO>> responseData = new RestApiResponse<>();
+        responseData.setData(kycRecordService.search(criteria, pageNumber, pageSize));
         responseData.setStatus(HttpStatus.OK.value());
         responseData.setMessage(String.format("Operation successful."));
-        ResponseEntity<RestApiResponse<org.springframework.data.domain.Page<bw.co.centralkyc.individual.kyc.KycRecordDTO>>> response = ResponseEntity.status(HttpStatus.OK).body(responseData);
+        ResponseEntity<RestApiResponse<Page<KycRecordDTO>>> response = ResponseEntity.status(HttpStatus.OK).body(responseData);
 
         return response;
     }
 
+
     @Override
-    public ResponseEntity<java.lang.Boolean> handleRemove(java.lang.String id) {
-        RestApiResponse<java.lang.Boolean> responseData = new RestApiResponse<>();
-        responseData.setData(null);
+    public ResponseEntity<RestApiResponse<Boolean>> handleRemove(String id) throws Exception {
+        RestApiResponse<Boolean> responseData = new RestApiResponse<>();
+        responseData.setData(kycRecordService.remove(id));
         responseData.setStatus(HttpStatus.OK.value());
         responseData.setMessage(String.format("Operation successful."));
-        ResponseEntity<RestApiResponse<java.lang.Boolean>> response = ResponseEntity.status(HttpStatus.OK).body(responseData);
+        ResponseEntity<RestApiResponse<Boolean>> response = ResponseEntity.status(HttpStatus.OK).body(responseData);
 
         return response;
     }
 
+
     @Override
-    public ResponseEntity<bw.co.centralkyc.individual.kyc.KycRecordDTO> handleSave(bw.co.centralkyc.individual.kyc.KycRecordDTO kycRecord) {
-        RestApiResponse<bw.co.centralkyc.individual.kyc.KycRecordDTO> responseData = new RestApiResponse<>();
-        responseData.setData(null);
+    public ResponseEntity<RestApiResponse<KycRecordDTO>> handleSave(KycRecordDTO kycRecord) throws Exception {
+        RestApiResponse<KycRecordDTO> responseData = new RestApiResponse<>();
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        AuditTracker.auditTrail(kycRecord, authentication);
+
+        responseData.setData(kycRecordService.save(kycRecord));
         responseData.setStatus(HttpStatus.OK.value());
         responseData.setMessage(String.format("Operation successful."));
-        ResponseEntity<RestApiResponse<bw.co.centralkyc.individual.kyc.KycRecordDTO>> response = ResponseEntity.status(HttpStatus.OK).body(responseData);
+        ResponseEntity<RestApiResponse<KycRecordDTO>> response = ResponseEntity.status(HttpStatus.OK).body(responseData);
 
         return response;
     }
 
+
     @Override
-    public ResponseEntity<java.util.Collection<bw.co.centralkyc.individual.kyc.KycRecordDTO>> handleSearch(java.lang.String criteria) {
-        RestApiResponse<java.util.Collection<bw.co.centralkyc.individual.kyc.KycRecordDTO>> responseData = new RestApiResponse<>();
-        responseData.setData(null);
+    public ResponseEntity<RestApiResponse<Collection<KycRecordDTO>>> handleSearch(String criteria) throws Exception {
+        RestApiResponse<Collection<KycRecordDTO>> responseData = new RestApiResponse<>();
+        responseData.setData(kycRecordService.search(criteria));
         responseData.setStatus(HttpStatus.OK.value());
         responseData.setMessage(String.format("Operation successful."));
-        ResponseEntity<RestApiResponse<java.util.Collection<bw.co.centralkyc.individual.kyc.KycRecordDTO>>> response = ResponseEntity.status(HttpStatus.OK).body(responseData);
+        ResponseEntity<RestApiResponse<Collection<KycRecordDTO>>> response = ResponseEntity.status(HttpStatus.OK).body(responseData);
 
         return response;
     }

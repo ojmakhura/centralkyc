@@ -6,103 +6,114 @@
 package bw.co.centralkyc.individual.employment;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+
+import bw.co.centralkyc.AuditTracker;
+import bw.co.centralkyc.RestApiResponse;
+
+import java.util.Collection;
+
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 
 @org.springframework.web.bind.annotation.RestController
 public class EmploymentRecordApiImpl extends EmploymentRecordApiBase {
     
     public EmploymentRecordApiImpl(
-        bw.co.centralkyc.individual.employment.EmploymentRecordService employmentRecordService    ) {
+        EmploymentRecordService employmentRecordService    ) {
         
         super(
             employmentRecordService        );
     }
 
-
     @Override
-    public ResponseEntity<bw.co.centralkyc.individual.employment.EmploymentRecordDTO> handleFindById(java.lang.String id) {
-        RestApiResponse<bw.co.centralkyc.individual.employment.EmploymentRecordDTO> responseData = new RestApiResponse<>();
-        responseData.setData(null);
+    public ResponseEntity<RestApiResponse<EmploymentRecordDTO>> handleFindById(String id) throws Exception {
+        RestApiResponse<EmploymentRecordDTO> responseData = new RestApiResponse<>();
+        responseData.setData(employmentRecordService.findById(id));
         responseData.setStatus(HttpStatus.OK.value());
         responseData.setMessage(String.format("Operation successful."));
-        ResponseEntity<RestApiResponse<bw.co.centralkyc.individual.employment.EmploymentRecordDTO>> response = ResponseEntity.status(HttpStatus.OK).body(responseData);
+        ResponseEntity<RestApiResponse<EmploymentRecordDTO>> response = ResponseEntity.status(HttpStatus.OK).body(responseData);
 
         return response;
     }
 
     @Override
-    public ResponseEntity<java.util.Collection<bw.co.centralkyc.individual.employment.EmploymentRecordDTO>> handleFindByIndividual(java.lang.String individualId) {
-        RestApiResponse<java.util.Collection<bw.co.centralkyc.individual.employment.EmploymentRecordDTO>> responseData = new RestApiResponse<>();
-        responseData.setData(null);
+    public ResponseEntity<RestApiResponse<Collection<EmploymentRecordDTO>>> handleFindByIndividual(String individualId) throws Exception {
+        RestApiResponse<Collection<EmploymentRecordDTO>> responseData = new RestApiResponse<>();
+        responseData.setData(employmentRecordService.findByIndividual(individualId));
         responseData.setStatus(HttpStatus.OK.value());
         responseData.setMessage(String.format("Operation successful."));
-        ResponseEntity<RestApiResponse<java.util.Collection<bw.co.centralkyc.individual.employment.EmploymentRecordDTO>>> response = ResponseEntity.status(HttpStatus.OK).body(responseData);
+        ResponseEntity<RestApiResponse<Collection<EmploymentRecordDTO>>> response = ResponseEntity.status(HttpStatus.OK).body(responseData);
 
         return response;
     }
 
     @Override
-    public ResponseEntity<java.util.Collection<bw.co.centralkyc.individual.employment.EmploymentRecordDTO>> handleGetAll() {
-        RestApiResponse<java.util.Collection<bw.co.centralkyc.individual.employment.EmploymentRecordDTO>> responseData = new RestApiResponse<>();
-        responseData.setData(null);
+    public ResponseEntity<RestApiResponse<Collection<EmploymentRecordDTO>>> handleGetAll() throws Exception {
+        RestApiResponse<Collection<EmploymentRecordDTO>> responseData = new RestApiResponse<>();
+        responseData.setData(employmentRecordService.getAll());
         responseData.setStatus(HttpStatus.OK.value());
         responseData.setMessage(String.format("Operation successful."));
-        ResponseEntity<RestApiResponse<java.util.Collection<bw.co.centralkyc.individual.employment.EmploymentRecordDTO>>> response = ResponseEntity.status(HttpStatus.OK).body(responseData);
+        ResponseEntity<RestApiResponse<Collection<EmploymentRecordDTO>>> response = ResponseEntity.status(HttpStatus.OK).body(responseData);
 
         return response;
     }
 
     @Override
-    public ResponseEntity<org.springframework.data.domain.Page<bw.co.centralkyc.individual.employment.EmploymentRecordDTO>> handleGetAllPaged(java.lang.Integer pageNumber, java.lang.Integer pageSize) {
-        RestApiResponse<org.springframework.data.domain.Page<bw.co.centralkyc.individual.employment.EmploymentRecordDTO>> responseData = new RestApiResponse<>();
-        responseData.setData(null);
+    public ResponseEntity<RestApiResponse<Page<EmploymentRecordDTO>>> handleGetAllPaged(Integer pageNumber, Integer pageSize) throws Exception {
+        RestApiResponse<Page<EmploymentRecordDTO>> responseData = new RestApiResponse<>();
+        responseData.setData(employmentRecordService.getAll(pageNumber, pageSize));
         responseData.setStatus(HttpStatus.OK.value());
         responseData.setMessage(String.format("Operation successful."));
-        ResponseEntity<RestApiResponse<org.springframework.data.domain.Page<bw.co.centralkyc.individual.employment.EmploymentRecordDTO>>> response = ResponseEntity.status(HttpStatus.OK).body(responseData);
+        ResponseEntity<RestApiResponse<Page<EmploymentRecordDTO>>> response = ResponseEntity.status(HttpStatus.OK).body(responseData);
 
         return response;
     }
 
     @Override
-    public ResponseEntity<org.springframework.data.domain.Page<bw.co.centralkyc.individual.employment.EmploymentRecordDTO>> handlePagedSearch(java.lang.String criteria, java.lang.Integer pageNumber, java.lang.Integer pageSize) {
-        RestApiResponse<org.springframework.data.domain.Page<bw.co.centralkyc.individual.employment.EmploymentRecordDTO>> responseData = new RestApiResponse<>();
-        responseData.setData(null);
+    public ResponseEntity<RestApiResponse<Page<EmploymentRecordDTO>>> handlePagedSearch(String criteria, Integer pageNumber, Integer pageSize) throws Exception {
+        RestApiResponse<Page<EmploymentRecordDTO>> responseData = new RestApiResponse<>();
+        responseData.setData(employmentRecordService.search(criteria, pageNumber, pageSize));
         responseData.setStatus(HttpStatus.OK.value());
         responseData.setMessage(String.format("Operation successful."));
-        ResponseEntity<RestApiResponse<org.springframework.data.domain.Page<bw.co.centralkyc.individual.employment.EmploymentRecordDTO>>> response = ResponseEntity.status(HttpStatus.OK).body(responseData);
+        ResponseEntity<RestApiResponse<Page<EmploymentRecordDTO>>> response = ResponseEntity.status(HttpStatus.OK).body(responseData);
 
         return response;
     }
 
     @Override
-    public ResponseEntity<java.lang.Boolean> handleRemove(java.lang.String id) {
-        RestApiResponse<java.lang.Boolean> responseData = new RestApiResponse<>();
-        responseData.setData(null);
+    public ResponseEntity<RestApiResponse<Boolean>> handleRemove(String id) throws Exception {
+        RestApiResponse<Boolean> responseData = new RestApiResponse<>();
+        responseData.setData(employmentRecordService.remove(id));
         responseData.setStatus(HttpStatus.OK.value());
         responseData.setMessage(String.format("Operation successful."));
-        ResponseEntity<RestApiResponse<java.lang.Boolean>> response = ResponseEntity.status(HttpStatus.OK).body(responseData);
+        ResponseEntity<RestApiResponse<Boolean>> response = ResponseEntity.status(HttpStatus.OK).body(responseData);
 
         return response;
     }
 
     @Override
-    public ResponseEntity<bw.co.centralkyc.individual.employment.EmploymentRecordDTO> handleSave(bw.co.centralkyc.individual.employment.EmploymentRecordDTO employmentRecord) {
-        RestApiResponse<bw.co.centralkyc.individual.employment.EmploymentRecordDTO> responseData = new RestApiResponse<>();
-        responseData.setData(null);
+    public ResponseEntity<RestApiResponse<EmploymentRecordDTO>> handleSave(EmploymentRecordDTO employmentRecord) throws Exception {
+        RestApiResponse<EmploymentRecordDTO> responseData = new RestApiResponse<>();
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        AuditTracker.auditTrail(employmentRecord, authentication);
+
+        responseData.setData(employmentRecordService.save(employmentRecord));
         responseData.setStatus(HttpStatus.OK.value());
         responseData.setMessage(String.format("Operation successful."));
-        ResponseEntity<RestApiResponse<bw.co.centralkyc.individual.employment.EmploymentRecordDTO>> response = ResponseEntity.status(HttpStatus.OK).body(responseData);
+        ResponseEntity<RestApiResponse<EmploymentRecordDTO>> response = ResponseEntity.status(HttpStatus.OK).body(responseData);
 
         return response;
     }
 
     @Override
-    public ResponseEntity<java.util.Collection<bw.co.centralkyc.individual.employment.EmploymentRecordDTO>> handleSearch(java.lang.String criteria) {
-        RestApiResponse<java.util.Collection<bw.co.centralkyc.individual.employment.EmploymentRecordDTO>> responseData = new RestApiResponse<>();
-        responseData.setData(null);
+    public ResponseEntity<RestApiResponse<Collection<EmploymentRecordDTO>>> handleSearch(String criteria) throws Exception {
+        RestApiResponse<Collection<EmploymentRecordDTO>> responseData = new RestApiResponse<>();
+        responseData.setData(employmentRecordService.search(criteria));
         responseData.setStatus(HttpStatus.OK.value());
         responseData.setMessage(String.format("Operation successful."));
-        ResponseEntity<RestApiResponse<java.util.Collection<bw.co.centralkyc.individual.employment.EmploymentRecordDTO>>> response = ResponseEntity.status(HttpStatus.OK).body(responseData);
+        ResponseEntity<RestApiResponse<Collection<EmploymentRecordDTO>>> response = ResponseEntity.status(HttpStatus.OK).body(responseData);
 
         return response;
     }

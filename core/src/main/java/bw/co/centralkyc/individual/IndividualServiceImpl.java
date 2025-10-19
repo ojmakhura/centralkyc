@@ -9,6 +9,8 @@
 package bw.co.centralkyc.individual;
 
 import java.util.Collection;
+
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -16,6 +18,9 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+
+import bw.co.centralkyc.PropertySearchOrder;
+import bw.co.centralkyc.SearchObject;
 
 /**
  * @see bw.co.centralkyc.individual.IndividualService
@@ -96,22 +101,53 @@ public class IndividualServiceImpl
         return individualDao.toIndividualDTO(entity);
     }
 
-    private Specification<Individual> createSpecification(String criteria) {
-        return (root, query, builder) -> {
-            String likeCriteria = "%" + criteria.toLowerCase() + "%";
-            return builder.or(
-                    builder.like(builder.lower(root.get("firstName")), likeCriteria),
-                    builder.like(builder.lower(root.get("surname")), likeCriteria),
-                    // builder.like(builder.lower(root.get("email")), likeCriteria),
-                    builder.like(builder.lower(root.get("identityNo")), likeCriteria));
-        };
+    private Specification<Individual> createSpecification(IndividualSearchCriteria criteria) {
+
+        Specification<Individual> spec = Specification.unrestricted();
+
+        if(StringUtils.isNotBlank(criteria.getEmailAddress())) {
+
+            spec = spec.and((root, query, builder) ->
+                    builder.equal(builder.lower(root.get("email")), criteria.getEmailAddress().toLowerCase()));
+
+        }
+
+        if(StringUtils.isNotBlank(criteria.getFirstName())) {
+
+            spec = spec.and((root, query, builder) ->
+                    builder.equal(builder.lower(root.get("firstName")), criteria.getFirstName().toLowerCase()));
+
+        }
+
+        if(StringUtils.isNotBlank(criteria.getSurname())) {
+
+            spec = spec.and((root, query, builder) ->
+                    builder.equal(builder.lower(root.get("surname")), criteria.getSurname().toLowerCase()));
+
+        }
+
+        if(StringUtils.isNotBlank(criteria.getMiddleName())) {
+
+            spec = spec.and((root, query, builder) ->
+                    builder.equal(builder.lower(root.get("middleName")), criteria.getMiddleName().toLowerCase()));
+
+        }
+
+        if(StringUtils.isNotBlank(criteria.getIdentityNo())) {
+
+            spec = spec.and((root, query, builder) ->
+                    builder.equal(builder.lower(root.get("identityNo")), criteria.getIdentityNo().toLowerCase()));
+
+        }
+
+        return spec;
     }
 
     /**
      * @see bw.co.centralkyc.individual.IndividualService#search(String)
      */
     @Override
-    protected Collection<IndividualListDTO> handleSearch(String criteria)
+    protected Collection<IndividualListDTO> handleSearch(IndividualSearchCriteria criteria, PropertySearchOrder orderings)
             throws Exception {
 
         Specification<Individual> spec = createSpecification(criteria);
@@ -124,15 +160,28 @@ public class IndividualServiceImpl
      *      String)
      */
     @Override
-    protected Page<IndividualListDTO> handleSearch(Integer pageNumber, Integer pageSize, String criteria)
+    protected Page<IndividualListDTO> handleSearch(SearchObject<IndividualSearchCriteria> criteria)
             throws Exception {
 
-        Specification<Individual> spec = createSpecification(criteria);
+        Specification<Individual> spec = createSpecification(criteria.getCriteria());
 
-        PageRequest pageRequest = PageRequest.of(pageNumber, pageSize);
+        PageRequest pageRequest = PageRequest.of(criteria.getPageNumber(), criteria.getPageSize());
         Page<Individual> individuals = individualRepository.findAll(spec, pageRequest);
 
         return individuals.map(individual -> individualDao.toIndividualListDTO(individual));
+    }
+
+    @Override
+    protected Collection<IndividualDTO> handleGetOrganisationClients(String organisationId) throws Exception {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'handleGetOrganisationClients'");
+    }
+
+    @Override
+    protected Collection<IndividualDTO> handleGetOrganisationClients(String organisationId, Integer pageNumber,
+            Integer pageSize) throws Exception {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'handleGetOrganisationClients'");
     }
 
 }

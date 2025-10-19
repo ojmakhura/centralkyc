@@ -7,9 +7,13 @@
 package bw.co.centralkyc.individual.employment;
 
 import bw.co.centralkyc.document.DocumentRepository;
+import bw.co.centralkyc.individual.Individual;
 import bw.co.centralkyc.individual.IndividualRepository;
 import bw.co.centralkyc.individual.kyc.KycRecordRepository;
 import bw.co.centralkyc.organisation.OrganisationRepository;
+import jakarta.persistence.EntityNotFoundException;
+
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Repository;
 
 /**
@@ -48,6 +52,24 @@ public class EmploymentRecordDaoImpl
         // TODO verify behavior of toEmploymentRecordDTO
         super.toEmploymentRecordDTO(source, target);
         // WARNING! No conversion for target.kycRecords (can't convert source.getKycRecords():bw.co.centralkyc.individual.kyc.KycRecord to bw.co.centralkyc.individual.kyc.KycRecordDTO
+
+        if(source.getIndividual() != null)  {
+
+            Individual individual = source.getIndividual();
+
+            StringBuilder builder = new StringBuilder();
+            builder.append(individual.getFirstName());
+
+            if(StringUtils.isNotBlank(individual.getMiddleName())) {
+
+                builder.append(' ').append(individual.getMiddleName());
+            }
+
+            builder.append(' ').append(individual.getSurname());
+
+            target.setName(builder.toString());
+            target.setIdentityNo(individual.getIdentityNo());
+        }
     }
 
     /**
@@ -67,10 +89,6 @@ public class EmploymentRecordDaoImpl
      */
     private EmploymentRecord loadEmploymentRecordFromEmploymentRecordDTO(EmploymentRecordDTO employmentRecordDTO)
     {
-        // TODO implement loadEmploymentRecordFromEmploymentRecordDTO
-        throw new UnsupportedOperationException("bw.co.centralkyc.individual.employment.loadEmploymentRecordFromEmploymentRecordDTO(EmploymentRecordDTO) not yet implemented.");
-
-        /* A typical implementation looks like this:
         if (employmentRecordDTO.getId() == null)
         {
             return  EmploymentRecord.Factory.newInstance();
@@ -80,7 +98,6 @@ public class EmploymentRecordDaoImpl
             return this.employmentRecordRepository.findById(employmentRecordDTO.getId())
                 .orElseThrow(() -> new EntityNotFoundException("Entity not found for id: " + employmentRecordDTO.getId()));
         }
-        */
     }
 
     /**
@@ -105,5 +122,9 @@ public class EmploymentRecordDaoImpl
     {
         // TODO verify behavior of employmentRecordDTOToEntity
         super.employmentRecordDTOToEntity(source, target, copyIfNull);
+
+        // if() {
+
+        // }
     }
 }

@@ -17,7 +17,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 
 import bw.co.centralkyc.AuditTracker;
+import bw.co.centralkyc.PropertySearchOrder;
 import bw.co.centralkyc.RestApiResponse;
+import bw.co.centralkyc.SearchObject;
 import bw.co.centralkyc.keycloak.KeycloakUserService;
 import bw.co.centralkyc.organisation.OrganisationDTO;
 import bw.co.centralkyc.organisation.OrganisationListDTO;
@@ -98,10 +100,9 @@ public class IndividualApiImpl extends IndividualApiBase {
     }
 
     @Override
-    public ResponseEntity<RestApiResponse<Page<IndividualListDTO>>> handlePagedSearch(Integer pageNumber,
-            Integer pageSize, String criteria) {
+    public ResponseEntity<RestApiResponse<Page<IndividualListDTO>>> handlePagedSearch(SearchObject<IndividualSearchCriteria> criteria) {
         RestApiResponse<Page<IndividualListDTO>> responseData = new RestApiResponse<>();
-        Optional<Page<IndividualListDTO>> data = Optional.of(individualService.search(pageNumber, pageSize, criteria));
+        Optional<Page<IndividualListDTO>> data = Optional.of(individualService.search(criteria));
         responseData.setData(data.get());
         ResponseEntity<RestApiResponse<Page<IndividualListDTO>>> response = ResponseEntity.status(HttpStatus.OK)
                 .body(responseData);
@@ -158,14 +159,28 @@ public class IndividualApiImpl extends IndividualApiBase {
     }
 
     @Override
-    public ResponseEntity<RestApiResponse<Collection<IndividualListDTO>>> handleSearch(String criteria) {
+    public ResponseEntity<RestApiResponse<Collection<IndividualListDTO>>> handleSearch(SearchObject<IndividualSearchCriteria> criteria) {
         RestApiResponse<Collection<IndividualListDTO>> responseData = new RestApiResponse<>();
-        Optional<Collection<IndividualListDTO>> data = Optional.of(individualService.search(criteria));
+        Optional<Collection<IndividualListDTO>> data = Optional.of(individualService.search(criteria.getCriteria(), (PropertySearchOrder) criteria.getSortings()));
         responseData.setData(data.get());
         ResponseEntity<RestApiResponse<Collection<IndividualListDTO>>> response = ResponseEntity.status(HttpStatus.OK)
                 .body(responseData);
 
         return response;
 
+    }
+
+    @Override
+    public ResponseEntity<RestApiResponse<Collection<IndividualListDTO>>> handleGetOrganisationClients(
+            String organisationId) throws Exception {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'handleGetOrganisationClients'");
+    }
+
+    @Override
+    public ResponseEntity<RestApiResponse<Page<IndividualListDTO>>> handleGetOrganisationClientsPaged(
+            Integer pageNumber, Integer pageSize, String criteria) throws Exception {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'handleGetOrganisationClientsPaged'");
     }
 }

@@ -9,6 +9,7 @@
 package bw.co.centralkyc.organisation;
 
 import java.util.Collection;
+import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.MessageSource;
@@ -21,6 +22,9 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+
+import bw.co.centralkyc.PropertySearchOrder;
+import bw.co.centralkyc.SearchObject;
 
 /**
  * @see bw.co.centralkyc.organisation.OrganisationService
@@ -108,15 +112,29 @@ public class OrganisationServiceImpl
         return organisationDao.toOrganisationDTO(org);
     }
 
-    private Specification<Organisation> createSpecification(String criteria) {
+    private Specification<Organisation> createSpecification(OrganisationSearchCriteria criteria) {
 
-        if (StringUtils.isBlank(criteria)) {
-            return null;
+        Specification<Organisation> spec = Specification.unrestricted();
+
+        if (StringUtils.isNotBlank(criteria.getName())) {
+            spec = spec.and((root, query, builder) ->
+                builder.like(builder.upper(root.get("name")), "%" + criteria.getName().toUpperCase() + "%"));
         }
 
-        Specification<Organisation> spec = (root, cq, cb) -> {
-            return cb.like(cb.upper(root.get("name")), "%" + criteria.toUpperCase() + "%");
-        };
+        if (StringUtils.isNotBlank(criteria.getRegistrationNo())) {
+            spec = spec.and((root, query, builder) ->
+                builder.equal(root.get("registrationNo"), criteria.getRegistrationNo()));
+        }
+
+        if(StringUtils.isNotBlank(criteria.getContactEmailAddress())) {
+            spec = spec.and((root, query, builder) ->
+                builder.like(builder.upper(root.get("contactEmailAddress")), "%" + criteria.getContactEmailAddress().toUpperCase() + "%"));
+        }
+
+        if(criteria.getStatus() != null) {
+            spec = spec.and((root, query, builder) ->
+                builder.equal(root.get("status"), criteria.getStatus()));
+        }
 
         return spec;
     }
@@ -125,7 +143,7 @@ public class OrganisationServiceImpl
      * @see bw.co.centralkyc.organisation.OrganisationService#search(String)
      */
     @Override
-    protected Collection<OrganisationListDTO> handleSearch(String criteria)
+    protected Collection<OrganisationListDTO> handleSearch(OrganisationSearchCriteria criteria, Set<PropertySearchOrder> orderings)
         throws Exception
     {
         Specification<Organisation> spec = createSpecification(criteria);
@@ -139,11 +157,11 @@ public class OrganisationServiceImpl
      * @see bw.co.centralkyc.organisation.OrganisationService#search(Integer, Integer, String)
      */
     @Override
-    protected Page<OrganisationListDTO> handleSearch(Integer pageNumber, Integer pageSize, String criteria)
+    protected Page<OrganisationListDTO> handleSearch(SearchObject<OrganisationSearchCriteria> criteria)
         throws Exception
     {
-        Specification<Organisation> spec = createSpecification(criteria);
-        Pageable pageable = PageRequest.of(pageNumber, pageSize, Sort.by(Direction.ASC, "name"));
+        Specification<Organisation> spec = createSpecification(criteria.getCriteria());
+        Pageable pageable = PageRequest.of(criteria.getPageNumber(), criteria.getPageSize(), Sort.by(Direction.ASC, "name"));
         Page<Organisation> page = organisationRepository.findAll(spec, pageable);
 
         return page.map(org -> organisationDao.toOrganisationListDTO(org));

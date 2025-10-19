@@ -7,6 +7,7 @@ package bw.co.centralkyc.organisation;
 
 import java.util.Collection;
 import java.util.Optional;
+import java.util.Set;
 
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -15,7 +16,9 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 import bw.co.centralkyc.AuditTracker;
+import bw.co.centralkyc.PropertySearchOrder;
 import bw.co.centralkyc.RestApiResponse;
+import bw.co.centralkyc.SearchObject;
 
 @org.springframework.web.bind.annotation.RestController
 public class OrganisationApiImpl extends OrganisationApiBase {
@@ -75,11 +78,10 @@ public class OrganisationApiImpl extends OrganisationApiBase {
     }
 
     @Override
-    public ResponseEntity<RestApiResponse<Page<OrganisationListDTO>>> handlePagedSearch(Integer pageNumber,
-            Integer pageSize, String criteria) {
+    public ResponseEntity<RestApiResponse<Page<OrganisationListDTO>>> handlePagedSearch(SearchObject<OrganisationSearchCriteria> criteria) {
         RestApiResponse<Page<OrganisationListDTO>> responseData = new RestApiResponse<>();
         Optional<Page<OrganisationListDTO>> data = Optional
-                .of(organisationService.search(pageNumber, pageSize, criteria)); // TODO: Add custom code here;
+                .of(organisationService.search(criteria)); // TODO: Add custom code here;
         responseData.setData(data.get());
         responseData.setSuccess(true);
         responseData.setMessage(String.format("Loaded organisation page %d.", responseData.getData().getNumber()));
@@ -120,9 +122,9 @@ public class OrganisationApiImpl extends OrganisationApiBase {
     }
 
     @Override
-    public ResponseEntity<RestApiResponse<Collection<OrganisationListDTO>>> handleSearch(String criteria) {
+    public ResponseEntity<RestApiResponse<Collection<OrganisationListDTO>>> handleSearch(SearchObject<OrganisationSearchCriteria> criteria) {
         RestApiResponse<Collection<OrganisationListDTO>> responseData = new RestApiResponse<>();
-        Optional<Collection<OrganisationListDTO>> data = Optional.of(organisationService.search(criteria)); // TODO: Add
+        Optional<Collection<OrganisationListDTO>> data = Optional.of(organisationService.search(criteria.getCriteria(), (Set<PropertySearchOrder>) criteria.getSortings())); // TODO: Add
                                                                                                             // custom
                                                                                                             // code
                                                                                                             // here;

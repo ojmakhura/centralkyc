@@ -7,6 +7,8 @@
 package bw.co.centralkyc.individual;
 
 import bw.co.centralkyc.document.DocumentRepository;
+import bw.co.centralkyc.individual.employment.EmploymentRecordRepository;
+import bw.co.centralkyc.individual.kyc.KycRecordRepository;
 import jakarta.persistence.EntityNotFoundException;
 
 import org.apache.commons.lang3.StringUtils;
@@ -20,15 +22,9 @@ public class IndividualDaoImpl
     extends IndividualDaoBase
 {
     
-    public IndividualDaoImpl(
-        DocumentRepository documentRepository,
-        IndividualRepository individualRepository
-    ) {
-
-        super(
-            documentRepository,
-            individualRepository
-        );
+    public IndividualDaoImpl(DocumentRepository documentRepository, KycRecordRepository kycRecordRepository,
+            EmploymentRecordRepository employmentRecordRepository, IndividualRepository individualRepository) {
+        super(documentRepository, kycRecordRepository, employmentRecordRepository, individualRepository);
     }
 
     /**
