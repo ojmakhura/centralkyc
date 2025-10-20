@@ -48,7 +48,7 @@ export const BranchApiStore = signalStore(
                     data: response?.data,
                     loading: false, 
                     status: (response?.status) ,
-                    success: (response?.success || false), 
+                    success: true, 
                     messages: [response.message || 'Success!!'],
                     error: false,
                   }
@@ -61,7 +61,7 @@ export const BranchApiStore = signalStore(
                     loading: false, 
                     success: false,
                     error: true,
-                    messages: [error.error.message || 'An error occurred'], 
+                    messages: [error.message || 'An error occurred'], 
                   }
                 );
               },
@@ -81,7 +81,7 @@ export const BranchApiStore = signalStore(
                     dataList: response?.data, 
                     loading: false, 
                     status: (response?.status) ,
-                    success: (response?.success || false), 
+                    success: true, 
                     messages: [response.message || 'Success!!'],
                     error: false,
                   }
@@ -94,7 +94,7 @@ export const BranchApiStore = signalStore(
                     loading: false, 
                     success: false,
                     error: true,
-                    messages: [error.error.message || 'An error occurred'], 
+                    messages: [error.message || 'An error occurred'], 
                   }
                 );
               },
@@ -114,7 +114,7 @@ export const BranchApiStore = signalStore(
                     dataList: response?.data, 
                     loading: false, 
                     status: (response?.status) ,
-                    success: (response?.success || false), 
+                    success: true, 
                     messages: [response.message || 'Success!!'],
                     error: false,
                   }
@@ -127,7 +127,7 @@ export const BranchApiStore = signalStore(
                     loading: false, 
                     success: false,
                     error: true,
-                    messages: [error.error.message || 'An error occurred'], 
+                    messages: [error.message || 'An error occurred'], 
                   }
                 );
               },
@@ -147,7 +147,7 @@ export const BranchApiStore = signalStore(
                     dataList: response?.data, 
                     loading: false, 
                     status: (response?.status) ,
-                    success: (response?.success || false), 
+                    success: true, 
                     messages: [response.message || 'Success!!'],
                     error: false,
                   }
@@ -160,7 +160,7 @@ export const BranchApiStore = signalStore(
                     loading: false, 
                     success: false,
                     error: true,
-                    messages: [error.error.message || 'An error occurred'], 
+                    messages: [error.message || 'An error occurred'], 
                   }
                 );
               },
@@ -180,7 +180,7 @@ export const BranchApiStore = signalStore(
                     dataPage: response?.data,
                     loading: false, 
                     status: (response?.status) ,
-                    success: (response?.success || false), 
+                    success: true, 
                     messages: [response.message || 'Success!!'],
                     error: false,
                   }
@@ -193,7 +193,7 @@ export const BranchApiStore = signalStore(
                     loading: false, 
                     success: false,
                     error: true,
-                    messages: [error.error.message || 'An error occurred'], 
+                    messages: [error.message || 'An error occurred'], 
                   }
                 );
               },
@@ -213,7 +213,7 @@ export const BranchApiStore = signalStore(
                     dataPage: response?.data,
                     loading: false, 
                     status: (response?.status) ,
-                    success: (response?.success || false), 
+                    success: true, 
                     messages: [response.message || 'Success!!'],
                     error: false,
                   }
@@ -226,7 +226,7 @@ export const BranchApiStore = signalStore(
                     loading: false, 
                     success: false,
                     error: true,
-                    messages: [error.error.message || 'An error occurred'], 
+                    messages: [error.message || 'An error occurred'], 
                   }
                 );
               },
@@ -246,7 +246,7 @@ export const BranchApiStore = signalStore(
                     data: response?.data,
                     loading: false, 
                     status: (response?.status) ,
-                    success: (response?.success || false), 
+                    success: true, 
                     messages: [response.message || 'Success!!'],
                     error: false,
                   }
@@ -259,7 +259,7 @@ export const BranchApiStore = signalStore(
                     loading: false, 
                     success: false,
                     error: true,
-                    messages: [error.error.message || 'An error occurred'], 
+                    messages: [error.message || 'An error occurred'], 
                   }
                 );
               },
@@ -279,7 +279,7 @@ export const BranchApiStore = signalStore(
                     data: response?.data,
                     loading: false, 
                     status: (response?.status) ,
-                    success: (response?.success || false), 
+                    success: true, 
                     messages: [response.message || 'Success!!'],
                     error: false,
                   }
@@ -292,7 +292,7 @@ export const BranchApiStore = signalStore(
                     loading: false, 
                     success: false,
                     error: true,
-                    messages: [error.error.message || 'An error occurred'], 
+                    messages: [error.message || 'An error occurred'], 
                   }
                 );
               },
@@ -312,7 +312,7 @@ export const BranchApiStore = signalStore(
                     dataList: response?.data, 
                     loading: false, 
                     status: (response?.status) ,
-                    success: (response?.success || false), 
+                    success: true, 
                     messages: [response.message || 'Success!!'],
                     error: false,
                   }
@@ -325,7 +325,7 @@ export const BranchApiStore = signalStore(
                     loading: false, 
                     success: false,
                     error: true,
-                    messages: [error.error.message || 'An error occurred'], 
+                    messages: [error.message || 'An error occurred'], 
                   }
                 );
               },

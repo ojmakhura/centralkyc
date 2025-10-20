@@ -26,9 +26,9 @@ export class SettingsApi {
         return this.http.get<RestApiResponse<SettingsDTO[] | any[]>>(`${this.path}`);
     }
 
-    public getAllPaged(pageNumber: number | any , pageSize: number | any ): Observable<RestApiResponse<Page<SettingsDTO>[] | any[]>> {
+    public getAllPaged(pageNumber: number | any , pageSize: number | any ): Observable<RestApiResponse<Page<SettingsDTO> | any>> {
 
-        return this.http.get<RestApiResponse<Page<SettingsDTO>[] | any[]>>(`${this.path}/paged?pageNumber=${pageNumber}&pageSize=${pageSize}`);
+        return this.http.get<RestApiResponse<Page<SettingsDTO> | any>>(`${this.path}/paged?pageNumber=${pageNumber}&pageSize=${pageSize}`);
     }
 
     public pagedSearch(criteria: string | any , pageNumber: number | any , pageSize: number | any ): Observable<RestApiResponse<Page<SettingsDTO> | any>> {

@@ -116,6 +116,10 @@ public class OrganisationServiceImpl
 
         Specification<Organisation> spec = Specification.unrestricted();
 
+        if(criteria == null) {
+            return spec;
+        }
+
         if (StringUtils.isNotBlank(criteria.getName())) {
             spec = spec.and((root, query, builder) ->
                 builder.like(builder.upper(root.get("name")), "%" + criteria.getName().toUpperCase() + "%"));

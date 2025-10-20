@@ -48,13 +48,13 @@ export const SettingsApiStore = signalStore(
                     data: response?.data,
                     loading: false,
                     status: (response?.status) ,
-                    success: (response?.success || false),
+                    success: true,
                     messages: [response.message || 'Success!!'],
                     error: false,
                   }
                 );
               },
-              error: (error: RestApiResponse<SettingsDTO | any>) => {
+              error: (error: any) => {
                 patchState(
                   store, {
                     status: (error?.status || 0),
@@ -75,20 +75,25 @@ export const SettingsApiStore = signalStore(
           return settingsApi.getAll().pipe(
             tapResponse({
               next: (response: RestApiResponse<SettingsDTO[] | any[]>) => {
-                patchState(
-                  store,
-                  {
-                    dataList: response?.data,
-                    data: (response.data || []).length > 0 ? (response.data || [])[0] : null,
-                    loading: false,
-                    status: (response?.status) ,
-                    success: (response?.success || false),
-                    messages: [response.message || 'Success!!'],
-                    error: false,
-                  }
-                );
+
+                let dataList = response?.data || [];
+
+                let data = null;
+                if (dataList.length > 0) {
+                  data = dataList[0];
+                }
+
+                patchState(store, {
+                  dataList: response?.data,
+                  data: data,
+                  loading: false,
+                  status: response?.status,
+                  success: true,
+                  messages: [response.message || 'Success!!'],
+                  error: false,
+                });
               },
-              error: (error: RestApiResponse<SettingsDTO[] | any[]>) => {
+              error: (error: any) => {
                 patchState(
                   store, {
                     status: (error?.status || 0),
@@ -115,13 +120,13 @@ export const SettingsApiStore = signalStore(
                     dataPage: response?.data,
                     loading: false,
                     status: (response?.status) ,
-                    success: (response?.success || false),
+                    success: true,
                     messages: [response.message || 'Success!!'],
                     error: false,
                   }
                 );
               },
-              error: (error: RestApiResponse<Page<SettingsDTO> | any>) => {
+              error: (error: any) => {
                 patchState(
                   store, {
                     status: (error?.status || 0),
@@ -148,13 +153,13 @@ export const SettingsApiStore = signalStore(
                     dataPage: response?.data,
                     loading: false,
                     status: (response?.status) ,
-                    success: (response?.success || false),
+                    success: true,
                     messages: [response.message || 'Success!!'],
                     error: false,
                   }
                 );
               },
-              error: (error: RestApiResponse<Page<SettingsDTO> | any>) => {
+              error: (error: any) => {
                 patchState(
                   store, {
                     status: (error?.status || 0),
@@ -181,13 +186,13 @@ export const SettingsApiStore = signalStore(
                     data: response?.data,
                     loading: false,
                     status: (response?.status) ,
-                    success: (response?.success || false),
+                    success: true,
                     messages: [response.message || 'Success!!'],
                     error: false,
                   }
                 );
               },
-              error: (error: RestApiResponse<boolean | any>) => {
+              error: (error: any) => {
                 patchState(
                   store, {
                     status: (error?.status || 0),
@@ -214,13 +219,13 @@ export const SettingsApiStore = signalStore(
                     data: response?.data,
                     loading: false,
                     status: (response?.status) ,
-                    success: (response?.success || false),
+                    success: true,
                     messages: [response.message || 'Success!!'],
                     error: false,
                   }
                 );
               },
-              error: (error: RestApiResponse<SettingsDTO | any>) => {
+              error: (error: any) => {
                 patchState(
                   store, {
                     status: (error?.status || 0),
@@ -247,13 +252,13 @@ export const SettingsApiStore = signalStore(
                     dataList: response?.data,
                     loading: false,
                     status: (response?.status) ,
-                    success: (response?.success || false),
+                    success: true,
                     messages: [response.message || 'Success!!'],
                     error: false,
                   }
                 );
               },
-              error: (error: RestApiResponse<SettingsDTO[] | any[]>) => {
+              error: (error: any) => {
                 patchState(
                   store, {
                     status: (error?.status || 0),

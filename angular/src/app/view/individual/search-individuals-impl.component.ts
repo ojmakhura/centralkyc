@@ -11,6 +11,8 @@ import { MaterialModule } from '@app/material.module';
 import { TableComponent } from '@app/components/table/table.component';
 import { LoaderComponent } from '@app/@shared/loader/loader.component';
 import { MatPaginator } from '@angular/material/paginator';
+import { IndividualSearchCriteria } from '@app/model/bw/co/centralkyc/individual/individual-search-criteria';
+import { SearchObject } from '@app/model/search-object';
 
 @Component({
   selector: 'app-search-individuals',
@@ -28,7 +30,6 @@ import { MatPaginator } from '@angular/material/paginator';
   ],
 })
 export class SearchIndividualsImplComponent extends SearchIndividualsComponent {
-
   override error = this.individualApiStore.error;
   override messages = this.individualApiStore.messages;
   override success = this.individualApiStore.success;
@@ -60,12 +61,15 @@ export class SearchIndividualsImplComponent extends SearchIndividualsComponent {
   }
 
   private doSearch(pageNumber: number = 0, pageSize: number = 10): void {
-    let criteria = this.criteriaControl.value;
+    let value = this.searchIndividualsForm.value;
+
+    let criteria = new SearchObject<IndividualSearchCriteria>()
+    criteria.pageNumber = pageNumber;
+    criteria.pageSize = pageSize;
+    criteria.criteria = value;
 
     this.individualApiStore.pagedSearch({
-      criteria: criteria ? criteria : '',
-      pageNumber: pageNumber,
-      pageSize: pageSize,
+      criteria: criteria
     });
   }
 }

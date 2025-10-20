@@ -41,6 +41,11 @@ export class UserApi {
         return this.http.get<RestApiResponse<UserDTO[] | any[]>>(`${this.path}/client/roles?roles=${roles}`);
     }
 
+    public findByIdentityNo(identityNo: string | any ): Observable<RestApiResponse<UserDTO | any>> {
+
+        return this.http.get<RestApiResponse<UserDTO | any>>(`${this.path}/by-identity/{identityNo}/identityNo/${identityNo}`);
+    }
+
     public findByOrganisationId(organisationId: string | any ): Observable<RestApiResponse<UserDTO[] | any[]>> {
 
         return this.http.get<RestApiResponse<UserDTO[] | any[]>>(`${this.path}/organisation-id/${organisationId}`);

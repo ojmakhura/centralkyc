@@ -11,7 +11,7 @@ import { RestApiResponse } from '@app/model/rest-api-response.model';
   providedIn: 'root'
 })
 export class EmploymentRecordApi {
-
+    
     protected path = '/employment';
 
     private http = inject(HttpClient);
@@ -21,9 +21,9 @@ export class EmploymentRecordApi {
         return this.http.get<RestApiResponse<EmploymentRecordDTO | any>>(`${this.path}/${id}`);
     }
 
-    public findByIndividual(individualId: string | any ): Observable<RestApiResponse<EmploymentRecordDTO[]>> {
+    public findByIndividual(individualId: string | any ): Observable<RestApiResponse<EmploymentRecordDTO[] | any[]>> {
 
-        return this.http.get<RestApiResponse<EmploymentRecordDTO[]>>(`${this.path}/by-individual/${individualId}`);
+        return this.http.get<RestApiResponse<EmploymentRecordDTO[] | any[]>>(`${this.path}/by-individual/${individualId}`);
     }
 
     public getAll(): Observable<RestApiResponse<EmploymentRecordDTO[] | any[]>> {

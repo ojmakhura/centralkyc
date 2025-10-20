@@ -7,12 +7,13 @@ import { HttpClient } from '@angular/common/http';
 import { Page } from '@app/model/page.model';
 import { SearchObject } from '@app/model/search-object';
 import { RestApiResponse } from '@app/model/rest-api-response.model';
+import { OrganisationSearchCriteria } from '@app/model/bw/co/centralkyc/organisation/organisation-search-criteria';
 
 @Injectable({
   providedIn: 'root'
 })
 export class OrganisationApi {
-    
+
     protected path = '/organisation';
 
     private http = inject(HttpClient);
@@ -29,12 +30,12 @@ export class OrganisationApi {
 
     public getAllPaged(pageNumber: number | any , pageSize: number | any ): Observable<RestApiResponse<Page<OrganisationListDTO> | any>> {
 
-        return this.http.get<RestApiResponse<Page<OrganisationListDTO> | any>>(`${this.path}/page/${pageNumber}/size/${pageSize}`);
+        return this.http.get<RestApiResponse<Page<OrganisationListDTO> | any>>(`${this.path}/paged?pageNumber=${pageNumber}&pageSize=${pageSize}`);
     }
 
-    public pagedSearch(pageNumber: number | any , pageSize: number | any , criteria: string | any ): Observable<RestApiResponse<Page<OrganisationListDTO> | any>> {
+    public pagedSearch(criteria: SearchObject<OrganisationSearchCriteria> | any ): Observable<RestApiResponse<Page<OrganisationListDTO> | any>> {
 
-        return this.http.get<RestApiResponse<Page<OrganisationListDTO> | any>>(`${this.path}/search/page/${pageNumber}/size/${pageSize}?criteria=${criteria}`);
+        return this.http.post<RestApiResponse<Page<OrganisationListDTO> | any>>(`${this.path}/search/paged`, criteria);
     }
 
     public remove(id: string | any ): Observable<RestApiResponse<boolean | any>> {
@@ -47,7 +48,7 @@ export class OrganisationApi {
         return this.http.post<RestApiResponse<OrganisationDTO | any>>(`${this.path}`, organisation);
     }
 
-    public search(criteria: string | any ): Observable<RestApiResponse<OrganisationListDTO[] | any[]>> {
+    public search(criteria: SearchObject<OrganisationSearchCriteria> | any ): Observable<RestApiResponse<OrganisationListDTO[] | any[]>> {
 
         return this.http.post<RestApiResponse<OrganisationListDTO[] | any[]>>(`${this.path}/search?criteria=${criteria}`, criteria);
     }

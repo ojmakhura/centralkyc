@@ -32,9 +32,19 @@ export class IndividualApi {
         return this.http.get<RestApiResponse<Page<IndividualListDTO> | any>>(`${this.path}/paged?pageNumber=${pageNumber}&pageSize=${pageSize}`);
     }
 
-    public pagedSearch(pageNumber: number | any , pageSize: number | any , criteria: string | any ): Observable<RestApiResponse<Page<IndividualListDTO> | any>> {
+    public getOrganisationClients(organisationId: string | any ): Observable<RestApiResponse<IndividualListDTO[] | any[]>> {
 
-        return this.http.get<RestApiResponse<Page<IndividualListDTO> | any>>(`${this.path}/search/paged?pageNumber=${pageNumber}&pageSize=${pageSize}&criteria=${criteria}`);
+        return this.http.get<RestApiResponse<IndividualListDTO[] | any[]>>(`${this.path}/organisation/{organisationId}/organisationId/${organisationId}`);
+    }
+
+    public getOrganisationClientsPaged(organisationId: string | any , pageNumber: number | any , pageSize: number | any ): Observable<RestApiResponse<Page<IndividualListDTO> | any>> {
+
+        return this.http.get<RestApiResponse<Page<IndividualListDTO> | any>>(`${this.path}/organisation/${organisationId}/paged?pageNumber=${pageNumber}&pageSize=${pageSize}`);
+    }
+
+    public pagedSearch(criteria: SearchObject<IndividualSearchCriteria> | any ): Observable<RestApiResponse<Page<IndividualListDTO> | any>> {
+
+        return this.http.post<RestApiResponse<Page<IndividualListDTO> | any>>(`${this.path}/search/paged`, criteria);
     }
 
     public remove(id: string | any ): Observable<RestApiResponse<boolean | any>> {
@@ -47,9 +57,9 @@ export class IndividualApi {
         return this.http.post<RestApiResponse<IndividualDTO | any>>(`${this.path}`, individual);
     }
 
-    public search(criteria: string | any ): Observable<RestApiResponse<IndividualListDTO[] | any[]>> {
+    public search(criteria: SearchObject<IndividualSearchCriteria> | any ): Observable<RestApiResponse<IndividualListDTO[] | any[]>> {
 
-        return this.http.post<RestApiResponse<IndividualListDTO[] | any[]>>(`${this.path}/search?criteria=${criteria}`, criteria);
+        return this.http.post<RestApiResponse<IndividualListDTO[] | any[]>>(`${this.path}/search`, criteria);
     }
 
 }

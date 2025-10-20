@@ -48,7 +48,7 @@ export const UserApiStore = signalStore(
                     data: response?.data,
                     loading: false, 
                     status: (response?.status) ,
-                    success: (response?.success || false), 
+                    success: true, 
                     messages: [response.message || 'Success!!'],
                     error: false,
                   }
@@ -61,7 +61,7 @@ export const UserApiStore = signalStore(
                     loading: false, 
                     success: false,
                     error: true,
-                    messages: [error.error.message || 'An error occurred'], 
+                    messages: [error.message || 'An error occurred'], 
                   }
                 );
               },
@@ -81,7 +81,7 @@ export const UserApiStore = signalStore(
                     data: response?.data,
                     loading: false, 
                     status: (response?.status) ,
-                    success: (response?.success || false), 
+                    success: true, 
                     messages: [response.message || 'Success!!'],
                     error: false,
                   }
@@ -94,7 +94,7 @@ export const UserApiStore = signalStore(
                     loading: false, 
                     success: false,
                     error: true,
-                    messages: [error.error.message || 'An error occurred'], 
+                    messages: [error.message || 'An error occurred'], 
                   }
                 );
               },
@@ -114,7 +114,7 @@ export const UserApiStore = signalStore(
                     dataList: response?.data, 
                     loading: false, 
                     status: (response?.status) ,
-                    success: (response?.success || false), 
+                    success: true, 
                     messages: [response.message || 'Success!!'],
                     error: false,
                   }
@@ -127,7 +127,7 @@ export const UserApiStore = signalStore(
                     loading: false, 
                     success: false,
                     error: true,
-                    messages: [error.error.message || 'An error occurred'], 
+                    messages: [error.message || 'An error occurred'], 
                   }
                 );
               },
@@ -147,7 +147,7 @@ export const UserApiStore = signalStore(
                     dataList: response?.data, 
                     loading: false, 
                     status: (response?.status) ,
-                    success: (response?.success || false), 
+                    success: true, 
                     messages: [response.message || 'Success!!'],
                     error: false,
                   }
@@ -160,7 +160,7 @@ export const UserApiStore = signalStore(
                     loading: false, 
                     success: false,
                     error: true,
-                    messages: [error.error.message || 'An error occurred'], 
+                    messages: [error.message || 'An error occurred'], 
                   }
                 );
               },
@@ -180,7 +180,7 @@ export const UserApiStore = signalStore(
                     dataList: response?.data, 
                     loading: false, 
                     status: (response?.status) ,
-                    success: (response?.success || false), 
+                    success: true, 
                     messages: [response.message || 'Success!!'],
                     error: false,
                   }
@@ -193,7 +193,40 @@ export const UserApiStore = signalStore(
                     loading: false, 
                     success: false,
                     error: true,
-                    messages: [error.error.message || 'An error occurred'], 
+                    messages: [error.message || 'An error occurred'], 
+                  }
+                );
+              },
+            }),
+          );
+        }),
+      ),
+      findByIdentityNo: rxMethod<{identityNo: string | any }>(
+        switchMap((data: any) => {
+          patchState(store, { loading: true, loaderMessage: 'Loading ...' });
+          return userApi.findByIdentityNo(data.identityNo, ).pipe(
+            tapResponse({
+              next: (response: RestApiResponse<UserDTO | any>) => {
+                patchState(
+                  store, 
+                  {
+                    data: response?.data,
+                    loading: false, 
+                    status: (response?.status) ,
+                    success: true, 
+                    messages: [response.message || 'Success!!'],
+                    error: false,
+                  }
+                );
+              },
+              error: (error: any) => {
+                patchState(
+                  store, { 
+                    status: (error?.status || 0), 
+                    loading: false, 
+                    success: false,
+                    error: true,
+                    messages: [error.message || 'An error occurred'], 
                   }
                 );
               },
@@ -213,7 +246,7 @@ export const UserApiStore = signalStore(
                     dataList: response?.data, 
                     loading: false, 
                     status: (response?.status) ,
-                    success: (response?.success || false), 
+                    success: true, 
                     messages: [response.message || 'Success!!'],
                     error: false,
                   }
@@ -226,7 +259,7 @@ export const UserApiStore = signalStore(
                     loading: false, 
                     success: false,
                     error: true,
-                    messages: [error.error.message || 'An error occurred'], 
+                    messages: [error.message || 'An error occurred'], 
                   }
                 );
               },
@@ -246,7 +279,7 @@ export const UserApiStore = signalStore(
                     dataList: response?.data, 
                     loading: false, 
                     status: (response?.status) ,
-                    success: (response?.success || false), 
+                    success: true, 
                     messages: [response.message || 'Success!!'],
                     error: false,
                   }
@@ -259,7 +292,7 @@ export const UserApiStore = signalStore(
                     loading: false, 
                     success: false,
                     error: true,
-                    messages: [error.error.message || 'An error occurred'], 
+                    messages: [error.message || 'An error occurred'], 
                   }
                 );
               },
@@ -279,7 +312,7 @@ export const UserApiStore = signalStore(
                     dataList: response?.data, 
                     loading: false, 
                     status: (response?.status) ,
-                    success: (response?.success || false), 
+                    success: true, 
                     messages: [response.message || 'Success!!'],
                     error: false,
                   }
@@ -292,7 +325,7 @@ export const UserApiStore = signalStore(
                     loading: false, 
                     success: false,
                     error: true,
-                    messages: [error.error.message || 'An error occurred'], 
+                    messages: [error.message || 'An error occurred'], 
                   }
                 );
               },
@@ -312,7 +345,7 @@ export const UserApiStore = signalStore(
                     data: response?.data,
                     loading: false, 
                     status: (response?.status) ,
-                    success: (response?.success || false), 
+                    success: true, 
                     messages: [response.message || 'Success!!'],
                     error: false,
                   }
@@ -325,7 +358,7 @@ export const UserApiStore = signalStore(
                     loading: false, 
                     success: false,
                     error: true,
-                    messages: [error.error.message || 'An error occurred'], 
+                    messages: [error.message || 'An error occurred'], 
                   }
                 );
               },
@@ -345,7 +378,7 @@ export const UserApiStore = signalStore(
                     dataList: response?.data, 
                     loading: false, 
                     status: (response?.status) ,
-                    success: (response?.success || false), 
+                    success: true, 
                     messages: [response.message || 'Success!!'],
                     error: false,
                   }
@@ -358,7 +391,7 @@ export const UserApiStore = signalStore(
                     loading: false, 
                     success: false,
                     error: true,
-                    messages: [error.error.message || 'An error occurred'], 
+                    messages: [error.message || 'An error occurred'], 
                   }
                 );
               },
@@ -378,7 +411,7 @@ export const UserApiStore = signalStore(
                     data: response?.data,
                     loading: false, 
                     status: (response?.status) ,
-                    success: (response?.success || false), 
+                    success: true, 
                     messages: [response.message || 'Success!!'],
                     error: false,
                   }
@@ -391,7 +424,7 @@ export const UserApiStore = signalStore(
                     loading: false, 
                     success: false,
                     error: true,
-                    messages: [error.error.message || 'An error occurred'], 
+                    messages: [error.message || 'An error occurred'], 
                   }
                 );
               },
@@ -411,7 +444,7 @@ export const UserApiStore = signalStore(
                     data: response?.data,
                     loading: false, 
                     status: (response?.status) ,
-                    success: (response?.success || false), 
+                    success: true, 
                     messages: [response.message || 'Success!!'],
                     error: false,
                   }
@@ -424,7 +457,7 @@ export const UserApiStore = signalStore(
                     loading: false, 
                     success: false,
                     error: true,
-                    messages: [error.error.message || 'An error occurred'], 
+                    messages: [error.message || 'An error occurred'], 
                   }
                 );
               },
@@ -444,7 +477,7 @@ export const UserApiStore = signalStore(
                     dataList: response?.data, 
                     loading: false, 
                     status: (response?.status) ,
-                    success: (response?.success || false), 
+                    success: true, 
                     messages: [response.message || 'Success!!'],
                     error: false,
                   }
@@ -457,7 +490,7 @@ export const UserApiStore = signalStore(
                     loading: false, 
                     success: false,
                     error: true,
-                    messages: [error.error.message || 'An error occurred'], 
+                    messages: [error.message || 'An error occurred'], 
                   }
                 );
               },
@@ -477,7 +510,7 @@ export const UserApiStore = signalStore(
                     data: response?.data,
                     loading: false, 
                     status: (response?.status) ,
-                    success: (response?.success || false), 
+                    success: true, 
                     messages: [response.message || 'Success!!'],
                     error: false,
                   }
@@ -490,7 +523,7 @@ export const UserApiStore = signalStore(
                     loading: false, 
                     success: false,
                     error: true,
-                    messages: [error.error.message || 'An error occurred'], 
+                    messages: [error.message || 'An error occurred'], 
                   }
                 );
               },

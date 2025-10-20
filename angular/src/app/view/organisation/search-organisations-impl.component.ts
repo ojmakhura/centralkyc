@@ -12,6 +12,8 @@ import { TableComponent } from '@app/components/table/table.component';
 import { LoaderComponent } from '@app/@shared/loader/loader.component';
 import { OrganisationApiStore } from '@app/store/bw/co/centralkyc/organisation/organisation-api.store';
 import { MatPaginator } from '@angular/material/paginator';
+import { OrganisationSearchCriteria } from '@app/model/bw/co/centralkyc/organisation/organisation-search-criteria';
+import { SearchObject } from '@app/model/search-object';
 
 @Component({
   selector: 'app-search-organisations',
@@ -58,16 +60,19 @@ export class SearchOrganisationsImplComponent extends SearchOrganisationsCompone
   doNgOnDestroy(): void {}
 
   override beforeSearchOrganisationsSearch(form: any): void {
-      this.doSearch();
+    this.doSearch();
   }
 
   private doSearch(pageNumber: number = 0, pageSize: number = 10): void {
-    let criteria = this.criteriaControl.value;
+    let value = this.criteriaControl.value;
+
+    let criteria = new SearchObject<OrganisationSearchCriteria>()
+    criteria.pageNumber = pageNumber;
+    criteria.pageSize = pageSize;
+    criteria.criteria = value;
 
     this.organisationApiStore.pagedSearch({
-      criteria: criteria ? criteria : '',
-      pageNumber: pageNumber,
-      pageSize: pageSize,
+      criteria
     });
   }
 }

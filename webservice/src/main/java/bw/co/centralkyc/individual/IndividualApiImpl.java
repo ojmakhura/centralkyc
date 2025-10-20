@@ -179,7 +179,7 @@ public class IndividualApiImpl extends IndividualApiBase {
 
     @Override
     public ResponseEntity<RestApiResponse<Page<IndividualListDTO>>> handleGetOrganisationClientsPaged(
-            Integer pageNumber, Integer pageSize, String criteria) throws Exception {
+            String criteria, Integer pageNumber, Integer pageSize) throws Exception {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'handleGetOrganisationClientsPaged'");
     }

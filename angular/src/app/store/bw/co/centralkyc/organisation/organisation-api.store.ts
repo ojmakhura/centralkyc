@@ -1,4 +1,3 @@
-
 import { inject } from '@angular/core';
 import { patchState, signalStore, withMethods, withState } from '@ngrx/signals';
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
@@ -11,6 +10,7 @@ import { OrganisationDTO } from '@app/model/bw/co/centralkyc/organisation/organi
 import { OrganisationListDTO } from '@app/model/bw/co/centralkyc/organisation/organisation-list-dto';
 import { OrganisationApi } from '@app/service/bw/co/centralkyc/organisation/organisation-api';
 import { RestApiResponse } from '@app/model/rest-api-response.model';
+import { OrganisationSearchCriteria } from '@app/model/bw/co/centralkyc/organisation/organisation-search-criteria';
 
 export type OrganisationApiState = AppState<any, any> & {};
 
@@ -25,7 +25,7 @@ const initialState: OrganisationApiState = {
   messages: [],
   loaderMessage: '',
   details: '',
-  error: false
+  error: false,
 };
 
 export const OrganisationApiStore = signalStore(
@@ -37,34 +37,29 @@ export const OrganisationApiStore = signalStore(
       reset: () => {
         patchState(store, initialState);
       },
-      findById: rxMethod<{id: string | any }>(
+      findById: rxMethod<{ id: string | any }>(
         switchMap((data: any) => {
           patchState(store, { loading: true, loaderMessage: 'Loading ...' });
-          return organisationApi.findById(data.id, ).pipe(
+          return organisationApi.findById(data.id).pipe(
             tapResponse({
               next: (response: RestApiResponse<OrganisationDTO | any>) => {
-                patchState(
-                  store, 
-                  {
-                    data: response?.data,
-                    loading: false, 
-                    status: (response?.status) ,
-                    success: (response?.success || false), 
-                    messages: [response.message || 'Success!!'],
-                    error: false,
-                  }
-                );
+                patchState(store, {
+                  data: response?.data,
+                  loading: false,
+                  status: response?.status,
+                  success: true,
+                  messages: [response.message || 'Success!!'],
+                  error: false,
+                });
               },
               error: (error: any) => {
-                patchState(
-                  store, { 
-                    status: (error?.status || 0), 
-                    loading: false, 
-                    success: false,
-                    error: true,
-                    messages: [error.error.message || 'An error occurred'], 
-                  }
-                );
+                patchState(store, {
+                  status: error?.status || 0,
+                  loading: false,
+                  success: false,
+                  error: true,
+                  messages: [error.message || 'An error occurred'],
+                });
               },
             }),
           );
@@ -76,198 +71,168 @@ export const OrganisationApiStore = signalStore(
           return organisationApi.getAll().pipe(
             tapResponse({
               next: (response: RestApiResponse<OrganisationListDTO[] | any[]>) => {
-                patchState(
-                  store, 
-                  {
-                    dataList: response?.data, 
-                    loading: false, 
-                    status: (response?.status) ,
-                    success: (response?.success || false), 
-                    messages: [response.message || 'Success!!'],
-                    error: false,
-                  }
-                );
+                patchState(store, {
+                  dataList: response?.data,
+                  loading: false,
+                  status: response?.status,
+                  success: true,
+                  messages: [response.message || 'Success!!'],
+                  error: false,
+                });
               },
               error: (error: any) => {
-                patchState(
-                  store, { 
-                    status: (error?.status || 0), 
-                    loading: false, 
-                    success: false,
-                    error: true,
-                    messages: [error.error.message || 'An error occurred'], 
-                  }
-                );
+                patchState(store, {
+                  status: error?.status || 0,
+                  loading: false,
+                  success: false,
+                  error: true,
+                  messages: [error.message || 'An error occurred'],
+                });
               },
             }),
           );
         }),
       ),
-      getAllPaged: rxMethod<{pageNumber: number | any , pageSize: number | any }>(
+      getAllPaged: rxMethod<{ pageNumber: number | any; pageSize: number | any }>(
         switchMap((data: any) => {
           patchState(store, { loading: true, loaderMessage: 'Loading ...' });
-          return organisationApi.getAllPaged(data.pageNumber, data.pageSize, ).pipe(
+          return organisationApi.getAllPaged(data.pageNumber, data.pageSize).pipe(
             tapResponse({
               next: (response: RestApiResponse<Page<OrganisationListDTO> | any>) => {
-                patchState(
-                  store, 
-                  {
-                    dataPage: response?.data,
-                    loading: false, 
-                    status: (response?.status) ,
-                    success: (response?.success || false), 
-                    messages: [response.message || 'Success!!'],
-                    error: false,
-                  }
-                );
+                patchState(store, {
+                  dataPage: response?.data,
+                  loading: false,
+                  status: response?.status,
+                  success: true,
+                  messages: [response.message || 'Success!!'],
+                  error: false,
+                });
               },
               error: (error: any) => {
-                patchState(
-                  store, { 
-                    status: (error?.status || 0), 
-                    loading: false, 
-                    success: false,
-                    error: true,
-                    messages: [error.error.message || 'An error occurred'], 
-                  }
-                );
+                patchState(store, {
+                  status: error?.status || 0,
+                  loading: false,
+                  success: false,
+                  error: true,
+                  messages: [error.message || 'An error occurred'],
+                });
               },
             }),
           );
         }),
       ),
-      pagedSearch: rxMethod<{pageNumber: number | any , pageSize: number | any , criteria: string | any }>(
+      pagedSearch: rxMethod<{ criteria: SearchObject<OrganisationSearchCriteria> | any }>(
         switchMap((data: any) => {
           patchState(store, { loading: true, loaderMessage: 'Loading ...' });
-          return organisationApi.pagedSearch(data.pageNumber, data.pageSize, data.criteria, ).pipe(
+          return organisationApi.pagedSearch(data.criteria).pipe(
             tapResponse({
               next: (response: RestApiResponse<Page<OrganisationListDTO> | any>) => {
-                patchState(
-                  store, 
-                  {
-                    dataPage: response?.data,
-                    loading: false, 
-                    status: (response?.status) ,
-                    success: (response?.success || false), 
-                    messages: [response.message || 'Success!!'],
-                    error: false,
-                  }
-                );
+                patchState(store, {
+                  dataPage: response?.data,
+                  loading: false,
+                  status: response?.status,
+                  success: true,
+                  messages: [response.message || 'Success!!'],
+                  error: false,
+                });
               },
               error: (error: any) => {
-                patchState(
-                  store, { 
-                    status: (error?.status || 0), 
-                    loading: false, 
-                    success: false,
-                    error: true,
-                    messages: [error.error.message || 'An error occurred'], 
-                  }
-                );
+                patchState(store, {
+                  status: error?.status || 0,
+                  loading: false,
+                  success: false,
+                  error: true,
+                  messages: [error.message || 'An error occurred'],
+                });
               },
             }),
           );
         }),
       ),
-      remove: rxMethod<{id: string | any }>(
+      remove: rxMethod<{ id: string | any }>(
         switchMap((data: any) => {
           patchState(store, { loading: true, loaderMessage: 'Loading ...' });
-          return organisationApi.remove(data.id, ).pipe(
+          return organisationApi.remove(data.id).pipe(
             tapResponse({
               next: (response: RestApiResponse<boolean | any>) => {
-                patchState(
-                  store, 
-                  {
-                    data: response?.data,
-                    loading: false, 
-                    status: (response?.status) ,
-                    success: (response?.success || false), 
-                    messages: [response.message || 'Success!!'],
-                    error: false,
-                  }
-                );
+                patchState(store, {
+                  data: response?.data,
+                  loading: false,
+                  status: response?.status,
+                  success: true,
+                  messages: [response.message || 'Success!!'],
+                  error: false,
+                });
               },
               error: (error: any) => {
-                patchState(
-                  store, { 
-                    status: (error?.status || 0), 
-                    loading: false, 
-                    success: false,
-                    error: true,
-                    messages: [error.error.message || 'An error occurred'], 
-                  }
-                );
+                patchState(store, {
+                  status: error?.status || 0,
+                  loading: false,
+                  success: false,
+                  error: true,
+                  messages: [error.message || 'An error occurred'],
+                });
               },
             }),
           );
         }),
       ),
-      save: rxMethod<{organisation: OrganisationDTO | any }>(
+      save: rxMethod<{ organisation: OrganisationDTO | any }>(
         switchMap((data: any) => {
           patchState(store, { loading: true, loaderMessage: 'Loading ...' });
-          return organisationApi.save(data.organisation, ).pipe(
+          return organisationApi.save(data.organisation).pipe(
             tapResponse({
               next: (response: RestApiResponse<OrganisationDTO | any>) => {
-                patchState(
-                  store, 
-                  {
-                    data: response?.data,
-                    loading: false, 
-                    status: (response?.status) ,
-                    success: (response?.success || false), 
-                    messages: [response.message || 'Success!!'],
-                    error: false,
-                  }
-                );
+                patchState(store, {
+                  data: response?.data,
+                  loading: false,
+                  status: response?.status,
+                  success: true,
+                  messages: [response.message || 'Success!!'],
+                  error: false,
+                });
               },
               error: (error: any) => {
-                patchState(
-                  store, { 
-                    status: (error?.status || 0), 
-                    loading: false, 
-                    success: false,
-                    error: true,
-                    messages: [error.error.message || 'An error occurred'], 
-                  }
-                );
+                patchState(store, {
+                  status: error?.status || 0,
+                  loading: false,
+                  success: false,
+                  error: true,
+                  messages: [error.message || 'An error occurred'],
+                });
               },
             }),
           );
         }),
       ),
-      search: rxMethod<{criteria: string | any }>(
+      search: rxMethod<{ criteria: SearchObject<OrganisationSearchCriteria> | any }>(
         switchMap((data: any) => {
           patchState(store, { loading: true, loaderMessage: 'Loading ...' });
-          return organisationApi.search(data.criteria, ).pipe(
+          return organisationApi.search(data.criteria).pipe(
             tapResponse({
               next: (response: RestApiResponse<OrganisationListDTO[] | any[]>) => {
-                patchState(
-                  store, 
-                  {
-                    dataList: response?.data, 
-                    loading: false, 
-                    status: (response?.status) ,
-                    success: (response?.success || false), 
-                    messages: [response.message || 'Success!!'],
-                    error: false,
-                  }
-                );
+                patchState(store, {
+                  dataList: response?.data,
+                  loading: false,
+                  status: response?.status,
+                  success: true,
+                  messages: [response.message || 'Success!!'],
+                  error: false,
+                });
               },
               error: (error: any) => {
-                patchState(
-                  store, { 
-                    status: (error?.status || 0), 
-                    loading: false, 
-                    success: false,
-                    error: true,
-                    messages: [error.error.message || 'An error occurred'], 
-                  }
-                );
+                patchState(store, {
+                  status: error?.status || 0,
+                  loading: false,
+                  success: false,
+                  error: true,
+                  messages: [error.message || 'An error occurred'],
+                });
               },
             }),
           );
         }),
       ),
-    }
+    };
   }),
 );
