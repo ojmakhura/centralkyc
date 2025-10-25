@@ -6,11 +6,14 @@
  */
 package bw.co.centralkyc.individual.kyc;
 
+import bw.co.centralkyc.document.Document;
+import bw.co.centralkyc.document.DocumentDTO;
 import bw.co.centralkyc.document.DocumentRepository;
 import bw.co.centralkyc.individual.IndividualRepository;
 import bw.co.centralkyc.individual.employment.EmploymentRecordRepository;
 import jakarta.persistence.EntityNotFoundException;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Repository;
 
 /**
@@ -47,6 +50,13 @@ public class KycRecordDaoImpl
         // TODO verify behavior of toKycRecordDTO
         super.toKycRecordDTO(source, target);
         // WARNING! No conversion for target.documents (can't convert source.getDocuments():bw.co.centralkyc.document.Document to bw.co.centralkyc.document.DocumentDTO
+        if(CollectionUtils.isNotEmpty(source.getDocuments())) {
+            for(Document doc : source.getDocuments()) {
+                DocumentDTO docDTO = new DocumentDTO();
+                this.documentDao.toDocumentDTO(doc, docDTO);
+                target.getDocuments().add(docDTO);
+            }
+        }
     }
 
     /**
@@ -99,5 +109,12 @@ public class KycRecordDaoImpl
     {
         // TODO verify behavior of kycRecordDTOToEntity
         super.kycRecordDTOToEntity(source, target, copyIfNull);
+
+        if(CollectionUtils.isNotEmpty(source.getDocuments())) {
+            for(DocumentDTO docDTO : source.getDocuments()) {
+                Document doc = this.documentDao.documentDTOToEntity(docDTO);
+                target.getDocuments().add(doc);
+            }
+        }
     }
 }

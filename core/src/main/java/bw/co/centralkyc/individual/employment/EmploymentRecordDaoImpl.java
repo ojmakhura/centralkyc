@@ -9,10 +9,13 @@ package bw.co.centralkyc.individual.employment;
 import bw.co.centralkyc.document.DocumentRepository;
 import bw.co.centralkyc.individual.Individual;
 import bw.co.centralkyc.individual.IndividualRepository;
+import bw.co.centralkyc.individual.kyc.KycRecord;
+import bw.co.centralkyc.individual.kyc.KycRecordDTO;
 import bw.co.centralkyc.individual.kyc.KycRecordRepository;
 import bw.co.centralkyc.organisation.OrganisationRepository;
 import jakarta.persistence.EntityNotFoundException;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Repository;
 
@@ -70,6 +73,16 @@ public class EmploymentRecordDaoImpl
             target.setName(builder.toString());
             target.setIdentityNo(individual.getIdentityNo());
         }
+
+        if(CollectionUtils.isNotEmpty(source.getKycRecords())) {
+
+            for(KycRecord record : source.getKycRecords()) {
+
+                KycRecordDTO recordDTO = new KycRecordDTO();
+                this.kycRecordDao.toKycRecordDTO(record, recordDTO);
+                target.getKycRecords().add(recordDTO);
+            }
+        }
     }
 
     /**
@@ -123,8 +136,14 @@ public class EmploymentRecordDaoImpl
         // TODO verify behavior of employmentRecordDTOToEntity
         super.employmentRecordDTOToEntity(source, target, copyIfNull);
 
-        // if() {
+        if(CollectionUtils.isNotEmpty(source.getKycRecords())) {
 
-        // }
+            for(KycRecordDTO recordDTO : source.getKycRecords()) {
+
+                KycRecord record = this.kycRecordDao.kycRecordDTOToEntity(recordDTO);
+                target.getKycRecords().add(record);
+            }
+
+        }
     }
 }
