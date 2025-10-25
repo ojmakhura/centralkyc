@@ -19,7 +19,6 @@ import Keycloak from 'keycloak-js';
   imports: [CommonModule, TranslateModule, MaterialModule, RouterModule, LanguageSelectorComponent],
 })
 export class ShellComponent implements OnInit {
-
   readonly appStore = inject(AppEnvStore);
   protected keycloak = inject(Keycloak);
 
@@ -54,8 +53,8 @@ export class ShellComponent implements OnInit {
       'document.type.title': 'description',
       'individual.title': 'people',
       'users.title': 'group',
-      'home': 'home',
-      'about': 'info'
+      home: 'home',
+      about: 'info',
     };
     return iconMap[titleKey] || 'circle';
   }

@@ -28,7 +28,9 @@ export class EditIndividualImplComponent extends EditIndividualComponent {
   organisationApiStore = inject(OrganisationApiStore);
   branchApiStore = inject(BranchApiStore);
 
-  override loading = computed(() => this.individualApiStore.loading() || this.organisationApiStore.loading() || this.branchApiStore.loading());
+  override loading = computed(
+    () => this.individualApiStore.loading() || this.organisationApiStore.loading() || this.branchApiStore.loading(),
+  );
 
   override error = this.individualApiStore.error;
   override messages = this.individualApiStore.messages;
@@ -44,15 +46,12 @@ export class EditIndividualImplComponent extends EditIndividualComponent {
       this.editIndividualForm.patchValue(individual);
 
       if (individual.hasUser) {
-
         if (individual.organisation?.id) {
-
           this.organisationApiStore.search({ criteria: individual.organisation.name || '' });
           this.organisationControl.setValue(individual.organisation);
 
           this.branchApiStore.findByOrganisation({ organisationId: individual.organisation.id });
         }
-
       }
     });
   }
@@ -78,7 +77,7 @@ export class EditIndividualImplComponent extends EditIndividualComponent {
     });
   }
 
-  doNgOnDestroy(): void { }
+  doNgOnDestroy(): void {}
 
   override beforeEditIndividualSave(form: any): void {
     this.individualApiStore.save({ individual: this.editIndividualForm.value });
@@ -101,6 +100,6 @@ export class EditIndividualImplComponent extends EditIndividualComponent {
   }
 
   override branchCompare(o1: BranchDTO | any, o2: BranchDTO | any) {
-      return o1 && o2 ? o1.id === o2.id : false;
+    return o1 && o2 ? o1.id === o2.id : false;
   }
 }

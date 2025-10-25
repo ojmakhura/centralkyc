@@ -1,6 +1,5 @@
 <!-- Modern Shell Component with Contemporary Design -->
 
-
 <div class="modern-shell-container">
   <!-- Top Navigation Bar -->
   <nav class="top-navbar">
@@ -106,21 +105,25 @@
           <div class="menu-section">
             <div class="menu-section-title">Main</div>
 
-            <a mat-list-item
-               routerLink="/"
-               routerLinkActive="active"
-               (click)="isMobile && sidenav.close()"
-               class="nav-item">
+            <a
+              mat-list-item
+              routerLink="/"
+              routerLinkActive="active"
+              (click)="isMobile && sidenav.close()"
+              class="nav-item"
+            >
               <mat-icon class="nav-icon">dashboard</mat-icon>
               <span class="nav-label" translate>Dashboard</span>
             </a>
 
-            <a mat-list-item
-               *ngFor="let item of menus"
-               routerLink="{{ item.routerLink }}"
-               routerLinkActive="active"
-               (click)="isMobile && sidenav.close()"
-               class="nav-item">
+            <a
+              mat-list-item
+              *ngFor="let item of menus"
+              routerLink="{{ item.routerLink }}"
+              routerLinkActive="active"
+              (click)="isMobile && sidenav.close()"
+              class="nav-item"
+            >
               <mat-icon class="nav-icon">{{ getMenuIcon(item.titleKey) }}</mat-icon>
               <span class="nav-label" translate>{{ item.titleKey }}</span>
             </a>
@@ -130,11 +133,13 @@
           <div class="menu-section">
             <div class="menu-section-title">System</div>
 
-            <a mat-list-item
-               routerLink="/about"
-               routerLinkActive="active"
-               (click)="isMobile && sidenav.close()"
-               class="nav-item">
+            <a
+              mat-list-item
+              routerLink="/about"
+              routerLinkActive="active"
+              (click)="isMobile && sidenav.close()"
+              class="nav-item"
+            >
               <mat-icon class="nav-icon">info</mat-icon>
               <span class="nav-label" translate>About</span>
             </a>

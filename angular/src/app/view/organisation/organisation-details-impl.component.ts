@@ -99,7 +99,6 @@ export class OrganisationDetailsImplComponent extends OrganisationDetailsCompone
   }
 
   doEditBranch(branch: BranchDTO): void {
-
     const dialogRef = this.dialog.open(DialogComponent<BranchEditorImplComponent>, <MatDialogConfig>{
       hasBackdrop: true,
       closeOnNavigation: true,
@@ -142,14 +141,12 @@ export class OrganisationDetailsImplComponent extends OrganisationDetailsCompone
   }
 
   addNewBranch(): void {
-
     let branch = new BranchDTO();
     const org = this.organisation();
     branch.organisationId = org.id;
     branch.organisation = org.name;
 
     this.doEditBranch(branch);
-
   }
 
   deleteBranch(branchId: string): void {
@@ -169,19 +166,11 @@ export class OrganisationDetailsImplComponent extends OrganisationDetailsCompone
     // For now, we'll just update the pagination state
   }
 
-  doNgOnDestroy(): void { }
+  doNgOnDestroy(): void {}
 
   branchesTableColumns: ColumnModel[] = [
-    new ColumnModel(
-      'code',
-      'code',
-      false,
-    ),
-    new ColumnModel(
-      'name',
-      'name',
-      false,
-    ),
+    new ColumnModel('code', 'code', false),
+    new ColumnModel('name', 'name', false),
   ];
 
   branchesTableColumnsActions: ActionTemplate[] = [
@@ -200,8 +189,7 @@ export class OrganisationDetailsImplComponent extends OrganisationDetailsCompone
   ];
 
   branchesTableActionClicked(event: any): void {
-
-    console.log(event)
+    console.log(event);
 
     switch (event.action) {
       case 'branch-edit':
@@ -216,7 +204,6 @@ export class OrganisationDetailsImplComponent extends OrganisationDetailsCompone
   }
 
   override organisationDetailsEdit(): void {
-
-    this.router.navigate(["/organisation/edit"], {queryParams: {id: this.organisation().id}});
+    this.router.navigate(['/organisation/edit'], { queryParams: { id: this.organisation().id } });
   }
 }

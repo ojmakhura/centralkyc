@@ -9,6 +9,8 @@ package bw.co.centralkyc.individual.kyc;
 import bw.co.centralkyc.document.DocumentRepository;
 import bw.co.centralkyc.individual.IndividualRepository;
 import bw.co.centralkyc.individual.employment.EmploymentRecordRepository;
+import jakarta.persistence.EntityNotFoundException;
+
 import org.springframework.stereotype.Repository;
 
 /**
@@ -64,10 +66,6 @@ public class KycRecordDaoImpl
      */
     private KycRecord loadKycRecordFromKycRecordDTO(KycRecordDTO kycRecordDTO)
     {
-        // TODO implement loadKycRecordFromKycRecordDTO
-        throw new UnsupportedOperationException("bw.co.centralkyc.individual.kyc.loadKycRecordFromKycRecordDTO(KycRecordDTO) not yet implemented.");
-
-        /* A typical implementation looks like this:
         if (kycRecordDTO.getId() == null)
         {
             return  KycRecord.Factory.newInstance();
@@ -77,7 +75,6 @@ public class KycRecordDaoImpl
             return this.kycRecordRepository.findById(kycRecordDTO.getId())
                 .orElseThrow(() -> new EntityNotFoundException("Entity not found for id: " + kycRecordDTO.getId()));
         }
-        */
     }
 
     /**

@@ -42,46 +42,67 @@ public class DocumentApiImpl extends DocumentApiBase {
 
     @Override
     public ResponseEntity<RestApiResponse<Collection<DocumentDTO>>> handleFindByDocumentType(String documentTypeId) {
-        RestApiResponse<Collection<DocumentDTO>> responseData = new RestApiResponse<>();
-        Optional<Collection<DocumentDTO>> data = Optional.of(documentService.findByDocumentType(documentTypeId));
-        responseData.setData(data.get());
-        responseData.setSuccess(true);
-        responseData.setMessage(String.format("Loaded %s documents successfully!", responseData.getData().size()));
-        ResponseEntity<RestApiResponse<Collection<DocumentDTO>>> response = ResponseEntity.status(HttpStatus.OK)
-                .body(responseData);
 
-        return response;
+        try {
+
+            RestApiResponse<Collection<DocumentDTO>> responseData = new RestApiResponse<>();
+            Optional<Collection<DocumentDTO>> data = Optional.of(documentService.findByDocumentType(documentTypeId));
+            responseData.setData(data.get());
+            responseData.setSuccess(true);
+            responseData.setMessage(String.format("Loaded %s documents successfully!", responseData.getData().size()));
+            ResponseEntity<RestApiResponse<Collection<DocumentDTO>>> response = ResponseEntity.status(HttpStatus.OK)
+                    .body(responseData);
+
+            return response;
+
+        } catch (Exception e) {
+
+            throw e;
+        }
 
     }
 
     @Override
     public ResponseEntity<RestApiResponse<DocumentDTO>> handleFindById(String id) {
-        RestApiResponse<DocumentDTO> responseData = new RestApiResponse<>();
-        Optional<DocumentDTO> data = Optional.of(documentService.findById(id));
-        responseData.setData(data.get());
-        responseData.setSuccess(true);
-        responseData.setMessage(
-                String.format("Document %s loaded successfully!", responseData.getData().getDocumentType()));
-        ResponseEntity<RestApiResponse<DocumentDTO>> response = ResponseEntity.status(HttpStatus.OK)
-                .body(responseData);
 
-        return response;
+        try {
 
+            RestApiResponse<DocumentDTO> responseData = new RestApiResponse<>();
+            Optional<DocumentDTO> data = Optional.of(documentService.findById(id));
+            responseData.setData(data.get());
+            responseData.setSuccess(true);
+            responseData.setMessage(
+                    String.format("Document %s loaded successfully!", responseData.getData().getDocumentType()));
+            ResponseEntity<RestApiResponse<DocumentDTO>> response = ResponseEntity.status(HttpStatus.OK)
+                    .body(responseData);
+
+            return response;
+
+        } catch (Exception e) {
+
+            throw e;
+        }
     }
 
     @Override
     public ResponseEntity<RestApiResponse<Collection<DocumentDTO>>> handleFindByTarget(
             bw.co.centralkyc.TargetEntity target, String targetId) {
-        RestApiResponse<Collection<DocumentDTO>> responseData = new RestApiResponse<>();
-        Optional<Collection<DocumentDTO>> data = Optional.of(documentService.findByTarget(target, targetId));
-        responseData.setData(data.get());
-        responseData.setSuccess(true);
-        responseData.setMessage(String.format("Loaded %s documents successfully!", responseData.getData().size()));
-        ResponseEntity<RestApiResponse<Collection<DocumentDTO>>> response = ResponseEntity.status(HttpStatus.OK)
-                .body(responseData);
 
-        return response;
+        try {
 
+            RestApiResponse<Collection<DocumentDTO>> responseData = new RestApiResponse<>();
+            Optional<Collection<DocumentDTO>> data = Optional.of(documentService.findByTarget(target, targetId));
+            responseData.setData(data.get());
+            responseData.setSuccess(true);
+            responseData.setMessage(String.format("Loaded %s documents successfully!", responseData.getData().size()));
+            ResponseEntity<RestApiResponse<Collection<DocumentDTO>>> response = ResponseEntity.status(HttpStatus.OK)
+                    .body(responseData);
+
+            return response;
+        } catch (Exception e) {
+
+            throw e;
+        }
     }
 
     @Override
@@ -100,56 +121,88 @@ public class DocumentApiImpl extends DocumentApiBase {
 
     @Override
     public ResponseEntity<RestApiResponse<Page<DocumentDTO>>> handleGetAllPaged(Integer pageNumber, Integer pageSize) {
-        RestApiResponse<Page<DocumentDTO>> responseData = new RestApiResponse<>();
-        Optional<Page<DocumentDTO>> data = Optional.of(documentService.getAll(pageNumber, pageSize));
-        responseData.setData(data.get());
-        ResponseEntity<RestApiResponse<Page<DocumentDTO>>> response = ResponseEntity.status(HttpStatus.OK)
-                .body(responseData);
 
-        return response;
+        try {
+
+            RestApiResponse<Page<DocumentDTO>> responseData = new RestApiResponse<>();
+            Optional<Page<DocumentDTO>> data = Optional.of(documentService.getAll(pageNumber, pageSize));
+            responseData.setData(data.get());
+            ResponseEntity<RestApiResponse<Page<DocumentDTO>>> response = ResponseEntity.status(HttpStatus.OK)
+                    .body(responseData);
+
+            return response;
+
+        } catch (Exception e) {
+
+            throw e;
+        }
 
     }
 
     @Override
     public ResponseEntity<RestApiResponse<Boolean>> handleRemove(String id) {
-        RestApiResponse<Boolean> responseData = new RestApiResponse<>();
-        Optional<Boolean> data = Optional.of(documentService.remove(id));
-        responseData.setData(data.get());
-        responseData.setSuccess(true);
-        responseData.setMessage(String.format("Document successfully removed!"));
-        ResponseEntity<RestApiResponse<Boolean>> response = ResponseEntity.status(HttpStatus.OK).body(responseData);
 
-        return response;
+        try {
+
+            RestApiResponse<Boolean> responseData = new RestApiResponse<>();
+            Optional<Boolean> data = Optional.of(documentService.remove(id));
+            responseData.setData(data.get());
+            responseData.setSuccess(true);
+            responseData.setMessage(String.format("Document successfully removed!"));
+            ResponseEntity<RestApiResponse<Boolean>> response = ResponseEntity.status(HttpStatus.OK).body(responseData);
+
+            return response;
+
+        } catch (Exception e) {
+
+            throw e;
+        }
 
     }
 
     @Override
     public ResponseEntity<RestApiResponse<DocumentDTO>> handleSave(DocumentDTO document) {
-        RestApiResponse<DocumentDTO> responseData = new RestApiResponse<>();
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        AuditTracker.auditTrail(document, authentication);
-        Optional<DocumentDTO> data = Optional.of(documentService.save(document));
-        responseData.setData(data.get());
-        responseData.setSuccess(true);
-        responseData.setMessage(String.format("Document %s saved  successfully!", document.getDocumentType()));
-        ResponseEntity<RestApiResponse<DocumentDTO>> response = ResponseEntity.status(HttpStatus.OK)
-                .body(responseData);
 
-        return response;
+        try {
+
+            RestApiResponse<DocumentDTO> responseData = new RestApiResponse<>();
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            AuditTracker.auditTrail(document, authentication);
+            Optional<DocumentDTO> data = Optional.of(documentService.save(document));
+            responseData.setData(data.get());
+            responseData.setSuccess(true);
+            responseData.setMessage(String.format("Document %s saved  successfully!", document.getDocumentType()));
+            ResponseEntity<RestApiResponse<DocumentDTO>> response = ResponseEntity.status(HttpStatus.OK)
+                    .body(responseData);
+
+            return response;
+
+        } catch (Exception e) {
+
+            throw e;
+        }
 
     }
 
     @Override
     public ResponseEntity<RestApiResponse<Collection<DocumentDTO>>> handleSearch(String criteria) {
-        RestApiResponse<Collection<DocumentDTO>> responseData = new RestApiResponse<>();
-        Optional<Collection<DocumentDTO>> data = Optional.of(documentService.search(criteria));
-        responseData.setData(data.get());
-        responseData.setSuccess(true);
-        responseData.setMessage(String.format("Loaded %s documents successfully!", responseData.getData().size()));
-        ResponseEntity<RestApiResponse<Collection<DocumentDTO>>> response = ResponseEntity.status(HttpStatus.OK)
-                .body(responseData);
 
-        return response;
+        try {
+
+            RestApiResponse<Collection<DocumentDTO>> responseData = new RestApiResponse<>();
+            Optional<Collection<DocumentDTO>> data = Optional.of(documentService.search(criteria));
+            responseData.setData(data.get());
+            responseData.setSuccess(true);
+            responseData.setMessage(String.format("Loaded %s documents successfully!", responseData.getData().size()));
+            ResponseEntity<RestApiResponse<Collection<DocumentDTO>>> response = ResponseEntity.status(HttpStatus.OK)
+                    .body(responseData);
+
+            return response;
+
+        } catch (Exception e) {
+
+            throw e;
+        }
 
     }
 
@@ -193,70 +246,82 @@ public class DocumentApiImpl extends DocumentApiBase {
     @Override
     public ResponseEntity<RestApiResponse<DocumentDTO>> handleUpload(TargetEntity target, String targetId,
             String documentTypeId, MultipartFile file) {
-        RestApiResponse<DocumentDTO> responseData = new RestApiResponse<>();
 
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        System.out.println(authentication);
-        Jwt jwt = (Jwt) authentication.getPrincipal();
-
-        System.out.println(jwt.getClaims());
-
-        String username = jwt.getClaimAsString("preferred_username");
-
-        DocumentDTO document = new DocumentDTO();
-        document.setCreatedAt(LocalDateTime.now());
-        document.setCreatedBy(username);
-        document.setTarget(target);
-        document.setTargetId(targetId);
-        document.setFileName(file.getOriginalFilename());
-
-        Map<String, Object> metadata = new HashMap<>();
-        metadata.put("fileSize", file.getSize());
-        metadata.put("fileType", file.getContentType());
-        metadata.put("contentType", file.getContentType());
-
-        document.setMetadata(metadata);
-
-        String filePath = constructFilePath(target, targetId, file.getOriginalFilename());
         try {
-            document.setUrl(uploadToMinio(file, filePath));
+
+            RestApiResponse<DocumentDTO> responseData = new RestApiResponse<>();
+
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            System.out.println(authentication);
+            Jwt jwt = (Jwt) authentication.getPrincipal();
+
+            System.out.println(jwt.getClaims());
+
+            String username = jwt.getClaimAsString("preferred_username");
+
+            DocumentDTO document = new DocumentDTO();
+            document.setCreatedAt(LocalDateTime.now());
+            document.setCreatedBy(username);
+            document.setTarget(target);
+            document.setTargetId(targetId);
+            document.setFileName(file.getOriginalFilename());
+
+            Map<String, Object> metadata = new HashMap<>();
+            metadata.put("fileSize", file.getSize());
+            metadata.put("fileType", file.getContentType());
+            metadata.put("contentType", file.getContentType());
+
+            document.setMetadata(metadata);
+
+            String filePath = constructFilePath(target, targetId, file.getOriginalFilename());
+            try {
+                document.setUrl(uploadToMinio(file, filePath));
+            } catch (Exception e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+                throw new DocumentServiceException("Error uploading file: " + file.getOriginalFilename());
+            }
+
+            document.setDocumentTypeId(documentTypeId);
+
+            Optional<DocumentDTO> data = Optional.of(documentService.save(document)); // TODO: Add custom code here;
+            responseData.setData(data.get());
+            responseData.setSuccess(true);
+            responseData.setMessage("Document uploaded successfully!");
+            ResponseEntity<RestApiResponse<DocumentDTO>> response = ResponseEntity.status(HttpStatus.OK)
+                    .body(responseData);
+
+            return response;
+
         } catch (Exception e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-            throw new DocumentServiceException("Error uploading file: " + file.getOriginalFilename());
+
+            throw e;
         }
-
-        document.setDocumentTypeId(documentTypeId);
-
-        Optional<DocumentDTO> data = Optional.of(documentService.save(document)); // TODO: Add custom code here;
-        responseData.setData(data.get());
-        responseData.setSuccess(true);
-        responseData.setMessage("Document uploaded successfully!");
-        ResponseEntity<RestApiResponse<DocumentDTO>> response = ResponseEntity.status(HttpStatus.OK).body(responseData);
-
-        return response;
 
     }
 
     // @Override
-    // public ResponseEntity<RestApiResponse<InputStreamResource>> handleDownloadFile(String objectName) {
+    // public ResponseEntity<RestApiResponse<InputStreamResource>>
+    // handleDownloadFile(String objectName) {
 
-    //     RestApiResponse<InputStreamResource> responseData = new RestApiResponse<>();
+    // RestApiResponse<InputStreamResource> responseData = new RestApiResponse<>();
 
-    //     try {
-    //         InputStreamResource data = downloadFromMinio(objectName);
-    //         responseData.setData(data);
-    //         responseData.setSuccess(true);
-    //         responseData.setMessage("File downloaded successfully!");
-    //         ResponseEntity<RestApiResponse<InputStreamResource>> response = ResponseEntity.status(HttpStatus.OK)
-    //                 .body(responseData);
+    // try {
+    // InputStreamResource data = downloadFromMinio(objectName);
+    // responseData.setData(data);
+    // responseData.setSuccess(true);
+    // responseData.setMessage("File downloaded successfully!");
+    // ResponseEntity<RestApiResponse<InputStreamResource>> response =
+    // ResponseEntity.status(HttpStatus.OK)
+    // .body(responseData);
 
-    //         return response;
+    // return response;
 
-    //     } catch (Exception e) {
-    //         // TODO Auto-generated catch block
-    //         e.printStackTrace();
-    //         throw new DocumentServiceException("Error downloading file: " + e.getMessage());
-    //     }
+    // } catch (Exception e) {
+    // // TODO Auto-generated catch block
+    // e.printStackTrace();
+    // throw new DocumentServiceException("Error downloading file: " +
+    // e.getMessage());
+    // }
     // }
 }

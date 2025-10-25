@@ -9,7 +9,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
 import { MaterialModule } from '@app/material.module';
 import { TableComponent } from '@app/components/table/table.component';
-import { LoaderComponent } from "@app/@shared/loader/loader.component";
+import { LoaderComponent } from '@app/@shared/loader/loader.component';
 import { OrganisationApiStore } from '@app/store/bw/co/centralkyc/organisation/organisation-api.store';
 
 @Component({
@@ -28,7 +28,6 @@ import { OrganisationApiStore } from '@app/store/bw/co/centralkyc/organisation/o
   ],
 })
 export class EditOrganisationImplComponent extends EditOrganisationComponent {
-
   @Input() id: string | any;
 
   organisationApiStore = inject(OrganisationApiStore);
@@ -37,7 +36,6 @@ export class EditOrganisationImplComponent extends EditOrganisationComponent {
   override messages = this.organisationApiStore.messages;
   override success = this.organisationApiStore.success;
   organisation = this.organisationApiStore.data;
-
 
   constructor() {
     super();
@@ -49,20 +47,17 @@ export class EditOrganisationImplComponent extends EditOrganisationComponent {
   }
 
   override beforeOnInit(form: EditOrganisationVarsForm): EditOrganisationVarsForm {
-
     this.organisationApiStore.reset();
     if (this.id) {
-      this.organisationApiStore.findById({id: this.id});
+      this.organisationApiStore.findById({ id: this.id });
     }
 
     return form;
   }
 
-  doNgOnDestroy(): void {
-  }
+  doNgOnDestroy(): void {}
 
   override beforeEditOrganisationSave(form: any): void {
-
-    this.organisationApiStore.save({organisation: this.editOrganisationForm.value});
+    this.organisationApiStore.save({ organisation: this.editOrganisationForm.value });
   }
 }

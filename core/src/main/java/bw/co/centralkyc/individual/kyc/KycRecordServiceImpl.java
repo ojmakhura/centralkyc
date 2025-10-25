@@ -11,6 +11,7 @@ package bw.co.centralkyc.individual.kyc;
 import java.util.Collection;
 import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Page;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -43,8 +44,11 @@ public class KycRecordServiceImpl
     protected KycRecordDTO handleFindById(String id)
         throws Exception
     {
-        // TODO implement protected  KycRecordDTO handleFindById(String id)
-        throw new UnsupportedOperationException("bw.co.centralkyc.individual.kyc.KycRecordService.handleFindById(String id) Not implemented!");
+
+        KycRecord kycRecord = this.kycRecordRepository.findById(id)
+            .orElseThrow(() -> new Exception("KycRecord not found for id: " + id));
+        
+        return this.kycRecordDao.toKycRecordDTO(kycRecord);
     }
 
     /**
@@ -54,8 +58,11 @@ public class KycRecordServiceImpl
     protected KycRecordDTO handleSave(KycRecordDTO kycRecord)
         throws Exception
     {
-        // TODO implement protected  KycRecordDTO handleSave(KycRecordDTO kycRecord)
-        throw new UnsupportedOperationException("bw.co.centralkyc.individual.kyc.KycRecordService.handleSave(KycRecordDTO kycRecord) Not implemented!");
+
+        KycRecord kycRecordEntity = this.kycRecordDao.kycRecordDTOToEntity(kycRecord);
+        kycRecordEntity = this.kycRecordRepository.save(kycRecordEntity);
+
+        return this.kycRecordDao.toKycRecordDTO(kycRecordEntity);
     }
 
     /**
@@ -65,8 +72,16 @@ public class KycRecordServiceImpl
     protected boolean handleRemove(String id)
         throws Exception
     {
-        // TODO implement protected  boolean handleRemove(String id)
-        throw new UnsupportedOperationException("bw.co.centralkyc.individual.kyc.KycRecordService.handleRemove(String id) Not implemented!");
+
+        if(!kycRecordRepository.existsById(id)) {
+
+            throw new KycRecordServiceException("KycRecord not found for id: " + id);
+
+        }
+
+        kycRecordRepository.deleteById(id);
+        return true;
+
     }
 
     /**
@@ -76,8 +91,9 @@ public class KycRecordServiceImpl
     protected Collection<KycRecordDTO> handleGetAll()
         throws Exception
     {
-        // TODO implement protected  Collection<KycRecordDTO> handleGetAll()
-        throw new UnsupportedOperationException("bw.co.centralkyc.individual.kyc.KycRecordService.handleGetAll() Not implemented!");
+
+        Collection<KycRecord> kycRecords = this.kycRecordRepository.findAll();
+        return this.kycRecordDao.toKycRecordDTOCollection(kycRecords);
     }
 
     /**
@@ -120,8 +136,12 @@ public class KycRecordServiceImpl
     protected Collection<KycRecordDTO> handleFindByIndividual(String individualId)
         throws Exception
     {
-        // TODO implement protected  Collection<KycRecordDTO> handleFindByIndividual(String individualId)
-        throw new UnsupportedOperationException("bw.co.centralkyc.individual.kyc.KycRecordService.handleFindByIndividual(String individualId) Not implemented!");
+
+        Specification<KycRecord> specification = (root, query, criteriaBuilder) -> 
+            criteriaBuilder.equal(root.get("individual").get("id"), individualId);
+
+        Collection<KycRecord> kycRecords = this.kycRecordRepository.findAll(specification);
+        return this.kycRecordDao.toKycRecordDTOCollection(kycRecords);
     }
 
     /**
@@ -131,8 +151,12 @@ public class KycRecordServiceImpl
     protected Collection<KycRecordDTO> handleFindByIdentityNo(String identityNo)
         throws Exception
     {
-        // TODO implement protected  Collection<KycRecordDTO> handleFindByIdentityNo(String identityNo)
-        throw new UnsupportedOperationException("bw.co.centralkyc.individual.kyc.KycRecordService.handleFindByIdentityNo(String identityNo) Not implemented!");
+
+        Specification<KycRecord> specification = (root, query, criteriaBuilder) -> 
+            criteriaBuilder.equal(root.get("identityNo"), identityNo);
+
+        Collection<KycRecord> kycRecords = this.kycRecordRepository.findAll(specification);
+        return this.kycRecordDao.toKycRecordDTOCollection(kycRecords);
     }
 
 }

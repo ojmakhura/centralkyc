@@ -1,4 +1,3 @@
-
 import { inject } from '@angular/core';
 import { patchState, signalStore, withMethods, withState } from '@ngrx/signals';
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
@@ -11,10 +10,10 @@ import { SettingsDTO } from '@app/model/bw/co/centralkyc/settings/settings-dto';
 import { SettingsApi } from '@app/service/bw/co/centralkyc/settings/settings-api';
 import { RestApiResponse } from '@app/model/rest-api-response.model';
 
-export type SettingsApiState = AppState<any, any> & {};
+export type SettingsApiState = AppState<SettingsDTO, SettingsDTO> & {};
 
 const initialState: SettingsApiState = {
-  data: null,
+  data: {},
   dataList: [],
   dataPage: new Page<any>(),
   searchCriteria: new SearchObject<any>(),
@@ -24,7 +23,7 @@ const initialState: SettingsApiState = {
   messages: [],
   loaderMessage: '',
   details: '',
-  error: false
+  error: false,
 };
 
 export const SettingsApiStore = signalStore(
@@ -36,34 +35,29 @@ export const SettingsApiStore = signalStore(
       reset: () => {
         patchState(store, initialState);
       },
-      findById: rxMethod<{id: string | any }>(
+      findById: rxMethod<{ id: string | any }>(
         switchMap((data: any) => {
           patchState(store, { loading: true, loaderMessage: 'Loading ...' });
-          return settingsApi.findById(data.id, ).pipe(
+          return settingsApi.findById(data.id).pipe(
             tapResponse({
               next: (response: RestApiResponse<SettingsDTO | any>) => {
-                patchState(
-                  store,
-                  {
-                    data: response?.data,
-                    loading: false,
-                    status: (response?.status) ,
-                    success: true,
-                    messages: [response.message || 'Success!!'],
-                    error: false,
-                  }
-                );
+                patchState(store, {
+                  data: response?.data,
+                  loading: false,
+                  status: response?.status,
+                  success: true,
+                  messages: [response.message || 'Success!!'],
+                  error: false,
+                });
               },
               error: (error: any) => {
-                patchState(
-                  store, {
-                    status: (error?.status || 0),
-                    loading: false,
-                    success: false,
-                    error: true,
-                    messages: [error.message || 'An error occurred'],
-                  }
-                );
+                patchState(store, {
+                  status: error?.status || 0,
+                  loading: false,
+                  success: false,
+                  error: true,
+                  messages: [error.message || 'An error occurred'],
+                });
               },
             }),
           );
@@ -75,7 +69,6 @@ export const SettingsApiStore = signalStore(
           return settingsApi.getAll().pipe(
             tapResponse({
               next: (response: RestApiResponse<SettingsDTO[] | any[]>) => {
-
                 let dataList = response?.data || [];
 
                 let data = null;
@@ -94,185 +87,158 @@ export const SettingsApiStore = signalStore(
                 });
               },
               error: (error: any) => {
-                patchState(
-                  store, {
-                    status: (error?.status || 0),
-                    loading: false,
-                    success: false,
-                    error: true,
-                    messages: [error.message || 'An error occurred'],
-                  }
-                );
+                patchState(store, {
+                  status: error?.status || 0,
+                  loading: false,
+                  success: false,
+                  error: true,
+                  messages: [error.message || 'An error occurred'],
+                });
               },
             }),
           );
         }),
       ),
-      getAllPaged: rxMethod<{pageNumber: number | any , pageSize: number | any }>(
+      getAllPaged: rxMethod<{ pageNumber: number | any; pageSize: number | any }>(
         switchMap((data: any) => {
           patchState(store, { loading: true, loaderMessage: 'Loading ...' });
-          return settingsApi.getAllPaged(data.pageNumber, data.pageSize, ).pipe(
+          return settingsApi.getAllPaged(data.pageNumber, data.pageSize).pipe(
             tapResponse({
               next: (response: RestApiResponse<Page<SettingsDTO> | any>) => {
-                patchState(
-                  store,
-                  {
-                    dataPage: response?.data,
-                    loading: false,
-                    status: (response?.status) ,
-                    success: true,
-                    messages: [response.message || 'Success!!'],
-                    error: false,
-                  }
-                );
+                patchState(store, {
+                  dataPage: response?.data,
+                  loading: false,
+                  status: response?.status,
+                  success: true,
+                  messages: [response.message || 'Success!!'],
+                  error: false,
+                });
               },
               error: (error: any) => {
-                patchState(
-                  store, {
-                    status: (error?.status || 0),
-                    loading: false,
-                    success: false,
-                    error: true,
-                    messages: [error.message || 'An error occurred'],
-                  }
-                );
+                patchState(store, {
+                  status: error?.status || 0,
+                  loading: false,
+                  success: false,
+                  error: true,
+                  messages: [error.message || 'An error occurred'],
+                });
               },
             }),
           );
         }),
       ),
-      pagedSearch: rxMethod<{criteria: string | any , pageNumber: number | any , pageSize: number | any }>(
+      pagedSearch: rxMethod<{ criteria: string | any; pageNumber: number | any; pageSize: number | any }>(
         switchMap((data: any) => {
           patchState(store, { loading: true, loaderMessage: 'Loading ...' });
-          return settingsApi.pagedSearch(data.criteria, data.pageNumber, data.pageSize, ).pipe(
+          return settingsApi.pagedSearch(data.criteria, data.pageNumber, data.pageSize).pipe(
             tapResponse({
               next: (response: RestApiResponse<Page<SettingsDTO> | any>) => {
-                patchState(
-                  store,
-                  {
-                    dataPage: response?.data,
-                    loading: false,
-                    status: (response?.status) ,
-                    success: true,
-                    messages: [response.message || 'Success!!'],
-                    error: false,
-                  }
-                );
+                patchState(store, {
+                  dataPage: response?.data,
+                  loading: false,
+                  status: response?.status,
+                  success: true,
+                  messages: [response.message || 'Success!!'],
+                  error: false,
+                });
               },
               error: (error: any) => {
-                patchState(
-                  store, {
-                    status: (error?.status || 0),
-                    loading: false,
-                    success: false,
-                    error: true,
-                    messages: [error.message || 'An error occurred'],
-                  }
-                );
+                patchState(store, {
+                  status: error?.status || 0,
+                  loading: false,
+                  success: false,
+                  error: true,
+                  messages: [error.message || 'An error occurred'],
+                });
               },
             }),
           );
         }),
       ),
-      remove: rxMethod<{id: string | any }>(
+      remove: rxMethod<{ id: string | any }>(
         switchMap((data: any) => {
           patchState(store, { loading: true, loaderMessage: 'Loading ...' });
-          return settingsApi.remove(data.id, ).pipe(
+          return settingsApi.remove(data.id).pipe(
             tapResponse({
               next: (response: RestApiResponse<boolean | any>) => {
-                patchState(
-                  store,
-                  {
-                    data: response?.data,
-                    loading: false,
-                    status: (response?.status) ,
-                    success: true,
-                    messages: [response.message || 'Success!!'],
-                    error: false,
-                  }
-                );
+                patchState(store, {
+                  data: response?.data,
+                  loading: false,
+                  status: response?.status,
+                  success: true,
+                  messages: [response.message || 'Success!!'],
+                  error: false,
+                });
               },
               error: (error: any) => {
-                patchState(
-                  store, {
-                    status: (error?.status || 0),
-                    loading: false,
-                    success: false,
-                    error: true,
-                    messages: [error.message || 'An error occurred'],
-                  }
-                );
+                patchState(store, {
+                  status: error?.status || 0,
+                  loading: false,
+                  success: false,
+                  error: true,
+                  messages: [error.message || 'An error occurred'],
+                });
               },
             }),
           );
         }),
       ),
-      save: rxMethod<{setttings: SettingsDTO | any }>(
+      save: rxMethod<{ setttings: SettingsDTO | any }>(
         switchMap((data: any) => {
           patchState(store, { loading: true, loaderMessage: 'Loading ...' });
-          return settingsApi.save(data.setttings, ).pipe(
+          return settingsApi.save(data.setttings).pipe(
             tapResponse({
               next: (response: RestApiResponse<SettingsDTO | any>) => {
-                patchState(
-                  store,
-                  {
-                    data: response?.data,
-                    loading: false,
-                    status: (response?.status) ,
-                    success: true,
-                    messages: [response.message || 'Success!!'],
-                    error: false,
-                  }
-                );
+                patchState(store, {
+                  data: response?.data,
+                  loading: false,
+                  status: response?.status,
+                  success: true,
+                  messages: [response.message || 'Success!!'],
+                  error: false,
+                });
               },
               error: (error: any) => {
-                patchState(
-                  store, {
-                    status: (error?.status || 0),
-                    loading: false,
-                    success: false,
-                    error: true,
-                    messages: [error.message || 'An error occurred'],
-                  }
-                );
+                patchState(store, {
+                  status: error?.status || 0,
+                  loading: false,
+                  success: false,
+                  error: true,
+                  messages: [error.message || 'An error occurred'],
+                });
               },
             }),
           );
         }),
       ),
-      search: rxMethod<{criteria: string | any }>(
+      search: rxMethod<{ criteria: string | any }>(
         switchMap((data: any) => {
           patchState(store, { loading: true, loaderMessage: 'Loading ...' });
-          return settingsApi.search(data.criteria, ).pipe(
+          return settingsApi.search(data.criteria).pipe(
             tapResponse({
               next: (response: RestApiResponse<SettingsDTO[] | any[]>) => {
-                patchState(
-                  store,
-                  {
-                    dataList: response?.data,
-                    loading: false,
-                    status: (response?.status) ,
-                    success: true,
-                    messages: [response.message || 'Success!!'],
-                    error: false,
-                  }
-                );
+                patchState(store, {
+                  dataList: response?.data,
+                  loading: false,
+                  status: response?.status,
+                  success: true,
+                  messages: [response.message || 'Success!!'],
+                  error: false,
+                });
               },
               error: (error: any) => {
-                patchState(
-                  store, {
-                    status: (error?.status || 0),
-                    loading: false,
-                    success: false,
-                    error: true,
-                    messages: [error.message || 'An error occurred'],
-                  }
-                );
+                patchState(store, {
+                  status: error?.status || 0,
+                  loading: false,
+                  success: false,
+                  error: true,
+                  messages: [error.message || 'An error occurred'],
+                });
               },
             }),
           );
         }),
       ),
-    }
+    };
   }),
 );

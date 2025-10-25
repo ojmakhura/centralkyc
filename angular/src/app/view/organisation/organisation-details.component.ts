@@ -107,7 +107,6 @@ export abstract class OrganisationDetailsComponent implements OnInit, AfterViewI
   }
 
   organisationDetailsFormReset() {
-
     if (this.router.url.substring(0, this.router.url.indexOf('?'))) {
       this.router.navigate([this.router.url.substring(0, this.router.url.indexOf('?'))]);
     } else {

@@ -11,6 +11,8 @@ package bw.co.centralkyc.individual.employment;
 import java.util.Collection;
 import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -43,8 +45,11 @@ public class EmploymentRecordServiceImpl
     protected EmploymentRecordDTO handleFindById(String id)
         throws Exception
     {
-        // TODO implement protected  EmploymentRecordDTO handleFindById(String id)
-        throw new UnsupportedOperationException("bw.co.centralkyc.individual.employment.EmploymentRecordService.handleFindById(String id) Not implemented!");
+
+        EmploymentRecord employmentRecord = this.employmentRecordRepository.findById(id)
+            .orElseThrow(() -> new Exception("EmploymentRecord not found for id: " + id));
+        
+        return this.employmentRecordDao.toEmploymentRecordDTO(employmentRecord);
     }
 
     /**
@@ -54,8 +59,10 @@ public class EmploymentRecordServiceImpl
     protected EmploymentRecordDTO handleSave(EmploymentRecordDTO employmentRecord)
         throws Exception
     {
-        // TODO implement protected  EmploymentRecordDTO handleSave(EmploymentRecordDTO employmentRecord)
-        throw new UnsupportedOperationException("bw.co.centralkyc.individual.employment.EmploymentRecordService.handleSave(EmploymentRecordDTO employmentRecord) Not implemented!");
+
+        EmploymentRecord entity = this.employmentRecordDao.employmentRecordDTOToEntity(employmentRecord);
+        entity = this.employmentRecordRepository.save(entity);
+        return this.employmentRecordDao.toEmploymentRecordDTO(entity);
     }
 
     /**
@@ -65,8 +72,13 @@ public class EmploymentRecordServiceImpl
     protected boolean handleRemove(String id)
         throws Exception
     {
-        // TODO implement protected  boolean handleRemove(String id)
-        throw new UnsupportedOperationException("bw.co.centralkyc.individual.employment.EmploymentRecordService.handleRemove(String id) Not implemented!");
+
+        if(!this.employmentRecordRepository.existsById(id)) {
+            throw new EmploymentRecordServiceException("EmploymentRecord not found for id: " + id);
+        }
+
+        this.employmentRecordRepository.deleteById(id);
+        return true;
     }
 
     /**
@@ -76,8 +88,9 @@ public class EmploymentRecordServiceImpl
     protected Collection<EmploymentRecordDTO> handleGetAll()
         throws Exception
     {
-        // TODO implement protected  Collection<EmploymentRecordDTO> handleGetAll()
-        throw new UnsupportedOperationException("bw.co.centralkyc.individual.employment.EmploymentRecordService.handleGetAll() Not implemented!");
+
+        Collection<EmploymentRecord> employmentRecords = this.employmentRecordRepository.findAll();
+        return this.employmentRecordDao.toEmploymentRecordDTOCollection(employmentRecords);
     }
 
     /**
@@ -87,7 +100,6 @@ public class EmploymentRecordServiceImpl
     protected Collection<EmploymentRecordDTO> handleSearch(String criteria)
         throws Exception
     {
-        // TODO implement protected  Collection<EmploymentRecordDTO> handleSearch(String criteria)
         throw new UnsupportedOperationException("bw.co.centralkyc.individual.employment.EmploymentRecordService.handleSearch(String criteria) Not implemented!");
     }
 
@@ -98,8 +110,12 @@ public class EmploymentRecordServiceImpl
     protected Page<EmploymentRecordDTO> handleGetAll(Integer pageNumber, Integer pageSize)
         throws Exception
     {
-        // TODO implement protected  Page<EmploymentRecordDTO> handleGetAll(Integer pageNumber, Integer pageSize)
-        throw new UnsupportedOperationException("bw.co.centralkyc.individual.employment.EmploymentRecordService.handleGetAll(Integer pageNumber, Integer pageSize) Not implemented!");
+
+        PageRequest pageRequest = PageRequest.of(pageNumber, pageSize);
+        Page<EmploymentRecord> employmentRecords = this.employmentRecordRepository.findAll(pageRequest);
+
+        return employmentRecords.map(employmentRecord -> this.employmentRecordDao.toEmploymentRecordDTO(employmentRecord));
+
     }
 
     /**
@@ -120,8 +136,12 @@ public class EmploymentRecordServiceImpl
     protected Collection<EmploymentRecordDTO> handleFindByIndividual(String individualId)
         throws Exception
     {
-        // TODO implement protected  Collection<EmploymentRecordDTO> handleFindByIndividual(String individualId)
-        throw new UnsupportedOperationException("bw.co.centralkyc.individual.employment.EmploymentRecordService.handleFindByIndividual(String individualId) Not implemented!");
+
+        Specification<EmploymentRecord> specification = (root, query, criteriaBuilder) -> 
+            criteriaBuilder.equal(root.get("individual").get("id"), individualId);
+
+        Collection<EmploymentRecord> employmentRecords = this.employmentRecordRepository.findAll(specification);
+        return this.employmentRecordDao.toEmploymentRecordDTOCollection(employmentRecords);
     }
 
 }

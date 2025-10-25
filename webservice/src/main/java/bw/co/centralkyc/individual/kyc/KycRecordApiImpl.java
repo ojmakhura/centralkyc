@@ -19,123 +19,186 @@ import org.springframework.http.HttpStatus;
 
 @org.springframework.web.bind.annotation.RestController
 public class KycRecordApiImpl extends KycRecordApiBase {
-    
-    public KycRecordApiImpl(
-        KycRecordService kycRecordService    ) {
-        
-        super(
-            kycRecordService        );
+
+    public KycRecordApiImpl(KycRecordService kycRecordService) {
+
+        super(kycRecordService);
     }
-
-
 
     @Override
     public ResponseEntity<RestApiResponse<KycRecordDTO>> handleFindById(String id) throws Exception {
-        RestApiResponse<KycRecordDTO> responseData = new RestApiResponse<>();
-        responseData.setData(kycRecordService.findById(id));
-        responseData.setStatus(HttpStatus.OK.value());
-        responseData.setMessage(String.format("KYC record for %s has been found.", responseData.getData().getName()));
-        ResponseEntity<RestApiResponse<KycRecordDTO>> response = ResponseEntity.status(HttpStatus.OK).body(responseData);
 
-        return response;
+        try {
+
+            RestApiResponse<KycRecordDTO> responseData = new RestApiResponse<>();
+            responseData.setData(kycRecordService.findById(id));
+            responseData.setStatus(HttpStatus.OK.value());
+            responseData
+                    .setMessage(String.format("KYC record for %s has been found.", responseData.getData().getName()));
+            ResponseEntity<RestApiResponse<KycRecordDTO>> response = ResponseEntity.status(HttpStatus.OK)
+                    .body(responseData);
+
+            return response;
+
+        } catch (Exception e) {
+
+            throw e;
+        }
     }
-
 
     @Override
-    public ResponseEntity<RestApiResponse<Collection<KycRecordDTO>>> handleFindByIdentityNo(String identityNo) throws Exception {
-        RestApiResponse<Collection<KycRecordDTO>> responseData = new RestApiResponse<>();
-        responseData.setData(kycRecordService.findByIdentityNo(identityNo));
-        responseData.setStatus(HttpStatus.OK.value());
-        responseData.setMessage(String.format("Operation successful."));
-        ResponseEntity<RestApiResponse<Collection<KycRecordDTO>>> response = ResponseEntity.status(HttpStatus.OK).body(responseData);
+    public ResponseEntity<RestApiResponse<Collection<KycRecordDTO>>> handleFindByIdentityNo(String identityNo)
+            throws Exception {
 
-        return response;
+        try {
+
+            RestApiResponse<Collection<KycRecordDTO>> responseData = new RestApiResponse<>();
+            responseData.setData(kycRecordService.findByIdentityNo(identityNo));
+            responseData.setStatus(HttpStatus.OK.value());
+            responseData.setMessage(String.format("Operation successful."));
+            ResponseEntity<RestApiResponse<Collection<KycRecordDTO>>> response = ResponseEntity.status(HttpStatus.OK)
+                    .body(responseData);
+
+            return response;
+
+        } catch (Exception e) {
+
+            throw e;
+        }
     }
-
 
     @Override
-    public ResponseEntity<RestApiResponse<Collection<KycRecordDTO>>> handleFindByIndividual(String individualId) throws Exception {
-        RestApiResponse<Collection<KycRecordDTO>> responseData = new RestApiResponse<>();
-        responseData.setData(kycRecordService.findByIndividual(individualId));
-        responseData.setStatus(HttpStatus.OK.value());
-        responseData.setMessage(String.format("Operation successful."));
-        ResponseEntity<RestApiResponse<Collection<KycRecordDTO>>> response = ResponseEntity.status(HttpStatus.OK).body(responseData);
+    public ResponseEntity<RestApiResponse<Collection<KycRecordDTO>>> handleFindByIndividual(String individualId)
+            throws Exception {
 
-        return response;
+        try {
+            RestApiResponse<Collection<KycRecordDTO>> responseData = new RestApiResponse<>();
+            responseData.setData(kycRecordService.findByIndividual(individualId));
+            responseData.setStatus(HttpStatus.OK.value());
+            responseData.setMessage(String.format("Operation successful."));
+            ResponseEntity<RestApiResponse<Collection<KycRecordDTO>>> response = ResponseEntity.status(HttpStatus.OK)
+                    .body(responseData);
+
+            return response;
+
+        } catch (Exception e) {
+
+            throw e;
+        }
     }
-
 
     @Override
     public ResponseEntity<RestApiResponse<Collection<KycRecordDTO>>> handleGetAll() throws Exception {
-        RestApiResponse<Collection<KycRecordDTO>> responseData = new RestApiResponse<>();
-        responseData.setData(kycRecordService.getAll());
-        responseData.setStatus(HttpStatus.OK.value());
-        responseData.setMessage(String.format("Operation successful."));
-        ResponseEntity<RestApiResponse<Collection<KycRecordDTO>>> response = ResponseEntity.status(HttpStatus.OK).body(responseData);
 
-        return response;
+        try {
+            RestApiResponse<Collection<KycRecordDTO>> responseData = new RestApiResponse<>();
+            responseData.setData(kycRecordService.getAll());
+            responseData.setStatus(HttpStatus.OK.value());
+            responseData.setMessage(String.format("Operation successful."));
+            ResponseEntity<RestApiResponse<Collection<KycRecordDTO>>> response = ResponseEntity.status(HttpStatus.OK)
+                    .body(responseData);
+
+            return response;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw e;
+        }
     }
-
 
     @Override
-    public ResponseEntity<RestApiResponse<Page<KycRecordDTO>>> handleGetAllPaged(Integer pageNumber, Integer pageSize) throws Exception {
-        RestApiResponse<Page<KycRecordDTO>> responseData = new RestApiResponse<>();
-        responseData.setData(kycRecordService.getAll(pageNumber, pageSize));
-        responseData.setStatus(HttpStatus.OK.value());
-        responseData.setMessage(String.format("Operation successful."));
-        ResponseEntity<RestApiResponse<Page<KycRecordDTO>>> response = ResponseEntity.status(HttpStatus.OK).body(responseData);
+    public ResponseEntity<RestApiResponse<Page<KycRecordDTO>>> handleGetAllPaged(Integer pageNumber, Integer pageSize)
+            throws Exception {
 
-        return response;
+        try {
+            RestApiResponse<Page<KycRecordDTO>> responseData = new RestApiResponse<>();
+            responseData.setData(kycRecordService.getAll(pageNumber, pageSize));
+            responseData.setStatus(HttpStatus.OK.value());
+            responseData.setMessage(String.format("Operation successful."));
+            ResponseEntity<RestApiResponse<Page<KycRecordDTO>>> response = ResponseEntity.status(HttpStatus.OK)
+                    .body(responseData);
+
+            return response;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw e;
+        }
     }
-
 
     @Override
-    public ResponseEntity<RestApiResponse<Page<KycRecordDTO>>> handlePagedSearch(String criteria, Integer pageNumber, Integer pageSize) throws Exception {
-        RestApiResponse<Page<KycRecordDTO>> responseData = new RestApiResponse<>();
-        responseData.setData(kycRecordService.search(criteria, pageNumber, pageSize));
-        responseData.setStatus(HttpStatus.OK.value());
-        responseData.setMessage(String.format("Operation successful."));
-        ResponseEntity<RestApiResponse<Page<KycRecordDTO>>> response = ResponseEntity.status(HttpStatus.OK).body(responseData);
+    public ResponseEntity<RestApiResponse<Page<KycRecordDTO>>> handlePagedSearch(String criteria, Integer pageNumber,
+            Integer pageSize) throws Exception {
 
-        return response;
+        try {
+            RestApiResponse<Page<KycRecordDTO>> responseData = new RestApiResponse<>();
+            responseData.setData(kycRecordService.search(criteria, pageNumber, pageSize));
+            responseData.setStatus(HttpStatus.OK.value());
+            responseData.setMessage(String.format("Operation successful."));
+            ResponseEntity<RestApiResponse<Page<KycRecordDTO>>> response = ResponseEntity.status(HttpStatus.OK)
+                    .body(responseData);
+
+            return response;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw e;
+        }
     }
-
 
     @Override
     public ResponseEntity<RestApiResponse<Boolean>> handleRemove(String id) throws Exception {
-        RestApiResponse<Boolean> responseData = new RestApiResponse<>();
-        responseData.setData(kycRecordService.remove(id));
-        responseData.setStatus(HttpStatus.OK.value());
-        responseData.setMessage(String.format("Operation successful."));
-        ResponseEntity<RestApiResponse<Boolean>> response = ResponseEntity.status(HttpStatus.OK).body(responseData);
+        try {
+            RestApiResponse<Boolean> responseData = new RestApiResponse<>();
+            responseData.setData(kycRecordService.remove(id));
+            responseData.setStatus(HttpStatus.OK.value());
+            responseData.setMessage(String.format("Operation successful."));
+            ResponseEntity<RestApiResponse<Boolean>> response = ResponseEntity.status(HttpStatus.OK).body(responseData);
 
-        return response;
+            return response;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw e;
+        }
     }
-
 
     @Override
     public ResponseEntity<RestApiResponse<KycRecordDTO>> handleSave(KycRecordDTO kycRecord) throws Exception {
-        RestApiResponse<KycRecordDTO> responseData = new RestApiResponse<>();
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        AuditTracker.auditTrail(kycRecord, authentication);
+        try {
+            RestApiResponse<KycRecordDTO> responseData = new RestApiResponse<>();
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            AuditTracker.auditTrail(kycRecord, authentication);
 
-        responseData.setData(kycRecordService.save(kycRecord));
-        responseData.setStatus(HttpStatus.OK.value());
-        responseData.setMessage(String.format("Operation successful."));
-        ResponseEntity<RestApiResponse<KycRecordDTO>> response = ResponseEntity.status(HttpStatus.OK).body(responseData);
+            responseData.setData(kycRecordService.save(kycRecord));
+            responseData.setStatus(HttpStatus.OK.value());
+            responseData.setMessage(String.format("Operation successful."));
+            ResponseEntity<RestApiResponse<KycRecordDTO>> response = ResponseEntity.status(HttpStatus.OK)
+                    .body(responseData);
 
-        return response;
+            return response;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw e;
+        }
     }
-
 
     @Override
     public ResponseEntity<RestApiResponse<Collection<KycRecordDTO>>> handleSearch(String criteria) throws Exception {
-        RestApiResponse<Collection<KycRecordDTO>> responseData = new RestApiResponse<>();
-        responseData.setData(kycRecordService.search(criteria));
-        responseData.setStatus(HttpStatus.OK.value());
-        responseData.setMessage(String.format("Operation successful."));
-        ResponseEntity<RestApiResponse<Collection<KycRecordDTO>>> response = ResponseEntity.status(HttpStatus.OK).body(responseData);
+        try {
+            RestApiResponse<Collection<KycRecordDTO>> responseData = new RestApiResponse<>();
+            responseData.setData(kycRecordService.search(criteria));
+            responseData.setStatus(HttpStatus.OK.value());
+            responseData.setMessage(String.format("Operation successful."));
+            ResponseEntity<RestApiResponse<Collection<KycRecordDTO>>> response = ResponseEntity.status(HttpStatus.OK)
+                    .body(responseData);
 
-        return response;
+            return response;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw e;
+        }
     }
 }

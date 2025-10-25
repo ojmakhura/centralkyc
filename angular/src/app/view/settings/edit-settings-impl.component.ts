@@ -38,8 +38,8 @@ export class EditSettingsImplComponent extends EditSettingsComponent {
 
   override organisationDocumentsTableSignal = computed(() => this.settingApiStore?.data()?.organisationDocuments || []);
   override individualDocumentsTableSignal = computed(() => this.settingApiStore?.data()?.individualDocuments || []);
-  override orgKycDocumentsTableSignal = computed(() => this.settingApiStore?.data()?.kycOrganisationDocuments || []);
-  override indKycDocumentsTableSignal = computed(() => this.settingApiStore?.data()?.kycIndividualDocuments || []);
+  override orgKycDocumentsTableSignal = computed(() => this.settingApiStore?.data()?.orgKycDocuments || []);
+  override indKycDocumentsTableSignal = computed(() => this.settingApiStore?.data()?.indKycDocuments || []);
 
   constructor() {
     super();

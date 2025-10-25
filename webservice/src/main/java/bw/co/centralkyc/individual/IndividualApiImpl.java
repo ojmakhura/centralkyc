@@ -21,7 +21,6 @@ import bw.co.centralkyc.PropertySearchOrder;
 import bw.co.centralkyc.RestApiResponse;
 import bw.co.centralkyc.SearchObject;
 import bw.co.centralkyc.keycloak.KeycloakUserService;
-import bw.co.centralkyc.organisation.OrganisationDTO;
 import bw.co.centralkyc.organisation.OrganisationListDTO;
 import bw.co.centralkyc.organisation.branch.BranchDTO;
 import bw.co.centralkyc.organisation.branch.BranchService;
@@ -43,130 +42,192 @@ public class IndividualApiImpl extends IndividualApiBase {
 
     @Override
     public ResponseEntity<RestApiResponse<IndividualDTO>> handleFindById(String id) {
-        RestApiResponse<IndividualDTO> responseData = new RestApiResponse<>();
-        IndividualDTO data = individualService.findById(id);
 
-        if (data.getHasUser()) {
+        try {
 
-            UserDTO user = keycloakUserService.getUserByIdentityNo(data.getIdentityNo());
+            RestApiResponse<IndividualDTO> responseData = new RestApiResponse<>();
+            IndividualDTO data = individualService.findById(id);
 
-            if (StringUtils.isNotBlank(user.getBranchId())) {
+            if (data.getHasUser()) {
 
-                BranchDTO branch = branchService.findById(user.getBranchId());
-                data.setBranch(branch);
+                UserDTO user = keycloakUserService.getUserByIdentityNo(data.getIdentityNo());
+
+                if (StringUtils.isNotBlank(user.getBranchId())) {
+
+                    BranchDTO branch = branchService.findById(user.getBranchId());
+                    data.setBranch(branch);
+                }
+
+                if (StringUtils.isNotBlank(user.getOrganisationId())) {
+
+                    OrganisationListDTO orgList = new OrganisationListDTO();
+                    orgList.setId(user.getOrganisationId());
+                    orgList.setName(user.getOrganisation());
+
+                    data.setOrganisation(orgList);
+                }
+
             }
 
-            if(StringUtils.isNotBlank(user.getOrganisationId())) {
+            responseData.setData(data);
+            ResponseEntity<RestApiResponse<IndividualDTO>> response = ResponseEntity.status(HttpStatus.OK)
+                    .body(responseData);
+            responseData.setStatus(HttpStatus.OK.value());
+            responseData.setMessage("Individual retrieved successfully.");
 
-                OrganisationListDTO orgList = new OrganisationListDTO();
-                orgList.setId(user.getOrganisationId());
-                orgList.setName(user.getOrganisation());
+            return response;
 
-                data.setOrganisation(orgList);
-            }
-
+        } catch (Exception e) {
+            throw e;
         }
-
-        responseData.setData(data);
-        ResponseEntity<RestApiResponse<IndividualDTO>> response = ResponseEntity.status(HttpStatus.OK)
-                .body(responseData);
-
-        return response;
 
     }
 
     @Override
     public ResponseEntity<RestApiResponse<Collection<IndividualListDTO>>> handleGetAll() {
-        RestApiResponse<Collection<IndividualListDTO>> responseData = new RestApiResponse<>();
-        Optional<Collection<IndividualListDTO>> data = Optional.of(individualService.getAll());
-        responseData.setData(data.get());
-        ResponseEntity<RestApiResponse<Collection<IndividualListDTO>>> response = ResponseEntity.status(HttpStatus.OK)
-                .body(responseData);
 
-        return response;
+        try {
+            RestApiResponse<Collection<IndividualListDTO>> responseData = new RestApiResponse<>();
+            Optional<Collection<IndividualListDTO>> data = Optional.of(individualService.getAll());
+            responseData.setData(data.get());
+            ResponseEntity<RestApiResponse<Collection<IndividualListDTO>>> response = ResponseEntity
+                    .status(HttpStatus.OK)
+                    .body(responseData);
+            responseData.setStatus(HttpStatus.OK.value());
+            responseData.setMessage(String.format("Fround %d individuals.", data.get().size()));
+
+            return response;
+        } catch (Exception e) {
+            throw e;
+        }
     }
 
     @Override
     public ResponseEntity<RestApiResponse<Page<IndividualListDTO>>> handleGetAllPaged(Integer pageNumber,
             Integer pageSize) {
-        RestApiResponse<Page<IndividualListDTO>> responseData = new RestApiResponse<>();
-        Optional<Page<IndividualListDTO>> data = Optional.of(individualService.getAll(pageNumber, pageSize));
-        responseData.setData(data.get());
-        ResponseEntity<RestApiResponse<Page<IndividualListDTO>>> response = ResponseEntity.status(HttpStatus.OK)
-                .body(responseData);
 
-        return response;
+        try {
+            RestApiResponse<Page<IndividualListDTO>> responseData = new RestApiResponse<>();
+            Optional<Page<IndividualListDTO>> data = Optional.of(individualService.getAll(pageNumber, pageSize));
+            responseData.setData(data.get());
+            ResponseEntity<RestApiResponse<Page<IndividualListDTO>>> response = ResponseEntity.status(HttpStatus.OK)
+                    .body(responseData);
+            responseData.setStatus(HttpStatus.OK.value());
+            responseData.setMessage(String.format("Fround %d individuals.", data.get().getTotalElements()));
 
+            return response;
+
+        } catch (Exception e) {
+            throw e;
+        }
     }
 
     @Override
-    public ResponseEntity<RestApiResponse<Page<IndividualListDTO>>> handlePagedSearch(SearchObject<IndividualSearchCriteria> criteria) {
-        RestApiResponse<Page<IndividualListDTO>> responseData = new RestApiResponse<>();
-        Optional<Page<IndividualListDTO>> data = Optional.of(individualService.search(criteria));
-        responseData.setData(data.get());
-        ResponseEntity<RestApiResponse<Page<IndividualListDTO>>> response = ResponseEntity.status(HttpStatus.OK)
-                .body(responseData);
+    public ResponseEntity<RestApiResponse<Page<IndividualListDTO>>> handlePagedSearch(
+            SearchObject<IndividualSearchCriteria> criteria) {
 
-        return response;
+        try {
+
+            RestApiResponse<Page<IndividualListDTO>> responseData = new RestApiResponse<>();
+            Optional<Page<IndividualListDTO>> data = Optional.of(individualService.search(criteria));
+            responseData.setData(data.get());
+            ResponseEntity<RestApiResponse<Page<IndividualListDTO>>> response = ResponseEntity.status(HttpStatus.OK)
+                    .body(responseData);
+            responseData.setStatus(HttpStatus.OK.value());
+            responseData.setMessage(String.format("Fround %d individuals.", data.get().getTotalElements()));
+
+            return response;
+
+        } catch (Exception e) {
+            throw e;
+        }
     }
 
     @Override
     public ResponseEntity<RestApiResponse<Boolean>> handleRemove(String id) {
-        RestApiResponse<Boolean> responseData = new RestApiResponse<>();
-        Optional<Boolean> data = Optional.of(individualService.remove(id));
-        responseData.setData(data.get());
-        ResponseEntity<RestApiResponse<Boolean>> response = ResponseEntity.status(HttpStatus.OK).body(responseData);
 
-        return response;
+        try {
+
+            RestApiResponse<Boolean> responseData = new RestApiResponse<>();
+            Optional<Boolean> data = Optional.of(individualService.remove(id));
+            responseData.setData(data.get());
+            ResponseEntity<RestApiResponse<Boolean>> response = ResponseEntity.status(HttpStatus.OK).body(responseData);
+            responseData.setStatus(HttpStatus.OK.value());
+            responseData.setMessage("Individual deleted successfully.");
+
+            return response;
+
+        } catch (Exception e) {
+            throw e;
+        }
 
     }
 
     @Override
     public ResponseEntity<RestApiResponse<IndividualDTO>> handleSave(IndividualDTO individual) {
 
-        RestApiResponse<IndividualDTO> responseData = new RestApiResponse<>();
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        AuditTracker.auditTrail(individual, authentication);
+        try {
 
-        keycloakUserService.getUserByIdentityNo(individual.getIdentityNo());
-        UserDTO user = keycloakUserService.getUserByIdentityNo(individual.getIdentityNo());
+            RestApiResponse<IndividualDTO> responseData = new RestApiResponse<>();
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            AuditTracker.auditTrail(individual, authentication);
 
-        if (user == null) {
+            keycloakUserService.getUserByIdentityNo(individual.getIdentityNo());
+            UserDTO user = keycloakUserService.getUserByIdentityNo(individual.getIdentityNo());
 
-            user = new UserDTO();
-            user.setFirstName(individual.getFirstName());
-            user.setLastName(individual.getSurname());
-            user.setEmail(individual.getEmailAddress());
-            user.setUsername(individual.getEmailAddress());
-            user.setIdentityNo(individual.getIdentityNo());
-            user.setPassword("P@ssw0rd");
-            user.setEnabled(true);
-            user.setBranchId(individual.getBranch().getId());
-            user.setBranch(individual.getBranch().getName());
-            user.setOrganisation(individual.getOrganisation().getName());
-            user.setOrganisationId(individual.getOrganisation().getId());
+            if (user == null) {
 
-            user = keycloakUserService.createUser(user);
+                user = new UserDTO();
+                user.setFirstName(individual.getFirstName());
+                user.setLastName(individual.getSurname());
+                user.setEmail(individual.getEmailAddress());
+                user.setUsername(individual.getEmailAddress());
+                user.setIdentityNo(individual.getIdentityNo());
+                user.setPassword("P@ssw0rd");
+                user.setEnabled(true);
+                user.setBranchId(individual.getBranch().getId());
+                user.setBranch(individual.getBranch().getName());
+                user.setOrganisation(individual.getOrganisation().getName());
+                user.setOrganisationId(individual.getOrganisation().getId());
 
+                user = keycloakUserService.createUser(user);
+
+            }
+
+            Optional<IndividualDTO> data = Optional.of(individualService.save(individual));
+            responseData.setData(data.get());
+            ResponseEntity<RestApiResponse<IndividualDTO>> response = ResponseEntity.status(HttpStatus.OK)
+                    .body(responseData);
+            responseData.setStatus(HttpStatus.OK.value());
+            responseData.setMessage("Individual saved successfully.");
+
+            return response;
+
+        } catch (Exception e) {
+            throw e;
         }
-
-        Optional<IndividualDTO> data = Optional.of(individualService.save(individual));
-        responseData.setData(data.get());
-        ResponseEntity<RestApiResponse<IndividualDTO>> response = ResponseEntity.status(HttpStatus.OK)
-                .body(responseData);
-
-        return response;
     }
 
     @Override
-    public ResponseEntity<RestApiResponse<Collection<IndividualListDTO>>> handleSearch(SearchObject<IndividualSearchCriteria> criteria) {
-        RestApiResponse<Collection<IndividualListDTO>> responseData = new RestApiResponse<>();
-        Optional<Collection<IndividualListDTO>> data = Optional.of(individualService.search(criteria.getCriteria(), (PropertySearchOrder) criteria.getSortings()));
-        responseData.setData(data.get());
-        ResponseEntity<RestApiResponse<Collection<IndividualListDTO>>> response = ResponseEntity.status(HttpStatus.OK)
-                .body(responseData);
+    public ResponseEntity<RestApiResponse<Collection<IndividualListDTO>>> handleSearch(
+            SearchObject<IndividualSearchCriteria> criteria) {
 
-        return response;
+        try {
+            RestApiResponse<Collection<IndividualListDTO>> responseData = new RestApiResponse<>();
+            Optional<Collection<IndividualListDTO>> data = Optional
+                    .of(individualService.search(criteria.getCriteria(), (PropertySearchOrder) criteria.getSortings()));
+            responseData.setData(data.get());
+            responseData.setStatus(HttpStatus.OK.value());
+            responseData.setMessage(String.format("Fround %d individuals.", data.get().size()));
+            ResponseEntity<RestApiResponse<Collection<IndividualListDTO>>> response = ResponseEntity
+                    .status(HttpStatus.OK)
+                    .body(responseData);
+
+            return response;
+
+        } catch (Exception e) {
+            throw e;
+        }
 
     }
 

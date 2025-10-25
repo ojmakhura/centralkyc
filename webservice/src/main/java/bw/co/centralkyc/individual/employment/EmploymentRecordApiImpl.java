@@ -19,102 +19,178 @@ import org.springframework.http.HttpStatus;
 
 @org.springframework.web.bind.annotation.RestController
 public class EmploymentRecordApiImpl extends EmploymentRecordApiBase {
-    
+
     public EmploymentRecordApiImpl(
-        EmploymentRecordService employmentRecordService    ) {
-        
+            EmploymentRecordService employmentRecordService) {
+
         super(
-            employmentRecordService        );
+                employmentRecordService);
     }
 
     @Override
     public ResponseEntity<RestApiResponse<EmploymentRecordDTO>> handleFindById(String id) throws Exception {
-        RestApiResponse<EmploymentRecordDTO> responseData = new RestApiResponse<>();
-        responseData.setData(employmentRecordService.findById(id));
-        responseData.setStatus(HttpStatus.OK.value());
-        responseData.setMessage(String.format("Operation successful."));
-        ResponseEntity<RestApiResponse<EmploymentRecordDTO>> response = ResponseEntity.status(HttpStatus.OK).body(responseData);
 
-        return response;
+        try {
+
+            RestApiResponse<EmploymentRecordDTO> responseData = new RestApiResponse<>();
+            responseData.setData(employmentRecordService.findById(id));
+            responseData.setStatus(HttpStatus.OK.value());
+            responseData.setMessage(String.format("Operation successful."));
+            ResponseEntity<RestApiResponse<EmploymentRecordDTO>> response = ResponseEntity.status(HttpStatus.OK)
+                    .body(responseData);
+
+            return response;
+
+        } catch (Exception e) {
+
+            throw e;
+        }
     }
 
     @Override
-    public ResponseEntity<RestApiResponse<Collection<EmploymentRecordDTO>>> handleFindByIndividual(String individualId) throws Exception {
-        RestApiResponse<Collection<EmploymentRecordDTO>> responseData = new RestApiResponse<>();
-        responseData.setData(employmentRecordService.findByIndividual(individualId));
-        responseData.setStatus(HttpStatus.OK.value());
-        responseData.setMessage(String.format("Operation successful."));
-        ResponseEntity<RestApiResponse<Collection<EmploymentRecordDTO>>> response = ResponseEntity.status(HttpStatus.OK).body(responseData);
+    public ResponseEntity<RestApiResponse<Collection<EmploymentRecordDTO>>> handleFindByIndividual(String individualId)
+            throws Exception {
 
-        return response;
+        try {
+
+            RestApiResponse<Collection<EmploymentRecordDTO>> responseData = new RestApiResponse<>();
+            responseData.setData(employmentRecordService.findByIndividual(individualId));
+            responseData.setStatus(HttpStatus.OK.value());
+            responseData.setMessage(String.format("Operation successful."));
+            ResponseEntity<RestApiResponse<Collection<EmploymentRecordDTO>>> response = ResponseEntity
+                    .status(HttpStatus.OK).body(responseData);
+
+            return response;
+
+        } catch (Exception e) {
+
+            throw e;
+        }
     }
 
     @Override
     public ResponseEntity<RestApiResponse<Collection<EmploymentRecordDTO>>> handleGetAll() throws Exception {
-        RestApiResponse<Collection<EmploymentRecordDTO>> responseData = new RestApiResponse<>();
-        responseData.setData(employmentRecordService.getAll());
-        responseData.setStatus(HttpStatus.OK.value());
-        responseData.setMessage(String.format("Operation successful."));
-        ResponseEntity<RestApiResponse<Collection<EmploymentRecordDTO>>> response = ResponseEntity.status(HttpStatus.OK).body(responseData);
 
-        return response;
+        try {
+
+            RestApiResponse<Collection<EmploymentRecordDTO>> responseData = new RestApiResponse<>();
+            responseData.setData(employmentRecordService.getAll());
+            responseData.setStatus(HttpStatus.OK.value());
+            responseData.setMessage(String.format("Operation successful."));
+            ResponseEntity<RestApiResponse<Collection<EmploymentRecordDTO>>> response = ResponseEntity
+                    .status(HttpStatus.OK).body(responseData);
+
+            return response;
+
+        } catch (Exception e) {
+
+            throw e;
+        }
     }
 
     @Override
-    public ResponseEntity<RestApiResponse<Page<EmploymentRecordDTO>>> handleGetAllPaged(Integer pageNumber, Integer pageSize) throws Exception {
-        RestApiResponse<Page<EmploymentRecordDTO>> responseData = new RestApiResponse<>();
-        responseData.setData(employmentRecordService.getAll(pageNumber, pageSize));
-        responseData.setStatus(HttpStatus.OK.value());
-        responseData.setMessage(String.format("Operation successful."));
-        ResponseEntity<RestApiResponse<Page<EmploymentRecordDTO>>> response = ResponseEntity.status(HttpStatus.OK).body(responseData);
+    public ResponseEntity<RestApiResponse<Page<EmploymentRecordDTO>>> handleGetAllPaged(Integer pageNumber,
+            Integer pageSize) throws Exception {
 
-        return response;
+        try {
+
+            RestApiResponse<Page<EmploymentRecordDTO>> responseData = new RestApiResponse<>();
+            responseData.setData(employmentRecordService.getAll(pageNumber, pageSize));
+            responseData.setStatus(HttpStatus.OK.value());
+            responseData.setMessage(String.format("Operation successful."));
+            ResponseEntity<RestApiResponse<Page<EmploymentRecordDTO>>> response = ResponseEntity.status(HttpStatus.OK)
+                    .body(responseData);
+
+            return response;
+
+        } catch (Exception e) {
+
+            throw e;
+        }
     }
 
     @Override
-    public ResponseEntity<RestApiResponse<Page<EmploymentRecordDTO>>> handlePagedSearch(String criteria, Integer pageNumber, Integer pageSize) throws Exception {
-        RestApiResponse<Page<EmploymentRecordDTO>> responseData = new RestApiResponse<>();
-        responseData.setData(employmentRecordService.search(criteria, pageNumber, pageSize));
-        responseData.setStatus(HttpStatus.OK.value());
-        responseData.setMessage(String.format("Operation successful."));
-        ResponseEntity<RestApiResponse<Page<EmploymentRecordDTO>>> response = ResponseEntity.status(HttpStatus.OK).body(responseData);
+    public ResponseEntity<RestApiResponse<Page<EmploymentRecordDTO>>> handlePagedSearch(String criteria,
+            Integer pageNumber, Integer pageSize) throws Exception {
 
-        return response;
+        try {
+
+            RestApiResponse<Page<EmploymentRecordDTO>> responseData = new RestApiResponse<>();
+            responseData.setData(employmentRecordService.search(criteria, pageNumber, pageSize));
+            responseData.setStatus(HttpStatus.OK.value());
+            responseData.setMessage(String.format("Operation successful."));
+            ResponseEntity<RestApiResponse<Page<EmploymentRecordDTO>>> response = ResponseEntity.status(HttpStatus.OK)
+                    .body(responseData);
+
+            return response;
+
+        } catch (Exception e) {
+
+            throw e;
+        }
     }
 
     @Override
     public ResponseEntity<RestApiResponse<Boolean>> handleRemove(String id) throws Exception {
-        RestApiResponse<Boolean> responseData = new RestApiResponse<>();
-        responseData.setData(employmentRecordService.remove(id));
-        responseData.setStatus(HttpStatus.OK.value());
-        responseData.setMessage(String.format("Operation successful."));
-        ResponseEntity<RestApiResponse<Boolean>> response = ResponseEntity.status(HttpStatus.OK).body(responseData);
 
-        return response;
+        try {
+
+            RestApiResponse<Boolean> responseData = new RestApiResponse<>();
+            responseData.setData(employmentRecordService.remove(id));
+            responseData.setStatus(HttpStatus.OK.value());
+            responseData.setMessage(String.format("Operation successful."));
+            ResponseEntity<RestApiResponse<Boolean>> response = ResponseEntity.status(HttpStatus.OK).body(responseData);
+
+            return response;
+
+        } catch (Exception e) {
+
+            throw e;
+        }
     }
 
     @Override
-    public ResponseEntity<RestApiResponse<EmploymentRecordDTO>> handleSave(EmploymentRecordDTO employmentRecord) throws Exception {
-        RestApiResponse<EmploymentRecordDTO> responseData = new RestApiResponse<>();
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        AuditTracker.auditTrail(employmentRecord, authentication);
+    public ResponseEntity<RestApiResponse<EmploymentRecordDTO>> handleSave(EmploymentRecordDTO employmentRecord)
+            throws Exception {
 
-        responseData.setData(employmentRecordService.save(employmentRecord));
-        responseData.setStatus(HttpStatus.OK.value());
-        responseData.setMessage(String.format("Operation successful."));
-        ResponseEntity<RestApiResponse<EmploymentRecordDTO>> response = ResponseEntity.status(HttpStatus.OK).body(responseData);
+        try {
 
-        return response;
+            RestApiResponse<EmploymentRecordDTO> responseData = new RestApiResponse<>();
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            AuditTracker.auditTrail(employmentRecord, authentication);
+
+            responseData.setData(employmentRecordService.save(employmentRecord));
+            responseData.setStatus(HttpStatus.OK.value());
+            responseData.setMessage(String.format("Operation successful."));
+            ResponseEntity<RestApiResponse<EmploymentRecordDTO>> response = ResponseEntity.status(HttpStatus.OK)
+                    .body(responseData);
+
+            return response;
+
+        } catch (Exception e) {
+
+            throw e;
+        }
     }
 
     @Override
-    public ResponseEntity<RestApiResponse<Collection<EmploymentRecordDTO>>> handleSearch(String criteria) throws Exception {
-        RestApiResponse<Collection<EmploymentRecordDTO>> responseData = new RestApiResponse<>();
-        responseData.setData(employmentRecordService.search(criteria));
-        responseData.setStatus(HttpStatus.OK.value());
-        responseData.setMessage(String.format("Operation successful."));
-        ResponseEntity<RestApiResponse<Collection<EmploymentRecordDTO>>> response = ResponseEntity.status(HttpStatus.OK).body(responseData);
+    public ResponseEntity<RestApiResponse<Collection<EmploymentRecordDTO>>> handleSearch(String criteria)
+            throws Exception {
 
-        return response;
+        try {
+
+            RestApiResponse<Collection<EmploymentRecordDTO>> responseData = new RestApiResponse<>();
+            responseData.setData(employmentRecordService.search(criteria));
+            responseData.setStatus(HttpStatus.OK.value());
+            responseData.setMessage(String.format("Operation successful."));
+            ResponseEntity<RestApiResponse<Collection<EmploymentRecordDTO>>> response = ResponseEntity
+                    .status(HttpStatus.OK).body(responseData);
+
+            return response;
+
+        } catch (Exception e) {
+
+            throw e;
+        }
     }
 }

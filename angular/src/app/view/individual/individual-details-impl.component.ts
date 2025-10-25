@@ -18,6 +18,8 @@ import { TargetEntity } from '@app/model/bw/co/centralkyc/target-entity';
 import { HttpClient } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
 import { DocumentDTO } from '@app/model/bw/co/centralkyc/document/document-dto';
+import { EmploymentRecordApiStore } from '@app/store/bw/co/centralkyc/individual/employment/employment-record-api.store';
+import { KycRecordApiStore } from '@app/store/bw/co/centralkyc/individual/kyc/kyc-record-api.store';
 
 // Interface for upload progress tracking
 interface UploadProgress {
@@ -40,6 +42,12 @@ export class IndividualDetailsImplComponent extends IndividualDetailsComponent {
   override success = this.individualApiStore.success;
   individual = this.individualApiStore.data;
 
+  employmentRecordStore = inject(EmploymentRecordApiStore);
+  employmentRecords = this.employmentRecordStore.dataList;
+
+  kycRecordStore = inject(KycRecordApiStore);
+  kycRecords = this.kycRecordStore.dataList;
+
   // Settings and document types
   settingsApiStore = inject(SettingsApiStore);
   documentApi = inject(DocumentApi);
@@ -55,6 +63,10 @@ export class IndividualDetailsImplComponent extends IndividualDetailsComponent {
     const settings = this.settingsApiStore.data();
     return settings?.individualDocuments || [];
   });
+  kycIndDocumentTypes = computed(() => {
+    const settings = this.settingsApiStore.data();
+    return settings?.indKycDocuments || [];
+  });
 
   constructor() {
     super();
@@ -65,19 +77,18 @@ export class IndividualDetailsImplComponent extends IndividualDetailsComponent {
         this.individualDetailsForm.patchValue(individual);
         // Load existing documents for this individual
         this.loadIndividualDocuments(individual.id);
+        this.loadKycRecords(individual.id);
+        this.loadEmploymentRecords(individual.id);
       }
     });
 
     effect(() => {
-
       const doc = this.documentApiStore.data();
 
       if (doc.targetId) {
         this.loadIndividualDocuments(doc.targetId);
       }
-
     });
-
 
     // Load settings to get document types
     this.settingsApiStore.getAll();
@@ -97,7 +108,15 @@ export class IndividualDetailsImplComponent extends IndividualDetailsComponent {
     return form;
   }
 
-  doNgOnDestroy(): void { }
+  loadKycRecords(individualId: string): void {
+    this.kycRecordStore.findByIndividual({ individualId });
+  }
+
+  loadEmploymentRecords(individualId: string): void {
+    this.employmentRecordStore.findByIndividual({ individualId });
+  }
+
+  doNgOnDestroy(): void {}
 
   // Document upload event handlers
   onDragOver(event: DragEvent): void {
@@ -160,7 +179,6 @@ export class IndividualDetailsImplComponent extends IndividualDetailsComponent {
     });
 
     // Subscribe to the store's state changes to track upload progress
-
   }
   private validateFile(file: File): boolean {
     // Check file size (max 10MB)
@@ -196,16 +214,25 @@ export class IndividualDetailsImplComponent extends IndividualDetailsComponent {
   }
 
   // Document management methods
-  getUploadedDocument(documentTypeId: string): DocumentDTO | undefined {
+  getUploadedDocument(documentTypeId?: string): DocumentDTO | undefined {
+
+    if(!documentTypeId) return undefined;
+
     const docs = this.uploadedDocuments() || [];
     return docs.find((doc) => doc.documentTypeId === documentTypeId);
   }
 
-  isUploading(documentTypeId: string): boolean {
+  isUploading(documentTypeId?: string): boolean {
+
+    if(!documentTypeId) return false;
+
     return this.uploadProgress()[documentTypeId]?.isUploading || false;
   }
 
-  getUploadProgress(documentTypeId: string): number {
+  getUploadProgress(documentTypeId?: string): number {
+
+    if(!documentTypeId) return 0;
+
     return this.uploadProgress()[documentTypeId]?.progress || 0;
   }
 
@@ -233,7 +260,10 @@ export class IndividualDetailsImplComponent extends IndividualDetailsComponent {
     });
   }
 
-  deleteDocument(documentTypeId: string): void {
+  deleteDocument(documentTypeId?: string): void {
+
+    if (!documentTypeId) return;
+
     const document = this.getUploadedDocument(documentTypeId);
     if (!document) return;
 
@@ -264,7 +294,6 @@ export class IndividualDetailsImplComponent extends IndividualDetailsComponent {
   }
 
   private loadIndividualDocuments(individualId: string): void {
-    this.documentApiStore.findByTarget({ target: TargetEntity.INDIVIDUAL, targetId: individualId })
-
+    this.documentApiStore.findByTarget({ target: TargetEntity.INDIVIDUAL, targetId: individualId });
   }
 }

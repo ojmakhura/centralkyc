@@ -33,235 +33,333 @@ public class UserApiImpl extends UserApiBase {
     @Override
     public ResponseEntity<RestApiResponse<UserDTO>> handleAddClientRoles(
             String clientId, Set<String> roles, String userId) {
-        RestApiResponse<UserDTO> responseData = new RestApiResponse<>();
-        logger.debug(
-                "Add user/client roles with client Id " + clientId + ",roles " + roles + " and user Id " + userId);
-        UserDTO rep = this.keycloakUserService.addClientRoles(clientId, roles, userId);
-        responseData.setData(rep);
-        responseData.setSuccess(true);
-        responseData.setMessage(String.format("Operation successful."));
-        ResponseEntity<RestApiResponse<UserDTO>> response = ResponseEntity
-                .status(HttpStatus.OK).body(responseData);
+        try {
+            RestApiResponse<UserDTO> responseData = new RestApiResponse<>();
+            logger.debug(
+                    "Add user/client roles with client Id " + clientId + ",roles " + roles
+                            + " and user Id " + userId);
+            UserDTO rep = this.keycloakUserService.addClientRoles(clientId, roles, userId);
+            responseData.setData(rep);
+            responseData.setSuccess(true);
+            responseData.setMessage(String.format("Operation successful."));
+            ResponseEntity<RestApiResponse<UserDTO>> response = ResponseEntity
+                    .status(HttpStatus.OK).body(responseData);
 
-        return response;
+            return response;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw e;
+        }
 
     }
 
     @Override
     public ResponseEntity<RestApiResponse<Boolean>> handleAddRole(String userId,
             String role) {
-        RestApiResponse<Boolean> responseData = new RestApiResponse<>();
-        responseData.setData(this.keycloakUserService.updateUserRoles(userId, role, 1));
-        responseData.setSuccess(true);
-        responseData.setMessage(String.format("Operation successful."));
-        ResponseEntity<RestApiResponse<Boolean>> response = ResponseEntity.status(HttpStatus.OK)
-                .body(responseData);
 
-        return response;
+        try {
+            RestApiResponse<Boolean> responseData = new RestApiResponse<>();
+            responseData.setData(this.keycloakUserService.updateUserRoles(userId, role, 1));
+            responseData.setSuccess(true);
+            responseData.setMessage(String.format("Operation successful."));
+            ResponseEntity<RestApiResponse<Boolean>> response = ResponseEntity.status(HttpStatus.OK)
+                    .body(responseData);
+
+            return response;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw e;
+        }
 
     }
 
     @Override
     public ResponseEntity<RestApiResponse<String>> handleChangePassword(String userId,
             String newPassword) {
-        RestApiResponse<String> responseData = new RestApiResponse<>();
-        this.keycloakUserService.updateUserPassword(userId, newPassword);
-        responseData.setData(true ? "Password changed successfully" : "Failed to change password.");
-        responseData.setSuccess(true);
-        responseData.setMessage(String.format("Operation successful."));
-        ResponseEntity<RestApiResponse<String>> response = ResponseEntity.status(HttpStatus.OK)
-                .body(responseData);
+        try {
+            RestApiResponse<String> responseData = new RestApiResponse<>();
+            this.keycloakUserService.updateUserPassword(userId, newPassword);
+            responseData.setData(true ? "Password changed successfully" : "Failed to change password.");
+            responseData.setSuccess(true);
+            responseData.setMessage(String.format("Operation successful."));
+            ResponseEntity<RestApiResponse<String>> response = ResponseEntity.status(HttpStatus.OK)
+                    .body(responseData);
 
-        return response;
+            return response;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw e;
+        }
 
     }
 
     @Override
     public ResponseEntity<RestApiResponse<Collection<UserDTO>>> handleFindByClientRoles(
             Set<String> roles, String clientId) {
-        RestApiResponse<Collection<UserDTO>> responseData = new RestApiResponse<>();
-        Collection<UserDTO> users = this.keycloakUserService.getUsersByRoles(clientId, roles);
-        responseData.setData(users);
-        responseData.setSuccess(true);
-        responseData.setMessage(String.format("Operation successful."));
-        ResponseEntity<RestApiResponse<Collection<UserDTO>>> response = ResponseEntity
-                .status(HttpStatus.OK).body(responseData);
+        try {
+            RestApiResponse<Collection<UserDTO>> responseData = new RestApiResponse<>();
+            Collection<UserDTO> users = this.keycloakUserService.getUsersByRoles(clientId, roles);
+            responseData.setData(users);
+            responseData.setSuccess(true);
+            responseData.setMessage(String.format("Operation successful."));
+            ResponseEntity<RestApiResponse<Collection<UserDTO>>> response = ResponseEntity
+                    .status(HttpStatus.OK).body(responseData);
 
-        return response;
+            return response;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw e;
+        }
 
     }
 
     @Override
     public ResponseEntity<RestApiResponse<Collection<UserDTO>>> handleFindByRealmRoles(
             Set<String> roles) {
-        RestApiResponse<Collection<UserDTO>> responseData = new RestApiResponse<>();
-        logger.debug("Search user by realm roles.");
-        Collection<UserDTO> users = this.keycloakUserService.getUsersByRoles(roles);
-        responseData.setData(users);
-        responseData.setSuccess(true);
-        responseData.setMessage(String.format("Operation successful."));
-        ResponseEntity<RestApiResponse<Collection<UserDTO>>> response = ResponseEntity
-                .status(HttpStatus.OK).body(responseData);
+        try {
+            RestApiResponse<Collection<UserDTO>> responseData = new RestApiResponse<>();
+            logger.debug("Search user by realm roles.");
+            Collection<UserDTO> users = this.keycloakUserService.getUsersByRoles(roles);
+            responseData.setData(users);
+            responseData.setSuccess(true);
+            responseData.setMessage(String.format("Operation successful."));
+            ResponseEntity<RestApiResponse<Collection<UserDTO>>> response = ResponseEntity
+                    .status(HttpStatus.OK).body(responseData);
 
-        return response;
+            return response;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw e;
+        }
 
     }
 
     @Override
     public ResponseEntity<RestApiResponse<UserDTO>> handleFindUserById(String userId) {
-        RestApiResponse<UserDTO> responseData = new RestApiResponse<>();
-        logger.debug("Search user by Id " + userId);
-        UserDTO rep = this.keycloakUserService.findUserById(userId);
-        responseData.setData(rep);
-        responseData.setSuccess(true);
-        responseData.setMessage(String.format("Operation successful."));
-        ResponseEntity<RestApiResponse<UserDTO>> response = ResponseEntity
-                .status(HttpStatus.OK).body(responseData);
+        try {
+            RestApiResponse<UserDTO> responseData = new RestApiResponse<>();
+            logger.debug("Search user by Id " + userId);
+            UserDTO rep = this.keycloakUserService.findUserById(userId);
+            responseData.setData(rep);
+            responseData.setSuccess(true);
+            responseData.setMessage(String.format("Operation successful."));
+            ResponseEntity<RestApiResponse<UserDTO>> response = ResponseEntity
+                    .status(HttpStatus.OK).body(responseData);
 
-        return response;
+            return response;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw e;
+        }
 
     }
 
     @Override
     public ResponseEntity<RestApiResponse<Collection<UserDTO>>> handleLoadUsers() {
-        RestApiResponse<Collection<UserDTO>> responseData = new RestApiResponse<>();
-        Collection<UserDTO> data = this.keycloakUserService.loadUsers();
-        responseData.setData(data);
-        responseData.setSuccess(true);
-        responseData.setMessage(String.format("Operation successful."));
-        ResponseEntity<RestApiResponse<Collection<UserDTO>>> response = ResponseEntity
-                .status(HttpStatus.OK).body(responseData);
+        try {
+            RestApiResponse<Collection<UserDTO>> responseData = new RestApiResponse<>();
+            Collection<UserDTO> data = this.keycloakUserService.loadUsers();
+            responseData.setData(data);
+            responseData.setSuccess(true);
+            responseData.setMessage(String.format("Operation successful."));
+            ResponseEntity<RestApiResponse<Collection<UserDTO>>> response = ResponseEntity
+                    .status(HttpStatus.OK).body(responseData);
 
-        return response;
+            return response;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw e;
+        }
 
     }
 
     @Override
     public ResponseEntity<RestApiResponse<Boolean>> handleRemoveRole(String userId,
             String role) {
-        RestApiResponse<Boolean> responseData = new RestApiResponse<>();
-        responseData.setData(this.keycloakUserService.updateUserRoles(userId, role, -1));
-        responseData.setSuccess(true);
-        responseData.setMessage(String.format("Operation successful."));
-        ResponseEntity<RestApiResponse<Boolean>> response = ResponseEntity.status(HttpStatus.OK)
-                .body(responseData);
+        try {
+            RestApiResponse<Boolean> responseData = new RestApiResponse<>();
+            responseData.setData(this.keycloakUserService.updateUserRoles(userId, role, -1));
+            responseData.setSuccess(true);
+            responseData.setMessage(String.format("Operation successful."));
+            ResponseEntity<RestApiResponse<Boolean>> response = ResponseEntity.status(HttpStatus.OK)
+                    .body(responseData);
 
-        return response;
+            return response;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw e;
+        }
 
     }
 
     @Override
     public ResponseEntity<RestApiResponse<UserDTO>> handleSaveUser(
             UserDTO user) {
-        RestApiResponse<UserDTO> responseData = new RestApiResponse<>();
-        logger.debug("Save User " + user);
+        try {
+            RestApiResponse<UserDTO> responseData = new RestApiResponse<>();
+            logger.debug("Save User " + user);
 
-        if (StringUtils.isBlank(user.getUserId()))
-            user = this.keycloakUserService.createUser(user);
-        else {
-            keycloakUserService.updateUser(user);
+            if (StringUtils.isBlank(user.getUserId()))
+                user = this.keycloakUserService.createUser(user);
+            else {
+                keycloakUserService.updateUser(user);
+            }
+
+            responseData.setData(user);
+            responseData.setSuccess(true);
+            responseData.setMessage(String.format("Operation successful."));
+            ResponseEntity<RestApiResponse<UserDTO>> response = ResponseEntity
+                    .status(HttpStatus.OK).body(responseData);
+
+            return response;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw e;
         }
-
-        responseData.setData(user);
-        responseData.setSuccess(true);
-        responseData.setMessage(String.format("Operation successful."));
-        ResponseEntity<RestApiResponse<UserDTO>> response = ResponseEntity
-                .status(HttpStatus.OK).body(responseData);
-
-        return response;
 
     }
 
     @Override
     public ResponseEntity<RestApiResponse<Collection<UserDTO>>> handleSearch(String criteria) {
-        RestApiResponse<Collection<UserDTO>> responseData = new RestApiResponse<>();
-        logger.debug("Search user by criteria" + criteria);
+        try {
+            RestApiResponse<Collection<UserDTO>> responseData = new RestApiResponse<>();
+            logger.debug("Search user by criteria" + criteria);
 
-        List<UserDTO> users = this.keycloakUserService.search(criteria);
+            List<UserDTO> users = this.keycloakUserService.search(criteria);
 
-        responseData.setData(users);
-        responseData.setSuccess(true);
-        responseData.setMessage(String.format("Operation successful."));
-        ResponseEntity<RestApiResponse<Collection<UserDTO>>> response = ResponseEntity
-                .status(HttpStatus.OK).body(responseData);
+            responseData.setData(users);
+            responseData.setSuccess(true);
+            responseData.setMessage(String.format("Operation successful."));
+            ResponseEntity<RestApiResponse<Collection<UserDTO>>> response = ResponseEntity
+                    .status(HttpStatus.OK).body(responseData);
 
-        return response;
+            return response;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw e;
+        }
 
     }
 
     @Override
     public ResponseEntity<RestApiResponse<Boolean>> handleUpdateUserName(String userId,
             String username) {
-        RestApiResponse<Boolean> responseData = new RestApiResponse<>();
-        Optional<Boolean> data = Optional.empty(); // TODO: Add custom code here;
-        responseData.setData(data.get());
-        responseData.setSuccess(true);
-        responseData.setMessage(String.format("Operation successful."));
-        ResponseEntity<RestApiResponse<Boolean>> response = ResponseEntity.status(HttpStatus.OK)
-                .body(responseData);
+        try {
+            RestApiResponse<Boolean> responseData = new RestApiResponse<>();
+            Optional<Boolean> data = Optional.empty(); // TODO: Add custom code here;
+            responseData.setData(data.get());
+            responseData.setSuccess(true);
+            responseData.setMessage(String.format("Operation successful."));
+            ResponseEntity<RestApiResponse<Boolean>> response = ResponseEntity.status(HttpStatus.OK)
+                    .body(responseData);
 
-        return response;
+            return response;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw e;
+        }
 
     }
 
     @Override
     public ResponseEntity<RestApiResponse<Collection<UserDTO>>> handleFindByBranchId(String branchId) {
 
-        RestApiResponse<Collection<UserDTO>> responseData = new RestApiResponse<>();
-        responseData.setData(this.keycloakUserService.getBranchUsers(branchId));
-        responseData.setSuccess(true);
-        responseData.setMessage(String.format("Operation successful."));
-        return ResponseEntity.status(HttpStatus.OK)
-                .body(responseData);
+        try {
+            RestApiResponse<Collection<UserDTO>> responseData = new RestApiResponse<>();
+            responseData.setData(this.keycloakUserService.getBranchUsers(branchId));
+            responseData.setSuccess(true);
+            responseData.setMessage(String.format("Operation successful."));
+            return ResponseEntity.status(HttpStatus.OK)
+                    .body(responseData);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw e;
+        }
 
     }
 
     @Override
     public ResponseEntity<RestApiResponse<Collection<UserDTO>>> handleFindByBranchName(String branch) {
 
-        RestApiResponse<Collection<UserDTO>> responseData = new RestApiResponse<>();
-        Optional<Collection<UserDTO>> data = Optional.empty(); // TODO: Add custom code here;
-        responseData.setData(data.get());
-        responseData.setSuccess(true);
-        responseData.setMessage(String.format("Operation successful."));
-        return ResponseEntity.status(HttpStatus.OK)
-                .body(responseData);
+        try {
+            RestApiResponse<Collection<UserDTO>> responseData = new RestApiResponse<>();
+            Optional<Collection<UserDTO>> data = Optional.empty(); // TODO: Add custom code here;
+            responseData.setData(data.get());
+            responseData.setSuccess(true);
+            responseData.setMessage(String.format("Operation successful."));
+            return ResponseEntity.status(HttpStatus.OK)
+                    .body(responseData);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw e;
+        }
 
     }
 
     @Override
     public ResponseEntity<RestApiResponse<Collection<UserDTO>>> handleFindByOrganisationId(String organisationId) {
 
-        RestApiResponse<Collection<UserDTO>> responseData = new RestApiResponse<>();
-        responseData.setData(this.keycloakUserService.getOrganisationUsers(organisationId));
-        responseData.setSuccess(true);
-        responseData.setMessage(String.format("Operation successful."));
-        return ResponseEntity.status(HttpStatus.OK)
-                .body(responseData);
+        try {
+            RestApiResponse<Collection<UserDTO>> responseData = new RestApiResponse<>();
+            responseData.setData(this.keycloakUserService.getOrganisationUsers(organisationId));
+            responseData.setSuccess(true);
+            responseData.setMessage(String.format("Operation successful."));
+            return ResponseEntity.status(HttpStatus.OK)
+                    .body(responseData);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw e;
+        }
 
     }
 
     @Override
     public ResponseEntity<RestApiResponse<Collection<UserDTO>>> handleFindByOrganisationName(String organisation) {
 
-        RestApiResponse<Collection<UserDTO>> responseData = new RestApiResponse<>();
-        Optional<Collection<UserDTO>> data = Optional.empty(); // TODO: Add custom code here;
-        responseData.setData(data.get());
-        responseData.setSuccess(true);
-        responseData.setMessage(String.format("Operation successful."));
-        return ResponseEntity.status(HttpStatus.OK)
-                .body(responseData);
+        try {
+            RestApiResponse<Collection<UserDTO>> responseData = new RestApiResponse<>();
+            Optional<Collection<UserDTO>> data = Optional.empty(); // TODO: Add custom code here;
+            responseData.setData(data.get());
+            responseData.setSuccess(true);
+            responseData.setMessage(String.format("Operation successful."));
+            return ResponseEntity.status(HttpStatus.OK)
+                    .body(responseData);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw e;
+        }
 
     }
 
     @Override
     public ResponseEntity<RestApiResponse<UserDTO>> handleFindByIdentityNo(String identityNo) {
-        
-        RestApiResponse<UserDTO> responseData = new RestApiResponse<>();
-        responseData.setData(this.keycloakUserService.getUserByIdentityNo(identityNo));
-        responseData.setSuccess(true);
-        responseData.setMessage(String.format("Operation successful."));
-        return ResponseEntity.status(HttpStatus.OK)
-                .body(responseData);
+
+        try {
+            RestApiResponse<UserDTO> responseData = new RestApiResponse<>();
+            responseData.setData(this.keycloakUserService.getUserByIdentityNo(identityNo));
+            responseData.setSuccess(true);
+            responseData.setMessage(String.format("Operation successful."));
+            return ResponseEntity.status(HttpStatus.OK)
+                    .body(responseData);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw e;
+        }
     }
 }
