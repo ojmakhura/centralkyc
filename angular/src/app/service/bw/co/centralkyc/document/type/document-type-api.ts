@@ -11,44 +11,44 @@ import { RestApiResponse } from '@app/model/rest-api-response.model';
   providedIn: 'root'
 })
 export class DocumentTypeApi {
-    
+
     protected path = '/document/type';
 
     private http = inject(HttpClient);
 
-    public findById(id: string | any ): Observable<RestApiResponse<DocumentTypeDTO | any>> {
+    public findById(id: string | any ): Observable<DocumentTypeDTO | any> {
 
-        return this.http.get<RestApiResponse<DocumentTypeDTO | any>>(`${this.path}/${id}`);
+        return this.http.get<DocumentTypeDTO | any>(`${this.path}/${id}`);
     }
 
-    public getAll(): Observable<RestApiResponse<DocumentTypeDTO[] | any[]>> {
+    public getAll(): Observable<DocumentTypeDTO[] | any[]> {
 
-        return this.http.get<RestApiResponse<DocumentTypeDTO[] | any[]>>(`${this.path}`);
+        return this.http.get<DocumentTypeDTO[] | any[]>(`${this.path}`);
     }
 
-    public getAllPaged(pageNumber: number | any , pageSize: number | any ): Observable<RestApiResponse<Page<DocumentTypeDTO>[] | any[]>> {
+    public getAllPaged(pageNumber: number | any , pageSize: number | any ): Observable<Page<DocumentTypeDTO>[] | any[]> {
 
-        return this.http.get<RestApiResponse<Page<DocumentTypeDTO>[] | any[]>>(`${this.path}/paged?pageNumber=${pageNumber}&pageSize=${pageSize}`);
+        return this.http.get<Page<DocumentTypeDTO>[] | any[]>(`${this.path}/paged?pageNumber=${pageNumber}&pageSize=${pageSize}`);
     }
 
-    public pagedSearch(criteria: string | any , pageNumber: number | any , pageSize: number | any ): Observable<RestApiResponse<Page<DocumentTypeDTO> | any>> {
+    public pagedSearch(criteria: string | any , pageNumber: number | any , pageSize: number | any ): Observable<Page<DocumentTypeDTO> | any> {
 
-        return this.http.get<RestApiResponse<Page<DocumentTypeDTO> | any>>(`${this.path}/search/paged?criteria=${criteria}&pageNumber=${pageNumber}&pageSize=${pageSize}`);
+        return this.http.get<Page<DocumentTypeDTO> | any>(`${this.path}/search/paged?criteria=${criteria}&pageNumber=${pageNumber}&pageSize=${pageSize}`);
     }
 
-    public remove(id: string | any ): Observable<RestApiResponse<boolean | any>> {
+    public remove(id: string | any ): Observable<boolean | any> {
 
-        return this.http.delete<RestApiResponse<boolean | any>>(`${this.path}/${id}`);
+        return this.http.delete<boolean | any>(`${this.path}/${id}`);
     }
 
-    public save(documentType: DocumentTypeDTO | any ): Observable<RestApiResponse<DocumentTypeDTO | any>> {
+    public save(documentType: DocumentTypeDTO | any ): Observable<DocumentTypeDTO | any> {
 
-        return this.http.post<RestApiResponse<DocumentTypeDTO | any>>(`${this.path}`, documentType);
+        return this.http.post<DocumentTypeDTO | any>(`${this.path}`, documentType);
     }
 
-    public search(criteria: string | any ): Observable<RestApiResponse<DocumentTypeDTO[] | any[]>> {
+    public search(criteria: string | any ): Observable<DocumentTypeDTO[] | any[]> {
 
-        return this.http.get<RestApiResponse<DocumentTypeDTO[] | any[]>>(`${this.path}/search?criteria=${criteria}`);
+        return this.http.get<DocumentTypeDTO[] | any[]>(`${this.path}/search?criteria=${criteria}`);
     }
 
 }

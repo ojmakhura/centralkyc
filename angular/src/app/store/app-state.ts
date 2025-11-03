@@ -6,7 +6,6 @@ export type AppState<T, L> = {
     dataList: L[];
     dataPage: Page<L>;
     searchCriteria: SearchObject<T>;
-    status: number;
     loading: boolean;
     success: boolean;
     messages: string[];

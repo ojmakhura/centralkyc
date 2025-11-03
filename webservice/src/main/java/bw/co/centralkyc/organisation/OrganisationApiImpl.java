@@ -31,17 +31,9 @@ public class OrganisationApiImpl extends OrganisationApiBase {
     }
 
     @Override
-    public ResponseEntity<RestApiResponse<OrganisationDTO>> handleFindById(String id) {
+    public ResponseEntity<OrganisationDTO> handleFindById(String id) {
         try {
-            RestApiResponse<OrganisationDTO> responseData = new RestApiResponse<>();
-            Optional<OrganisationDTO> data = Optional.of(organisationService.findById(id));
-            responseData.setData(data.get());
-            responseData.setSuccess(true);
-            responseData.setMessage(String.format("Organisation %s loaded.", responseData.getData().getName()));
-            ResponseEntity<RestApiResponse<OrganisationDTO>> response = ResponseEntity.status(HttpStatus.OK)
-                    .body(responseData);
-
-            return response;
+            return ResponseEntity.ok(organisationService.findById(id));
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -50,41 +42,21 @@ public class OrganisationApiImpl extends OrganisationApiBase {
     }
 
     @Override
-    public ResponseEntity<RestApiResponse<Collection<OrganisationListDTO>>> handleGetAll() {
+    public ResponseEntity<Collection<OrganisationListDTO>> handleGetAll() {
         try {
-            RestApiResponse<Collection<OrganisationListDTO>> responseData = new RestApiResponse<>();
-            Optional<Collection<OrganisationListDTO>> data = Optional.of(organisationService.getAll()); // TODO: Add
-                                                                                                        // custom
-                                                                                                        // code here;
-            responseData.setData(data.get());
-            responseData.setSuccess(true);
-            responseData.setMessage(String.format("Loaded %d organisations.", responseData.getData().size()));
-            ResponseEntity<RestApiResponse<Collection<OrganisationListDTO>>> response = ResponseEntity
-                    .status(HttpStatus.OK)
-                    .body(responseData);
-
-            return response;
+            return ResponseEntity.ok(organisationService.getAll());
 
         } catch (Exception e) {
             e.printStackTrace();
             throw e;
         }
-
     }
 
     @Override
-    public ResponseEntity<RestApiResponse<Page<OrganisationListDTO>>> handleGetAllPaged(Integer pageNumber,
+    public ResponseEntity<Page<OrganisationListDTO>> handleGetAllPaged(Integer pageNumber,
             Integer pageSize) {
         try {
-            RestApiResponse<Page<OrganisationListDTO>> responseData = new RestApiResponse<>();
-            Optional<Page<OrganisationListDTO>> data = Optional.of(organisationService.getAll(pageNumber, pageSize));
-            responseData.setData(data.get());
-            responseData.setSuccess(true);
-            responseData.setMessage(String.format("Loaded organisation page %d.", responseData.getData().getNumber()));
-            ResponseEntity<RestApiResponse<Page<OrganisationListDTO>>> response = ResponseEntity.status(HttpStatus.OK)
-                    .body(responseData);
-
-            return response;
+            return ResponseEntity.ok(organisationService.getAll(pageNumber, pageSize));
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -94,19 +66,11 @@ public class OrganisationApiImpl extends OrganisationApiBase {
     }
 
     @Override
-    public ResponseEntity<RestApiResponse<Page<OrganisationListDTO>>> handlePagedSearch(
+    public ResponseEntity<Page<OrganisationListDTO>> handlePagedSearch(
             SearchObject<OrganisationSearchCriteria> criteria) {
         try {
-            RestApiResponse<Page<OrganisationListDTO>> responseData = new RestApiResponse<>();
-            Optional<Page<OrganisationListDTO>> data = Optional
-                    .of(organisationService.search(criteria)); // TODO: Add custom code here;
-            responseData.setData(data.get());
-            responseData.setSuccess(true);
-            responseData.setMessage(String.format("Loaded organisation page %d.", responseData.getData().getNumber()));
-            ResponseEntity<RestApiResponse<Page<OrganisationListDTO>>> response = ResponseEntity.status(HttpStatus.OK)
-                    .body(responseData);
 
-            return response;
+            return ResponseEntity.ok(organisationService.search(criteria));
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -116,16 +80,9 @@ public class OrganisationApiImpl extends OrganisationApiBase {
     }
 
     @Override
-    public ResponseEntity<RestApiResponse<Boolean>> handleRemove(String id) {
+    public ResponseEntity<Boolean> handleRemove(String id) {
         try {
-            RestApiResponse<Boolean> responseData = new RestApiResponse<>();
-            Optional<Boolean> data = Optional.of(organisationService.remove(id)); // TODO: Add custom code here;
-            responseData.setData(data.get());
-            responseData.setSuccess(true);
-            responseData.setMessage(String.format("Organistaion removed."));
-            ResponseEntity<RestApiResponse<Boolean>> response = ResponseEntity.status(HttpStatus.OK).body(responseData);
-
-            return response;
+            return ResponseEntity.ok(organisationService.remove(id));
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -135,21 +92,12 @@ public class OrganisationApiImpl extends OrganisationApiBase {
     }
 
     @Override
-    public ResponseEntity<RestApiResponse<OrganisationDTO>> handleSave(OrganisationDTO organisation) {
+    public ResponseEntity<OrganisationDTO> handleSave(OrganisationDTO organisation) {
         try {
-            RestApiResponse<OrganisationDTO> responseData = new RestApiResponse<>();
+            
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             AuditTracker.auditTrail(organisation, authentication);
-            Optional<OrganisationDTO> data = Optional.of(organisationService.save(organisation)); // TODO: Add custom
-                                                                                                  // code
-                                                                                                  // here;
-            responseData.setData(data.get());
-            responseData.setSuccess(true);
-            responseData.setMessage(String.format("Organisation %s saved.", responseData.getData().getName()));
-            ResponseEntity<RestApiResponse<OrganisationDTO>> response = ResponseEntity.status(HttpStatus.OK)
-                    .body(responseData);
-
-            return response;
+            return ResponseEntity.ok(organisationService.save(organisation));
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -158,21 +106,12 @@ public class OrganisationApiImpl extends OrganisationApiBase {
     }
 
     @Override
-    public ResponseEntity<RestApiResponse<Collection<OrganisationListDTO>>> handleSearch(
+    public ResponseEntity<Collection<OrganisationListDTO>> handleSearch(
             SearchObject<OrganisationSearchCriteria> criteria) {
         try {
-            RestApiResponse<Collection<OrganisationListDTO>> responseData = new RestApiResponse<>();
-            Optional<Collection<OrganisationListDTO>> data = Optional.of(organisationService
-                    .search(criteria.getCriteria(), (Set<PropertySearchOrder>) criteria.getSortings())); // TODO: Add
-
-            responseData.setData(data.get());
-            responseData.setSuccess(true);
-            responseData.setMessage(String.format("Loaded %d document types.", responseData.getData().size()));
-            ResponseEntity<RestApiResponse<Collection<OrganisationListDTO>>> response = ResponseEntity
-                    .status(HttpStatus.OK)
-                    .body(responseData);
-
-            return response;
+            
+            return ResponseEntity.ok(organisationService
+                    .search(criteria.getCriteria(), (Set<PropertySearchOrder>) criteria.getSortings()));
 
         } catch (Exception e) {
             e.printStackTrace();

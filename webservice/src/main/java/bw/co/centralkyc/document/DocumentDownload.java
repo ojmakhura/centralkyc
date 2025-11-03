@@ -5,6 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
 
@@ -12,7 +13,10 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 @Tag(name = "Document Attachments", description = "Managing document attached to different targets.")
 public interface DocumentDownload {
     
+    @GetMapping()
+    public ResponseEntity<InputStreamResource> downloadFileByUrl(@RequestParam  String objectName) throws Exception;
+    
     @GetMapping("/{id}")
-    public ResponseEntity<InputStreamResource> downloadFile(@PathVariable  String id) ;
+    public ResponseEntity<InputStreamResource> downloadFile(@PathVariable  String id) throws Exception;
 
 }

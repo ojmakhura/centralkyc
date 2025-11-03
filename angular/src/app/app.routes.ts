@@ -46,6 +46,10 @@ export const routes: Routes = [
       path: 'user', 
       loadChildren: () => import('@app/view/user/user.routes').then((m) => m.routes),
     },
+    {
+      path: 'subscription', 
+      loadChildren: () => import('@app/view/subscription/subcription.routes').then((m) => m.routes),
+    },
   ]),
   // Fallback when no prior route is matched
   { 

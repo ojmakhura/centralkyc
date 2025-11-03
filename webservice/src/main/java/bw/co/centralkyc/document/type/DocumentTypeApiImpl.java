@@ -26,21 +26,11 @@ public class DocumentTypeApiImpl extends DocumentTypeApiBase {
     }
 
     @Override
-    public ResponseEntity<RestApiResponse<DocumentTypeDTO>> handleFindById(String id) {
+    public ResponseEntity<DocumentTypeDTO> handleFindById(String id) {
 
         try {
 
-            RestApiResponse<DocumentTypeDTO> responseData = new RestApiResponse<>();
-            Optional<DocumentTypeDTO> data = Optional.of(documentTypeService.findById(id));
-            responseData.setData(data.get());
-            responseData.setSuccess(true);
-            responseData.setStatus(HttpStatus.OK.value());
-            responseData.setMessage(String.format("Document type %s loaded successfully!",
-                    responseData.getData().name));
-            ResponseEntity<RestApiResponse<DocumentTypeDTO>> response = ResponseEntity.status(HttpStatus.OK)
-                    .body(responseData);
-
-            return response;
+            return ResponseEntity.ok(documentTypeService.findById(id));
 
         } catch (Exception e) {
 
@@ -50,22 +40,11 @@ public class DocumentTypeApiImpl extends DocumentTypeApiBase {
     }
 
     @Override
-    public ResponseEntity<RestApiResponse<Collection<DocumentTypeDTO>>> handleGetAll() {
+    public ResponseEntity<Collection<DocumentTypeDTO>> handleGetAll() {
 
         try {
 
-            RestApiResponse<Collection<DocumentTypeDTO>> responseData = new RestApiResponse<>();
-            Optional<Collection<DocumentTypeDTO>> data = Optional.of(documentTypeService.getAll());
-            responseData.setData(data.get());
-            responseData.setSuccess(true);
-            responseData.setStatus(HttpStatus.OK.value());
-            responseData.setMessage(
-                    String.format("Loaded %d document type.", responseData.getData().size()));
-            ResponseEntity<RestApiResponse<Collection<DocumentTypeDTO>>> response = ResponseEntity
-                    .status(HttpStatus.OK)
-                    .body(responseData);
-
-            return response;
+            return ResponseEntity.ok(documentTypeService.getAll());
 
         } catch (Exception e) {
 
@@ -75,43 +54,25 @@ public class DocumentTypeApiImpl extends DocumentTypeApiBase {
     }
 
     @Override
-    public ResponseEntity<RestApiResponse<Page<DocumentTypeDTO>>> handleGetAllPaged(Integer pageNumber,
+    public ResponseEntity<Page<DocumentTypeDTO>> handleGetAllPaged(Integer pageNumber,
             Integer pageSize) {
-        RestApiResponse<Page<DocumentTypeDTO>> responseData = new RestApiResponse<>();
-        Optional<Page<DocumentTypeDTO>> data = Optional.of(documentTypeService.getAll(pageNumber, pageSize));
-        responseData.setData(data.get());
-        responseData.setSuccess(true);
-        responseData.setStatus(HttpStatus.OK.value());
-        responseData.setMessage(String.format("Loaded page %d with %d document types.",
-                responseData.getData().getNumber(), responseData.getData().getNumberOfElements()));
-        ResponseEntity<RestApiResponse<Page<DocumentTypeDTO>>> response = ResponseEntity.status(HttpStatus.OK)
-                .body(responseData);
 
-        return response;
+        try {
+            return ResponseEntity.ok(documentTypeService.getAll(pageNumber, pageSize));
+        } catch(Exception e) {
 
+            throw e;
+        }
     }
 
     @Override
-    public ResponseEntity<RestApiResponse<Page<DocumentTypeDTO>>> handlePagedSearch(String criteria,
+    public ResponseEntity<Page<DocumentTypeDTO>> handlePagedSearch(String criteria,
             Integer pageNumber,
             Integer pageSize) {
 
         try {
 
-            RestApiResponse<Page<DocumentTypeDTO>> responseData = new RestApiResponse<>();
-            Optional<Page<DocumentTypeDTO>> data = Optional
-                    .of(documentTypeService.search(criteria, pageNumber, pageSize));
-            responseData.setData(data.get());
-            responseData.setSuccess(true);
-            responseData.setStatus(HttpStatus.OK.value());
-            responseData.setMessage(String.format("Loaded page %d with %d document types.",
-                    responseData.getData().getNumber(),
-                    responseData.getData().getNumberOfElements()));
-            ResponseEntity<RestApiResponse<Page<DocumentTypeDTO>>> response = ResponseEntity
-                    .status(HttpStatus.OK)
-                    .body(responseData);
-
-            return response;
+            return ResponseEntity.ok(documentTypeService.search(criteria, pageNumber, pageSize));
 
         } catch (Exception e) {
 
@@ -121,20 +82,11 @@ public class DocumentTypeApiImpl extends DocumentTypeApiBase {
     }
 
     @Override
-    public ResponseEntity<RestApiResponse<Boolean>> handleRemove(String id) {
+    public ResponseEntity<Boolean> handleRemove(String id) {
 
         try {
 
-            RestApiResponse<Boolean> responseData = new RestApiResponse<>();
-            Optional<Boolean> data = Optional.of(documentTypeService.remove(id));
-            responseData.setData(data.get());
-            responseData.setSuccess(true);
-            responseData.setMessage("Removed document type.");
-            responseData.setStatus(HttpStatus.OK.value());
-            ResponseEntity<RestApiResponse<Boolean>> response = ResponseEntity.status(HttpStatus.OK)
-                    .body(responseData);
-
-            return response;
+            return ResponseEntity.ok(documentTypeService.remove(id));
 
         } catch (Exception e) {
 
@@ -144,22 +96,13 @@ public class DocumentTypeApiImpl extends DocumentTypeApiBase {
     }
 
     @Override
-    public ResponseEntity<RestApiResponse<DocumentTypeDTO>> handleSave(DocumentTypeDTO documentType) {
+    public ResponseEntity<DocumentTypeDTO> handleSave(DocumentTypeDTO documentType) {
 
         try {
 
-            RestApiResponse<DocumentTypeDTO> responseData = new RestApiResponse<>();
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             AuditTracker.auditTrail(documentType, authentication);
-            Optional<DocumentTypeDTO> data = Optional.of(documentTypeService.save(documentType));
-            responseData.setData(data.get());
-            responseData.setSuccess(true);
-            responseData.setMessage("Document type saves successfully!");
-            responseData.setStatus(HttpStatus.OK.value());
-            ResponseEntity<RestApiResponse<DocumentTypeDTO>> response = ResponseEntity.status(HttpStatus.OK)
-                    .body(responseData);
-
-            return response;
+            return ResponseEntity.ok(documentTypeService.save(documentType));
 
         } catch (Exception e) {
 
@@ -169,21 +112,11 @@ public class DocumentTypeApiImpl extends DocumentTypeApiBase {
     }
 
     @Override
-    public ResponseEntity<RestApiResponse<Collection<DocumentTypeDTO>>> handleSearch(String criteria) {
+    public ResponseEntity<Collection<DocumentTypeDTO>> handleSearch(String criteria) {
 
         try {
-            RestApiResponse<Collection<DocumentTypeDTO>> responseData = new RestApiResponse<>();
-            Optional<Collection<DocumentTypeDTO>> data = Optional.of(documentTypeService.search(criteria));
-            responseData.setData(data.get());
-            responseData.setSuccess(true);
-            responseData.setMessage(
-                    String.format("Loaded %d document types.", responseData.getData().size()));
-            responseData.setStatus(HttpStatus.OK.value());
-            ResponseEntity<RestApiResponse<Collection<DocumentTypeDTO>>> response = ResponseEntity
-                    .status(HttpStatus.OK)
-                    .body(responseData);
-
-            return response;
+            
+            return ResponseEntity.ok(documentTypeService.search(criteria));
 
         } catch (Exception e) {
 

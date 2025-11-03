@@ -190,7 +190,7 @@
                       [noEntriesFoundLabel]="'No Entries Found'"
                     ></ngx-mat-select-search>
                   </mat-option>
-                  @for (item of organisationApiStore.dataList(); track item.id) {
+                  @for (item of organisationList(); track item.id) {
                     <mat-option [value]="item">{{ item[organisationDisplays[0]] }}</mat-option>
                   }
                 </mat-select>
@@ -213,7 +213,7 @@
                       [noEntriesFoundLabel]="'No Entries Found'"
                     ></ngx-mat-select-search>
                   </mat-option>
-                  @for (item of branchApiStore.dataList(); track item.id) {
+                  @for (item of branchList(); track item.id) {
                     <mat-option [value]="item">{{ item[branchDisplays[0]] }}</mat-option>
                   }
                 </mat-select>

@@ -18,7 +18,6 @@ const initialState: EmploymentRecordApiState = {
   dataList: [],
   dataPage: new Page<any>(),
   searchCriteria: new SearchObject<any>(),
-  status: 0,
   loading: false,
   success: false,
   messages: [],
@@ -41,27 +40,27 @@ export const EmploymentRecordApiStore = signalStore(
           patchState(store, { loading: true, loaderMessage: 'Loading ...' });
           return employmentRecordApi.findById(data.id, ).pipe(
             tapResponse({
-              next: (response: RestApiResponse<EmploymentRecordDTO | any>) => {
+              next: (response: EmploymentRecordDTO | any) => {
                 patchState(
-                  store, 
+                  store,
                   {
-                    data: response?.data,
-                    loading: false, 
+                    data: response,
+                    loading: false,
                     status: (response?.status) ,
-                    success: true, 
-                    messages: [response.message || 'Success!!'],
+                    success: true,
+                    messages: [ 'Success!'],
                     error: false,
                   }
                 );
               },
               error: (error: any) => {
                 patchState(
-                  store, { 
-                    status: (error?.status || 0), 
-                    loading: false, 
+                  store, {
+                    status: (error?.status || 0),
+                    loading: false,
                     success: false,
                     error: true,
-                    messages: [error.message || 'An error occurred'], 
+                    messages: [error.message || 'An error occurred'],
                   }
                 );
               },
@@ -74,27 +73,25 @@ export const EmploymentRecordApiStore = signalStore(
           patchState(store, { loading: true, loaderMessage: 'Loading ...' });
           return employmentRecordApi.findByIndividual(data.individualId, ).pipe(
             tapResponse({
-              next: (response: RestApiResponse<EmploymentRecordDTO[] | any[]>) => {
+              next: (response: EmploymentRecordDTO[] | any[]) => {
                 patchState(
-                  store, 
+                  store,
                   {
-                    dataList: response?.data, 
-                    loading: false, 
-                    status: (response?.status) ,
-                    success: true, 
-                    messages: [response.message || 'Success!!'],
+                    dataList: response,
+                    loading: false,
+                    success: true,
+                    messages: [ 'Success!'],
                     error: false,
                   }
                 );
               },
               error: (error: any) => {
                 patchState(
-                  store, { 
-                    status: (error?.status || 0), 
-                    loading: false, 
+                  store, {
+                    loading: false,
                     success: false,
                     error: true,
-                    messages: [error.message || 'An error occurred'], 
+                    messages: [error.message || 'An error occurred'],
                   }
                 );
               },
@@ -107,27 +104,25 @@ export const EmploymentRecordApiStore = signalStore(
           patchState(store, { loading: true, loaderMessage: 'Loading ...' });
           return employmentRecordApi.getAll().pipe(
             tapResponse({
-              next: (response: RestApiResponse<EmploymentRecordDTO[] | any[]>) => {
+              next: (response: EmploymentRecordDTO[] | any[]) => {
                 patchState(
-                  store, 
+                  store,
                   {
-                    dataList: response?.data, 
-                    loading: false, 
-                    status: (response?.status) ,
-                    success: true, 
-                    messages: [response.message || 'Success!!'],
+                    dataList: response,
+                    loading: false,
+                    success: true,
+                    messages: [ 'Success!'],
                     error: false,
                   }
                 );
               },
               error: (error: any) => {
                 patchState(
-                  store, { 
-                    status: (error?.status || 0), 
-                    loading: false, 
+                  store, {
+                    loading: false,
                     success: false,
                     error: true,
-                    messages: [error.message || 'An error occurred'], 
+                    messages: [error.message || 'An error occurred'],
                   }
                 );
               },
@@ -140,27 +135,25 @@ export const EmploymentRecordApiStore = signalStore(
           patchState(store, { loading: true, loaderMessage: 'Loading ...' });
           return employmentRecordApi.getAllPaged(data.pageNumber, data.pageSize, ).pipe(
             tapResponse({
-              next: (response: RestApiResponse<Page<EmploymentRecordDTO> | any>) => {
+              next: (response: Page<EmploymentRecordDTO> | any) => {
                 patchState(
-                  store, 
+                  store,
                   {
-                    dataPage: response?.data,
-                    loading: false, 
-                    status: (response?.status) ,
-                    success: true, 
-                    messages: [response.message || 'Success!!'],
+                    dataPage: response,
+                    loading: false,
+                    success: true,
+                    messages: [ 'Success!'],
                     error: false,
                   }
                 );
               },
               error: (error: any) => {
                 patchState(
-                  store, { 
-                    status: (error?.status || 0), 
-                    loading: false, 
+                  store, {
+                    loading: false,
                     success: false,
                     error: true,
-                    messages: [error.message || 'An error occurred'], 
+                    messages: [error.message || 'An error occurred'],
                   }
                 );
               },
@@ -173,27 +166,25 @@ export const EmploymentRecordApiStore = signalStore(
           patchState(store, { loading: true, loaderMessage: 'Loading ...' });
           return employmentRecordApi.pagedSearch(data.criteria, data.pageNumber, data.pageSize, ).pipe(
             tapResponse({
-              next: (response: RestApiResponse<Page<EmploymentRecordDTO> | any>) => {
+              next: (response: Page<EmploymentRecordDTO> | any) => {
                 patchState(
-                  store, 
+                  store,
                   {
-                    dataPage: response?.data,
-                    loading: false, 
-                    status: (response?.status) ,
-                    success: true, 
-                    messages: [response.message || 'Success!!'],
+                    dataPage: response,
+                    loading: false,
+                    success: true,
+                    messages: [ 'Success!'],
                     error: false,
                   }
                 );
               },
               error: (error: any) => {
                 patchState(
-                  store, { 
-                    status: (error?.status || 0), 
-                    loading: false, 
+                  store, {
+                    loading: false,
                     success: false,
                     error: true,
-                    messages: [error.message || 'An error occurred'], 
+                    messages: [error.message || 'An error occurred'],
                   }
                 );
               },
@@ -206,27 +197,25 @@ export const EmploymentRecordApiStore = signalStore(
           patchState(store, { loading: true, loaderMessage: 'Loading ...' });
           return employmentRecordApi.remove(data.id, ).pipe(
             tapResponse({
-              next: (response: RestApiResponse<boolean | any>) => {
+              next: (response: boolean | any) => {
                 patchState(
-                  store, 
+                  store,
                   {
-                    data: response?.data,
-                    loading: false, 
-                    status: (response?.status) ,
-                    success: true, 
-                    messages: [response.message || 'Success!!'],
+                    data: response,
+                    loading: false,
+                    success: true,
+                    messages: [ 'Success!'],
                     error: false,
                   }
                 );
               },
               error: (error: any) => {
                 patchState(
-                  store, { 
-                    status: (error?.status || 0), 
-                    loading: false, 
+                  store, {
+                    loading: false,
                     success: false,
                     error: true,
-                    messages: [error.message || 'An error occurred'], 
+                    messages: [error.message || 'An error occurred'],
                   }
                 );
               },
@@ -239,27 +228,25 @@ export const EmploymentRecordApiStore = signalStore(
           patchState(store, { loading: true, loaderMessage: 'Loading ...' });
           return employmentRecordApi.save(data.employmentRecord, ).pipe(
             tapResponse({
-              next: (response: RestApiResponse<EmploymentRecordDTO | any>) => {
+              next: (response: EmploymentRecordDTO | any) => {
                 patchState(
-                  store, 
+                  store,
                   {
-                    data: response?.data,
-                    loading: false, 
-                    status: (response?.status) ,
-                    success: true, 
-                    messages: [response.message || 'Success!!'],
+                    data: response,
+                    loading: false,
+                    success: true,
+                    messages: [ 'Success!'],
                     error: false,
                   }
                 );
               },
               error: (error: any) => {
                 patchState(
-                  store, { 
-                    status: (error?.status || 0), 
-                    loading: false, 
+                  store, {
+                    loading: false,
                     success: false,
                     error: true,
-                    messages: [error.message || 'An error occurred'], 
+                    messages: [error.message || 'An error occurred'],
                   }
                 );
               },
@@ -272,27 +259,25 @@ export const EmploymentRecordApiStore = signalStore(
           patchState(store, { loading: true, loaderMessage: 'Loading ...' });
           return employmentRecordApi.search(data.criteria, ).pipe(
             tapResponse({
-              next: (response: RestApiResponse<EmploymentRecordDTO[] | any[]>) => {
+              next: (response: EmploymentRecordDTO[] | any[]) => {
                 patchState(
-                  store, 
+                  store,
                   {
-                    dataList: response?.data, 
-                    loading: false, 
-                    status: (response?.status) ,
-                    success: true, 
-                    messages: [response.message || 'Success!!'],
+                    dataList: response,
+                    loading: false,
+                    success: true,
+                    messages: [ 'Success!'],
                     error: false,
                   }
                 );
               },
               error: (error: any) => {
                 patchState(
-                  store, { 
-                    status: (error?.status || 0), 
-                    loading: false, 
+                  store, {
+                    loading: false,
                     success: false,
                     error: true,
-                    messages: [error.message || 'An error occurred'], 
+                    messages: [error.message || 'An error occurred'],
                   }
                 );
               },

@@ -6,60 +6,60 @@ import { IndividualDTO } from '@app/model/bw/co/centralkyc/individual/individual
 import { HttpClient } from '@angular/common/http';
 import { Page } from '@app/model/page.model';
 import { SearchObject } from '@app/model/search-object';
-import { RestApiResponse } from '@app/model/rest-api-response.model';
+import { IndividualSearchCriteria } from '@app/model/bw/co/centralkyc/individual/individual-search-criteria';
 
 @Injectable({
   providedIn: 'root'
 })
 export class IndividualApi {
-    
+
     protected path = '/individual';
 
     private http = inject(HttpClient);
 
-    public findById(id: string | any ): Observable<RestApiResponse<IndividualDTO | any>> {
+    public findById(id: string | any ): Observable<IndividualDTO | any> {
 
-        return this.http.get<RestApiResponse<IndividualDTO | any>>(`${this.path}/${id}`);
+        return this.http.get<IndividualDTO | any>(`${this.path}/${id}`);
     }
 
-    public getAll(): Observable<RestApiResponse<IndividualListDTO[] | any[]>> {
+    public getAll(): Observable<IndividualListDTO[] | any[]> {
 
-        return this.http.get<RestApiResponse<IndividualListDTO[] | any[]>>(`${this.path}`);
+        return this.http.get<IndividualListDTO[] | any[]>(`${this.path}`);
     }
 
-    public getAllPaged(pageNumber: number | any , pageSize: number | any ): Observable<RestApiResponse<Page<IndividualListDTO> | any>> {
+    public getAllPaged(pageNumber: number | any , pageSize: number | any ): Observable<Page<IndividualListDTO> | any> {
 
-        return this.http.get<RestApiResponse<Page<IndividualListDTO> | any>>(`${this.path}/paged?pageNumber=${pageNumber}&pageSize=${pageSize}`);
+        return this.http.get<Page<IndividualListDTO> | any>(`${this.path}/paged?pageNumber=${pageNumber}&pageSize=${pageSize}`);
     }
 
-    public getOrganisationClients(organisationId: string | any ): Observable<RestApiResponse<IndividualListDTO[] | any[]>> {
+    public getOrganisationClients(organisationId: string | any ): Observable<IndividualListDTO[] | any[]> {
 
-        return this.http.get<RestApiResponse<IndividualListDTO[] | any[]>>(`${this.path}/organisation/{organisationId}/organisationId/${organisationId}`);
+        return this.http.get<IndividualListDTO[] | any[]>(`${this.path}/organisation/{organisationId}/organisationId/${organisationId}`);
     }
 
-    public getOrganisationClientsPaged(organisationId: string | any , pageNumber: number | any , pageSize: number | any ): Observable<RestApiResponse<Page<IndividualListDTO> | any>> {
+    public getOrganisationClientsPaged(organisationId: string | any , pageNumber: number | any , pageSize: number | any ): Observable<Page<IndividualListDTO> | any> {
 
-        return this.http.get<RestApiResponse<Page<IndividualListDTO> | any>>(`${this.path}/organisation/${organisationId}/paged?pageNumber=${pageNumber}&pageSize=${pageSize}`);
+        return this.http.get<Page<IndividualListDTO> | any>(`${this.path}/organisation/${organisationId}/paged?pageNumber=${pageNumber}&pageSize=${pageSize}`);
     }
 
-    public pagedSearch(criteria: SearchObject<IndividualSearchCriteria> | any ): Observable<RestApiResponse<Page<IndividualListDTO> | any>> {
+    public pagedSearch(criteria: SearchObject<IndividualSearchCriteria> | any ): Observable<Page<IndividualListDTO> | any> {
 
-        return this.http.post<RestApiResponse<Page<IndividualListDTO> | any>>(`${this.path}/search/paged`, criteria);
+        return this.http.post<Page<IndividualListDTO> | any>(`${this.path}/search/paged`, criteria);
     }
 
-    public remove(id: string | any ): Observable<RestApiResponse<boolean | any>> {
+    public remove(id: string | any ): Observable<boolean | any> {
 
-        return this.http.delete<RestApiResponse<boolean | any>>(`${this.path}/${id}`);
+        return this.http.delete<boolean | any>(`${this.path}/${id}`);
     }
 
-    public save(individual: IndividualDTO | any ): Observable<RestApiResponse<IndividualDTO | any>> {
+    public save(individual: IndividualDTO | any ): Observable<IndividualDTO | any> {
 
-        return this.http.post<RestApiResponse<IndividualDTO | any>>(`${this.path}`, individual);
+        return this.http.post<IndividualDTO | any>(`${this.path}`, individual);
     }
 
-    public search(criteria: SearchObject<IndividualSearchCriteria> | any ): Observable<RestApiResponse<IndividualListDTO[] | any[]>> {
+    public search(criteria: SearchObject<IndividualSearchCriteria> | any ): Observable<IndividualListDTO[] | any[]> {
 
-        return this.http.post<RestApiResponse<IndividualListDTO[] | any[]>>(`${this.path}/search`, criteria);
+        return this.http.post<IndividualListDTO[] | any[]>(`${this.path}/search`, criteria);
     }
 
 }

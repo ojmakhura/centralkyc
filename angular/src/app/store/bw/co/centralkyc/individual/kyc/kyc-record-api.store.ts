@@ -18,7 +18,6 @@ const initialState: KycRecordApiState = {
   dataList: [],
   dataPage: new Page<any>(),
   searchCriteria: new SearchObject<any>(),
-  status: 0,
   loading: false,
   success: false,
   messages: [],
@@ -41,27 +40,25 @@ export const KycRecordApiStore = signalStore(
           patchState(store, { loading: true, loaderMessage: 'Loading ...' });
           return kycRecordApi.findById(data.id, ).pipe(
             tapResponse({
-              next: (response: RestApiResponse<KycRecordDTO | any>) => {
+              next: (response: KycRecordDTO | any) => {
                 patchState(
-                  store, 
+                  store,
                   {
-                    data: response?.data,
-                    loading: false, 
-                    status: (response?.status) ,
-                    success: true, 
-                    messages: [response.message || 'Success!!'],
+                    data: response,
+                    loading: false,
+                    success: true,
+                    messages: [ 'Success!'],
                     error: false,
                   }
                 );
               },
               error: (error: any) => {
                 patchState(
-                  store, { 
-                    status: (error?.status || 0), 
-                    loading: false, 
+                  store, {
+                    loading: false,
                     success: false,
                     error: true,
-                    messages: [error.message || 'An error occurred'], 
+                    messages: [error.message || 'An error occurred'],
                   }
                 );
               },
@@ -74,27 +71,25 @@ export const KycRecordApiStore = signalStore(
           patchState(store, { loading: true, loaderMessage: 'Loading ...' });
           return kycRecordApi.findByIdentityNo(data.identityNo, ).pipe(
             tapResponse({
-              next: (response: RestApiResponse<KycRecordDTO[] | any[]>) => {
+              next: (response: KycRecordDTO[] | any[]) => {
                 patchState(
-                  store, 
+                  store,
                   {
-                    dataList: response?.data, 
-                    loading: false, 
-                    status: (response?.status) ,
-                    success: true, 
-                    messages: [response.message || 'Success!!'],
+                    dataList: response,
+                    loading: false,
+                    success: true,
+                    messages: [ 'Success!'],
                     error: false,
                   }
                 );
               },
               error: (error: any) => {
                 patchState(
-                  store, { 
-                    status: (error?.status || 0), 
-                    loading: false, 
+                  store, {
+                    loading: false,
                     success: false,
                     error: true,
-                    messages: [error.message || 'An error occurred'], 
+                    messages: [error.message || 'An error occurred'],
                   }
                 );
               },
@@ -107,27 +102,25 @@ export const KycRecordApiStore = signalStore(
           patchState(store, { loading: true, loaderMessage: 'Loading ...' });
           return kycRecordApi.findByIndividual(data.individualId, ).pipe(
             tapResponse({
-              next: (response: RestApiResponse<KycRecordDTO[] | any[]>) => {
+              next: (response: KycRecordDTO[] | any[]) => {
                 patchState(
-                  store, 
+                  store,
                   {
-                    dataList: response?.data, 
-                    loading: false, 
-                    status: (response?.status) ,
-                    success: true, 
-                    messages: [response.message || 'Success!!'],
+                    dataList: response,
+                    loading: false,
+                    success: true,
+                    messages: [ 'Success!'],
                     error: false,
                   }
                 );
               },
               error: (error: any) => {
                 patchState(
-                  store, { 
-                    status: (error?.status || 0), 
-                    loading: false, 
+                  store, {
+                    loading: false,
                     success: false,
                     error: true,
-                    messages: [error.message || 'An error occurred'], 
+                    messages: [error.message || 'An error occurred'],
                   }
                 );
               },
@@ -140,27 +133,25 @@ export const KycRecordApiStore = signalStore(
           patchState(store, { loading: true, loaderMessage: 'Loading ...' });
           return kycRecordApi.getAll().pipe(
             tapResponse({
-              next: (response: RestApiResponse<KycRecordDTO[] | any[]>) => {
+              next: (response: KycRecordDTO[] | any[]) => {
                 patchState(
-                  store, 
+                  store,
                   {
-                    dataList: response?.data, 
-                    loading: false, 
-                    status: (response?.status) ,
-                    success: true, 
-                    messages: [response.message || 'Success!!'],
+                    dataList: response,
+                    loading: false,
+                    success: true,
+                    messages: [ 'Success!'],
                     error: false,
                   }
                 );
               },
               error: (error: any) => {
                 patchState(
-                  store, { 
-                    status: (error?.status || 0), 
-                    loading: false, 
+                  store, {
+                    loading: false,
                     success: false,
                     error: true,
-                    messages: [error.message || 'An error occurred'], 
+                    messages: [error.message || 'An error occurred'],
                   }
                 );
               },
@@ -173,27 +164,25 @@ export const KycRecordApiStore = signalStore(
           patchState(store, { loading: true, loaderMessage: 'Loading ...' });
           return kycRecordApi.getAllPaged(data.pageNumber, data.pageSize, ).pipe(
             tapResponse({
-              next: (response: RestApiResponse<Page<KycRecordDTO> | any>) => {
+              next: (response: Page<KycRecordDTO> | any) => {
                 patchState(
-                  store, 
+                  store,
                   {
-                    dataPage: response?.data,
-                    loading: false, 
-                    status: (response?.status) ,
-                    success: true, 
-                    messages: [response.message || 'Success!!'],
+                    dataPage: response,
+                    loading: false,
+                    success: true,
+                    messages: [ 'Success!'],
                     error: false,
                   }
                 );
               },
               error: (error: any) => {
                 patchState(
-                  store, { 
-                    status: (error?.status || 0), 
-                    loading: false, 
+                  store, {
+                    loading: false,
                     success: false,
                     error: true,
-                    messages: [error.message || 'An error occurred'], 
+                    messages: [error.message || 'An error occurred'],
                   }
                 );
               },
@@ -206,27 +195,25 @@ export const KycRecordApiStore = signalStore(
           patchState(store, { loading: true, loaderMessage: 'Loading ...' });
           return kycRecordApi.pagedSearch(data.criteria, data.pageNumber, data.pageSize, ).pipe(
             tapResponse({
-              next: (response: RestApiResponse<Page<KycRecordDTO> | any>) => {
+              next: (response: Page<KycRecordDTO> | any) => {
                 patchState(
-                  store, 
+                  store,
                   {
-                    dataPage: response?.data,
-                    loading: false, 
-                    status: (response?.status) ,
-                    success: true, 
-                    messages: [response.message || 'Success!!'],
+                    dataPage: response,
+                    loading: false,
+                    success: true,
+                    messages: [ 'Success!'],
                     error: false,
                   }
                 );
               },
               error: (error: any) => {
                 patchState(
-                  store, { 
-                    status: (error?.status || 0), 
-                    loading: false, 
+                  store, {
+                    loading: false,
                     success: false,
                     error: true,
-                    messages: [error.message || 'An error occurred'], 
+                    messages: [error.message || 'An error occurred'],
                   }
                 );
               },
@@ -239,27 +226,25 @@ export const KycRecordApiStore = signalStore(
           patchState(store, { loading: true, loaderMessage: 'Loading ...' });
           return kycRecordApi.remove(data.id, ).pipe(
             tapResponse({
-              next: (response: RestApiResponse<boolean | any>) => {
+              next: (response: boolean | any) => {
                 patchState(
-                  store, 
+                  store,
                   {
-                    data: response?.data,
-                    loading: false, 
-                    status: (response?.status) ,
-                    success: true, 
-                    messages: [response.message || 'Success!!'],
+                    data: response,
+                    loading: false,
+                    success: true,
+                    messages: [ 'Success!'],
                     error: false,
                   }
                 );
               },
               error: (error: any) => {
                 patchState(
-                  store, { 
-                    status: (error?.status || 0), 
-                    loading: false, 
+                  store, {
+                    loading: false,
                     success: false,
                     error: true,
-                    messages: [error.message || 'An error occurred'], 
+                    messages: [error.message || 'An error occurred'],
                   }
                 );
               },
@@ -272,27 +257,25 @@ export const KycRecordApiStore = signalStore(
           patchState(store, { loading: true, loaderMessage: 'Loading ...' });
           return kycRecordApi.save(data.kycRecord, ).pipe(
             tapResponse({
-              next: (response: RestApiResponse<KycRecordDTO | any>) => {
+              next: (response: KycRecordDTO | any) => {
                 patchState(
-                  store, 
+                  store,
                   {
-                    data: response?.data,
-                    loading: false, 
-                    status: (response?.status) ,
-                    success: true, 
-                    messages: [response.message || 'Success!!'],
+                    data: response,
+                    loading: false,
+                    success: true,
+                    messages: [ 'Success!'],
                     error: false,
                   }
                 );
               },
               error: (error: any) => {
                 patchState(
-                  store, { 
-                    status: (error?.status || 0), 
-                    loading: false, 
+                  store, {
+                    loading: false,
                     success: false,
                     error: true,
-                    messages: [error.message || 'An error occurred'], 
+                    messages: [error.message || 'An error occurred'],
                   }
                 );
               },
@@ -305,27 +288,25 @@ export const KycRecordApiStore = signalStore(
           patchState(store, { loading: true, loaderMessage: 'Loading ...' });
           return kycRecordApi.search(data.criteria, ).pipe(
             tapResponse({
-              next: (response: RestApiResponse<KycRecordDTO[] | any[]>) => {
+              next: (response: KycRecordDTO[] | any[]) => {
                 patchState(
-                  store, 
+                  store,
                   {
-                    dataList: response?.data, 
-                    loading: false, 
-                    status: (response?.status) ,
-                    success: true, 
-                    messages: [response.message || 'Success!!'],
+                    dataList: response,
+                    loading: false,
+                    success: true,
+                    messages: [ 'Success!'],
                     error: false,
                   }
                 );
               },
               error: (error: any) => {
                 patchState(
-                  store, { 
-                    status: (error?.status || 0), 
-                    loading: false, 
+                  store, {
+                    loading: false,
                     success: false,
                     error: true,
-                    messages: [error.message || 'An error occurred'], 
+                    messages: [error.message || 'An error occurred'],
                   }
                 );
               },

@@ -41,11 +41,10 @@ public class IndividualApiImpl extends IndividualApiBase {
     }
 
     @Override
-    public ResponseEntity<RestApiResponse<IndividualDTO>> handleFindById(String id) {
+    public ResponseEntity<IndividualDTO> handleFindById(String id) {
 
         try {
 
-            RestApiResponse<IndividualDTO> responseData = new RestApiResponse<>();
             IndividualDTO data = individualService.findById(id);
 
             if (data.getHasUser()) {
@@ -69,14 +68,7 @@ public class IndividualApiImpl extends IndividualApiBase {
 
             }
 
-            responseData.setData(data);
-            ResponseEntity<RestApiResponse<IndividualDTO>> response = ResponseEntity.status(HttpStatus.OK)
-                    .body(responseData);
-            responseData.setStatus(HttpStatus.OK.value());
-            responseData.setMessage("Individual retrieved successfully.");
-
-            return response;
-
+            return ResponseEntity.ok(data);
         } catch (Exception e) {
             throw e;
         }
@@ -84,38 +76,22 @@ public class IndividualApiImpl extends IndividualApiBase {
     }
 
     @Override
-    public ResponseEntity<RestApiResponse<Collection<IndividualListDTO>>> handleGetAll() {
+    public ResponseEntity<Collection<IndividualListDTO>> handleGetAll() {
 
         try {
-            RestApiResponse<Collection<IndividualListDTO>> responseData = new RestApiResponse<>();
-            Optional<Collection<IndividualListDTO>> data = Optional.of(individualService.getAll());
-            responseData.setData(data.get());
-            ResponseEntity<RestApiResponse<Collection<IndividualListDTO>>> response = ResponseEntity
-                    .status(HttpStatus.OK)
-                    .body(responseData);
-            responseData.setStatus(HttpStatus.OK.value());
-            responseData.setMessage(String.format("Fround %d individuals.", data.get().size()));
 
-            return response;
+            return ResponseEntity.ok(individualService.getAll());
         } catch (Exception e) {
             throw e;
         }
     }
 
     @Override
-    public ResponseEntity<RestApiResponse<Page<IndividualListDTO>>> handleGetAllPaged(Integer pageNumber,
+    public ResponseEntity<Page<IndividualListDTO>> handleGetAllPaged(Integer pageNumber,
             Integer pageSize) {
 
         try {
-            RestApiResponse<Page<IndividualListDTO>> responseData = new RestApiResponse<>();
-            Optional<Page<IndividualListDTO>> data = Optional.of(individualService.getAll(pageNumber, pageSize));
-            responseData.setData(data.get());
-            ResponseEntity<RestApiResponse<Page<IndividualListDTO>>> response = ResponseEntity.status(HttpStatus.OK)
-                    .body(responseData);
-            responseData.setStatus(HttpStatus.OK.value());
-            responseData.setMessage(String.format("Fround %d individuals.", data.get().getTotalElements()));
-
-            return response;
+            return ResponseEntity.ok(individualService.getAll(pageNumber, pageSize));
 
         } catch (Exception e) {
             throw e;
@@ -123,20 +99,12 @@ public class IndividualApiImpl extends IndividualApiBase {
     }
 
     @Override
-    public ResponseEntity<RestApiResponse<Page<IndividualListDTO>>> handlePagedSearch(
+    public ResponseEntity<Page<IndividualListDTO>> handlePagedSearch(
             SearchObject<IndividualSearchCriteria> criteria) {
 
         try {
 
-            RestApiResponse<Page<IndividualListDTO>> responseData = new RestApiResponse<>();
-            Optional<Page<IndividualListDTO>> data = Optional.of(individualService.search(criteria));
-            responseData.setData(data.get());
-            ResponseEntity<RestApiResponse<Page<IndividualListDTO>>> response = ResponseEntity.status(HttpStatus.OK)
-                    .body(responseData);
-            responseData.setStatus(HttpStatus.OK.value());
-            responseData.setMessage(String.format("Fround %d individuals.", data.get().getTotalElements()));
-
-            return response;
+            return ResponseEntity.ok(individualService.search(criteria));
 
         } catch (Exception e) {
             throw e;
@@ -144,18 +112,11 @@ public class IndividualApiImpl extends IndividualApiBase {
     }
 
     @Override
-    public ResponseEntity<RestApiResponse<Boolean>> handleRemove(String id) {
+    public ResponseEntity<Boolean> handleRemove(String id) {
 
         try {
 
-            RestApiResponse<Boolean> responseData = new RestApiResponse<>();
-            Optional<Boolean> data = Optional.of(individualService.remove(id));
-            responseData.setData(data.get());
-            ResponseEntity<RestApiResponse<Boolean>> response = ResponseEntity.status(HttpStatus.OK).body(responseData);
-            responseData.setStatus(HttpStatus.OK.value());
-            responseData.setMessage("Individual deleted successfully.");
-
-            return response;
+            return ResponseEntity.ok(individualService.remove(id));
 
         } catch (Exception e) {
             throw e;
@@ -164,11 +125,10 @@ public class IndividualApiImpl extends IndividualApiBase {
     }
 
     @Override
-    public ResponseEntity<RestApiResponse<IndividualDTO>> handleSave(IndividualDTO individual) {
+    public ResponseEntity<IndividualDTO> handleSave(IndividualDTO individual) {
 
         try {
 
-            RestApiResponse<IndividualDTO> responseData = new RestApiResponse<>();
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             AuditTracker.auditTrail(individual, authentication);
 
@@ -194,14 +154,7 @@ public class IndividualApiImpl extends IndividualApiBase {
 
             }
 
-            Optional<IndividualDTO> data = Optional.of(individualService.save(individual));
-            responseData.setData(data.get());
-            ResponseEntity<RestApiResponse<IndividualDTO>> response = ResponseEntity.status(HttpStatus.OK)
-                    .body(responseData);
-            responseData.setStatus(HttpStatus.OK.value());
-            responseData.setMessage("Individual saved successfully.");
-
-            return response;
+            return ResponseEntity.ok(individualService.save(individual));
 
         } catch (Exception e) {
             throw e;
@@ -209,21 +162,13 @@ public class IndividualApiImpl extends IndividualApiBase {
     }
 
     @Override
-    public ResponseEntity<RestApiResponse<Collection<IndividualListDTO>>> handleSearch(
+    public ResponseEntity<Collection<IndividualListDTO>> handleSearch(
             SearchObject<IndividualSearchCriteria> criteria) {
 
         try {
-            RestApiResponse<Collection<IndividualListDTO>> responseData = new RestApiResponse<>();
-            Optional<Collection<IndividualListDTO>> data = Optional
-                    .of(individualService.search(criteria.getCriteria(), (PropertySearchOrder) criteria.getSortings()));
-            responseData.setData(data.get());
-            responseData.setStatus(HttpStatus.OK.value());
-            responseData.setMessage(String.format("Fround %d individuals.", data.get().size()));
-            ResponseEntity<RestApiResponse<Collection<IndividualListDTO>>> response = ResponseEntity
-                    .status(HttpStatus.OK)
-                    .body(responseData);
-
-            return response;
+            
+            return ResponseEntity.ok(individualService.search(criteria.getCriteria(), (PropertySearchOrder) criteria.getSortings()));
+            
 
         } catch (Exception e) {
             throw e;
@@ -232,14 +177,14 @@ public class IndividualApiImpl extends IndividualApiBase {
     }
 
     @Override
-    public ResponseEntity<RestApiResponse<Collection<IndividualListDTO>>> handleGetOrganisationClients(
+    public ResponseEntity<Collection<IndividualListDTO>> handleGetOrganisationClients(
             String organisationId) throws Exception {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'handleGetOrganisationClients'");
     }
 
     @Override
-    public ResponseEntity<RestApiResponse<Page<IndividualListDTO>>> handleGetOrganisationClientsPaged(
+    public ResponseEntity<Page<IndividualListDTO>> handleGetOrganisationClientsPaged(
             String criteria, Integer pageNumber, Integer pageSize) throws Exception {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'handleGetOrganisationClientsPaged'");

@@ -28,18 +28,11 @@ public class EmploymentRecordApiImpl extends EmploymentRecordApiBase {
     }
 
     @Override
-    public ResponseEntity<RestApiResponse<EmploymentRecordDTO>> handleFindById(String id) throws Exception {
+    public ResponseEntity<EmploymentRecordDTO> handleFindById(String id) throws Exception {
 
         try {
 
-            RestApiResponse<EmploymentRecordDTO> responseData = new RestApiResponse<>();
-            responseData.setData(employmentRecordService.findById(id));
-            responseData.setStatus(HttpStatus.OK.value());
-            responseData.setMessage(String.format("Operation successful."));
-            ResponseEntity<RestApiResponse<EmploymentRecordDTO>> response = ResponseEntity.status(HttpStatus.OK)
-                    .body(responseData);
-
-            return response;
+            return ResponseEntity.ok(employmentRecordService.findById(id));
 
         } catch (Exception e) {
 
@@ -48,19 +41,12 @@ public class EmploymentRecordApiImpl extends EmploymentRecordApiBase {
     }
 
     @Override
-    public ResponseEntity<RestApiResponse<Collection<EmploymentRecordDTO>>> handleFindByIndividual(String individualId)
+    public ResponseEntity<Collection<EmploymentRecordDTO>> handleFindByIndividual(String individualId)
             throws Exception {
 
         try {
 
-            RestApiResponse<Collection<EmploymentRecordDTO>> responseData = new RestApiResponse<>();
-            responseData.setData(employmentRecordService.findByIndividual(individualId));
-            responseData.setStatus(HttpStatus.OK.value());
-            responseData.setMessage(String.format("Operation successful."));
-            ResponseEntity<RestApiResponse<Collection<EmploymentRecordDTO>>> response = ResponseEntity
-                    .status(HttpStatus.OK).body(responseData);
-
-            return response;
+            return ResponseEntity.ok(employmentRecordService.findByIndividual(individualId));
 
         } catch (Exception e) {
 
@@ -69,18 +55,11 @@ public class EmploymentRecordApiImpl extends EmploymentRecordApiBase {
     }
 
     @Override
-    public ResponseEntity<RestApiResponse<Collection<EmploymentRecordDTO>>> handleGetAll() throws Exception {
+    public ResponseEntity<Collection<EmploymentRecordDTO>> handleGetAll() throws Exception {
 
         try {
 
-            RestApiResponse<Collection<EmploymentRecordDTO>> responseData = new RestApiResponse<>();
-            responseData.setData(employmentRecordService.getAll());
-            responseData.setStatus(HttpStatus.OK.value());
-            responseData.setMessage(String.format("Operation successful."));
-            ResponseEntity<RestApiResponse<Collection<EmploymentRecordDTO>>> response = ResponseEntity
-                    .status(HttpStatus.OK).body(responseData);
-
-            return response;
+            return ResponseEntity.ok(employmentRecordService.getAll());
 
         } catch (Exception e) {
 
@@ -89,19 +68,12 @@ public class EmploymentRecordApiImpl extends EmploymentRecordApiBase {
     }
 
     @Override
-    public ResponseEntity<RestApiResponse<Page<EmploymentRecordDTO>>> handleGetAllPaged(Integer pageNumber,
+    public ResponseEntity<Page<EmploymentRecordDTO>> handleGetAllPaged(Integer pageNumber,
             Integer pageSize) throws Exception {
 
         try {
 
-            RestApiResponse<Page<EmploymentRecordDTO>> responseData = new RestApiResponse<>();
-            responseData.setData(employmentRecordService.getAll(pageNumber, pageSize));
-            responseData.setStatus(HttpStatus.OK.value());
-            responseData.setMessage(String.format("Operation successful."));
-            ResponseEntity<RestApiResponse<Page<EmploymentRecordDTO>>> response = ResponseEntity.status(HttpStatus.OK)
-                    .body(responseData);
-
-            return response;
+            return ResponseEntity.ok(employmentRecordService.getAll(pageNumber, pageSize));
 
         } catch (Exception e) {
 
@@ -110,19 +82,12 @@ public class EmploymentRecordApiImpl extends EmploymentRecordApiBase {
     }
 
     @Override
-    public ResponseEntity<RestApiResponse<Page<EmploymentRecordDTO>>> handlePagedSearch(String criteria,
+    public ResponseEntity<Page<EmploymentRecordDTO>> handlePagedSearch(String criteria,
             Integer pageNumber, Integer pageSize) throws Exception {
 
         try {
 
-            RestApiResponse<Page<EmploymentRecordDTO>> responseData = new RestApiResponse<>();
-            responseData.setData(employmentRecordService.search(criteria, pageNumber, pageSize));
-            responseData.setStatus(HttpStatus.OK.value());
-            responseData.setMessage(String.format("Operation successful."));
-            ResponseEntity<RestApiResponse<Page<EmploymentRecordDTO>>> response = ResponseEntity.status(HttpStatus.OK)
-                    .body(responseData);
-
-            return response;
+            return ResponseEntity.ok(employmentRecordService.search(criteria, pageNumber, pageSize));
 
         } catch (Exception e) {
 
@@ -131,17 +96,11 @@ public class EmploymentRecordApiImpl extends EmploymentRecordApiBase {
     }
 
     @Override
-    public ResponseEntity<RestApiResponse<Boolean>> handleRemove(String id) throws Exception {
+    public ResponseEntity<Boolean> handleRemove(String id) throws Exception {
 
         try {
 
-            RestApiResponse<Boolean> responseData = new RestApiResponse<>();
-            responseData.setData(employmentRecordService.remove(id));
-            responseData.setStatus(HttpStatus.OK.value());
-            responseData.setMessage(String.format("Operation successful."));
-            ResponseEntity<RestApiResponse<Boolean>> response = ResponseEntity.status(HttpStatus.OK).body(responseData);
-
-            return response;
+            return ResponseEntity.ok(employmentRecordService.remove(id));
 
         } catch (Exception e) {
 
@@ -150,22 +109,15 @@ public class EmploymentRecordApiImpl extends EmploymentRecordApiBase {
     }
 
     @Override
-    public ResponseEntity<RestApiResponse<EmploymentRecordDTO>> handleSave(EmploymentRecordDTO employmentRecord)
+    public ResponseEntity<EmploymentRecordDTO> handleSave(EmploymentRecordDTO employmentRecord)
             throws Exception {
 
         try {
 
-            RestApiResponse<EmploymentRecordDTO> responseData = new RestApiResponse<>();
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             AuditTracker.auditTrail(employmentRecord, authentication);
 
-            responseData.setData(employmentRecordService.save(employmentRecord));
-            responseData.setStatus(HttpStatus.OK.value());
-            responseData.setMessage(String.format("Operation successful."));
-            ResponseEntity<RestApiResponse<EmploymentRecordDTO>> response = ResponseEntity.status(HttpStatus.OK)
-                    .body(responseData);
-
-            return response;
+            return ResponseEntity.ok(employmentRecordService.save(employmentRecord));
 
         } catch (Exception e) {
 
@@ -174,19 +126,12 @@ public class EmploymentRecordApiImpl extends EmploymentRecordApiBase {
     }
 
     @Override
-    public ResponseEntity<RestApiResponse<Collection<EmploymentRecordDTO>>> handleSearch(String criteria)
+    public ResponseEntity<Collection<EmploymentRecordDTO>> handleSearch(String criteria)
             throws Exception {
 
         try {
 
-            RestApiResponse<Collection<EmploymentRecordDTO>> responseData = new RestApiResponse<>();
-            responseData.setData(employmentRecordService.search(criteria));
-            responseData.setStatus(HttpStatus.OK.value());
-            responseData.setMessage(String.format("Operation successful."));
-            ResponseEntity<RestApiResponse<Collection<EmploymentRecordDTO>>> response = ResponseEntity
-                    .status(HttpStatus.OK).body(responseData);
-
-            return response;
+            return ResponseEntity.ok(employmentRecordService.search(criteria));
 
         } catch (Exception e) {
 

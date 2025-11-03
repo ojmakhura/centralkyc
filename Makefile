@@ -14,6 +14,9 @@ test_api:
 	
 build_api:
 	. ./.env && mvn -rf webservice install -DskipTests=true
+	
+build_mda:
+	. ./.env && mvn -rf mda install -DskipTests=true
 
 build_web: 
 	mvn -f angular install -DskipTests=true -o

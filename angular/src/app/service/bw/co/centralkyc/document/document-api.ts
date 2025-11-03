@@ -4,8 +4,6 @@ import { Observable } from 'rxjs';
 import { DocumentDTO } from '@app/model/bw/co/centralkyc/document/document-dto';
 import { HttpClient } from '@angular/common/http';
 import { Page } from '@app/model/page.model';
-import { SearchObject } from '@app/model/search-object';
-import { RestApiResponse } from '@app/model/rest-api-response.model';
 import { TargetEntity } from '@app/model/bw/co/centralkyc/target-entity';
 
 @Injectable({
@@ -16,44 +14,44 @@ export class DocumentApi {
 
   private http = inject(HttpClient);
 
-  public findByDocumentType(documentTypeId: string | any): Observable<RestApiResponse<DocumentDTO[] | any[]>> {
-    return this.http.get<RestApiResponse<DocumentDTO[] | any[]>>(`${this.path}/documentTypeId/${documentTypeId}`);
+  public findByDocumentType(documentTypeId: string | any): Observable<DocumentDTO[] | any[]> {
+    return this.http.get<DocumentDTO[] | any[]>(`${this.path}/documentTypeId/${documentTypeId}`);
   }
 
-  public findById(id: string | any): Observable<RestApiResponse<DocumentDTO | any>> {
-    return this.http.get<RestApiResponse<DocumentDTO | any>>(`${this.path}/${id}`);
+  public findById(id: string | any): Observable<DocumentDTO | any> {
+    return this.http.get<DocumentDTO | any>(`${this.path}/${id}`);
   }
 
   public findByTarget(
     target: TargetEntity | any,
     targetId: string | any,
-  ): Observable<RestApiResponse<DocumentDTO[] | any[]>> {
-    return this.http.get<RestApiResponse<DocumentDTO[] | any[]>>(`${this.path}/target/${target}/${targetId}`);
+  ): Observable<DocumentDTO[] | any[]> {
+    return this.http.get<DocumentDTO[] | any[]>(`${this.path}/target/${target}/${targetId}`);
   }
 
-  public getAll(): Observable<RestApiResponse<DocumentDTO[] | any[]>> {
-    return this.http.get<RestApiResponse<DocumentDTO[] | any[]>>(`${this.path}`);
+  public getAll(): Observable<DocumentDTO[] | any[]> {
+    return this.http.get<DocumentDTO[] | any[]>(`${this.path}`);
   }
 
   public getAllPaged(
     pageNumber: number | any,
     pageSize: number | any,
-  ): Observable<RestApiResponse<Page<DocumentDTO> | any>> {
-    return this.http.get<RestApiResponse<Page<DocumentDTO> | any>>(
+  ): Observable<Page<DocumentDTO> | any> {
+    return this.http.get<Page<DocumentDTO> | any>(
       `${this.path}/paged?pageNumber=${pageNumber}&pageSize=${pageSize}`,
     );
   }
 
-  public remove(id: string | any): Observable<RestApiResponse<boolean | any>> {
-    return this.http.delete<RestApiResponse<boolean | any>>(`${this.path}/${id}`);
+  public remove(id: string | any): Observable<boolean | any> {
+    return this.http.delete<boolean | any>(`${this.path}/${id}`);
   }
 
-  public save(document: DocumentDTO | any): Observable<RestApiResponse<DocumentDTO | any>> {
-    return this.http.post<RestApiResponse<DocumentDTO | any>>(`${this.path}`, document);
+  public save(document: DocumentDTO | any): Observable<DocumentDTO | any> {
+    return this.http.post<DocumentDTO | any>(`${this.path}`, document);
   }
 
-  public search(criteria: string | any): Observable<RestApiResponse<DocumentDTO[] | any[]>> {
-    return this.http.get<RestApiResponse<DocumentDTO[] | any[]>>(`${this.path}/search?criteria=${criteria}`);
+  public search(criteria: string | any): Observable<DocumentDTO[] | any[]> {
+    return this.http.get<DocumentDTO[] | any[]>(`${this.path}/search?criteria=${criteria}`);
   }
 
   public upload(
@@ -61,10 +59,10 @@ export class DocumentApi {
     targetId: string | any,
     documentTypeId: string | any,
     file: File | any,
-  ): Observable<RestApiResponse<DocumentDTO | any>> {
+  ): Observable<DocumentDTO | any> {
     const formData: FormData = new FormData();
     formData.append('file', file);
-    return this.http.post<RestApiResponse<DocumentDTO | any>>(
+    return this.http.post<DocumentDTO | any>(
       `${this.path}/upload/${target}/${targetId}/type/${documentTypeId}`,
       formData,
     );

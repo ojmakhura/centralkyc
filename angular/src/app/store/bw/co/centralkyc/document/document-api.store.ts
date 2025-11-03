@@ -19,7 +19,6 @@ const initialState: DocumentApiState = {
   dataList: [],
   dataPage: new Page<any>(),
   searchCriteria: new SearchObject<any>(),
-  status: 0,
   loading: false,
   success: false,
   messages: [],
@@ -42,23 +41,21 @@ export const DocumentApiStore = signalStore(
           patchState(store, { loading: true, loaderMessage: 'Loading ...' });
           return documentApi.findByDocumentType(data.documentTypeId, ).pipe(
             tapResponse({
-              next: (response: RestApiResponse<DocumentDTO[] | any[]>) => {
+              next: (response: DocumentDTO[] | any[]) => {
                 patchState(
                   store,
                   {
-                    dataList: response?.data,
+                    dataList: response,
                     loading: false,
-                    status: (response?.status) ,
-                    success: (response?.success || false),
-                    messages: [response.message || 'Success!!'],
+                    success: true,
+                    messages: [ 'Success!'],
                     error: false,
                   }
                 );
               },
-              error: (error: RestApiResponse<DocumentDTO[] | any[]>) => {
+              error: (error: any) => {
                 patchState(
                   store, {
-                    status: (error?.status || 0),
                     loading: false,
                     success: false,
                     error: true,
@@ -75,23 +72,21 @@ export const DocumentApiStore = signalStore(
           patchState(store, { loading: true, loaderMessage: 'Loading ...' });
           return documentApi.findById(data.id, ).pipe(
             tapResponse({
-              next: (response: RestApiResponse<DocumentDTO | any>) => {
+              next: (response: DocumentDTO | any) => {
                 patchState(
                   store,
                   {
-                    data: response?.data,
+                    data: response,
                     loading: false,
-                    status: (response?.status) ,
-                    success: (response?.success || false),
-                    messages: [response.message || 'Success!!'],
+                    success: true,
+                    messages: [ 'Success!'],
                     error: false,
                   }
                 );
               },
-              error: (error: RestApiResponse<DocumentDTO | any>) => {
+              error: (error: DocumentDTO | any) => {
                 patchState(
                   store, {
-                    status: (error?.status || 0),
                     loading: false,
                     success: false,
                     error: true,
@@ -108,20 +103,19 @@ export const DocumentApiStore = signalStore(
           patchState(store, { loading: true, loaderMessage: 'Loading ...' });
           return documentApi.findByTarget(data.target, data.targetId, ).pipe(
             tapResponse({
-              next: (response: RestApiResponse<DocumentDTO[] | any[]>) => {
+              next: (response: DocumentDTO[] | any[]) => {
                 patchState(
                   store,
                   {
-                    dataList: response?.data,
+                    dataList: response,
                     loading: false,
-                    status: (response?.status) ,
-                    success: (response?.success || false),
-                    messages: [response.message || 'Success!!'],
+                    success: true,
+                    messages: [ 'Success!'],
                     error: false,
                   }
                 );
               },
-              error: (error: RestApiResponse<DocumentDTO[] | any[]>) => {
+              error: (error: any) => {
                 patchState(
                   store, {
                     status: (error?.status || 0),
@@ -141,23 +135,21 @@ export const DocumentApiStore = signalStore(
           patchState(store, { loading: true, loaderMessage: 'Loading ...' });
           return documentApi.getAll().pipe(
             tapResponse({
-              next: (response: RestApiResponse<DocumentDTO[] | any[]>) => {
+              next: (response: DocumentDTO[] | any[]) => {
                 patchState(
                   store,
                   {
-                    dataList: response?.data,
+                    dataList: response,
                     loading: false,
-                    status: (response?.status) ,
-                    success: (response?.success || false),
-                    messages: [response.message || 'Success!!'],
+                    success: true,
+                    messages: [ 'Success!'],
                     error: false,
                   }
                 );
               },
-              error: (error: RestApiResponse<DocumentDTO[] | any[]>) => {
+              error: (error: any) => {
                 patchState(
                   store, {
-                    status: (error?.status || 0),
                     loading: false,
                     success: false,
                     error: true,
@@ -174,23 +166,21 @@ export const DocumentApiStore = signalStore(
           patchState(store, { loading: true, loaderMessage: 'Loading ...' });
           return documentApi.getAllPaged(data.pageNumber, data.pageSize, ).pipe(
             tapResponse({
-              next: (response: RestApiResponse<Page<DocumentDTO> | any>) => {
+              next: (response: Page<DocumentDTO> | any) => {
                 patchState(
                   store,
                   {
-                    dataPage: response?.data,
+                    dataPage: response,
                     loading: false,
-                    status: (response?.status) ,
-                    success: (response?.success || false),
-                    messages: [response.message || 'Success!!'],
+                    success: true,
+                    messages: [ 'Success!'],
                     error: false,
                   }
                 );
               },
-              error: (error: RestApiResponse<Page<DocumentDTO> | any>) => {
+              error: (error: Page<DocumentDTO> | any) => {
                 patchState(
                   store, {
-                    status: (error?.status || 0),
                     loading: false,
                     success: false,
                     error: true,
@@ -207,23 +197,21 @@ export const DocumentApiStore = signalStore(
           patchState(store, { loading: true, loaderMessage: 'Loading ...' });
           return documentApi.remove(data.id, ).pipe(
             tapResponse({
-              next: (response: RestApiResponse<boolean | any>) => {
+              next: (response: boolean | any) => {
                 patchState(
                   store,
                   {
-                    data: response?.data,
+                    data: response,
                     loading: false,
-                    status: (response?.status) ,
-                    success: (response?.success || false),
-                    messages: [response.message || 'Success!!'],
+                    success: true,
+                    messages: [ 'Success!'],
                     error: false,
                   }
                 );
               },
-              error: (error: RestApiResponse<boolean | any>) => {
+              error: (error: boolean | any) => {
                 patchState(
                   store, {
-                    status: (error?.status || 0),
                     loading: false,
                     success: false,
                     error: true,
@@ -240,23 +228,21 @@ export const DocumentApiStore = signalStore(
           patchState(store, { loading: true, loaderMessage: 'Loading ...' });
           return documentApi.save(data.document, ).pipe(
             tapResponse({
-              next: (response: RestApiResponse<DocumentDTO | any>) => {
+              next: (response: DocumentDTO | any) => {
                 patchState(
                   store,
                   {
-                    data: response?.data,
+                    data: response,
                     loading: false,
-                    status: (response?.status) ,
-                    success: (response?.success || false),
-                    messages: [response.message || 'Success!!'],
+                    success: true,
+                    messages: [ 'Success!'],
                     error: false,
                   }
                 );
               },
-              error: (error: RestApiResponse<DocumentDTO | any>) => {
+              error: (error: DocumentDTO | any) => {
                 patchState(
                   store, {
-                    status: (error?.status || 0),
                     loading: false,
                     success: false,
                     error: true,
@@ -273,23 +259,21 @@ export const DocumentApiStore = signalStore(
           patchState(store, { loading: true, loaderMessage: 'Loading ...' });
           return documentApi.search(data.criteria, ).pipe(
             tapResponse({
-              next: (response: RestApiResponse<DocumentDTO[] | any[]>) => {
+              next: (response: DocumentDTO[] | any[]) => {
                 patchState(
                   store,
                   {
-                    dataList: response?.data,
+                    dataList: response,
                     loading: false,
-                    status: (response?.status) ,
-                    success: (response?.success || false),
-                    messages: [response.message || 'Success!!'],
+                    success: true,
+                    messages: [ 'Success!'],
                     error: false,
                   }
                 );
               },
-              error: (error: RestApiResponse<DocumentDTO[] | any[]>) => {
+              error: (error: any) => {
                 patchState(
                   store, {
-                    status: (error?.status || 0),
                     loading: false,
                     success: false,
                     error: true,
@@ -306,23 +290,21 @@ export const DocumentApiStore = signalStore(
           patchState(store, { loading: true, loaderMessage: 'Loading ...' });
           return documentApi.upload(data.target, data.targetId, data.documentTypeId, data.file, ).pipe(
             tapResponse({
-              next: (response: RestApiResponse<DocumentDTO | any>) => {
+              next: (response: DocumentDTO | any) => {
                 patchState(
                   store,
                   {
-                    data: response?.data,
+                    data: response,
                     loading: false,
-                    status: (response?.status) ,
-                    success: (response?.success || false),
-                    messages: [response.message || 'Success!!'],
+                    success: true,
+                    messages: [ 'Success!'],
                     error: false,
                   }
                 );
               },
-              error: (error: RestApiResponse<DocumentDTO | any>) => {
+              error: (error: DocumentDTO | any) => {
                 patchState(
                   store, {
-                    status: (error?.status || 0),
                     loading: false,
                     success: false,
                     error: true,

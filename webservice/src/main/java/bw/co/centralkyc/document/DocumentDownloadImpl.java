@@ -11,6 +11,8 @@ import org.springframework.http.ResponseEntity;
 
 import bw.co.centralkyc.RestApiResponse;
 import bw.co.centralkyc.minio.MinioService;
+
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -53,5 +55,17 @@ public class DocumentDownloadImpl implements DocumentDownload {
             throw new DocumentServiceException("Error downloading file: " + e.getMessage());
         }
     }
-    
+
+    public ResponseEntity<InputStreamResource> downloadFileByUrl(@RequestParam String objectName) throws Exception {
+
+        InputStreamResource data = downloadFromMinio(objectName);
+        ResponseEntity<InputStreamResource> response = ResponseEntity.status(HttpStatus.OK)
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + objectName + "\"")
+                .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                .body(data);
+
+        return response;
+
+    }
+
 }

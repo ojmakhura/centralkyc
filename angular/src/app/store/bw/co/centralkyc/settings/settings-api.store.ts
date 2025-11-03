@@ -17,7 +17,6 @@ const initialState: SettingsApiState = {
   dataList: [],
   dataPage: new Page<any>(),
   searchCriteria: new SearchObject<any>(),
-  status: 0,
   loading: false,
   success: false,
   messages: [],
@@ -40,19 +39,17 @@ export const SettingsApiStore = signalStore(
           patchState(store, { loading: true, loaderMessage: 'Loading ...' });
           return settingsApi.findById(data.id).pipe(
             tapResponse({
-              next: (response: RestApiResponse<SettingsDTO | any>) => {
+              next: (response: SettingsDTO | any) => {
                 patchState(store, {
-                  data: response?.data,
+                  data: response,
                   loading: false,
-                  status: response?.status,
                   success: true,
-                  messages: [response.message || 'Success!!'],
+                  messages: [ 'Success!'],
                   error: false,
                 });
               },
               error: (error: any) => {
                 patchState(store, {
-                  status: error?.status || 0,
                   loading: false,
                   success: false,
                   error: true,
@@ -68,8 +65,8 @@ export const SettingsApiStore = signalStore(
           patchState(store, { loading: true, loaderMessage: 'Loading ...' });
           return settingsApi.getAll().pipe(
             tapResponse({
-              next: (response: RestApiResponse<SettingsDTO[] | any[]>) => {
-                let dataList = response?.data || [];
+              next: (response: SettingsDTO[] | any[]) => {
+                let dataList = response || [];
 
                 let data = null;
                 if (dataList.length > 0) {
@@ -77,18 +74,16 @@ export const SettingsApiStore = signalStore(
                 }
 
                 patchState(store, {
-                  dataList: response?.data,
+                  dataList: response,
                   data: data,
                   loading: false,
-                  status: response?.status,
                   success: true,
-                  messages: [response.message || 'Success!!'],
+                  messages: [ 'Success!'],
                   error: false,
                 });
               },
               error: (error: any) => {
                 patchState(store, {
-                  status: error?.status || 0,
                   loading: false,
                   success: false,
                   error: true,
@@ -104,19 +99,17 @@ export const SettingsApiStore = signalStore(
           patchState(store, { loading: true, loaderMessage: 'Loading ...' });
           return settingsApi.getAllPaged(data.pageNumber, data.pageSize).pipe(
             tapResponse({
-              next: (response: RestApiResponse<Page<SettingsDTO> | any>) => {
+              next: (response: Page<SettingsDTO> | any) => {
                 patchState(store, {
-                  dataPage: response?.data,
+                  dataPage: response,
                   loading: false,
-                  status: response?.status,
                   success: true,
-                  messages: [response.message || 'Success!!'],
+                  messages: [ 'Success!'],
                   error: false,
                 });
               },
               error: (error: any) => {
                 patchState(store, {
-                  status: error?.status || 0,
                   loading: false,
                   success: false,
                   error: true,
@@ -132,19 +125,17 @@ export const SettingsApiStore = signalStore(
           patchState(store, { loading: true, loaderMessage: 'Loading ...' });
           return settingsApi.pagedSearch(data.criteria, data.pageNumber, data.pageSize).pipe(
             tapResponse({
-              next: (response: RestApiResponse<Page<SettingsDTO> | any>) => {
+              next: (response: Page<SettingsDTO> | any) => {
                 patchState(store, {
-                  dataPage: response?.data,
+                  dataPage: response,
                   loading: false,
-                  status: response?.status,
                   success: true,
-                  messages: [response.message || 'Success!!'],
+                  messages: [ 'Success!'],
                   error: false,
                 });
               },
               error: (error: any) => {
                 patchState(store, {
-                  status: error?.status || 0,
                   loading: false,
                   success: false,
                   error: true,
@@ -160,19 +151,17 @@ export const SettingsApiStore = signalStore(
           patchState(store, { loading: true, loaderMessage: 'Loading ...' });
           return settingsApi.remove(data.id).pipe(
             tapResponse({
-              next: (response: RestApiResponse<boolean | any>) => {
+              next: (response: boolean | any) => {
                 patchState(store, {
-                  data: response?.data,
+                  data: response,
                   loading: false,
-                  status: response?.status,
                   success: true,
-                  messages: [response.message || 'Success!!'],
+                  messages: [ 'Success!'],
                   error: false,
                 });
               },
               error: (error: any) => {
                 patchState(store, {
-                  status: error?.status || 0,
                   loading: false,
                   success: false,
                   error: true,
@@ -188,19 +177,17 @@ export const SettingsApiStore = signalStore(
           patchState(store, { loading: true, loaderMessage: 'Loading ...' });
           return settingsApi.save(data.setttings).pipe(
             tapResponse({
-              next: (response: RestApiResponse<SettingsDTO | any>) => {
+              next: (response: SettingsDTO | any) => {
                 patchState(store, {
-                  data: response?.data,
+                  data: response,
                   loading: false,
-                  status: response?.status,
                   success: true,
-                  messages: [response.message || 'Success!!'],
+                  messages: [ 'Success!'],
                   error: false,
                 });
               },
               error: (error: any) => {
                 patchState(store, {
-                  status: error?.status || 0,
                   loading: false,
                   success: false,
                   error: true,
@@ -216,19 +203,17 @@ export const SettingsApiStore = signalStore(
           patchState(store, { loading: true, loaderMessage: 'Loading ...' });
           return settingsApi.search(data.criteria).pipe(
             tapResponse({
-              next: (response: RestApiResponse<SettingsDTO[] | any[]>) => {
+              next: (response: SettingsDTO[] | any[]) => {
                 patchState(store, {
-                  dataList: response?.data,
+                  dataList: response,
                   loading: false,
-                  status: response?.status,
                   success: true,
-                  messages: [response.message || 'Success!!'],
+                  messages: [ 'Success!'],
                   error: false,
                 });
               },
               error: (error: any) => {
                 patchState(store, {
-                  status: error?.status || 0,
                   loading: false,
                   success: false,
                   error: true,

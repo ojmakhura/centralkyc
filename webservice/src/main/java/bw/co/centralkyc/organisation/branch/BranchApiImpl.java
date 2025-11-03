@@ -31,209 +31,134 @@ public class BranchApiImpl extends BranchApiBase {
 
 
     @Override
-    public ResponseEntity<RestApiResponse<BranchDTO>> handleFindById(java.lang.String id) {
-        RestApiResponse<BranchDTO> responseData = new RestApiResponse<>();
+    public ResponseEntity<BranchDTO> handleFindById(String id) {
+        
         try {
-            Optional<BranchDTO> data = Optional.of(branchService.findById(id));
-            responseData.setData(data.get());
-            responseData.setSuccess(true);
-            responseData.setStatus(HttpStatus.OK.value());
-            responseData.setMessage(String.format("Branch %s loaded.", responseData.getData().getName()));
-            ResponseEntity<RestApiResponse<BranchDTO>> response = ResponseEntity.status(HttpStatus.OK).body(responseData);
-
-            return response;
+            
+            return ResponseEntity.ok(branchService.findById(id));
         } catch (Exception e) {
             logger.error(e.getMessage());
-            responseData.setSuccess(false);
-            responseData.setMessage(e.getMessage());
-            responseData.setStatus(HttpStatus.BAD_REQUEST.value());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseData);
+            e.printStackTrace();
+            throw e;
         }
 
 
     }
 
     @Override
-    public ResponseEntity<RestApiResponse<Collection<BranchDTO>>> handleFindByOrganisation(java.lang.String organisationId) {
-        RestApiResponse<Collection<BranchDTO>> responseData = new RestApiResponse<>();
+    public ResponseEntity<Collection<BranchDTO>> handleFindByOrganisation(String organisationId) {
+        
         try {
-            Optional<Collection<BranchDTO>> data = Optional.of(branchService.findByOrganisation(organisationId));
-            responseData.setData(data.get());
-            responseData.setSuccess(true);
-            responseData.setStatus(HttpStatus.OK.value());
-            responseData.setMessage(String.format("Loaded %d branch(es).", responseData.getData().size()));
-            ResponseEntity<RestApiResponse<Collection<BranchDTO>>> response = ResponseEntity.status(HttpStatus.OK).body(responseData);
-
-            return response;
+            return ResponseEntity.ok(branchService.findByOrganisation(organisationId));
         } catch (Exception e) {
             logger.error(e.getMessage());
-            responseData.setSuccess(false);
-            responseData.setMessage(e.getMessage());
-            responseData.setStatus(HttpStatus.BAD_REQUEST.value());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseData);
+            e.printStackTrace();
+            throw e;
         }
 
 
     }
 
     @Override
-    public ResponseEntity<RestApiResponse<Collection<BranchDTO>>> handleFindByOrganisationPaged(java.lang.String organisationId, java.lang.Integer pageNumber, java.lang.Integer pageSize) {
-        RestApiResponse<Collection<BranchDTO>> responseData = new RestApiResponse<>();
+    public ResponseEntity<Collection<BranchDTO>> handleFindByOrganisationPaged(String organisationId, Integer pageNumber, Integer pageSize) {
+        
         try {
-            Optional<Collection<BranchDTO>> data = Optional.of(branchService.findByOrganisation(organisationId, pageNumber, pageSize));
-            responseData.setData(data.get());
-            responseData.setSuccess(true);
-            responseData.setStatus(HttpStatus.OK.value());
-            responseData.setMessage(String.format("Loaded %d branches.", responseData.getData().size()));
-            ResponseEntity<RestApiResponse<Collection<BranchDTO>>> response = ResponseEntity.status(HttpStatus.OK).body(responseData);
-
-            return response;
+            return ResponseEntity.ok(branchService.findByOrganisation(organisationId, pageNumber, pageSize));
+            
         } catch (Exception e) {
-            logger.error(e.getMessage());
-            responseData.setSuccess(false);
-            responseData.setMessage(e.getMessage());
-            responseData.setStatus(HttpStatus.BAD_REQUEST.value());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseData);
+            
+            e.printStackTrace();
+            throw e;
         }
 
 
     }
 
     @Override
-    public ResponseEntity<RestApiResponse<Collection<BranchDTO>>> handleGetAll() {
-        RestApiResponse<Collection<BranchDTO>> responseData = new RestApiResponse<>();
+    public ResponseEntity<Collection<BranchDTO>> handleGetAll() {
+        
         try {
-            Optional<Collection<BranchDTO>> data = Optional.of(branchService.getAll());
-            responseData.setData(data.get());
-            responseData.setSuccess(true);
-            responseData.setStatus(HttpStatus.OK.value());
-            responseData.setMessage(String.format("Loaded %d branch(es).", responseData.getData().size()));
-            ResponseEntity<RestApiResponse<Collection<BranchDTO>>> response = ResponseEntity.status(HttpStatus.OK).body(responseData);
-
-            return response;
+            return ResponseEntity.ok(branchService.getAll());
         } catch (Exception e) {
-            logger.error(e.getMessage());
-            responseData.setSuccess(false);
-            responseData.setMessage(e.getMessage());
-            responseData.setStatus(HttpStatus.BAD_REQUEST.value());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseData);
+            e.printStackTrace();
+            throw e;
         }
 
 
     }
 
     @Override
-    public ResponseEntity<RestApiResponse<Page<BranchDTO>>> handleGetAllPaged(java.lang.Integer pageNumber, java.lang.Integer pageSize) {
-        RestApiResponse<Page<BranchDTO>> responseData = new RestApiResponse<>();
+    public ResponseEntity<Page<BranchDTO>> handleGetAllPaged(Integer pageNumber, Integer pageSize) {
+        
         try {
-            Optional<Page<BranchDTO>> data = Optional.of(branchService.getAll(pageNumber, pageSize));
-            responseData.setData(data.get());
-            responseData.setSuccess(true);
-            responseData.setStatus(HttpStatus.OK.value());
-            responseData.setMessage(String.format("Loaded page %d of branches.", responseData.getData().getNumber()));
-            ResponseEntity<RestApiResponse<Page<BranchDTO>>> response = ResponseEntity.status(HttpStatus.OK).body(responseData);
-
-            return response;
+            return ResponseEntity.ok(branchService.getAll(pageNumber, pageSize));
         } catch (Exception e) {
-            logger.error(e.getMessage());
-            responseData.setSuccess(false);
-            responseData.setMessage(e.getMessage());
-            responseData.setStatus(HttpStatus.BAD_REQUEST.value());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseData);
+            e.printStackTrace();
+            throw e;
         }
 
 
     }
 
     @Override
-    public ResponseEntity<RestApiResponse<Page<BranchDTO>>> handlePagedSearch(java.lang.String criteria, java.lang.Integer pageNumber, java.lang.Integer pageSize) {
-        RestApiResponse<Page<BranchDTO>> responseData = new RestApiResponse<>();
+    public ResponseEntity<Page<BranchDTO>> handlePagedSearch(String criteria, Integer pageNumber, Integer pageSize) {
+        
         try {
-            Optional<Page<BranchDTO>> data = Optional.of(branchService.search(criteria, pageNumber, pageSize));
-            responseData.setData(data.get());
-            responseData.setSuccess(true);
-            responseData.setStatus(HttpStatus.OK.value());
-            responseData.setMessage(String.format("Loaded page %d of branches.", responseData.getData().getNumber()));
-            ResponseEntity<RestApiResponse<Page<BranchDTO>>> response = ResponseEntity.status(HttpStatus.OK).body(responseData);
-
-            return response;
+            return ResponseEntity.ok(branchService.search(criteria, pageNumber, pageSize));
+            
         } catch (Exception e) {
             logger.error(e.getMessage());
-            responseData.setSuccess(false);
-            responseData.setMessage(e.getMessage());
-            responseData.setStatus(HttpStatus.BAD_REQUEST.value());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseData);
+            e.printStackTrace();
+            throw e;
         }
 
 
     }
 
     @Override
-    public ResponseEntity<RestApiResponse<java.lang.Boolean>> handleRemove(java.lang.String id) {
-        RestApiResponse<java.lang.Boolean> responseData = new RestApiResponse<>();
+    public ResponseEntity<Boolean> handleRemove(String id) {
+        
         try {
-            Optional<java.lang.Boolean> data = Optional.of(branchService.remove(id));
-            responseData.setData(data.get());
-            responseData.setSuccess(true);
-            responseData.setStatus(HttpStatus.OK.value());
-            responseData.setMessage(String.format("Branch removed."));
-            ResponseEntity<RestApiResponse<java.lang.Boolean>> response = ResponseEntity.status(HttpStatus.OK).body(responseData);
 
-            return response;
+            return ResponseEntity.ok(branchService.remove(id));
+
         } catch (Exception e) {
             logger.error(e.getMessage());
-            responseData.setSuccess(false);
-            responseData.setMessage(e.getMessage());
-            responseData.setStatus(HttpStatus.BAD_REQUEST.value());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseData);
+            e.printStackTrace();
+            throw e;
         }
 
 
     }
 
     @Override
-    public ResponseEntity<RestApiResponse<BranchDTO>> handleSave(BranchDTO branch) {
-        RestApiResponse<BranchDTO> responseData = new RestApiResponse<>();
+    public ResponseEntity<BranchDTO> handleSave(BranchDTO branch) {
+        
         try {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             AuditTracker.auditTrail(branch, authentication);
-            Optional<BranchDTO> data = Optional.of(branchService.save(branch));
-            responseData.setData(data.get());
-            responseData.setSuccess(true);
-            responseData.setStatus(HttpStatus.OK.value());
-            responseData.setMessage(String.format("Branch %s saved.", responseData.getData().getName()));
-            ResponseEntity<RestApiResponse<BranchDTO>> response = ResponseEntity.status(HttpStatus.OK).body(responseData);
+            return ResponseEntity.ok(branchService.save(branch));
 
-            return response;
         } catch (Exception e) {
             logger.error(e.getMessage());
-            responseData.setSuccess(false);
-            responseData.setMessage(e.getMessage());
-            responseData.setStatus(HttpStatus.BAD_REQUEST.value());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseData);
+            e.printStackTrace();
+
+            throw e;
         }
 
 
     }
 
     @Override
-    public ResponseEntity<RestApiResponse<Collection<BranchDTO>>> handleSearch(java.lang.String criteria) {
-        RestApiResponse<Collection<BranchDTO>> responseData = new RestApiResponse<>();
+    public ResponseEntity<Collection<BranchDTO>> handleSearch(String criteria) {
+        
         try {
-            Optional<Collection<BranchDTO>> data = Optional.of(branchService.search(criteria));
-            responseData.setData(data.get());
-            responseData.setSuccess(true);
-            responseData.setStatus(HttpStatus.OK.value());
-            responseData.setMessage(String.format("Loaded %d branch(es).", responseData.getData().size()));
-            ResponseEntity<RestApiResponse<Collection<BranchDTO>>> response = ResponseEntity.status(HttpStatus.OK).body(responseData);
-
-            return response;
+            return ResponseEntity.ok(branchService.search(criteria));
+            
         } catch (Exception e) {
             logger.error(e.getMessage());
-            responseData.setSuccess(false);
-            responseData.setMessage(e.getMessage());
-            responseData.setStatus(HttpStatus.BAD_REQUEST.value());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseData);
+            e.printStackTrace();
+            throw e;
         }
 
 

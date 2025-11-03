@@ -11,54 +11,54 @@ import { RestApiResponse } from '@app/model/rest-api-response.model';
   providedIn: 'root'
 })
 export class KycRecordApi {
-    
+
     protected path = '/kyc';
 
     private http = inject(HttpClient);
 
-    public findById(id: string | any ): Observable<RestApiResponse<KycRecordDTO | any>> {
+    public findById(id: string | any ): Observable<KycRecordDTO | any> {
 
-        return this.http.get<RestApiResponse<KycRecordDTO | any>>(`${this.path}/${id}`);
+        return this.http.get<KycRecordDTO | any>(`${this.path}/${id}`);
     }
 
-    public findByIdentityNo(identityNo: string | any ): Observable<RestApiResponse<KycRecordDTO[] | any[]>> {
+    public findByIdentityNo(identityNo: string | any ): Observable<KycRecordDTO[] | any[]> {
 
-        return this.http.get<RestApiResponse<KycRecordDTO[] | any[]>>(`${this.path}/by-identity/${identityNo}`);
+        return this.http.get<KycRecordDTO[] | any[]>(`${this.path}/by-identity/${identityNo}`);
     }
 
-    public findByIndividual(individualId: string | any ): Observable<RestApiResponse<KycRecordDTO[] | any[]>> {
+    public findByIndividual(individualId: string | any ): Observable<KycRecordDTO[] | any[]> {
 
-        return this.http.get<RestApiResponse<KycRecordDTO[] | any[]>>(`${this.path}/by-individual/${individualId}`);
+        return this.http.get<KycRecordDTO[] | any[]>(`${this.path}/by-individual/${individualId}`);
     }
 
-    public getAll(): Observable<RestApiResponse<KycRecordDTO[] | any[]>> {
+    public getAll(): Observable<KycRecordDTO[] | any[]> {
 
-        return this.http.get<RestApiResponse<KycRecordDTO[] | any[]>>(`${this.path}`);
+        return this.http.get<KycRecordDTO[] | any[]>(`${this.path}`);
     }
 
-    public getAllPaged(pageNumber: number | any , pageSize: number | any ): Observable<RestApiResponse<Page<KycRecordDTO> | any>> {
+    public getAllPaged(pageNumber: number | any , pageSize: number | any ): Observable<Page<KycRecordDTO> | any> {
 
-        return this.http.get<RestApiResponse<Page<KycRecordDTO> | any>>(`${this.path}/paged?pageNumber=${pageNumber}&pageSize=${pageSize}`);
+        return this.http.get<Page<KycRecordDTO> | any>(`${this.path}/paged?pageNumber=${pageNumber}&pageSize=${pageSize}`);
     }
 
-    public pagedSearch(criteria: string | any , pageNumber: number | any , pageSize: number | any ): Observable<RestApiResponse<Page<KycRecordDTO> | any>> {
+    public pagedSearch(criteria: string | any , pageNumber: number | any , pageSize: number | any ): Observable<Page<KycRecordDTO> | any> {
 
-        return this.http.get<RestApiResponse<Page<KycRecordDTO> | any>>(`${this.path}/search/paged?criteria=${criteria}&pageNumber=${pageNumber}&pageSize=${pageSize}`);
+        return this.http.get<Page<KycRecordDTO> | any>(`${this.path}/search/paged?criteria=${criteria}&pageNumber=${pageNumber}&pageSize=${pageSize}`);
     }
 
-    public remove(id: string | any ): Observable<RestApiResponse<boolean | any>> {
+    public remove(id: string | any ): Observable<boolean | any> {
 
-        return this.http.delete<RestApiResponse<boolean | any>>(`${this.path}/${id}`);
+        return this.http.delete<boolean | any>(`${this.path}/${id}`);
     }
 
-    public save(kycRecord: KycRecordDTO | any ): Observable<RestApiResponse<KycRecordDTO | any>> {
+    public save(kycRecord: KycRecordDTO | any ): Observable<KycRecordDTO | any> {
 
-        return this.http.post<RestApiResponse<KycRecordDTO | any>>(`${this.path}`, kycRecord);
+        return this.http.post<KycRecordDTO | any>(`${this.path}`, kycRecord);
     }
 
-    public search(criteria: string | any ): Observable<RestApiResponse<KycRecordDTO[] | any[]>> {
+    public search(criteria: string | any ): Observable<KycRecordDTO[] | any[]> {
 
-        return this.http.get<RestApiResponse<KycRecordDTO[] | any[]>>(`${this.path}/search?criteria=${criteria}`);
+        return this.http.get<KycRecordDTO[] | any[]>(`${this.path}/search?criteria=${criteria}`);
     }
 
 }

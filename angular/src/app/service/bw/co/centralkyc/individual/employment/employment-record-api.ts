@@ -11,49 +11,49 @@ import { RestApiResponse } from '@app/model/rest-api-response.model';
   providedIn: 'root'
 })
 export class EmploymentRecordApi {
-    
+
     protected path = '/employment';
 
     private http = inject(HttpClient);
 
-    public findById(id: string | any ): Observable<RestApiResponse<EmploymentRecordDTO | any>> {
+    public findById(id: string | any ): Observable<EmploymentRecordDTO | any> {
 
-        return this.http.get<RestApiResponse<EmploymentRecordDTO | any>>(`${this.path}/${id}`);
+        return this.http.get<EmploymentRecordDTO | any>(`${this.path}/${id}`);
     }
 
-    public findByIndividual(individualId: string | any ): Observable<RestApiResponse<EmploymentRecordDTO[] | any[]>> {
+    public findByIndividual(individualId: string | any ): Observable<EmploymentRecordDTO[] | any[]> {
 
-        return this.http.get<RestApiResponse<EmploymentRecordDTO[] | any[]>>(`${this.path}/by-individual/${individualId}`);
+        return this.http.get<EmploymentRecordDTO[] | any[]>(`${this.path}/by-individual/${individualId}`);
     }
 
-    public getAll(): Observable<RestApiResponse<EmploymentRecordDTO[] | any[]>> {
+    public getAll(): Observable<EmploymentRecordDTO[] | any[]> {
 
-        return this.http.get<RestApiResponse<EmploymentRecordDTO[] | any[]>>(`${this.path}`);
+        return this.http.get<EmploymentRecordDTO[] | any[]>(`${this.path}`);
     }
 
-    public getAllPaged(pageNumber: number | any , pageSize: number | any ): Observable<RestApiResponse<Page<EmploymentRecordDTO> | any>> {
+    public getAllPaged(pageNumber: number | any , pageSize: number | any ): Observable<Page<EmploymentRecordDTO> | any> {
 
-        return this.http.get<RestApiResponse<Page<EmploymentRecordDTO> | any>>(`${this.path}/paged?pageNumber=${pageNumber}&pageSize=${pageSize}`);
+        return this.http.get<Page<EmploymentRecordDTO> | any>(`${this.path}/paged?pageNumber=${pageNumber}&pageSize=${pageSize}`);
     }
 
-    public pagedSearch(criteria: string | any , pageNumber: number | any , pageSize: number | any ): Observable<RestApiResponse<Page<EmploymentRecordDTO> | any>> {
+    public pagedSearch(criteria: string | any , pageNumber: number | any , pageSize: number | any ): Observable<Page<EmploymentRecordDTO> | any> {
 
-        return this.http.get<RestApiResponse<Page<EmploymentRecordDTO> | any>>(`${this.path}/search/paged?criteria=${criteria}&pageNumber=${pageNumber}&pageSize=${pageSize}`);
+        return this.http.get<Page<EmploymentRecordDTO> | any>(`${this.path}/search/paged?criteria=${criteria}&pageNumber=${pageNumber}&pageSize=${pageSize}`);
     }
 
-    public remove(id: string | any ): Observable<RestApiResponse<boolean | any>> {
+    public remove(id: string | any ): Observable<boolean | any> {
 
-        return this.http.delete<RestApiResponse<boolean | any>>(`${this.path}/${id}`);
+        return this.http.delete<boolean | any>(`${this.path}/${id}`);
     }
 
-    public save(employmentRecord: EmploymentRecordDTO | any ): Observable<RestApiResponse<EmploymentRecordDTO | any>> {
+    public save(employmentRecord: EmploymentRecordDTO | any ): Observable<EmploymentRecordDTO | any> {
 
-        return this.http.post<RestApiResponse<EmploymentRecordDTO | any>>(`${this.path}`, employmentRecord);
+        return this.http.post<EmploymentRecordDTO | any>(`${this.path}`, employmentRecord);
     }
 
-    public search(criteria: string | any ): Observable<RestApiResponse<EmploymentRecordDTO[] | any[]>> {
+    public search(criteria: string | any ): Observable<EmploymentRecordDTO[] | any[]> {
 
-        return this.http.get<RestApiResponse<EmploymentRecordDTO[] | any[]>>(`${this.path}/search?criteria=${criteria}`);
+        return this.http.get<EmploymentRecordDTO[] | any[]>(`${this.path}/search?criteria=${criteria}`);
     }
 
 }

@@ -41,27 +41,25 @@ export const UserApiStore = signalStore(
           patchState(store, { loading: true, loaderMessage: 'Loading ...' });
           return userApi.addRole(data.userId, data.role, ).pipe(
             tapResponse({
-              next: (response: RestApiResponse<boolean | any>) => {
+              next: (response: boolean | any) => {
                 patchState(
-                  store, 
+                  store,
                   {
-                    data: response?.data,
-                    loading: false, 
-                    status: (response?.status) ,
-                    success: true, 
-                    messages: [response.message || 'Success!!'],
+                    data: response,
+                    loading: false,
+                    success: true,
+                    messages: [ 'Success!'],
                     error: false,
                   }
                 );
               },
               error: (error: any) => {
                 patchState(
-                  store, { 
-                    status: (error?.status || 0), 
-                    loading: false, 
+                  store, {
+                    loading: false,
                     success: false,
                     error: true,
-                    messages: [error.message || 'An error occurred'], 
+                    messages: [error.message || 'An error occurred'],
                   }
                 );
               },
@@ -74,27 +72,25 @@ export const UserApiStore = signalStore(
           patchState(store, { loading: true, loaderMessage: 'Loading ...' });
           return userApi.changePassword(data.userId, data.newPassword, ).pipe(
             tapResponse({
-              next: (response: RestApiResponse<string | any>) => {
+              next: (response: string | any) => {
                 patchState(
-                  store, 
+                  store,
                   {
-                    data: response?.data,
-                    loading: false, 
-                    status: (response?.status) ,
-                    success: true, 
-                    messages: [response.message || 'Success!!'],
+                    data: response,
+                    loading: false,
+                    success: true,
+                    messages: [ 'Success!'],
                     error: false,
                   }
                 );
               },
               error: (error: any) => {
                 patchState(
-                  store, { 
-                    status: (error?.status || 0), 
-                    loading: false, 
+                  store, {
+                    loading: false,
                     success: false,
                     error: true,
-                    messages: [error.message || 'An error occurred'], 
+                    messages: [error.message || 'An error occurred'],
                   }
                 );
               },
@@ -107,27 +103,25 @@ export const UserApiStore = signalStore(
           patchState(store, { loading: true, loaderMessage: 'Loading ...' });
           return userApi.findByBranchId(data.branchId, ).pipe(
             tapResponse({
-              next: (response: RestApiResponse<UserDTO[] | any[]>) => {
+              next: (response: UserDTO[] | any[]) => {
                 patchState(
-                  store, 
+                  store,
                   {
-                    dataList: response?.data, 
-                    loading: false, 
-                    status: (response?.status) ,
-                    success: true, 
-                    messages: [response.message || 'Success!!'],
+                    dataList: response,
+                    loading: false,
+                    success: true,
+                    messages: [ 'Success!'],
                     error: false,
                   }
                 );
               },
               error: (error: any) => {
                 patchState(
-                  store, { 
-                    status: (error?.status || 0), 
-                    loading: false, 
+                  store, {
+                    loading: false,
                     success: false,
                     error: true,
-                    messages: [error.message || 'An error occurred'], 
+                    messages: [error.message || 'An error occurred'],
                   }
                 );
               },
@@ -140,27 +134,25 @@ export const UserApiStore = signalStore(
           patchState(store, { loading: true, loaderMessage: 'Loading ...' });
           return userApi.findByBranchName(data.branch, ).pipe(
             tapResponse({
-              next: (response: RestApiResponse<UserDTO[] | any[]>) => {
+              next: (response: UserDTO[] | any[]) => {
                 patchState(
-                  store, 
+                  store,
                   {
-                    dataList: response?.data, 
-                    loading: false, 
-                    status: (response?.status) ,
-                    success: true, 
-                    messages: [response.message || 'Success!!'],
+                    dataList: response,
+                    loading: false,
+                    success: true,
+                    messages: [ 'Success!'],
                     error: false,
                   }
                 );
               },
               error: (error: any) => {
                 patchState(
-                  store, { 
-                    status: (error?.status || 0), 
-                    loading: false, 
+                  store, {
+                    loading: false,
                     success: false,
                     error: true,
-                    messages: [error.message || 'An error occurred'], 
+                    messages: [error.message || 'An error occurred'],
                   }
                 );
               },
@@ -173,27 +165,25 @@ export const UserApiStore = signalStore(
           patchState(store, { loading: true, loaderMessage: 'Loading ...' });
           return userApi.findByClientRoles(data.roles, data.clientId, ).pipe(
             tapResponse({
-              next: (response: RestApiResponse<UserDTO[] | any[]>) => {
+              next: (response: UserDTO[] | any[]) => {
                 patchState(
-                  store, 
+                  store,
                   {
-                    dataList: response?.data, 
-                    loading: false, 
-                    status: (response?.status) ,
-                    success: true, 
-                    messages: [response.message || 'Success!!'],
+                    dataList: response,
+                    loading: false,
+                    success: true,
+                    messages: [ 'Success!'],
                     error: false,
                   }
                 );
               },
               error: (error: any) => {
                 patchState(
-                  store, { 
-                    status: (error?.status || 0), 
-                    loading: false, 
+                  store, {
+                    loading: false,
                     success: false,
                     error: true,
-                    messages: [error.message || 'An error occurred'], 
+                    messages: [error.message || 'An error occurred'],
                   }
                 );
               },
@@ -206,27 +196,25 @@ export const UserApiStore = signalStore(
           patchState(store, { loading: true, loaderMessage: 'Loading ...' });
           return userApi.findByIdentityNo(data.identityNo, ).pipe(
             tapResponse({
-              next: (response: RestApiResponse<UserDTO | any>) => {
+              next: (response: UserDTO | any) => {
                 patchState(
-                  store, 
+                  store,
                   {
-                    data: response?.data,
-                    loading: false, 
-                    status: (response?.status) ,
-                    success: true, 
-                    messages: [response.message || 'Success!!'],
+                    data: response,
+                    loading: false,
+                    success: true,
+                    messages: [ 'Success!'],
                     error: false,
                   }
                 );
               },
               error: (error: any) => {
                 patchState(
-                  store, { 
-                    status: (error?.status || 0), 
-                    loading: false, 
+                  store, {
+                    loading: false,
                     success: false,
                     error: true,
-                    messages: [error.message || 'An error occurred'], 
+                    messages: [error.message || 'An error occurred'],
                   }
                 );
               },
@@ -239,27 +227,25 @@ export const UserApiStore = signalStore(
           patchState(store, { loading: true, loaderMessage: 'Loading ...' });
           return userApi.findByOrganisationId(data.organisationId, ).pipe(
             tapResponse({
-              next: (response: RestApiResponse<UserDTO[] | any[]>) => {
+              next: (response: UserDTO[] | any[]) => {
                 patchState(
-                  store, 
+                  store,
                   {
-                    dataList: response?.data, 
-                    loading: false, 
-                    status: (response?.status) ,
-                    success: true, 
-                    messages: [response.message || 'Success!!'],
+                    dataList: response,
+                    loading: false,
+                    success: true,
+                    messages: [ 'Success!'],
                     error: false,
                   }
                 );
               },
               error: (error: any) => {
                 patchState(
-                  store, { 
-                    status: (error?.status || 0), 
-                    loading: false, 
+                  store, {
+                    loading: false,
                     success: false,
                     error: true,
-                    messages: [error.message || 'An error occurred'], 
+                    messages: [error.message || 'An error occurred'],
                   }
                 );
               },
@@ -272,27 +258,25 @@ export const UserApiStore = signalStore(
           patchState(store, { loading: true, loaderMessage: 'Loading ...' });
           return userApi.findByOrganisationName(data.organisation, ).pipe(
             tapResponse({
-              next: (response: RestApiResponse<UserDTO[] | any[]>) => {
+              next: (response: UserDTO[] | any[]) => {
                 patchState(
-                  store, 
+                  store,
                   {
-                    dataList: response?.data, 
-                    loading: false, 
-                    status: (response?.status) ,
-                    success: true, 
-                    messages: [response.message || 'Success!!'],
+                    dataList: response,
+                    loading: false,
+                    success: true,
+                    messages: [ 'Success!'],
                     error: false,
                   }
                 );
               },
               error: (error: any) => {
                 patchState(
-                  store, { 
-                    status: (error?.status || 0), 
-                    loading: false, 
+                  store, {
+                    loading: false,
                     success: false,
                     error: true,
-                    messages: [error.message || 'An error occurred'], 
+                    messages: [error.message || 'An error occurred'],
                   }
                 );
               },
@@ -305,27 +289,25 @@ export const UserApiStore = signalStore(
           patchState(store, { loading: true, loaderMessage: 'Loading ...' });
           return userApi.findByRealmRoles(data.roles, ).pipe(
             tapResponse({
-              next: (response: RestApiResponse<UserDTO[] | any[]>) => {
+              next: (response: UserDTO[] | any[]) => {
                 patchState(
-                  store, 
+                  store,
                   {
-                    dataList: response?.data, 
-                    loading: false, 
-                    status: (response?.status) ,
-                    success: true, 
-                    messages: [response.message || 'Success!!'],
+                    dataList: response,
+                    loading: false,
+                    success: true,
+                    messages: [ 'Success!'],
                     error: false,
                   }
                 );
               },
               error: (error: any) => {
                 patchState(
-                  store, { 
-                    status: (error?.status || 0), 
-                    loading: false, 
+                  store, {
+                    loading: false,
                     success: false,
                     error: true,
-                    messages: [error.message || 'An error occurred'], 
+                    messages: [error.message || 'An error occurred'],
                   }
                 );
               },
@@ -338,27 +320,25 @@ export const UserApiStore = signalStore(
           patchState(store, { loading: true, loaderMessage: 'Loading ...' });
           return userApi.findUserById(data.userId, ).pipe(
             tapResponse({
-              next: (response: RestApiResponse<UserDTO | any>) => {
+              next: (response: UserDTO | any) => {
                 patchState(
-                  store, 
+                  store,
                   {
-                    data: response?.data,
-                    loading: false, 
-                    status: (response?.status) ,
-                    success: true, 
-                    messages: [response.message || 'Success!!'],
+                    data: response,
+                    loading: false,
+                    success: true,
+                    messages: [ 'Success!'],
                     error: false,
                   }
                 );
               },
               error: (error: any) => {
                 patchState(
-                  store, { 
-                    status: (error?.status || 0), 
-                    loading: false, 
+                  store, {
+                    loading: false,
                     success: false,
                     error: true,
-                    messages: [error.message || 'An error occurred'], 
+                    messages: [error.message || 'An error occurred'],
                   }
                 );
               },
@@ -371,27 +351,25 @@ export const UserApiStore = signalStore(
           patchState(store, { loading: true, loaderMessage: 'Loading ...' });
           return userApi.loadUsers().pipe(
             tapResponse({
-              next: (response: RestApiResponse<UserDTO[] | any[]>) => {
+              next: (response: UserDTO[] | any[]) => {
                 patchState(
-                  store, 
+                  store,
                   {
-                    dataList: response?.data, 
-                    loading: false, 
-                    status: (response?.status) ,
-                    success: true, 
-                    messages: [response.message || 'Success!!'],
+                    dataList: response,
+                    loading: false,
+                    success: true,
+                    messages: [ 'Success!'],
                     error: false,
                   }
                 );
               },
               error: (error: any) => {
                 patchState(
-                  store, { 
-                    status: (error?.status || 0), 
-                    loading: false, 
+                  store, {
+                    loading: false,
                     success: false,
                     error: true,
-                    messages: [error.message || 'An error occurred'], 
+                    messages: [error.message || 'An error occurred'],
                   }
                 );
               },
@@ -404,27 +382,25 @@ export const UserApiStore = signalStore(
           patchState(store, { loading: true, loaderMessage: 'Loading ...' });
           return userApi.removeRole(data.userId, data.role, ).pipe(
             tapResponse({
-              next: (response: RestApiResponse<boolean | any>) => {
+              next: (response: boolean | any) => {
                 patchState(
-                  store, 
+                  store,
                   {
-                    data: response?.data,
-                    loading: false, 
-                    status: (response?.status) ,
-                    success: true, 
-                    messages: [response.message || 'Success!!'],
+                    data: response,
+                    loading: false,
+                    success: true,
+                    messages: [ 'Success!'],
                     error: false,
                   }
                 );
               },
               error: (error: any) => {
                 patchState(
-                  store, { 
-                    status: (error?.status || 0), 
-                    loading: false, 
+                  store, {
+                    loading: false,
                     success: false,
                     error: true,
-                    messages: [error.message || 'An error occurred'], 
+                    messages: [error.message || 'An error occurred'],
                   }
                 );
               },
@@ -437,27 +413,25 @@ export const UserApiStore = signalStore(
           patchState(store, { loading: true, loaderMessage: 'Loading ...' });
           return userApi.saveUser(data.user, ).pipe(
             tapResponse({
-              next: (response: RestApiResponse<UserDTO | any>) => {
+              next: (response: UserDTO | any) => {
                 patchState(
-                  store, 
+                  store,
                   {
-                    data: response?.data,
-                    loading: false, 
-                    status: (response?.status) ,
-                    success: true, 
-                    messages: [response.message || 'Success!!'],
+                    data: response,
+                    loading: false,
+                    success: true,
+                    messages: [ 'Success!'],
                     error: false,
                   }
                 );
               },
               error: (error: any) => {
                 patchState(
-                  store, { 
-                    status: (error?.status || 0), 
-                    loading: false, 
+                  store, {
+                    loading: false,
                     success: false,
                     error: true,
-                    messages: [error.message || 'An error occurred'], 
+                    messages: [error.message || 'An error occurred'],
                   }
                 );
               },
@@ -470,27 +444,25 @@ export const UserApiStore = signalStore(
           patchState(store, { loading: true, loaderMessage: 'Loading ...' });
           return userApi.search(data.criteria, ).pipe(
             tapResponse({
-              next: (response: RestApiResponse<UserDTO[] | any[]>) => {
+              next: (response: UserDTO[] | any[]) => {
                 patchState(
-                  store, 
+                  store,
                   {
-                    dataList: response?.data, 
-                    loading: false, 
-                    status: (response?.status) ,
-                    success: true, 
-                    messages: [response.message || 'Success!!'],
+                    dataList: response,
+                    loading: false,
+                    success: true,
+                    messages: [ 'Success!'],
                     error: false,
                   }
                 );
               },
               error: (error: any) => {
                 patchState(
-                  store, { 
-                    status: (error?.status || 0), 
-                    loading: false, 
+                  store, {
+                    loading: false,
                     success: false,
                     error: true,
-                    messages: [error.message || 'An error occurred'], 
+                    messages: [error.message || 'An error occurred'],
                   }
                 );
               },
@@ -503,27 +475,25 @@ export const UserApiStore = signalStore(
           patchState(store, { loading: true, loaderMessage: 'Loading ...' });
           return userApi.updateUserName(data.userId, data.username, ).pipe(
             tapResponse({
-              next: (response: RestApiResponse<boolean | any>) => {
+              next: (response: boolean | any) => {
                 patchState(
-                  store, 
+                  store,
                   {
-                    data: response?.data,
-                    loading: false, 
-                    status: (response?.status) ,
-                    success: true, 
-                    messages: [response.message || 'Success!!'],
+                    data: response,
+                    loading: false,
+                    success: true,
+                    messages: [ 'Success!'],
                     error: false,
                   }
                 );
               },
               error: (error: any) => {
                 patchState(
-                  store, { 
-                    status: (error?.status || 0), 
-                    loading: false, 
+                  store, {
+                    loading: false,
                     success: false,
                     error: true,
-                    messages: [error.message || 'An error occurred'], 
+                    messages: [error.message || 'An error occurred'],
                   }
                 );
               },

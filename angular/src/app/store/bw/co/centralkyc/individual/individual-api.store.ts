@@ -19,7 +19,6 @@ const initialState: IndividualApiState = {
   dataList: [],
   dataPage: new Page<any>(),
   searchCriteria: new SearchObject<any>(),
-  status: 0,
   loading: false,
   success: false,
   messages: [],
@@ -42,19 +41,17 @@ export const IndividualApiStore = signalStore(
           patchState(store, { loading: true, loaderMessage: 'Loading ...' });
           return individualApi.findById(data.id).pipe(
             tapResponse({
-              next: (response: RestApiResponse<IndividualDTO | any>) => {
+              next: (response: IndividualDTO | any) => {
                 patchState(store, {
-                  data: response?.data,
+                  data: response,
                   loading: false,
-                  status: response?.status,
                   success: true,
-                  messages: [response.message || 'Success!!'],
+                  messages: [ 'Success!'],
                   error: false,
                 });
               },
               error: (error: any) => {
                 patchState(store, {
-                  status: error?.status || 0,
                   loading: false,
                   success: false,
                   error: true,
@@ -70,19 +67,17 @@ export const IndividualApiStore = signalStore(
           patchState(store, { loading: true, loaderMessage: 'Loading ...' });
           return individualApi.getAll().pipe(
             tapResponse({
-              next: (response: RestApiResponse<IndividualListDTO[] | any[]>) => {
+              next: (response: IndividualListDTO[] | any[]) => {
                 patchState(store, {
-                  dataList: response?.data,
+                  dataList: response,
                   loading: false,
-                  status: response?.status,
                   success: true,
-                  messages: [response.message || 'Success!!'],
+                  messages: [ 'Success!'],
                   error: false,
                 });
               },
               error: (error: any) => {
                 patchState(store, {
-                  status: error?.status || 0,
                   loading: false,
                   success: false,
                   error: true,
@@ -98,19 +93,17 @@ export const IndividualApiStore = signalStore(
           patchState(store, { loading: true, loaderMessage: 'Loading ...' });
           return individualApi.getAllPaged(data.pageNumber, data.pageSize).pipe(
             tapResponse({
-              next: (response: RestApiResponse<Page<IndividualListDTO> | any>) => {
+              next: (response: Page<IndividualListDTO> | any) => {
                 patchState(store, {
-                  dataPage: response?.data,
+                  dataPage: response,
                   loading: false,
-                  status: response?.status,
                   success: true,
-                  messages: [response.message || 'Success!!'],
+                  messages: [ 'Success!'],
                   error: false,
                 });
               },
               error: (error: any) => {
                 patchState(store, {
-                  status: error?.status || 0,
                   loading: false,
                   success: false,
                   error: true,
@@ -126,19 +119,17 @@ export const IndividualApiStore = signalStore(
           patchState(store, { loading: true, loaderMessage: 'Loading ...' });
           return individualApi.getOrganisationClients(data.organisationId).pipe(
             tapResponse({
-              next: (response: RestApiResponse<IndividualListDTO[] | any[]>) => {
+              next: (response: IndividualListDTO[] | any[]) => {
                 patchState(store, {
-                  dataList: response?.data,
+                  dataList: response,
                   loading: false,
-                  status: response?.status,
                   success: true,
-                  messages: [response.message || 'Success!!'],
+                  messages: [ 'Success!'],
                   error: false,
                 });
               },
               error: (error: any) => {
                 patchState(store, {
-                  status: error?.status || 0,
                   loading: false,
                   success: false,
                   error: true,
@@ -158,19 +149,17 @@ export const IndividualApiStore = signalStore(
           patchState(store, { loading: true, loaderMessage: 'Loading ...' });
           return individualApi.getOrganisationClientsPaged(data.organisationId, data.pageNumber, data.pageSize).pipe(
             tapResponse({
-              next: (response: RestApiResponse<Page<IndividualListDTO> | any>) => {
+              next: (response: Page<IndividualListDTO> | any) => {
                 patchState(store, {
-                  dataPage: response?.data,
+                  dataPage: response,
                   loading: false,
-                  status: response?.status,
                   success: true,
-                  messages: [response.message || 'Success!!'],
+                  messages: [ 'Success!'],
                   error: false,
                 });
               },
               error: (error: any) => {
                 patchState(store, {
-                  status: error?.status || 0,
                   loading: false,
                   success: false,
                   error: true,
@@ -186,19 +175,17 @@ export const IndividualApiStore = signalStore(
           patchState(store, { loading: true, loaderMessage: 'Loading ...' });
           return individualApi.pagedSearch(data.criteria).pipe(
             tapResponse({
-              next: (response: RestApiResponse<Page<IndividualListDTO> | any>) => {
+              next: (response: Page<IndividualListDTO> | any) => {
                 patchState(store, {
-                  dataPage: response?.data,
+                  dataPage: response,
                   loading: false,
-                  status: response?.status,
                   success: true,
-                  messages: [response.message || 'Success!!'],
+                  messages: [ 'Success!'],
                   error: false,
                 });
               },
               error: (error: any) => {
                 patchState(store, {
-                  status: error?.status || 0,
                   loading: false,
                   success: false,
                   error: true,
@@ -214,19 +201,17 @@ export const IndividualApiStore = signalStore(
           patchState(store, { loading: true, loaderMessage: 'Loading ...' });
           return individualApi.remove(data.id).pipe(
             tapResponse({
-              next: (response: RestApiResponse<boolean | any>) => {
+              next: (response: boolean | any) => {
                 patchState(store, {
-                  data: response?.data,
+                  data: response,
                   loading: false,
-                  status: response?.status,
                   success: true,
-                  messages: [response.message || 'Success!!'],
+                  messages: [ 'Success!'],
                   error: false,
                 });
               },
               error: (error: any) => {
                 patchState(store, {
-                  status: error?.status || 0,
                   loading: false,
                   success: false,
                   error: true,
@@ -242,19 +227,17 @@ export const IndividualApiStore = signalStore(
           patchState(store, { loading: true, loaderMessage: 'Loading ...' });
           return individualApi.save(data.individual).pipe(
             tapResponse({
-              next: (response: RestApiResponse<IndividualDTO | any>) => {
+              next: (response: IndividualDTO | any) => {
                 patchState(store, {
-                  data: response?.data,
+                  data: response,
                   loading: false,
-                  status: response?.status,
                   success: true,
-                  messages: [response.message || 'Success!!'],
+                  messages: [ 'Success!'],
                   error: false,
                 });
               },
               error: (error: any) => {
                 patchState(store, {
-                  status: error?.status || 0,
                   loading: false,
                   success: false,
                   error: true,
@@ -270,19 +253,17 @@ export const IndividualApiStore = signalStore(
           patchState(store, { loading: true, loaderMessage: 'Loading ...' });
           return individualApi.search(data.criteria).pipe(
             tapResponse({
-              next: (response: RestApiResponse<IndividualListDTO[] | any[]>) => {
+              next: (response: IndividualListDTO[] | any[]) => {
                 patchState(store, {
-                  dataList: response?.data,
+                  dataList: response,
                   loading: false,
-                  status: response?.status,
                   success: true,
-                  messages: [response.message || 'Success!!'],
+                  messages: [ 'Success!'],
                   error: false,
                 });
               },
               error: (error: any) => {
                 patchState(store, {
-                  status: error?.status || 0,
                   loading: false,
                   success: false,
                   error: true,

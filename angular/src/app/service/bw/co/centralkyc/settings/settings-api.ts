@@ -11,44 +11,44 @@ import { RestApiResponse } from '@app/model/rest-api-response.model';
   providedIn: 'root'
 })
 export class SettingsApi {
-    
+
     protected path = '/settings';
 
     private http = inject(HttpClient);
 
-    public findById(id: string | any ): Observable<RestApiResponse<SettingsDTO | any>> {
+    public findById(id: string | any ): Observable<SettingsDTO | any> {
 
-        return this.http.get<RestApiResponse<SettingsDTO | any>>(`${this.path}/${id}`);
+        return this.http.get<SettingsDTO | any>(`${this.path}/${id}`);
     }
 
-    public getAll(): Observable<RestApiResponse<SettingsDTO[] | any[]>> {
+    public getAll(): Observable<SettingsDTO[] | any[]> {
 
-        return this.http.get<RestApiResponse<SettingsDTO[] | any[]>>(`${this.path}`);
+        return this.http.get<SettingsDTO[] | any[]>(`${this.path}`);
     }
 
-    public getAllPaged(pageNumber: number | any , pageSize: number | any ): Observable<RestApiResponse<Page<SettingsDTO> | any>> {
+    public getAllPaged(pageNumber: number | any , pageSize: number | any ): Observable<Page<SettingsDTO> | any> {
 
-        return this.http.get<RestApiResponse<Page<SettingsDTO> | any>>(`${this.path}/paged?pageNumber=${pageNumber}&pageSize=${pageSize}`);
+        return this.http.get<Page<SettingsDTO> | any>(`${this.path}/paged?pageNumber=${pageNumber}&pageSize=${pageSize}`);
     }
 
-    public pagedSearch(criteria: string | any , pageNumber: number | any , pageSize: number | any ): Observable<RestApiResponse<Page<SettingsDTO> | any>> {
+    public pagedSearch(criteria: string | any , pageNumber: number | any , pageSize: number | any ): Observable<Page<SettingsDTO> | any> {
 
-        return this.http.get<RestApiResponse<Page<SettingsDTO> | any>>(`${this.path}/search/paged?criteria=${criteria}&pageNumber=${pageNumber}&pageSize=${pageSize}`);
+        return this.http.get<Page<SettingsDTO> | any>(`${this.path}/search/paged?criteria=${criteria}&pageNumber=${pageNumber}&pageSize=${pageSize}`);
     }
 
-    public remove(id: string | any ): Observable<RestApiResponse<boolean | any>> {
+    public remove(id: string | any ): Observable<boolean | any> {
 
-        return this.http.delete<RestApiResponse<boolean | any>>(`${this.path}/${id}`);
+        return this.http.delete<boolean | any>(`${this.path}/${id}`);
     }
 
-    public save(setttings: SettingsDTO | any ): Observable<RestApiResponse<SettingsDTO | any>> {
+    public save(setttings: SettingsDTO | any ): Observable<SettingsDTO | any> {
 
-        return this.http.post<RestApiResponse<SettingsDTO | any>>(`${this.path}`, setttings);
+        return this.http.post<SettingsDTO | any>(`${this.path}`, setttings);
     }
 
-    public search(criteria: string | any ): Observable<RestApiResponse<SettingsDTO[] | any[]>> {
+    public search(criteria: string | any ): Observable<SettingsDTO[] | any[]> {
 
-        return this.http.get<RestApiResponse<SettingsDTO[] | any[]>>(`${this.path}/search?criteria=${criteria}`);
+        return this.http.get<SettingsDTO[] | any[]>(`${this.path}/search?criteria=${criteria}`);
     }
 
 }

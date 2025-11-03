@@ -19,7 +19,6 @@ const initialState: OrganisationApiState = {
   dataList: [],
   dataPage: new Page<any>(),
   searchCriteria: new SearchObject<any>(),
-  status: 0,
   loading: false,
   success: false,
   messages: [],
@@ -42,19 +41,17 @@ export const OrganisationApiStore = signalStore(
           patchState(store, { loading: true, loaderMessage: 'Loading ...' });
           return organisationApi.findById(data.id).pipe(
             tapResponse({
-              next: (response: RestApiResponse<OrganisationDTO | any>) => {
+              next: (response: OrganisationDTO | any) => {
                 patchState(store, {
-                  data: response?.data,
+                  data: response,
                   loading: false,
-                  status: response?.status,
                   success: true,
-                  messages: [response.message || 'Success!!'],
+                  messages: [ 'Success!'],
                   error: false,
                 });
               },
               error: (error: any) => {
                 patchState(store, {
-                  status: error?.status || 0,
                   loading: false,
                   success: false,
                   error: true,
@@ -70,19 +67,17 @@ export const OrganisationApiStore = signalStore(
           patchState(store, { loading: true, loaderMessage: 'Loading ...' });
           return organisationApi.getAll().pipe(
             tapResponse({
-              next: (response: RestApiResponse<OrganisationListDTO[] | any[]>) => {
+              next: (response: OrganisationListDTO[] | any[]) => {
                 patchState(store, {
-                  dataList: response?.data,
+                  dataList: response,
                   loading: false,
-                  status: response?.status,
                   success: true,
-                  messages: [response.message || 'Success!!'],
+                  messages: [ 'Success!'],
                   error: false,
                 });
               },
               error: (error: any) => {
                 patchState(store, {
-                  status: error?.status || 0,
                   loading: false,
                   success: false,
                   error: true,
@@ -98,19 +93,17 @@ export const OrganisationApiStore = signalStore(
           patchState(store, { loading: true, loaderMessage: 'Loading ...' });
           return organisationApi.getAllPaged(data.pageNumber, data.pageSize).pipe(
             tapResponse({
-              next: (response: RestApiResponse<Page<OrganisationListDTO> | any>) => {
+              next: (response: Page<OrganisationListDTO> | any) => {
                 patchState(store, {
-                  dataPage: response?.data,
+                  dataPage: response,
                   loading: false,
-                  status: response?.status,
                   success: true,
-                  messages: [response.message || 'Success!!'],
+                  messages: [ 'Success!'],
                   error: false,
                 });
               },
               error: (error: any) => {
                 patchState(store, {
-                  status: error?.status || 0,
                   loading: false,
                   success: false,
                   error: true,
@@ -126,19 +119,17 @@ export const OrganisationApiStore = signalStore(
           patchState(store, { loading: true, loaderMessage: 'Loading ...' });
           return organisationApi.pagedSearch(data.criteria).pipe(
             tapResponse({
-              next: (response: RestApiResponse<Page<OrganisationListDTO> | any>) => {
+              next: (response: Page<OrganisationListDTO> | any) => {
                 patchState(store, {
-                  dataPage: response?.data,
+                  dataPage: response,
                   loading: false,
-                  status: response?.status,
                   success: true,
-                  messages: [response.message || 'Success!!'],
+                  messages: [ 'Success!'],
                   error: false,
                 });
               },
               error: (error: any) => {
                 patchState(store, {
-                  status: error?.status || 0,
                   loading: false,
                   success: false,
                   error: true,
@@ -154,19 +145,17 @@ export const OrganisationApiStore = signalStore(
           patchState(store, { loading: true, loaderMessage: 'Loading ...' });
           return organisationApi.remove(data.id).pipe(
             tapResponse({
-              next: (response: RestApiResponse<boolean | any>) => {
+              next: (response: boolean | any) => {
                 patchState(store, {
-                  data: response?.data,
+                  data: response,
                   loading: false,
-                  status: response?.status,
                   success: true,
-                  messages: [response.message || 'Success!!'],
+                  messages: [ 'Success!'],
                   error: false,
                 });
               },
               error: (error: any) => {
                 patchState(store, {
-                  status: error?.status || 0,
                   loading: false,
                   success: false,
                   error: true,
@@ -182,19 +171,17 @@ export const OrganisationApiStore = signalStore(
           patchState(store, { loading: true, loaderMessage: 'Loading ...' });
           return organisationApi.save(data.organisation).pipe(
             tapResponse({
-              next: (response: RestApiResponse<OrganisationDTO | any>) => {
+              next: (response: OrganisationDTO | any) => {
                 patchState(store, {
-                  data: response?.data,
+                  data: response,
                   loading: false,
-                  status: response?.status,
                   success: true,
-                  messages: [response.message || 'Success!!'],
+                  messages: [ 'Success!'],
                   error: false,
                 });
               },
               error: (error: any) => {
                 patchState(store, {
-                  status: error?.status || 0,
                   loading: false,
                   success: false,
                   error: true,
@@ -210,19 +197,17 @@ export const OrganisationApiStore = signalStore(
           patchState(store, { loading: true, loaderMessage: 'Loading ...' });
           return organisationApi.search(data.criteria).pipe(
             tapResponse({
-              next: (response: RestApiResponse<OrganisationListDTO[] | any[]>) => {
+              next: (response: OrganisationListDTO[] | any[]) => {
                 patchState(store, {
-                  dataList: response?.data,
+                  dataList: response,
                   loading: false,
-                  status: response?.status,
                   success: true,
-                  messages: [response.message || 'Success!!'],
+                  messages: [ 'Success!'],
                   error: false,
                 });
               },
               error: (error: any) => {
                 patchState(store, {
-                  status: error?.status || 0,
                   loading: false,
                   success: false,
                   error: true,

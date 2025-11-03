@@ -92,28 +92,28 @@ export class EditSettingsImplComponent extends EditSettingsComponent {
   override filterSelectedOrgDocument(): void {
     const search = this.selectedOrgDocumentFilterCtrl.value?.toLowerCase() || '';
     this.documentTypeApi.search(search).subscribe((data) => {
-      this.selectedOrgDocumentFilteredList$ = of(data.data || []);
+      this.selectedOrgDocumentFilteredList$ = of(data || []);
     });
   }
 
   override filterSelectedKycOrgDocument(): void {
     const search = this.selectedKycOrgDocumentFilterCtrl.value?.toLowerCase() || '';
     this.documentTypeApi.search(search).subscribe((data) => {
-      this.selectedKycOrgDocumentFilteredList$ = of(data.data || []);
+      this.selectedKycOrgDocumentFilteredList$ = of(data || []);
     });
   }
 
   override filterSelectedIndDocument(): void {
     const search = this.selectedIndDocumentFilterCtrl.value?.toLowerCase() || '';
     this.documentTypeApi.search(search).subscribe((data) => {
-      this.selectedIndDocumentFilteredList$ = of(data.data || []);
+      this.selectedIndDocumentFilteredList$ = of(data || []);
     });
   }
 
   override filterSelectedKycIndDocument(): void {
     const search = this.selectedKycIndDocumentFilterCtrl.value?.toLowerCase() || '';
     this.documentTypeApi.search(search).subscribe((data) => {
-      this.selectedKycIndDocumentFilteredList$ = of(data.data || []);
+      this.selectedKycIndDocumentFilteredList$ = of(data || []);
     });
   }
 

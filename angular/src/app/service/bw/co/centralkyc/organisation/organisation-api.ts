@@ -18,39 +18,39 @@ export class OrganisationApi {
 
     private http = inject(HttpClient);
 
-    public findById(id: string | any ): Observable<RestApiResponse<OrganisationDTO | any>> {
+    public findById(id: string | any ): Observable<OrganisationDTO | any> {
 
-        return this.http.get<RestApiResponse<OrganisationDTO | any>>(`${this.path}/${id}`);
+        return this.http.get<OrganisationDTO | any>(`${this.path}/${id}`);
     }
 
-    public getAll(): Observable<RestApiResponse<OrganisationListDTO[] | any[]>> {
+    public getAll(): Observable<OrganisationListDTO[] | any[]> {
 
-        return this.http.get<RestApiResponse<OrganisationListDTO[] | any[]>>(`${this.path}`);
+        return this.http.get<OrganisationListDTO[] | any[]>(`${this.path}`);
     }
 
-    public getAllPaged(pageNumber: number | any , pageSize: number | any ): Observable<RestApiResponse<Page<OrganisationListDTO> | any>> {
+    public getAllPaged(pageNumber: number | any , pageSize: number | any ): Observable<Page<OrganisationListDTO> | any> {
 
-        return this.http.get<RestApiResponse<Page<OrganisationListDTO> | any>>(`${this.path}/paged?pageNumber=${pageNumber}&pageSize=${pageSize}`);
+        return this.http.get<Page<OrganisationListDTO> | any>(`${this.path}/paged?pageNumber=${pageNumber}&pageSize=${pageSize}`);
     }
 
-    public pagedSearch(criteria: SearchObject<OrganisationSearchCriteria> | any ): Observable<RestApiResponse<Page<OrganisationListDTO> | any>> {
+    public pagedSearch(criteria: SearchObject<OrganisationSearchCriteria> | any ): Observable<Page<OrganisationListDTO> | any> {
 
-        return this.http.post<RestApiResponse<Page<OrganisationListDTO> | any>>(`${this.path}/search/paged`, criteria);
+        return this.http.post<Page<OrganisationListDTO> | any>(`${this.path}/search/paged`, criteria);
     }
 
-    public remove(id: string | any ): Observable<RestApiResponse<boolean | any>> {
+    public remove(id: string | any ): Observable<boolean | any> {
 
-        return this.http.delete<RestApiResponse<boolean | any>>(`${this.path}/${id}`);
+        return this.http.delete<boolean | any>(`${this.path}/${id}`);
     }
 
-    public save(organisation: OrganisationDTO | any ): Observable<RestApiResponse<OrganisationDTO | any>> {
+    public save(organisation: OrganisationDTO | any ): Observable<OrganisationDTO | any> {
 
-        return this.http.post<RestApiResponse<OrganisationDTO | any>>(`${this.path}`, organisation);
+        return this.http.post<OrganisationDTO | any>(`${this.path}`, organisation);
     }
 
-    public search(criteria: SearchObject<OrganisationSearchCriteria> | any ): Observable<RestApiResponse<OrganisationListDTO[] | any[]>> {
+    public search(criteria: SearchObject<OrganisationSearchCriteria> | any ): Observable<OrganisationListDTO[] | any[]> {
 
-        return this.http.post<RestApiResponse<OrganisationListDTO[] | any[]>>(`${this.path}/search?criteria=${criteria}`, criteria);
+        return this.http.post<OrganisationListDTO[] | any[]>(`${this.path}/search?criteria=${criteria}`, criteria);
     }
 
 }

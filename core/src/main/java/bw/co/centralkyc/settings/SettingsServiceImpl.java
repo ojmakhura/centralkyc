@@ -8,6 +8,7 @@
  */
 package bw.co.centralkyc.settings;
 
+import java.time.LocalDateTime;
 import java.util.Collection;
 import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Page;
@@ -114,6 +115,19 @@ public class SettingsServiceImpl
     {
         // TODO implement protected  Page<SettingsDTO> handleSearch(String criteria, Integer pageNumber, Integer pageSize)
         throw new UnsupportedOperationException("bw.co.centralkyc.settings.SettingsService.handleSearch(String criteria, Integer pageNumber, Integer pageSize) Not implemented!");
+    }
+
+    @Override
+    protected SettingsDTO handleUploadInvoiceTemplate(String invoiceTemplate, String user) throws Exception {
+
+        Settings settings = settingsRepository.findAll().stream().findFirst().orElseThrow(() -> new Exception("Settings not found"));
+        settings.setInvoiceTemplate(invoiceTemplate);
+        settings.setModifiedBy(user);
+        settings.setModifiedAt(LocalDateTime.now());
+        
+        settings = settingsRepository.save(settings);
+
+        return settingsDao.toSettingsDTO(settings);
     }
 
 }

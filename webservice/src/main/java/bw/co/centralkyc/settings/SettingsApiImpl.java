@@ -17,6 +17,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 public class SettingsApiImpl extends SettingsApiBase {
@@ -27,15 +28,10 @@ public class SettingsApiImpl extends SettingsApiBase {
     }
 
     @Override
-    public ResponseEntity<RestApiResponse<SettingsDTO>> handleFindById(String id) {
+    public ResponseEntity<SettingsDTO> handleFindById(String id) {
         try {
-            RestApiResponse<SettingsDTO> responseData = new RestApiResponse<>();
-            Optional<SettingsDTO> data = Optional.empty(); // TODO: Add custom code here;
-            responseData.setData(data.get());
-            ResponseEntity<RestApiResponse<SettingsDTO>> response = ResponseEntity.status(HttpStatus.OK)
-                    .body(responseData);
-
-            return response;
+            
+            return ResponseEntity.ok(null);
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -45,17 +41,9 @@ public class SettingsApiImpl extends SettingsApiBase {
     }
 
     @Override
-    public ResponseEntity<RestApiResponse<Collection<SettingsDTO>>> handleGetAll() {
+    public ResponseEntity<Collection<SettingsDTO>> handleGetAll() {
         try {
-            RestApiResponse<Collection<SettingsDTO>> responseData = new RestApiResponse<>();
-            Optional<Collection<SettingsDTO>> data = Optional.of(settingsService.getAll());
-            responseData.setData(data.get());
-            responseData.setSuccess(true);
-            responseData.setMessage(String.format("Loaded %s settings!", data.get().size()));
-            ResponseEntity<RestApiResponse<Collection<SettingsDTO>>> response = ResponseEntity.status(HttpStatus.OK)
-                    .body(responseData);
-
-            return response;
+            return ResponseEntity.ok(settingsService.getAll());
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -65,15 +53,9 @@ public class SettingsApiImpl extends SettingsApiBase {
     }
 
     @Override
-    public ResponseEntity<RestApiResponse<Page<SettingsDTO>>> handleGetAllPaged(Integer pageNumber, Integer pageSize) {
+    public ResponseEntity<Page<SettingsDTO>> handleGetAllPaged(Integer pageNumber, Integer pageSize) {
         try {
-            RestApiResponse<Page<SettingsDTO>> responseData = new RestApiResponse<>();
-            Optional<Page<SettingsDTO>> data = Optional.of(settingsService.getAll(pageNumber, pageSize));
-            responseData.setData(data.get());
-            ResponseEntity<RestApiResponse<Page<SettingsDTO>>> response = ResponseEntity.status(HttpStatus.OK)
-                    .body(responseData);
-
-            return response;
+            return ResponseEntity.ok(settingsService.getAll(pageNumber, pageSize));
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -83,16 +65,10 @@ public class SettingsApiImpl extends SettingsApiBase {
     }
 
     @Override
-    public ResponseEntity<RestApiResponse<Page<SettingsDTO>>> handlePagedSearch(String criteria, Integer pageNumber,
+    public ResponseEntity<Page<SettingsDTO>> handlePagedSearch(String criteria, Integer pageNumber,
             Integer pageSize) {
         try {
-            RestApiResponse<Page<SettingsDTO>> responseData = new RestApiResponse<>();
-            Optional<Page<SettingsDTO>> data = Optional.empty(); // TODO: Add custom code here;
-            responseData.setData(data.get());
-            ResponseEntity<RestApiResponse<Page<SettingsDTO>>> response = ResponseEntity.status(HttpStatus.OK)
-                    .body(responseData);
-
-            return response;
+            return ResponseEntity.ok(null);
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -102,16 +78,9 @@ public class SettingsApiImpl extends SettingsApiBase {
     }
 
     @Override
-    public ResponseEntity<RestApiResponse<Boolean>> handleRemove(String id) {
+    public ResponseEntity<Boolean> handleRemove(String id) {
         try {
-            RestApiResponse<Boolean> responseData = new RestApiResponse<>();
-            Optional<Boolean> data = Optional.empty(); // TODO: Add custom code here;
-            responseData.setData(data.get());
-            responseData.setSuccess(true);
-            responseData.setMessage("");
-            ResponseEntity<RestApiResponse<Boolean>> response = ResponseEntity.status(HttpStatus.OK).body(responseData);
-
-            return response;
+            return ResponseEntity.ok(false);
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -121,21 +90,14 @@ public class SettingsApiImpl extends SettingsApiBase {
     }
 
     @Override
-    public ResponseEntity<RestApiResponse<SettingsDTO>> handleSave(SettingsDTO setttings) {
+    public ResponseEntity<SettingsDTO> handleSave(SettingsDTO setttings) {
         try {
-            RestApiResponse<SettingsDTO> responseData = new RestApiResponse<>();
+            
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             AuditTracker.auditTrail(setttings, authentication);
 
-            Optional<SettingsDTO> data = Optional.of(
-                    settingsService.save(setttings)); // TODO: Add custom code here;
-            responseData.setData(data.get());
-            responseData.setSuccess(true);
-            responseData.setMessage("Settings saved successfully");
-            ResponseEntity<RestApiResponse<SettingsDTO>> response = ResponseEntity.status(HttpStatus.OK)
-                    .body(responseData);
-
-            return response;
+            return ResponseEntity.ok(
+                    settingsService.save(setttings)); 
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -145,20 +107,20 @@ public class SettingsApiImpl extends SettingsApiBase {
     }
 
     @Override
-    public ResponseEntity<RestApiResponse<Collection<SettingsDTO>>> handleSearch(String criteria) {
+    public ResponseEntity<Collection<SettingsDTO>> handleSearch(String criteria) {
         try {
-            RestApiResponse<Collection<SettingsDTO>> responseData = new RestApiResponse<>();
-            Optional<Collection<SettingsDTO>> data = Optional.empty(); // TODO: Add custom code here;
-            responseData.setData(data.get());
-            ResponseEntity<RestApiResponse<Collection<SettingsDTO>>> response = ResponseEntity.status(HttpStatus.OK)
-                    .body(responseData);
-
-            return response;
+            return ResponseEntity.ok(null);
 
         } catch (Exception e) {
             e.printStackTrace();
             throw e;
         }
 
+    }
+
+    @Override
+    public ResponseEntity<SettingsDTO> handleUploadInvoiceTemplate(MultipartFile invoiceTemplate) throws Exception {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'handleUploadInvoiceTemplate'");
     }
 }

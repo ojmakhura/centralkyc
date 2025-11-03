@@ -41,19 +41,11 @@ public class DocumentApiImpl extends DocumentApiBase {
     }
 
     @Override
-    public ResponseEntity<RestApiResponse<Collection<DocumentDTO>>> handleFindByDocumentType(String documentTypeId) {
+    public ResponseEntity<Collection<DocumentDTO>> handleFindByDocumentType(String documentTypeId) {
 
         try {
 
-            RestApiResponse<Collection<DocumentDTO>> responseData = new RestApiResponse<>();
-            Optional<Collection<DocumentDTO>> data = Optional.of(documentService.findByDocumentType(documentTypeId));
-            responseData.setData(data.get());
-            responseData.setSuccess(true);
-            responseData.setMessage(String.format("Loaded %s documents successfully!", responseData.getData().size()));
-            ResponseEntity<RestApiResponse<Collection<DocumentDTO>>> response = ResponseEntity.status(HttpStatus.OK)
-                    .body(responseData);
-
-            return response;
+            return ResponseEntity.ok(documentService.findByDocumentType(documentTypeId));
 
         } catch (Exception e) {
 
@@ -63,20 +55,11 @@ public class DocumentApiImpl extends DocumentApiBase {
     }
 
     @Override
-    public ResponseEntity<RestApiResponse<DocumentDTO>> handleFindById(String id) {
+    public ResponseEntity<DocumentDTO> handleFindById(String id) {
 
         try {
 
-            RestApiResponse<DocumentDTO> responseData = new RestApiResponse<>();
-            Optional<DocumentDTO> data = Optional.of(documentService.findById(id));
-            responseData.setData(data.get());
-            responseData.setSuccess(true);
-            responseData.setMessage(
-                    String.format("Document %s loaded successfully!", responseData.getData().getDocumentType()));
-            ResponseEntity<RestApiResponse<DocumentDTO>> response = ResponseEntity.status(HttpStatus.OK)
-                    .body(responseData);
-
-            return response;
+            return ResponseEntity.ok(documentService.findById(id));
 
         } catch (Exception e) {
 
@@ -85,20 +68,12 @@ public class DocumentApiImpl extends DocumentApiBase {
     }
 
     @Override
-    public ResponseEntity<RestApiResponse<Collection<DocumentDTO>>> handleFindByTarget(
+    public ResponseEntity<Collection<DocumentDTO>> handleFindByTarget(
             bw.co.centralkyc.TargetEntity target, String targetId) {
 
         try {
 
-            RestApiResponse<Collection<DocumentDTO>> responseData = new RestApiResponse<>();
-            Optional<Collection<DocumentDTO>> data = Optional.of(documentService.findByTarget(target, targetId));
-            responseData.setData(data.get());
-            responseData.setSuccess(true);
-            responseData.setMessage(String.format("Loaded %s documents successfully!", responseData.getData().size()));
-            ResponseEntity<RestApiResponse<Collection<DocumentDTO>>> response = ResponseEntity.status(HttpStatus.OK)
-                    .body(responseData);
-
-            return response;
+            return ResponseEntity.ok(documentService.findByTarget(target, targetId));
         } catch (Exception e) {
 
             throw e;
@@ -106,31 +81,17 @@ public class DocumentApiImpl extends DocumentApiBase {
     }
 
     @Override
-    public ResponseEntity<RestApiResponse<Collection<DocumentDTO>>> handleGetAll() {
-        RestApiResponse<Collection<DocumentDTO>> responseData = new RestApiResponse<>();
-        Optional<Collection<DocumentDTO>> data = Optional.of(documentService.getAll());
-        responseData.setData(data.get());
-        responseData.setSuccess(true);
-        responseData.setMessage(String.format("Loaded %s documents successfully!", responseData.getData().size()));
-        ResponseEntity<RestApiResponse<Collection<DocumentDTO>>> response = ResponseEntity.status(HttpStatus.OK)
-                .body(responseData);
-
-        return response;
+    public ResponseEntity<Collection<DocumentDTO>> handleGetAll() {
+        return ResponseEntity.ok(documentService.getAll());
 
     }
 
     @Override
-    public ResponseEntity<RestApiResponse<Page<DocumentDTO>>> handleGetAllPaged(Integer pageNumber, Integer pageSize) {
+    public ResponseEntity<Page<DocumentDTO>> handleGetAllPaged(Integer pageNumber, Integer pageSize) {
 
         try {
 
-            RestApiResponse<Page<DocumentDTO>> responseData = new RestApiResponse<>();
-            Optional<Page<DocumentDTO>> data = Optional.of(documentService.getAll(pageNumber, pageSize));
-            responseData.setData(data.get());
-            ResponseEntity<RestApiResponse<Page<DocumentDTO>>> response = ResponseEntity.status(HttpStatus.OK)
-                    .body(responseData);
-
-            return response;
+            return ResponseEntity.ok(documentService.getAll(pageNumber, pageSize));
 
         } catch (Exception e) {
 
@@ -140,18 +101,11 @@ public class DocumentApiImpl extends DocumentApiBase {
     }
 
     @Override
-    public ResponseEntity<RestApiResponse<Boolean>> handleRemove(String id) {
+    public ResponseEntity<Boolean> handleRemove(String id) {
 
         try {
 
-            RestApiResponse<Boolean> responseData = new RestApiResponse<>();
-            Optional<Boolean> data = Optional.of(documentService.remove(id));
-            responseData.setData(data.get());
-            responseData.setSuccess(true);
-            responseData.setMessage(String.format("Document successfully removed!"));
-            ResponseEntity<RestApiResponse<Boolean>> response = ResponseEntity.status(HttpStatus.OK).body(responseData);
-
-            return response;
+            return ResponseEntity.ok(documentService.remove(id));
 
         } catch (Exception e) {
 
@@ -161,21 +115,13 @@ public class DocumentApiImpl extends DocumentApiBase {
     }
 
     @Override
-    public ResponseEntity<RestApiResponse<DocumentDTO>> handleSave(DocumentDTO document) {
+    public ResponseEntity<DocumentDTO> handleSave(DocumentDTO document) {
 
         try {
 
-            RestApiResponse<DocumentDTO> responseData = new RestApiResponse<>();
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             AuditTracker.auditTrail(document, authentication);
-            Optional<DocumentDTO> data = Optional.of(documentService.save(document));
-            responseData.setData(data.get());
-            responseData.setSuccess(true);
-            responseData.setMessage(String.format("Document %s saved  successfully!", document.getDocumentType()));
-            ResponseEntity<RestApiResponse<DocumentDTO>> response = ResponseEntity.status(HttpStatus.OK)
-                    .body(responseData);
-
-            return response;
+            return ResponseEntity.ok(documentService.save(document));
 
         } catch (Exception e) {
 
@@ -185,20 +131,11 @@ public class DocumentApiImpl extends DocumentApiBase {
     }
 
     @Override
-    public ResponseEntity<RestApiResponse<Collection<DocumentDTO>>> handleSearch(String criteria) {
+    public ResponseEntity<Collection<DocumentDTO>> handleSearch(String criteria) {
 
         try {
 
-            RestApiResponse<Collection<DocumentDTO>> responseData = new RestApiResponse<>();
-            Optional<Collection<DocumentDTO>> data = Optional.of(documentService.search(criteria));
-            responseData.setData(data.get());
-            responseData.setSuccess(true);
-            responseData.setMessage(String.format("Loaded %s documents successfully!", responseData.getData().size()));
-            ResponseEntity<RestApiResponse<Collection<DocumentDTO>>> response = ResponseEntity.status(HttpStatus.OK)
-                    .body(responseData);
-
-            return response;
-
+            return ResponseEntity.ok(documentService.search(criteria));
         } catch (Exception e) {
 
             throw e;
@@ -244,12 +181,10 @@ public class DocumentApiImpl extends DocumentApiBase {
     }
 
     @Override
-    public ResponseEntity<RestApiResponse<DocumentDTO>> handleUpload(TargetEntity target, String targetId,
+    public ResponseEntity<DocumentDTO> handleUpload(TargetEntity target, String targetId,
             String documentTypeId, MultipartFile file) {
 
         try {
-
-            RestApiResponse<DocumentDTO> responseData = new RestApiResponse<>();
 
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             System.out.println(authentication);
@@ -284,14 +219,7 @@ public class DocumentApiImpl extends DocumentApiBase {
 
             document.setDocumentTypeId(documentTypeId);
 
-            Optional<DocumentDTO> data = Optional.of(documentService.save(document)); // TODO: Add custom code here;
-            responseData.setData(data.get());
-            responseData.setSuccess(true);
-            responseData.setMessage("Document uploaded successfully!");
-            ResponseEntity<RestApiResponse<DocumentDTO>> response = ResponseEntity.status(HttpStatus.OK)
-                    .body(responseData);
-
-            return response;
+            return ResponseEntity.ok(documentService.save(document)); 
 
         } catch (Exception e) {
 
@@ -301,17 +229,17 @@ public class DocumentApiImpl extends DocumentApiBase {
     }
 
     // @Override
-    // public ResponseEntity<RestApiResponse<InputStreamResource>>
+    // public ResponseEntity<InputStreamResource>>
     // handleDownloadFile(String objectName) {
 
-    // RestApiResponse<InputStreamResource> responseData = new RestApiResponse<>();
+    // InputStreamResource> responseData = new >();
 
     // try {
     // InputStreamResource data = downloadFromMinio(objectName);
     // responseData.setData(data);
     // responseData.setSuccess(true);
     // responseData.setMessage("File downloaded successfully!");
-    // ResponseEntity<RestApiResponse<InputStreamResource>> response =
+    // ResponseEntity<InputStreamResource>> response =
     // ResponseEntity.status(HttpStatus.OK)
     // .body(responseData);
 

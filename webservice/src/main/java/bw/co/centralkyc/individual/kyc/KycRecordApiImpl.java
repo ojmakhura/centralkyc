@@ -10,12 +10,10 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 import bw.co.centralkyc.AuditTracker;
-import bw.co.centralkyc.RestApiResponse;
 
 import java.util.Collection;
 
 import org.springframework.data.domain.Page;
-import org.springframework.http.HttpStatus;
 
 @org.springframework.web.bind.annotation.RestController
 public class KycRecordApiImpl extends KycRecordApiBase {
@@ -26,19 +24,11 @@ public class KycRecordApiImpl extends KycRecordApiBase {
     }
 
     @Override
-    public ResponseEntity<RestApiResponse<KycRecordDTO>> handleFindById(String id) throws Exception {
+    public ResponseEntity<KycRecordDTO> handleFindById(String id) throws Exception {
 
         try {
 
-            RestApiResponse<KycRecordDTO> responseData = new RestApiResponse<>();
-            responseData.setData(kycRecordService.findById(id));
-            responseData.setStatus(HttpStatus.OK.value());
-            responseData
-                    .setMessage(String.format("KYC record for %s has been found.", responseData.getData().getName()));
-            ResponseEntity<RestApiResponse<KycRecordDTO>> response = ResponseEntity.status(HttpStatus.OK)
-                    .body(responseData);
-
-            return response;
+            return ResponseEntity.ok(kycRecordService.findById(id));
 
         } catch (Exception e) {
 
@@ -47,19 +37,12 @@ public class KycRecordApiImpl extends KycRecordApiBase {
     }
 
     @Override
-    public ResponseEntity<RestApiResponse<Collection<KycRecordDTO>>> handleFindByIdentityNo(String identityNo)
+    public ResponseEntity<Collection<KycRecordDTO>> handleFindByIdentityNo(String identityNo)
             throws Exception {
 
         try {
 
-            RestApiResponse<Collection<KycRecordDTO>> responseData = new RestApiResponse<>();
-            responseData.setData(kycRecordService.findByIdentityNo(identityNo));
-            responseData.setStatus(HttpStatus.OK.value());
-            responseData.setMessage(String.format("Operation successful."));
-            ResponseEntity<RestApiResponse<Collection<KycRecordDTO>>> response = ResponseEntity.status(HttpStatus.OK)
-                    .body(responseData);
-
-            return response;
+            return ResponseEntity.ok(kycRecordService.findByIdentityNo(identityNo));
 
         } catch (Exception e) {
 
@@ -68,18 +51,12 @@ public class KycRecordApiImpl extends KycRecordApiBase {
     }
 
     @Override
-    public ResponseEntity<RestApiResponse<Collection<KycRecordDTO>>> handleFindByIndividual(String individualId)
+    public ResponseEntity<Collection<KycRecordDTO>> handleFindByIndividual(String individualId)
             throws Exception {
 
         try {
-            RestApiResponse<Collection<KycRecordDTO>> responseData = new RestApiResponse<>();
-            responseData.setData(kycRecordService.findByIndividual(individualId));
-            responseData.setStatus(HttpStatus.OK.value());
-            responseData.setMessage(String.format("Operation successful."));
-            ResponseEntity<RestApiResponse<Collection<KycRecordDTO>>> response = ResponseEntity.status(HttpStatus.OK)
-                    .body(responseData);
-
-            return response;
+            
+            return ResponseEntity.ok(kycRecordService.findByIndividual(individualId));
 
         } catch (Exception e) {
 
@@ -88,17 +65,10 @@ public class KycRecordApiImpl extends KycRecordApiBase {
     }
 
     @Override
-    public ResponseEntity<RestApiResponse<Collection<KycRecordDTO>>> handleGetAll() throws Exception {
+    public ResponseEntity<Collection<KycRecordDTO>> handleGetAll() throws Exception {
 
         try {
-            RestApiResponse<Collection<KycRecordDTO>> responseData = new RestApiResponse<>();
-            responseData.setData(kycRecordService.getAll());
-            responseData.setStatus(HttpStatus.OK.value());
-            responseData.setMessage(String.format("Operation successful."));
-            ResponseEntity<RestApiResponse<Collection<KycRecordDTO>>> response = ResponseEntity.status(HttpStatus.OK)
-                    .body(responseData);
-
-            return response;
+            return ResponseEntity.ok(kycRecordService.getAll());
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -107,18 +77,11 @@ public class KycRecordApiImpl extends KycRecordApiBase {
     }
 
     @Override
-    public ResponseEntity<RestApiResponse<Page<KycRecordDTO>>> handleGetAllPaged(Integer pageNumber, Integer pageSize)
+    public ResponseEntity<Page<KycRecordDTO>> handleGetAllPaged(Integer pageNumber, Integer pageSize)
             throws Exception {
 
         try {
-            RestApiResponse<Page<KycRecordDTO>> responseData = new RestApiResponse<>();
-            responseData.setData(kycRecordService.getAll(pageNumber, pageSize));
-            responseData.setStatus(HttpStatus.OK.value());
-            responseData.setMessage(String.format("Operation successful."));
-            ResponseEntity<RestApiResponse<Page<KycRecordDTO>>> response = ResponseEntity.status(HttpStatus.OK)
-                    .body(responseData);
-
-            return response;
+            return ResponseEntity.ok(kycRecordService.getAll(pageNumber, pageSize));
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -127,18 +90,11 @@ public class KycRecordApiImpl extends KycRecordApiBase {
     }
 
     @Override
-    public ResponseEntity<RestApiResponse<Page<KycRecordDTO>>> handlePagedSearch(String criteria, Integer pageNumber,
+    public ResponseEntity<Page<KycRecordDTO>> handlePagedSearch(String criteria, Integer pageNumber,
             Integer pageSize) throws Exception {
 
         try {
-            RestApiResponse<Page<KycRecordDTO>> responseData = new RestApiResponse<>();
-            responseData.setData(kycRecordService.search(criteria, pageNumber, pageSize));
-            responseData.setStatus(HttpStatus.OK.value());
-            responseData.setMessage(String.format("Operation successful."));
-            ResponseEntity<RestApiResponse<Page<KycRecordDTO>>> response = ResponseEntity.status(HttpStatus.OK)
-                    .body(responseData);
-
-            return response;
+            return ResponseEntity.ok(kycRecordService.search(criteria, pageNumber, pageSize));
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -147,15 +103,9 @@ public class KycRecordApiImpl extends KycRecordApiBase {
     }
 
     @Override
-    public ResponseEntity<RestApiResponse<Boolean>> handleRemove(String id) throws Exception {
+    public ResponseEntity<Boolean> handleRemove(String id) throws Exception {
         try {
-            RestApiResponse<Boolean> responseData = new RestApiResponse<>();
-            responseData.setData(kycRecordService.remove(id));
-            responseData.setStatus(HttpStatus.OK.value());
-            responseData.setMessage(String.format("Operation successful."));
-            ResponseEntity<RestApiResponse<Boolean>> response = ResponseEntity.status(HttpStatus.OK).body(responseData);
-
-            return response;
+            return ResponseEntity.ok(kycRecordService.remove(id));
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -164,19 +114,13 @@ public class KycRecordApiImpl extends KycRecordApiBase {
     }
 
     @Override
-    public ResponseEntity<RestApiResponse<KycRecordDTO>> handleSave(KycRecordDTO kycRecord) throws Exception {
+    public ResponseEntity<KycRecordDTO> handleSave(KycRecordDTO kycRecord) throws Exception {
         try {
-            RestApiResponse<KycRecordDTO> responseData = new RestApiResponse<>();
+            
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             AuditTracker.auditTrail(kycRecord, authentication);
 
-            responseData.setData(kycRecordService.save(kycRecord));
-            responseData.setStatus(HttpStatus.OK.value());
-            responseData.setMessage(String.format("Operation successful."));
-            ResponseEntity<RestApiResponse<KycRecordDTO>> response = ResponseEntity.status(HttpStatus.OK)
-                    .body(responseData);
-
-            return response;
+            return ResponseEntity.ok(kycRecordService.save(kycRecord));
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -185,16 +129,10 @@ public class KycRecordApiImpl extends KycRecordApiBase {
     }
 
     @Override
-    public ResponseEntity<RestApiResponse<Collection<KycRecordDTO>>> handleSearch(String criteria) throws Exception {
+    public ResponseEntity<Collection<KycRecordDTO>> handleSearch(String criteria) throws Exception {
         try {
-            RestApiResponse<Collection<KycRecordDTO>> responseData = new RestApiResponse<>();
-            responseData.setData(kycRecordService.search(criteria));
-            responseData.setStatus(HttpStatus.OK.value());
-            responseData.setMessage(String.format("Operation successful."));
-            ResponseEntity<RestApiResponse<Collection<KycRecordDTO>>> response = ResponseEntity.status(HttpStatus.OK)
-                    .body(responseData);
-
-            return response;
+            
+            return ResponseEntity.ok(kycRecordService.search(criteria));
 
         } catch (Exception e) {
             e.printStackTrace();

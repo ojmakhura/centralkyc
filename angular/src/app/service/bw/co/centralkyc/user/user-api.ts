@@ -11,84 +11,84 @@ import { RestApiResponse } from '@app/model/rest-api-response.model';
   providedIn: 'root'
 })
 export class UserApi {
-    
+
     protected path = '/user';
 
     private http = inject(HttpClient);
 
-    public addRole(userId: string | any , role: string | any ): Observable<RestApiResponse<boolean | any>> {
+    public addRole(userId: string | any , role: string | any ): Observable<boolean | any> {
 
-        return this.http.put<RestApiResponse<boolean | any>>(`${this.path}/role?userId=${userId}&role=${role}`, {userId: userId, role: role});
+        return this.http.put<boolean | any>(`${this.path}/role?userId=${userId}&role=${role}`, {userId: userId, role: role});
     }
 
-    public changePassword(userId: string | any , newPassword: string | any ): Observable<RestApiResponse<string | any>> {
+    public changePassword(userId: string | any , newPassword: string | any ): Observable<string | any> {
 
-        return this.http.get<RestApiResponse<string | any>>(`${this.path}/updatePassword?userId=${userId}&newPassword=${newPassword}`);
+        return this.http.get<string | any>(`${this.path}/updatePassword?userId=${userId}&newPassword=${newPassword}`);
     }
 
-    public findByBranchId(branchId: string | any ): Observable<RestApiResponse<UserDTO[] | any[]>> {
+    public findByBranchId(branchId: string | any ): Observable<UserDTO[] | any[]> {
 
-        return this.http.get<RestApiResponse<UserDTO[] | any[]>>(`${this.path}/branch-id/{branchId}/branchId/${branchId}`);
+        return this.http.get<UserDTO[] | any[]>(`${this.path}/branch-id/{branchId}/branchId/${branchId}`);
     }
 
-    public findByBranchName(branch: string | any ): Observable<RestApiResponse<UserDTO[] | any[]>> {
+    public findByBranchName(branch: string | any ): Observable<UserDTO[] | any[]> {
 
-        return this.http.get<RestApiResponse<UserDTO[] | any[]>>(`${this.path}/branch-name/${branch}`);
+        return this.http.get<UserDTO[] | any[]>(`${this.path}/branch-name/${branch}`);
     }
 
-    public findByClientRoles(roles: Set<string> | any , clientId: string | any ): Observable<RestApiResponse<UserDTO[] | any[]>> {
+    public findByClientRoles(roles: Set<string> | any , clientId: string | any ): Observable<UserDTO[] | any[]> {
 
-        return this.http.get<RestApiResponse<UserDTO[] | any[]>>(`${this.path}/client/roles?roles=${roles}`);
+        return this.http.get<UserDTO[] | any[]>(`${this.path}/client/roles?roles=${roles}`);
     }
 
-    public findByIdentityNo(identityNo: string | any ): Observable<RestApiResponse<UserDTO | any>> {
+    public findByIdentityNo(identityNo: string | any ): Observable<UserDTO | any> {
 
-        return this.http.get<RestApiResponse<UserDTO | any>>(`${this.path}/by-identity/{identityNo}/identityNo/${identityNo}`);
+        return this.http.get<UserDTO | any>(`${this.path}/by-identity/{identityNo}/identityNo/${identityNo}`);
     }
 
-    public findByOrganisationId(organisationId: string | any ): Observable<RestApiResponse<UserDTO[] | any[]>> {
+    public findByOrganisationId(organisationId: string | any ): Observable<UserDTO[] | any[]> {
 
-        return this.http.get<RestApiResponse<UserDTO[] | any[]>>(`${this.path}/organisation-id/${organisationId}`);
+        return this.http.get<UserDTO[] | any[]>(`${this.path}/organisation-id/${organisationId}`);
     }
 
-    public findByOrganisationName(organisation: string | any ): Observable<RestApiResponse<UserDTO[] | any[]>> {
+    public findByOrganisationName(organisation: string | any ): Observable<UserDTO[] | any[]> {
 
-        return this.http.get<RestApiResponse<UserDTO[] | any[]>>(`${this.path}/department-name/${organisation}`);
+        return this.http.get<UserDTO[] | any[]>(`${this.path}/department-name/${organisation}`);
     }
 
-    public findByRealmRoles(roles: Set<string> | any ): Observable<RestApiResponse<UserDTO[] | any[]>> {
+    public findByRealmRoles(roles: Set<string> | any ): Observable<UserDTO[] | any[]> {
 
-        return this.http.get<RestApiResponse<UserDTO[] | any[]>>(`${this.path}/realm/roles?roles=${roles}`);
+        return this.http.get<UserDTO[] | any[]>(`${this.path}/realm/roles?roles=${roles}`);
     }
 
-    public findUserById(userId: string | any ): Observable<RestApiResponse<UserDTO | any>> {
+    public findUserById(userId: string | any ): Observable<UserDTO | any> {
 
-        return this.http.get<RestApiResponse<UserDTO | any>>(`${this.path}?userId=${userId}`);
+        return this.http.get<UserDTO | any>(`${this.path}?userId=${userId}`);
     }
 
-    public loadUsers(): Observable<RestApiResponse<UserDTO[] | any[]>> {
+    public loadUsers(): Observable<UserDTO[] | any[]> {
 
-        return this.http.get<RestApiResponse<UserDTO[] | any[]>>(`${this.path}/load`);
+        return this.http.get<UserDTO[] | any[]>(`${this.path}/load`);
     }
 
-    public removeRole(userId: string | any , role: string | any ): Observable<RestApiResponse<boolean | any>> {
+    public removeRole(userId: string | any , role: string | any ): Observable<boolean | any> {
 
-        return this.http.delete<RestApiResponse<boolean | any>>(`${this.path}/role?userId=${userId}&role=${role}`);
+        return this.http.delete<boolean | any>(`${this.path}/role?userId=${userId}&role=${role}`);
     }
 
-    public saveUser(user: UserDTO | any ): Observable<RestApiResponse<UserDTO | any>> {
+    public saveUser(user: UserDTO | any ): Observable<UserDTO | any> {
 
-        return this.http.post<RestApiResponse<UserDTO | any>>(`${this.path}/create`, user);
+        return this.http.post<UserDTO | any>(`${this.path}/create`, user);
     }
 
-    public search(criteria: string | any ): Observable<RestApiResponse<UserDTO[] | any[]>> {
+    public search(criteria: string | any ): Observable<UserDTO[] | any[]> {
 
-        return this.http.get<RestApiResponse<UserDTO[] | any[]>>(`${this.path}/search?criteria=${criteria}`);
+        return this.http.get<UserDTO[] | any[]>(`${this.path}/search?criteria=${criteria}`);
     }
 
-    public updateUserName(userId: string | any , username: string | any ): Observable<RestApiResponse<boolean | any>> {
+    public updateUserName(userId: string | any , username: string | any ): Observable<boolean | any> {
 
-        return this.http.patch<RestApiResponse<boolean | any>>(`${this.path}/${userId}?username=${username}`, {userId: userId, username: username});
+        return this.http.patch<boolean | any>(`${this.path}/${userId}?username=${username}`, {userId: userId, username: username});
     }
 
 }
