@@ -31,7 +31,6 @@ import { SearchObject } from '@app/model/search-object';
   ],
 })
 export class SearchOrganisationsImplComponent extends SearchOrganisationsComponent {
-  organisationApiStore = inject(OrganisationApiStore);
 
   override error = this.organisationApiStore.error;
   override messages = this.organisationApiStore.messages;

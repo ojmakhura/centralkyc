@@ -30,8 +30,6 @@ import { MatPaginator } from '@angular/material/paginator';
 })
 export class SearchDocumentTypesImplComponent extends SearchDocumentTypesComponent {
 
-  documentTypeApiStore = inject(DocumentTypeApiStore);
-
   override error = this.documentTypeApiStore.error;
   override messages = this.documentTypeApiStore.messages;
   override success = this.documentTypeApiStore.success;

@@ -10,45 +10,44 @@ import { SearchObject } from '@app/model/search-object';
   providedIn: 'root'
 })
 export class KycInvoiceApi {
-    
-    protected path = '/invoice
-';
+
+    protected path = '/invoice';
 
     private http = inject(HttpClient);
 
-    public findById(id: string | any ): Observable<RestApiResponse<KycInvoiceDTO | any>> {
+    public findById(id: string | any ): Observable<KycInvoiceDTO> {
 
         return this.http.get<KycInvoiceDTO | any>(`${this.path}/${id}`);
     }
 
-    public getAll(): Observable<RestApiResponse<KycInvoiceDTO[] | any[]>> {
+    public getAll(): Observable<KycInvoiceDTO[]> {
 
-        return this.http.get<KycInvoiceDTO[] | any[]>(`${this.path}`);
+        return this.http.get<KycInvoiceDTO[]>(`${this.path}`);
     }
 
-    public getAllPaged(pageNumber: number | any , pageSize: number | any ): Observable<RestApiResponse<Page<KycInvoiceDTO> | any>> {
+    public getAllPaged(pageNumber: number | any , pageSize: number | any ): Observable<Page<KycInvoiceDTO>> {
 
-        return this.http.get<Page<KycInvoiceDTO> | any>(`${this.path}/paged?pageNumber=${pageNumber}&pageSize=${pageSize}`);
+        return this.http.get<Page<KycInvoiceDTO>>(`${this.path}/paged?pageNumber=${pageNumber}&pageSize=${pageSize}`);
     }
 
-    public pagedSearch(criteria: string | any , pageNumber: number | any , pageSize: number | any ): Observable<RestApiResponse<Page<KycInvoiceDTO> | any>> {
+    public pagedSearch(criteria: string | any , pageNumber: number | any , pageSize: number | any ): Observable<Page<KycInvoiceDTO>> {
 
-        return this.http.get<Page<KycInvoiceDTO> | any>(`${this.path}/search/paged?criteria=${criteria}&pageNumber=${pageNumber}&pageSize=${pageSize}`);
+        return this.http.get<Page<KycInvoiceDTO>>(`${this.path}/search/paged?criteria=${criteria}&pageNumber=${pageNumber}&pageSize=${pageSize}`);
     }
 
-    public remove(id: string | any ): Observable<RestApiResponse<boolean | any>> {
+    public remove(id: string | any ): Observable<boolean> {
 
         return this.http.delete<boolean | any>(`${this.path}/${id}`);
     }
 
-    public save(invoice: KycInvoiceDTO | any ): Observable<RestApiResponse<KycInvoiceDTO | any>> {
+    public save(invoice: KycInvoiceDTO | any ): Observable<KycInvoiceDTO> {
 
-        return this.http.post<KycInvoiceDTO | any>(`${this.path}`, invoice);
+        return this.http.post<KycInvoiceDTO>(`${this.path}`, invoice);
     }
 
-    public search(criteria: string | any ): Observable<RestApiResponse<KycInvoiceDTO[] | any[]>> {
+    public search(criteria: string | any ): Observable<KycInvoiceDTO[]> {
 
-        return this.http.get<KycInvoiceDTO[] | any[]>(`${this.path}/search?criteria=${criteria}`);
+        return this.http.get<KycInvoiceDTO[]>(`${this.path}/search?criteria=${criteria}`);
     }
 
 }

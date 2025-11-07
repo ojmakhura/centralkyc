@@ -6,7 +6,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.5.6</version>
+        <version>3.5.7</version>
         <relativePath />
     </parent>
     <groupId>bw.co.centralkyc</groupId>
@@ -325,6 +325,12 @@
         <module>angular</module>
     </modules>
     <properties>
+        <!-- Java 21 LTS Configuration -->
+        <java.version>21</java.version>
+        <maven.compiler.source>21</maven.compiler.source>
+        <maven.compiler.target>21</maven.compiler.target>
+        <maven.compiler.release>21</maven.compiler.release>
+        
         <andromda.version>5.0-SNAPSHOT</andromda.version>
         <downloadSources>true</downloadSources>
         <createChecksum>true</createChecksum>
@@ -333,10 +339,10 @@
         <stagingDirectory>${project.build.outputDirectory}/target/site</stagingDirectory>
         <testdb.groupId>com.h2database</testdb.groupId>
         <testdb.artifactId>h2</testdb.artifactId>
-        <testdb.version>1.4.180</testdb.version>
+        <testdb.version>2.2.224</testdb.version>
         <testdb.groupId>com.h2database</testdb.groupId>
         <testdb.artifactId>h2</testdb.artifactId>
-        <testdb.version>1.4.180</testdb.version>
+        <testdb.version>2.2.224</testdb.version>
         <testdb.driver>org.h2.Driver</testdb.driver>
         <testdb.dialect>org.hibernate.dialect.H2Dialect</testdb.dialect>
         <!-- See http://www.h2database.com/html/features.html#database_url (mixed mode) -->
@@ -419,6 +425,8 @@
         <username></username>
         <password></password -->
         <keycloak.version>25.0.3</keycloak.version>
+        <!-- Updated PostgreSQL driver to fix Java 21 compatibility issues -->
+        <postgresql.version>42.7.4</postgresql.version>
     </properties>
     <profiles>
         <!--Profile

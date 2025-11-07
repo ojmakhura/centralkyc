@@ -28,7 +28,6 @@ import { DocumentTypeApiStore } from '@app/store/bw/co/centralkyc/document/type/
   ],
 })
 export class EditDocumentTypeImplComponent extends EditDocumentTypeComponent {
-  documentTypeApiStore = inject(DocumentTypeApiStore);
 
   override error = this.documentTypeApiStore.error;
   override messages = this.documentTypeApiStore.messages;
