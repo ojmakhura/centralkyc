@@ -90,7 +90,7 @@ export abstract class EditSettingsComponent implements OnInit, AfterViewInit, On
   // Table org.andromda.cartridges.angular.metafacades.AngularParameterLogicImpl[settings.organisationDocuments] true false
   @ViewChild('organisationDocumentsTable') organisationDocumentsTable?: TableComponent<DocumentTypeDTO>;
   organisationDocumentsTableSignal: Signal<any>;
-  organisationDocumentsTablePaged: boolean = true;
+  organisationDocumentsTablePaged = signal(false);
 
   organisationDocumentsTableColumns: ColumnModel[] = [
     new ColumnModel('id', 'id', false),
@@ -119,7 +119,7 @@ export abstract class EditSettingsComponent implements OnInit, AfterViewInit, On
   // Table org.andromda.cartridges.angular.metafacades.AngularParameterLogicImpl[settings.orgKycDocuments] true false
   @ViewChild('orgKycDocumentsTable') orgKycDocumentsTable?: TableComponent<DocumentTypeDTO>;
   orgKycDocumentsTableSignal: Signal<any>;
-  orgKycDocumentsTablePaged: boolean = true;
+  orgKycDocumentsTablePaged = signal(false);
 
   orgKycDocumentsTableColumns: ColumnModel[] = [
     new ColumnModel('id', 'id', false),
@@ -148,7 +148,7 @@ export abstract class EditSettingsComponent implements OnInit, AfterViewInit, On
   // Table org.andromda.cartridges.angular.metafacades.AngularParameterLogicImpl[settings.individualDocuments] true false
   @ViewChild('individualDocumentsTable') individualDocumentsTable?: TableComponent<DocumentTypeDTO>;
   individualDocumentsTableSignal: Signal<any>;
-  individualDocumentsTablePaged: boolean = true;
+  individualDocumentsTablePaged = signal(true);
 
   individualDocumentsTableColumns: ColumnModel[] = [
     new ColumnModel('id', 'id', false),
@@ -177,7 +177,7 @@ export abstract class EditSettingsComponent implements OnInit, AfterViewInit, On
   // Table org.andromda.cartridges.angular.metafacades.AngularParameterLogicImpl[settings.indKycDocuments] true false
   @ViewChild('indKycDocumentsTable') indKycDocumentsTable?: TableComponent<DocumentTypeDTO>;
   indKycDocumentsTableSignal: Signal<any>;
-  indKycDocumentsTablePaged: boolean = true;
+  indKycDocumentsTablePaged = signal(true);
 
   indKycDocumentsTableColumns: ColumnModel[] = [
     new ColumnModel('id', 'id', false),

@@ -182,7 +182,7 @@
               #organisationsTable
               [dataColumns]="branchesTableColumns"
               [showActions]="true"
-              [paged]="false"
+              [paged]="branchTablePaged"
               [actions]="branchesTableColumnsActions"
               (actionClicked)="branchesTableActionClicked($event)"
               [dataSignal]="branches"

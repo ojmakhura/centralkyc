@@ -50,7 +50,7 @@ export class OrganisationApi {
 
     public search(criteria: SearchObject<OrganisationSearchCriteria> | any ): Observable<OrganisationListDTO[] | any[]> {
 
-        return this.http.post<OrganisationListDTO[] | any[]>(`${this.path}/search?criteria=${criteria}`, criteria);
+        return this.http.post<OrganisationListDTO[] | any[]>(`${this.path}/search`, criteria);
     }
 
 }

@@ -34,9 +34,9 @@ export class EditIndividualImplComponent extends EditIndividualComponent {
   organisationList = linkedSignal(() => this.organisationApiStore.dataList());
   branchList = linkedSignal(() => this.branchApiStore.dataList())
 
-  override error = this.individualApiStore.error;
-  override messages = this.individualApiStore.messages;
-  override success = this.individualApiStore.success;
+  override error = linkedSignal(() => this.individualApiStore.error());
+  override messages = linkedSignal(() => this.individualApiStore.messages());
+  override success = linkedSignal(() => this.individualApiStore.success());
 
   individual = this.individualApiStore.data;
 

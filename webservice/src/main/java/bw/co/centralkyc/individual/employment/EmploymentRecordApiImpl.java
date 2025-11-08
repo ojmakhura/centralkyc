@@ -10,7 +10,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 import bw.co.centralkyc.AuditTracker;
-import bw.co.centralkyc.RestApiResponse;
 
 import java.util.Collection;
 

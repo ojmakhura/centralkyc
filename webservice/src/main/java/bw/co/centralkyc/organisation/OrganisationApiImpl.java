@@ -6,6 +6,7 @@
 package bw.co.centralkyc.organisation;
 
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 
@@ -109,9 +110,15 @@ public class OrganisationApiImpl extends OrganisationApiBase {
     public ResponseEntity<Collection<OrganisationListDTO>> handleSearch(
             SearchObject<OrganisationSearchCriteria> criteria) {
         try {
+
+            Set<PropertySearchOrder> sortings = new HashSet<>();
+
+            if (criteria.getSortings() != null) {
+                sortings.addAll(sortings);
+            }
             
             return ResponseEntity.ok(organisationService
-                    .search(criteria.getCriteria(), (Set<PropertySearchOrder>) criteria.getSortings()));
+                    .search(criteria.getCriteria(), sortings));
 
         } catch (Exception e) {
             e.printStackTrace();
