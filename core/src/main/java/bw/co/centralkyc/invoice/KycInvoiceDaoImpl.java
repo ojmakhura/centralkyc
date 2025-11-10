@@ -8,6 +8,8 @@ package bw.co.centralkyc.invoice;
 
 import bw.co.centralkyc.document.DocumentRepository;
 import bw.co.centralkyc.organisation.OrganisationRepository;
+import jakarta.persistence.EntityNotFoundException;
+
 import org.springframework.stereotype.Repository;
 
 /**
@@ -42,6 +44,7 @@ public class KycInvoiceDaoImpl
         // TODO verify behavior of toKycInvoiceDTO
         super.toKycInvoiceDTO(source, target);
         // WARNING! No conversion for target.issueDate (can't convert source.getIssueDate():java.util.Date to java.util.Date
+        target.setIssueDate(source.getIssueDate());
     }
 
     /**
@@ -61,10 +64,6 @@ public class KycInvoiceDaoImpl
      */
     private KycInvoice loadKycInvoiceFromKycInvoiceDTO(KycInvoiceDTO kycInvoiceDTO)
     {
-        // TODO implement loadKycInvoiceFromKycInvoiceDTO
-        throw new UnsupportedOperationException("bw.co.centralkyc.invoice.loadKycInvoiceFromKycInvoiceDTO(KycInvoiceDTO) not yet implemented.");
-
-        /* A typical implementation looks like this:
         if (kycInvoiceDTO.getId() == null)
         {
             return  KycInvoice.Factory.newInstance();
@@ -74,7 +73,6 @@ public class KycInvoiceDaoImpl
             return this.kycInvoiceRepository.findById(kycInvoiceDTO.getId())
                 .orElseThrow(() -> new EntityNotFoundException("Entity not found for id: " + kycInvoiceDTO.getId()));
         }
-        */
     }
 
     /**
@@ -100,5 +98,6 @@ public class KycInvoiceDaoImpl
         // TODO verify behavior of kycInvoiceDTOToEntity
         super.kycInvoiceDTOToEntity(source, target, copyIfNull);
         // No conversion for target.issueDate (can't convert source.getIssueDate():java.util.Date to java.util.Date
+        target.setIssueDate(source.getIssueDate());
     }
 }

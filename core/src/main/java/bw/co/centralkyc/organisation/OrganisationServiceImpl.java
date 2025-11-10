@@ -120,6 +120,11 @@ public class OrganisationServiceImpl
             return spec;
         }
 
+        if(StringUtils.isNotBlank(criteria.getId())) {
+            spec = spec.and((root, query, builder) ->
+                builder.equal(root.get("id"), criteria.getId()));
+        }
+
         if (StringUtils.isNotBlank(criteria.getName())) {
             spec = spec.and((root, query, builder) ->
                 builder.like(builder.upper(root.get("name")), "%" + criteria.getName().toUpperCase() + "%"));

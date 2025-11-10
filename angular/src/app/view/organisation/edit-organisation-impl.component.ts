@@ -2,15 +2,11 @@
 import { Component, effect, inject, Input, linkedSignal } from '@angular/core';
 import { EditOrganisationComponent } from '@app/view/organisation/edit-organisation.component';
 import { EditOrganisationVarsForm } from '@app/view/organisation/edit-organisation.component';
-import { MatRadioChange } from '@angular/material/radio';
-import { MatCheckboxChange } from '@angular/material/checkbox';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
 import { MaterialModule } from '@app/material.module';
-import { TableComponent } from '@app/components/table/table.component';
 import { LoaderComponent } from '@app/@shared/loader/loader.component';
-import { OrganisationApiStore } from '@app/store/bw/co/centralkyc/organisation/organisation-api.store';
 
 @Component({
   selector: 'app-edit-organisation',
@@ -23,7 +19,6 @@ import { OrganisationApiStore } from '@app/store/bw/co/centralkyc/organisation/o
     ReactiveFormsModule,
     TranslateModule,
     MaterialModule,
-    TableComponent,
     LoaderComponent,
   ],
 })
@@ -42,18 +37,34 @@ export class EditOrganisationImplComponent extends EditOrganisationComponent {
       let organisation = this.organisationApiStore.data();
       this.editOrganisationForm.patchValue(organisation);
     });
+
+    // Handle form control disabled state based on loading
+    effect(() => {
+      const isLoading = this.loading();
+      if (isLoading) {
+        this.editOrganisationForm.disable();
+      } else {
+        this.editOrganisationForm.enable();
+      }
+    });
   }
 
   override beforeOnInit(form: EditOrganisationVarsForm): EditOrganisationVarsForm {
     this.organisationApiStore.reset();
-    if (this.id) {
-      this.organisationApiStore.findById({ id: this.id });
-    }
+
+    this.route.queryParams.subscribe(params => {
+      const id = params['id'];
+      if (id) {
+        this.id = id;
+        this.organisationApiStore.findById({ id: this.id });
+      }
+    });
+
 
     return form;
   }
 
-  doNgOnDestroy(): void {}
+  doNgOnDestroy(): void { }
 
   override beforeEditOrganisationSave(form: any): void {
     this.organisationApiStore.save({ organisation: this.editOrganisationForm.value });

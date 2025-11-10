@@ -50,6 +50,10 @@ export const routes: Routes = [
       path: 'subscription', 
       loadChildren: () => import('@app/view/subscription/subcription.routes').then((m) => m.routes),
     },
+    {
+      path: 'invoice', 
+      loadChildren: () => import('@app/view/invoice/invoice.routes').then((m) => m.routes),
+    },
   ]),
   // Fallback when no prior route is matched
   { 

@@ -6,87 +6,89 @@
 package bw.co.centralkyc.invoice;
 
 import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
+
 import org.springframework.data.domain.Page;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
+
+import bw.co.centralkyc.AuditTracker;
+import bw.co.centralkyc.PropertySearchOrder;
+import bw.co.centralkyc.SearchObject;
 
 @RestController
 public class KycInvoiceApiImpl extends KycInvoiceApiBase {
     
-    public KycInvoiceApiImpl(
-        KycInvoiceService kycInvoiceService    ) {
+    public KycInvoiceApiImpl(KycInvoiceService kycInvoiceService) {
         
-        super(
-            kycInvoiceService        );
+        super(kycInvoiceService);
     }
-
-
 
     @Override
     public ResponseEntity<KycInvoiceDTO> handleFindById(String id) throws Exception {
         try {
-            return ResponseEntity.ok(null);
+            return ResponseEntity.ok(kycInvoiceService.findById(id));
         } catch (Exception e) {
 
             e.printStackTrace();
             throw e;
         } 
     }
-
 
     @Override
     public ResponseEntity<Collection<KycInvoiceDTO>> handleGetAll() throws Exception {
         try {
-            return ResponseEntity.ok(null);
+            return ResponseEntity.ok(kycInvoiceService.getAll());
         } catch (Exception e) {
 
             e.printStackTrace();
             throw e;
         } 
     }
-
 
     @Override
     public ResponseEntity<Page<KycInvoiceDTO>> handleGetAllPaged(Integer pageNumber, Integer pageSize) throws Exception {
         try {
-            return ResponseEntity.ok(null);
+            return ResponseEntity.ok(kycInvoiceService.getAll(pageNumber, pageSize));
         } catch (Exception e) {
 
             e.printStackTrace();
             throw e;
         } 
     }
-
 
     @Override
-    public ResponseEntity<Page<KycInvoiceDTO>> handlePagedSearch(String criteria, Integer pageNumber, Integer pageSize) throws Exception {
+    public ResponseEntity<Page<KycInvoiceDTO>> handlePagedSearch(SearchObject<InvoiceSearchCriteria> criteria) throws Exception {
         try {
-            return ResponseEntity.ok(null);
+            return ResponseEntity.ok(kycInvoiceService.search(criteria));
         } catch (Exception e) {
 
             e.printStackTrace();
             throw e;
         } 
     }
-
 
     @Override
     public ResponseEntity<Boolean> handleRemove(String id) throws Exception {
         try {
-            return ResponseEntity.ok(null);
+            return ResponseEntity.ok(kycInvoiceService.remove(id));
         } catch (Exception e) {
 
             e.printStackTrace();
             throw e;
         } 
     }
-
 
     @Override
     public ResponseEntity<KycInvoiceDTO> handleSave(KycInvoiceDTO invoice) throws Exception {
         try {
-            return ResponseEntity.ok(null);
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            AuditTracker.auditTrail(invoice, authentication);
+            return ResponseEntity.ok(kycInvoiceService.save(invoice));
         } catch (Exception e) {
 
             e.printStackTrace();
@@ -94,15 +96,27 @@ public class KycInvoiceApiImpl extends KycInvoiceApiBase {
         } 
     }
 
-
     @Override
-    public ResponseEntity<Collection<KycInvoiceDTO>> handleSearch(String criteria) throws Exception {
+    public ResponseEntity<Collection<KycInvoiceDTO>> handleSearch(SearchObject<InvoiceSearchCriteria> criteria) throws Exception {
         try {
-            return ResponseEntity.ok(null);
+
+            Set<PropertySearchOrder> sortOrders = new HashSet<>();
+            if(criteria.getSortings() != null){
+                sortOrders.addAll(criteria.getSortings());
+            }
+
+            return ResponseEntity.ok(kycInvoiceService.search(criteria.getCriteria(), sortOrders));
         } catch (Exception e) {
 
             e.printStackTrace();
             throw e;
         } 
+    }
+
+    @Override
+    public ResponseEntity<KycInvoiceDTO> handleUpload(String id, UploadPurpose purpose, MultipartFile file)
+            throws Exception {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'handleUpload'");
     }
 }

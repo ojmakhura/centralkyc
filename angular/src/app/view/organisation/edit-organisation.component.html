@@ -17,15 +17,12 @@
         color="primary"
         (click)="editOrganisationSave()"
         [disabled]="editOrganisationForm.invalid || loading()"
-        class="save-btn">
+        class="save-btn"
+      >
         <mat-icon>save</mat-icon>
         <span>{{ 'save' | translate }}</span>
       </button>
-      <button
-        mat-stroked-button
-        color="primary"
-        (click)="editOrganisationSearch()"
-        [disabled]="loading()">
+      <button mat-stroked-button color="primary" (click)="editOrganisationSearch()" [disabled]="loading()">
         <mat-icon>search</mat-icon>
         <span>{{ 'search' | translate }}</span>
       </button>
@@ -34,14 +31,12 @@
         color="warn"
         (click)="editOrganisationDelete()"
         *ngIf="deleteUnrestricted()"
-        [disabled]="loading()">
+        [disabled]="loading()"
+      >
         <mat-icon>delete</mat-icon>
         <span>{{ 'delete' | translate }}</span>
       </button>
-      <button
-        mat-button
-        (click)="editOrganisationFormReset()"
-        [disabled]="loading()">
+      <button mat-button (click)="editOrganisationFormReset()" [disabled]="loading()">
         <mat-icon>refresh</mat-icon>
         <span>{{ 'reset' | translate }}</span>
       </button>
@@ -71,11 +66,7 @@
           <div class="field-row">
             <mat-form-field appearance="outline" class="col-md-8 field-full-width">
               <mat-label>{{ 'status' | translate }}</mat-label>
-              <mat-select
-                id="status"
-                formControlName="status"
-                required
-                [disabled]="loading()">
+              <mat-select id="status" formControlName="status" required>
                 <mat-option value="">{{ 'select.status' | translate }}</mat-option>
                 @for (key of GeneralStatusOptions; track key) {
                   <mat-option [value]="key">
@@ -98,9 +89,9 @@
                 type="text"
                 id="registrationNo"
                 formControlName="registrationNo"
-                [disabled]="loading()"
                 placeholder="{{ 'enter.registration.no' | translate }}"
-                required />
+                required
+              />
               <mat-icon matSuffix>assignment</mat-icon>
               @if (registrationNoControl.hasError('required')) {
                 <mat-error>{{ 'registration.no.required' | translate }}</mat-error>
@@ -114,9 +105,9 @@
                 type="text"
                 id="code"
                 formControlName="code"
-                [disabled]="loading()"
                 placeholder="{{ 'enter.code' | translate }}"
-                required />
+                required
+              />
               <mat-icon matSuffix>qr_code</mat-icon>
               @if (codeControl.hasError('required')) {
                 <mat-error>{{ 'code.required' | translate }}</mat-error>
@@ -132,9 +123,9 @@
                 type="text"
                 id="name"
                 formControlName="name"
-                [disabled]="loading()"
                 placeholder="{{ 'enter.organisation.name' | translate }}"
-                required />
+                required
+              />
               <mat-icon matSuffix>business</mat-icon>
               @if (nameControl.hasError('required')) {
                 <mat-error>{{ 'name.required' | translate }}</mat-error>
@@ -149,10 +140,10 @@
                 matInput
                 id="description"
                 formControlName="description"
-                [disabled]="loading()"
                 placeholder="{{ 'enter.description' | translate }}"
                 rows="3"
-                required></textarea>
+                required
+              ></textarea>
               <mat-icon matSuffix>description</mat-icon>
               @if (descriptionControl.hasError('required')) {
                 <mat-error>{{ 'description.required' | translate }}</mat-error>
@@ -180,8 +171,8 @@
                 type="text"
                 id="phoneNumbers"
                 formControlName="phoneNumbers"
-                [disabled]="loading()"
-                placeholder="{{ 'enter.phone.numbers' | translate }}" />
+                placeholder="{{ 'enter.phone.numbers' | translate }}"
+              />
               <mat-icon matSuffix>phone</mat-icon>
               <mat-hint>{{ 'separate.multiple.numbers.with.commas' | translate }}</mat-hint>
             </mat-form-field>
@@ -194,10 +185,10 @@
                 matInput
                 id="postalAddress"
                 formControlName="postalAddress"
-                [disabled]="loading()"
                 placeholder="{{ 'enter.postal.address' | translate }}"
                 rows="3"
-                required></textarea>
+                required
+              ></textarea>
               <mat-icon matSuffix>mail</mat-icon>
               @if (postalAddressControl.hasError('required')) {
                 <mat-error>{{ 'postal.address.required' | translate }}</mat-error>
@@ -210,10 +201,10 @@
                 matInput
                 id="physicalAddress"
                 formControlName="physicalAddress"
-                [disabled]="loading()"
                 placeholder="{{ 'enter.physical.address' | translate }}"
                 rows="3"
-                required></textarea>
+                required
+              ></textarea>
               <mat-icon matSuffix>location_on</mat-icon>
               @if (physicalAddressControl.hasError('required')) {
                 <mat-error>{{ 'physical.address.required' | translate }}</mat-error>
@@ -231,7 +222,8 @@
           type="submit"
           (click)="editOrganisationSave()"
           [disabled]="editOrganisationForm.invalid || loading()"
-          class="action-primary">
+          class="action-primary"
+        >
           <mat-icon>save</mat-icon>
           <span>{{ 'save' | translate }}</span>
         </button>
@@ -241,7 +233,8 @@
           type="button"
           (click)="editOrganisationFormReset()"
           [disabled]="loading()"
-          class="action-secondary">
+          class="action-secondary"
+        >
           <mat-icon>refresh</mat-icon>
           <span>{{ 'reset' | translate }}</span>
         </button>

@@ -41,9 +41,7 @@ export class EditSubscriptionImplComponent extends EditSubscriptionComponent {
   override messages = linkedSignal(() => this.kycSubscriptionApiStore.messages());
   override success = linkedSignal(() => this.kycSubscriptionApiStore.success());
 
-  override organisationDisplays: string[] = [
-    'name',
-  ];
+  override organisationDisplays: string[] = ['name'];
 
   constructor() {
     super();
@@ -59,7 +57,6 @@ export class EditSubscriptionImplComponent extends EditSubscriptionComponent {
     });
 
     effect(() => {
-
       let subscription = this.kycSubscriptionApiStore.data();
       if (subscription) {
         this.editSubscriptionForm.patchValue({
@@ -76,19 +73,36 @@ export class EditSubscriptionImplComponent extends EditSubscriptionComponent {
           status: subscription.status,
           startDate: subscription.startDate ? new Date(subscription.startDate) : null,
           endDate: subscription.endDate ? new Date(subscription.endDate) : null,
+          period: subscription.period,
         });
+
       }
     });
   }
 
   override beforeOnInit(form: EditSubscriptionVarsForm): EditSubscriptionVarsForm {
+
+    this.route.queryParams.subscribe((params) => {
+      const id = params['id'];
+      if (id) {
+        this.kycSubscriptionApiStore.findById({ id: id });
+        let search = new SearchObject<OrganisationSearchCriteria>();
+        search.criteria = {
+          id: id,
+        };
+
+        this.organisationApiStore.search({
+          criteria: search,
+        });
+      }
+    });
+
     return form;
   }
 
   doNgOnDestroy(): void { }
 
   override beforeEditSubscriptionSave(form: any): void {
-
     let formValue = this.editSubscriptionForm.value;
 
     let subscription = new KycSubscriptionDTO();
@@ -102,6 +116,7 @@ export class EditSubscriptionImplComponent extends EditSubscriptionComponent {
     subscription.startDate = formValue.startDate;
     subscription.endDate = formValue.endDate;
     subscription.amount = formValue.amount;
+    subscription.period = formValue.period;
     subscription.createdBy = formValue.createdBy;
     subscription.createdAt = formValue.createdAt;
     subscription.modifiedBy = formValue.modifiedBy;

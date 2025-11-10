@@ -9,11 +9,16 @@
 package bw.co.centralkyc.invoice;
 
 import java.util.Collection;
+import java.util.Set;
+
 import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+
+import bw.co.centralkyc.PropertySearchOrder;
+import bw.co.centralkyc.SearchObject;
 
 /**
  * @see bw.co.centralkyc.invoice.KycInvoiceService
@@ -43,8 +48,10 @@ public class KycInvoiceServiceImpl
     protected KycInvoiceDTO handleFindById(String id)
         throws Exception
     {
-        // TODO implement protected  KycInvoiceDTO handleFindById(String id)
-        throw new UnsupportedOperationException("bw.co.centralkyc.invoice.KycInvoiceService.handleFindById(String id) Not implemented!");
+
+        KycInvoice kycInvoice = this.kycInvoiceRepository.findById(id).orElse(null);
+
+        return this.kycInvoiceDao.toKycInvoiceDTO(kycInvoice);
     }
 
     /**
@@ -54,8 +61,11 @@ public class KycInvoiceServiceImpl
     protected KycInvoiceDTO handleSave(KycInvoiceDTO invoice)
         throws Exception
     {
-        // TODO implement protected  KycInvoiceDTO handleSave(KycInvoiceDTO invoice)
-        throw new UnsupportedOperationException("bw.co.centralkyc.invoice.KycInvoiceService.handleSave(KycInvoiceDTO invoice) Not implemented!");
+
+        KycInvoice kycInvoice = this.kycInvoiceDao.kycInvoiceDTOToEntity(invoice);
+        kycInvoice = this.kycInvoiceRepository.save(kycInvoice);
+
+        return this.kycInvoiceDao.toKycInvoiceDTO(kycInvoice);
     }
 
     /**
@@ -65,8 +75,9 @@ public class KycInvoiceServiceImpl
     protected boolean handleRemove(String id)
         throws Exception
     {
-        // TODO implement protected  boolean handleRemove(String id)
-        throw new UnsupportedOperationException("bw.co.centralkyc.invoice.KycInvoiceService.handleRemove(String id) Not implemented!");
+
+        this.kycInvoiceRepository.deleteById(id);
+        return true;
     }
 
     /**
@@ -76,15 +87,15 @@ public class KycInvoiceServiceImpl
     protected Collection<KycInvoiceDTO> handleGetAll()
         throws Exception
     {
-        // TODO implement protected  Collection<KycInvoiceDTO> handleGetAll()
-        throw new UnsupportedOperationException("bw.co.centralkyc.invoice.KycInvoiceService.handleGetAll() Not implemented!");
+
+        return this.kycInvoiceDao.toKycInvoiceDTOCollection(this.kycInvoiceRepository.findAll());
     }
 
     /**
      * @see bw.co.centralkyc.invoice.KycInvoiceService#search(String)
      */
     @Override
-    protected Collection<KycInvoiceDTO> handleSearch(String criteria)
+    protected Collection<KycInvoiceDTO> handleSearch(InvoiceSearchCriteria criteria, Set<PropertySearchOrder> sortOrders)
         throws Exception
     {
         // TODO implement protected  Collection<KycInvoiceDTO> handleSearch(String criteria)
@@ -106,11 +117,18 @@ public class KycInvoiceServiceImpl
      * @see bw.co.centralkyc.invoice.KycInvoiceService#search(String, Integer, Integer)
      */
     @Override
-    protected Page<KycInvoiceDTO> handleSearch(String criteria, Integer pageNumber, Integer pageSize)
+    protected Page<KycInvoiceDTO> handleSearch(SearchObject<InvoiceSearchCriteria> criteria)
         throws Exception
     {
         // TODO implement protected  Page<KycInvoiceDTO> handleSearch(String criteria, Integer pageNumber, Integer pageSize)
         throw new UnsupportedOperationException("bw.co.centralkyc.invoice.KycInvoiceService.handleSearch(String criteria, Integer pageNumber, Integer pageSize) Not implemented!");
+    }
+
+    @Override
+    protected KycInvoiceDTO handleUpload(String id, String uploadUrl, UploadPurpose purpose, String user)
+            throws Exception {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'handleUpload'");
     }
 
 }

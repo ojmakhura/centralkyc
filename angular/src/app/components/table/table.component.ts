@@ -63,7 +63,7 @@ export class TableComponent<T> implements OnInit, OnDestroy, AfterViewInit {
         return;
       }
 
-      if (!this.paged) {
+      if (!this.paged()) {
         const data: T[] = <T[]>this.dataSignal();
         this.dataSource = new MatTableDataSource(data || []);
         this.dataSource.sort = this.tableSort;

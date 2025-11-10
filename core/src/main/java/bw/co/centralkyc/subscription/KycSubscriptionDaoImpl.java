@@ -6,7 +6,11 @@
  */
 package bw.co.centralkyc.subscription;
 
+import bw.co.centralkyc.organisation.Organisation;
 import bw.co.centralkyc.organisation.OrganisationRepository;
+import jakarta.persistence.EntityNotFoundException;
+
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Repository;
 
 /**
@@ -39,7 +43,17 @@ public class KycSubscriptionDaoImpl
         // TODO verify behavior of toKycSubscriptionDTO
         super.toKycSubscriptionDTO(source, target);
         // WARNING! No conversion for target.startDate (can't convert source.getStartDate():java.util.Date to java.util.Date
+        target.setStartDate(source.getStartDate());
         // WARNING! No conversion for target.endDate (can't convert source.getEndDate():java.util.Date to java.util.Date
+        target.setEndDate(source.getEndDate());
+
+        if(source.getOrganisation() != null) {
+
+            target.setOrganisationId(source.getOrganisation().getId());
+            target.setOrganisationCode(source.getOrganisation().getCode());
+            target.setOrganisationName(source.getOrganisation().getName());
+            target.setOrganisationRegistrationNo(source.getOrganisation().getRegistrationNo());
+        }
     }
 
     /**
@@ -59,10 +73,6 @@ public class KycSubscriptionDaoImpl
      */
     private KycSubscription loadKycSubscriptionFromKycSubscriptionDTO(KycSubscriptionDTO kycSubscriptionDTO)
     {
-        // TODO implement loadKycSubscriptionFromKycSubscriptionDTO
-        throw new UnsupportedOperationException("bw.co.centralkyc.subscription.loadKycSubscriptionFromKycSubscriptionDTO(KycSubscriptionDTO) not yet implemented.");
-
-        /* A typical implementation looks like this:
         if (kycSubscriptionDTO.getId() == null)
         {
             return  KycSubscription.Factory.newInstance();
@@ -72,7 +82,6 @@ public class KycSubscriptionDaoImpl
             return this.kycSubscriptionRepository.findById(kycSubscriptionDTO.getId())
                 .orElseThrow(() -> new EntityNotFoundException("Entity not found for id: " + kycSubscriptionDTO.getId()));
         }
-        */
     }
 
     /**
@@ -98,6 +107,14 @@ public class KycSubscriptionDaoImpl
         // TODO verify behavior of kycSubscriptionDTOToEntity
         super.kycSubscriptionDTOToEntity(source, target, copyIfNull);
         // No conversion for target.startDate (can't convert source.getStartDate():java.util.Date to java.util.Date
+        target.setStartDate(source.getStartDate());
         // No conversion for target.endDate (can't convert source.getEndDate():java.util.Date to java.util.Date
+        target.setEndDate(source.getEndDate());
+
+        if(StringUtils.isNotBlank(source.getOrganisationId())) {
+
+            Organisation organisation = this.organisationRepository.getReferenceById(source.getOrganisationId());
+            target.setOrganisation(organisation);
+        }
     }
 }
