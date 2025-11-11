@@ -147,13 +147,18 @@
         </mat-card-title>
       </mat-card-header>
       <mat-card-content>
+        <button mat-raised-button color="primary" (click)="addInvoice()" class="action-button">
+          <mat-icon>add</mat-icon>
+          {{ 'invoice.add' | translate }}
+        </button>
         <app-table
           #invoicesTable
           [dataColumns]="invoicesTableColumns"
           [showActions]="showInvoicesActions"
           [paged]="invoicesTablePaged"
           [actions]="invoicesTableColumnsActions"
-          [dataSignal]="invoicesTableSignal">
+          [dataSignal]="invoicesTableSignal"
+        >
         </app-table>
       </mat-card-content>
     </mat-card>

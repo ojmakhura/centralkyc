@@ -4,13 +4,15 @@ import { SubscriptionDetailsComponent } from '@app/view/subscription/subscriptio
 import { SubscriptionDetailsVarsForm } from '@app/view/subscription/subscription-details.component';
 import { MatRadioChange } from '@angular/material/radio';
 import { MatCheckboxChange } from '@angular/material/checkbox';
-import { CommonModule } from '@angular/common';
+import Swal from 'sweetalert2';
+import { CommonModule, CurrencyPipe, DatePipe } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
 import { MaterialModule } from '@app/material.module';
 import { TableComponent } from '@app/components/table/table.component';
-import { LoaderComponent } from "@app/@shared/loader/loader.component";
+import { LoaderComponent } from '@app/@shared/loader/loader.component';
 import { OrganisationApiStore } from '@app/store/bw/co/centralkyc/organisation/organisation-api.store';
+import { KycInvoiceApiStore } from '@app/store/bw/co/centralkyc/invoice/kyc-invoice-api.store';
 
 @Component({
   selector: 'app-subscription-details',
@@ -26,9 +28,14 @@ import { OrganisationApiStore } from '@app/store/bw/co/centralkyc/organisation/o
     TableComponent,
     LoaderComponent,
   ],
+  providers: [
+    DatePipe,
+    CurrencyPipe
+  ],
 })
 export class SubscriptionDetailsImplComponent extends SubscriptionDetailsComponent {
   organisationApiStore = inject(OrganisationApiStore);
+  kycInvoiceApiStore = inject(KycInvoiceApiStore);
 
   @Input() id: string | any;
 
@@ -37,28 +44,46 @@ export class SubscriptionDetailsImplComponent extends SubscriptionDetailsCompone
   override messages = linkedSignal(() => this.kycSubscriptionApiStore.messages());
   override success = linkedSignal(() => this.kycSubscriptionApiStore.success());
 
-    constructor() {
-        super();
+  subscription = linkedSignal(() => this.kycSubscriptionApiStore.data());
+  override invoicesTableSignal = linkedSignal(() => this.kycInvoiceApiStore.dataList());
 
-        effect(() => {
-          let subscription = this.kycSubscriptionApiStore.data();
-          if (subscription) {
+  constructor() {
+    super();
 
-            this.subscriptionDetailsForm.patchValue(subscription);
-          }
-        });
-    }
+    this.invoicesTablePaged.set(false);
 
-    override beforeOnInit(form: SubscriptionDetailsVarsForm): SubscriptionDetailsVarsForm{
-      this.route.queryParams.subscribe((params) => {
-            const id = params['id'];
-            if (id) {
-              this.kycSubscriptionApiStore.findById({ id: id });
-            }
-          });
-        return form;
-    }
+  }
 
-    doNgOnDestroy(): void {
-    }
+  override beforeOnInit(form: SubscriptionDetailsVarsForm): SubscriptionDetailsVarsForm {
+    this.route.queryParams.subscribe((params) => {
+      const id = params['id'];
+      if (id) {
+        this.kycSubscriptionApiStore.findById({ id: id });
+
+        this.kycInvoiceApiStore.findBySubscription({ subscriptionId: id });
+      }
+    });
+    return form;
+  }
+
+
+  addInvoice(): void {
+
+    Swal.fire({
+      title: 'Are you sure?',
+      text: 'Do you want to generate a new invoice for this subscription?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Yes, generate it!',
+      cancelButtonText: 'No, cancel',
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.kycInvoiceApiStore.generateInvoice({ subscriptionId: this.subscription()?.id });
+      } else if (result.dismiss === Swal.DismissReason.cancel) {
+      }
+    });
+
+  }
+
+  doNgOnDestroy(): void { }
 }

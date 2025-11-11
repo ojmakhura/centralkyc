@@ -6,8 +6,6 @@ import {
   inject,
   ViewChild,
   Input,
-  Output,
-  EventEmitter,
   AfterViewInit,
   signal,
   Signal,
@@ -18,39 +16,20 @@ import {
 import { ActivatedRoute, Router } from '@angular/router';
 import { COMMA, ENTER } from '@angular/cdk/keycodes';
 import {
-  FormGroup,
-  FormControl,
-  FormArray,
   FormBuilder,
-  ReactiveFormsModule,
-  Validators
 } from '@angular/forms';
-import { formatDate } from '@angular/common';
-import { MatPaginator } from '@angular/material/paginator';
-import { MatSort } from '@angular/material/sort';
-import { MatSelectChange } from '@angular/material/select';
-import { MatRadioChange } from '@angular/material/radio';
-import { MatCheckboxChange } from '@angular/material/checkbox';
+import { CurrencyPipe, DatePipe, formatDate } from '@angular/common';
 import { UseCaseScope } from '@app/utils/use-case-scope';
-import { Store, select } from '@ngrx/store';
-import { Observable, of, Subscription } from 'rxjs';
-import { SearchObject } from '@app/model/search-object';
+import { Subscription } from 'rxjs';
 import { MatDialog } from '@angular/material/dialog';
-import { MatTableDataSource } from '@angular/material/table';
-import { MatChipInputEvent } from '@angular/material/chips';
-import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { TableComponent } from '@app/components/table/table.component';
 import { KycSubscriptionApiStore } from '@app/store/bw/co/centralkyc/subscription/kyc-subscription-api.store';
 import { ColumnModel } from '@app/model/column.model';
 import { ActionTemplate } from '@app/model/action-template';
 
 import { KycSubscriptionControllerImpl } from '@app/controller/subscription/kyc-subscription-controller.impl';
-import { OrganisationListDTO } from '@app/model/bw/co/centralkyc/organisation/organisation-list-dto';
 import { TimePeriod } from '@app/model/bw/co/centralkyc/time-period';
 import { KycInvoiceDTO } from '@app/model/bw/co/centralkyc/invoice/kyc-invoice-dto';
-import { KycSubscriptionApi } from '@app/service/bw/co/centralkyc/subscription/kyc-subscription-api';
-import { KycSubscriptionDTO } from '@app/model/bw/co/centralkyc/subscription/kyc-subscription-dto';
-import { DocumentDTO } from '@app/model/bw/co/centralkyc/document/document-dto';
 import { KycSubsciptionStatus } from '@app/model/bw/co/centralkyc/subscription/kyc-subsciption-status';
 import { ToastrService } from 'ngx-toastr';
 import { Page } from '@app/model/page.model';
@@ -96,7 +75,18 @@ export abstract class SubscriptionDetailsComponent implements OnInit, AfterViewI
   invoicesTableSignal: Signal<any | KycInvoiceDTO | Page<KycInvoiceDTO>> = signal(null);
   invoicesTablePaged: WritableSignal<boolean> = linkedSignal(() => true);
 
+  datePipe = inject(DatePipe);
+  currencyPipe = inject(CurrencyPipe);
+
   invoicesTableColumns: ColumnModel[] = [
+    new ColumnModel(
+      'issueDate',
+      'issue.date',
+      false,
+      undefined,
+      this.datePipe,
+      ['dd/MM/yyyy']
+    ),
     new ColumnModel(
       'ref',
       'ref',
@@ -106,6 +96,9 @@ export abstract class SubscriptionDetailsComponent implements OnInit, AfterViewI
       'amount',
       'amount',
       false,
+      undefined,
+      this.currencyPipe,
+      ['BWP']
     ),
     new ColumnModel(
       'paid',
@@ -116,13 +109,22 @@ export abstract class SubscriptionDetailsComponent implements OnInit, AfterViewI
       'payDate',
       'pay.date',
       false,
+      undefined,
+      this.datePipe,
+      ['dd/MM/yyyy']
     ),
   ];
 
   invoicesTableColumnsActions: ActionTemplate[] = [
+    {
+      id: 'kyc-subscription-details',
+      label: 'details',
+      icon: 'remove_red_eye',
+      tooltip: 'details',
+    },
   ];
 
-  showInvoicesActions = false;
+  showInvoicesActions = true;
 
 
   TimePeriodT: any = TimePeriod;
@@ -222,5 +224,37 @@ export abstract class SubscriptionDetailsComponent implements OnInit, AfterViewI
 
     this.kycSubscriptionController.subscriptionDetailsEdit(form.id);
     this.afterSubscriptionDetailsEdit(form);
+  }
+
+  doSubscriptionDetailsDetails(form: any): any {
+
+    console.log('SubscriptionDetailsDetails', form);
+    this.router.navigate(['/invoice/details'], { queryParams: { id: form.row.id } });
+    return form;
+  }
+
+  invoicesTableActionClicked(event: any): void {
+
+    let form: any = {};
+    let queryParams: any = {};
+    let params: any = {};
+
+    switch (event.action) {
+      case 'kyc-subscription-details':
+        // TODO: Implement the action
+        form = {
+          id: event.row.id,
+        };
+        queryParams = {
+          id: event.row.id,
+        };
+        this.kycSubscriptionController.setQueryParams(Object.assign({}, queryParams));
+        params = this.doSubscriptionDetailsDetails(event);
+        this.useCaseScope.pageVariables = Object.assign({}, params);
+        this.kycSubscriptionController.subscriptionDetailsDetails(
+          event.id,
+        );
+        break;
+    }
   }
 }

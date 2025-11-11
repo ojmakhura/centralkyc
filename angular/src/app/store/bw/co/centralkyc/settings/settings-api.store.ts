@@ -9,6 +9,7 @@ import { Page } from '@app/model/page.model';
 import { SettingsDTO } from '@app/model/bw/co/centralkyc/settings/settings-dto';
 import { SettingsApi } from '@app/service/bw/co/centralkyc/settings/settings-api';
 import { RestApiResponse } from '@app/model/rest-api-response.model';
+import { TargetEntity } from '@app/model/bw/co/centralkyc/target-entity';
 
 export type SettingsApiState = AppState<SettingsDTO, SettingsDTO> & {};
 
@@ -218,6 +219,32 @@ export const SettingsApiStore = signalStore(
                   success: false,
                   error: true,
                   messages: [error.message || 'An error occurred'],
+                });
+              },
+            }),
+          );
+        }),
+      ),
+      uploadTemplate: rxMethod<{ template: File; target: TargetEntity }>(
+        switchMap((data: any) => {
+          patchState(store, { loading: true, loaderMessage: 'Uploading template ...' });
+          return settingsApi.uploadTemplate(data.template, data.target).pipe(
+            tapResponse({
+              next: (response: SettingsDTO) => {
+                patchState(store, {
+                  data: response,
+                  loading: false,
+                  success: true,
+                  messages: [ 'Template uploaded successfully!'],
+                  error: false,
+                });
+              },
+              error: (error: any) => {
+                patchState(store, {
+                  loading: false,
+                  success: false,
+                  error: true,
+                  messages: [error.message || 'An error occurred during template upload'],
                 });
               },
             }),

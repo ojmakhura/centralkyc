@@ -9,7 +9,6 @@ import { SearchObject } from '@app/model/search-object';
 import { Page } from '@app/model/page.model';
 import { KycSubscriptionDTO } from '@app/model/bw/co/centralkyc/subscription/kyc-subscription-dto';
 import { KycSubscriptionApi } from '@app/service/bw/co/centralkyc/subscription/kyc-subscription-api';
-import { RestApiResponse } from '@app/model/rest-api-response.model';
 
 export type KycSubscriptionApiState = AppState<any, any> & {};
 
@@ -47,7 +46,7 @@ export const KycSubscriptionApiStore = signalStore(
                     data: response,
                     loading: false,
                     success: true,
-                    messages: [ 'Success!'],
+                    messages: ['Success!!'],
                     error: false,
                   }
                 );
@@ -55,6 +54,7 @@ export const KycSubscriptionApiStore = signalStore(
               error: (error: any) => {
                 patchState(
                   store, {
+                    status: (error?.status || 0),
                     loading: false,
                     success: false,
                     error: true,
@@ -78,7 +78,7 @@ export const KycSubscriptionApiStore = signalStore(
                     dataList: response,
                     loading: false,
                     success: true,
-                    messages: [ 'Success!'],
+                    messages: ['Success!!'],
                     error: false,
                   }
                 );
@@ -86,6 +86,7 @@ export const KycSubscriptionApiStore = signalStore(
               error: (error: any) => {
                 patchState(
                   store, {
+                    status: (error?.status || 0),
                     loading: false,
                     success: false,
                     error: true,
@@ -109,7 +110,7 @@ export const KycSubscriptionApiStore = signalStore(
                     dataPage: response,
                     loading: false,
                     success: true,
-                    messages: [ 'Success!'],
+                    messages: ['Success!!'],
                     error: false,
                   }
                 );
@@ -117,6 +118,7 @@ export const KycSubscriptionApiStore = signalStore(
               error: (error: any) => {
                 patchState(
                   store, {
+                    status: (error?.status || 0),
                     loading: false,
                     success: false,
                     error: true,
@@ -140,7 +142,7 @@ export const KycSubscriptionApiStore = signalStore(
                     dataPage: response,
                     loading: false,
                     success: true,
-                    messages: [ 'Success!'],
+                    messages: ['Success!!'],
                     error: false,
                   }
                 );
@@ -148,6 +150,7 @@ export const KycSubscriptionApiStore = signalStore(
               error: (error: any) => {
                 patchState(
                   store, {
+                    status: (error?.status || 0),
                     loading: false,
                     success: false,
                     error: true,
@@ -171,7 +174,7 @@ export const KycSubscriptionApiStore = signalStore(
                     data: response,
                     loading: false,
                     success: true,
-                    messages: [ 'Success!'],
+                    messages: ['Success!!'],
                     error: false,
                   }
                 );
@@ -179,6 +182,7 @@ export const KycSubscriptionApiStore = signalStore(
               error: (error: any) => {
                 patchState(
                   store, {
+                    status: (error?.status || 0),
                     loading: false,
                     success: false,
                     error: true,
@@ -201,9 +205,8 @@ export const KycSubscriptionApiStore = signalStore(
                   {
                     data: response,
                     loading: false,
-                    status: (response?.status) ,
                     success: true,
-                    messages: [ 'Success!'],
+                    messages: ['Success!!'],
                     error: false,
                   }
                 );
@@ -211,6 +214,7 @@ export const KycSubscriptionApiStore = signalStore(
               error: (error: any) => {
                 patchState(
                   store, {
+                    status: (error?.status || 0),
                     loading: false,
                     success: false,
                     error: true,
@@ -234,7 +238,7 @@ export const KycSubscriptionApiStore = signalStore(
                     dataList: response,
                     loading: false,
                     success: true,
-                    messages: [ 'Success!'],
+                    messages: ['Success!!'],
                     error: false,
                   }
                 );
@@ -242,6 +246,39 @@ export const KycSubscriptionApiStore = signalStore(
               error: (error: any) => {
                 patchState(
                   store, {
+                    status: (error?.status || 0),
+                    loading: false,
+                    success: false,
+                    error: true,
+                    messages: [error.message || 'An error occurred'],
+                  }
+                );
+              },
+            }),
+          );
+        }),
+      ),
+      findByOrganisation: rxMethod<{organisationId: string | any }>(
+        switchMap((data: any) => {
+          patchState(store, { loading: true, loaderMessage: 'Loading ...' });
+          return kycSubscriptionApi.findByOrganisation(data.organisationId, ).pipe(
+            tapResponse({
+              next: (response: KycSubscriptionDTO[] | any[]) => {
+                patchState(
+                  store,
+                  {
+                    dataList: response,
+                    loading: false,
+                    success: true,
+                    messages: ['Success!!'],
+                    error: false,
+                  }
+                );
+              },
+              error: (error: any) => {
+                patchState(
+                  store, {
+                    status: (error?.status || 0),
                     loading: false,
                     success: false,
                     error: true,

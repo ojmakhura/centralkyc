@@ -7,6 +7,9 @@ package bw.co.centralkyc.settings;
 
 import bw.co.centralkyc.AuditTracker;
 import bw.co.centralkyc.RestApiResponse;
+import bw.co.centralkyc.TargetEntity;
+import bw.co.centralkyc.document.DocumentApi;
+import bw.co.centralkyc.document.DocumentDTO;
 
 import java.util.Collection;
 import java.util.Optional;
@@ -22,15 +25,18 @@ import org.springframework.web.multipart.MultipartFile;
 @RestController
 public class SettingsApiImpl extends SettingsApiBase {
 
-    public SettingsApiImpl(SettingsService settingsService) {
+    private final DocumentApi documentApi;
+
+    public SettingsApiImpl(SettingsService settingsService, DocumentApi documentApi) {
 
         super(settingsService);
+        this.documentApi = documentApi;
     }
 
     @Override
     public ResponseEntity<SettingsDTO> handleFindById(String id) {
         try {
-            
+
             return ResponseEntity.ok(null);
 
         } catch (Exception e) {
@@ -92,12 +98,12 @@ public class SettingsApiImpl extends SettingsApiBase {
     @Override
     public ResponseEntity<SettingsDTO> handleSave(SettingsDTO setttings) {
         try {
-            
+
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             AuditTracker.auditTrail(setttings, authentication);
 
             return ResponseEntity.ok(
-                    settingsService.save(setttings)); 
+                    settingsService.save(setttings));
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -119,8 +125,40 @@ public class SettingsApiImpl extends SettingsApiBase {
     }
 
     @Override
-    public ResponseEntity<SettingsDTO> handleUploadInvoiceTemplate(MultipartFile invoiceTemplate) throws Exception {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'handleUploadInvoiceTemplate'");
+    public ResponseEntity<SettingsDTO> handleUploadTemplate(MultipartFile template, TargetEntity target)
+            throws Exception {
+
+        try {
+
+            if(target != TargetEntity.INVOICE && target != TargetEntity.QUOTATION) {
+                throw new IllegalArgumentException("Invalid target entity for template upload: " + target);
+            }
+
+            SettingsDTO settings = settingsService.getAll().stream().findFirst()
+                    .orElseThrow(() -> new Exception("Settings not found"));
+
+            DocumentDTO doc = documentApi
+                    .upload(
+                            target,
+                            settings.getId(),
+                            target == TargetEntity.INVOICE ? settings.getInvoiceDocumentType().getId()
+                                    : settings.getQuotationDocumentType().getId(),
+                            template)
+                    .getBody();
+
+            if(target == TargetEntity.INVOICE) {
+
+                settings.setInvoiceTemplate(doc);
+            } else if (target == TargetEntity.QUOTATION) {
+                
+                settings.setQuotationTemplate(doc);
+            }
+
+            return this.save(settings);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw e;
+        }
     }
 }

@@ -6,6 +6,7 @@
  */
 package bw.co.centralkyc.settings;
 
+import bw.co.centralkyc.document.DocumentRepository;
 import bw.co.centralkyc.document.type.DocumentType;
 import bw.co.centralkyc.document.type.DocumentTypeDTO;
 import bw.co.centralkyc.document.type.DocumentTypeRepository;
@@ -22,15 +23,11 @@ public class SettingsDaoImpl
     extends SettingsDaoBase
 {
     
-    public SettingsDaoImpl(
-        DocumentTypeRepository documentTypeRepository,
-        SettingsRepository settingsRepository
-    ) {
 
-        super(
-            documentTypeRepository,
-            settingsRepository
-        );
+    public SettingsDaoImpl(DocumentTypeRepository documentTypeRepository, DocumentRepository documentRepository,
+            SettingsRepository settingsRepository) {
+        super(documentTypeRepository, documentRepository, settingsRepository);
+        //TODO Auto-generated constructor stub
     }
 
     /**
@@ -60,6 +57,36 @@ public class SettingsDaoImpl
         // WARNING! No conversion for target.indKycDocuments (can't convert source.getIndKycDocuments():bw.co.centralkyc.document.type.DocumentType to bw.co.centralkyc.document.type.DocumentTypeDTO
         if(CollectionUtils.isNotEmpty(source.getIndKycDocuments())) {
             target.setIndKycDocuments(this.getDocumentTypeDao().toDocumentTypeDTOCollection(source.getIndKycDocuments()));
+        }
+
+        if(source.getInvoiceDocumentType() != null) {
+
+            target.setInvoiceDocumentType(this.getDocumentTypeDao().toDocumentTypeDTO(source.getInvoiceDocumentType()));
+        }
+
+        if(source.getInvoiceTemplateType() != null) {
+
+            target.setInvoiceTemplateType(this.getDocumentTypeDao().toDocumentTypeDTO(source.getInvoiceTemplateType()));
+        }
+
+        if(source.getInvoiceTemplate() != null) {
+
+            target.setInvoiceTemplate(this.getDocumentDao().toDocumentDTO(source.getInvoiceTemplate()));
+        }
+
+        if(source.getQuotationDocumentType() != null) {
+
+            target.setQuotationDocumentType(this.getDocumentTypeDao().toDocumentTypeDTO(source.getQuotationDocumentType()));
+        }
+
+        if(source.getQuotationTemplateType() != null) {
+
+            target.setQuotationTemplateType(this.getDocumentTypeDao().toDocumentTypeDTO(source.getQuotationTemplateType()));
+        }
+
+        if(source.getQuotationTemplate() != null) {
+
+            target.setQuotationTemplate(this.getDocumentDao().toDocumentDTO(source.getQuotationTemplate()));
         }
     }
 
@@ -114,40 +141,72 @@ public class SettingsDaoImpl
         // TODO verify behavior of settingsDTOToEntity
         super.settingsDTOToEntity(source, target, copyIfNull);
 
-        if(CollectionUtils.isNotEmpty(source.getOrganisationDocuments())) {
+        // if(CollectionUtils.isNotEmpty(source.getOrganisationDocuments())) {
 
-            for(DocumentTypeDTO documentTypeDTO : source.getOrganisationDocuments()) {
+        //     for(DocumentTypeDTO documentTypeDTO : source.getOrganisationDocuments()) {
 
-                DocumentType type = documentTypeDao.documentTypeDTOToEntity(documentTypeDTO);
-                target.getOrganisationDocuments().add(type);
-            }
+        //         DocumentType type = documentTypeDao.documentTypeDTOToEntity(documentTypeDTO);
+        //         target.getOrganisationDocuments().add(type);
+        //     }
+        // }
+
+        // if(CollectionUtils.isNotEmpty(source.getIndividualDocuments())) {
+
+        //     for(DocumentTypeDTO documentTypeDTO : source.getIndividualDocuments()) {
+
+        //         DocumentType type = documentTypeDao.documentTypeDTOToEntity(documentTypeDTO);
+        //         target.getIndividualDocuments().add(type);
+        //     }
+        // }
+
+        // if(CollectionUtils.isNotEmpty(source.getOrgKycDocuments())) {
+
+        //     for(DocumentTypeDTO documentTypeDTO : source.getOrgKycDocuments()) {
+
+        //         DocumentType type = documentTypeDao.documentTypeDTOToEntity(documentTypeDTO);
+        //         target.getOrgKycDocuments().add(type);
+        //     }
+        // }
+
+        // if(CollectionUtils.isNotEmpty(source.getIndKycDocuments())) {
+
+        //     for(DocumentTypeDTO documentTypeDTO : source.getIndKycDocuments()) {
+
+        //         DocumentType type = documentTypeDao.documentTypeDTOToEntity(documentTypeDTO);
+        //         target.getIndKycDocuments().add(type);
+        //     }
+        // }
+
+
+        if(source.getInvoiceDocumentType() != null && source.getInvoiceDocumentType().getId() != null) {
+
+            target.setInvoiceDocumentType(documentTypeRepository.getReferenceById(source.getInvoiceDocumentType().getId()));
         }
 
-        if(CollectionUtils.isNotEmpty(source.getIndividualDocuments())) {
+        if(source.getInvoiceTemplateType() != null && source.getInvoiceTemplateType().getId() != null) {
 
-            for(DocumentTypeDTO documentTypeDTO : source.getIndividualDocuments()) {
-
-                DocumentType type = documentTypeDao.documentTypeDTOToEntity(documentTypeDTO);
-                target.getIndividualDocuments().add(type);
-            }
+            target.setInvoiceTemplateType(documentTypeRepository.getReferenceById(source.getInvoiceTemplateType().getId()));
         }
 
-        if(CollectionUtils.isNotEmpty(source.getOrgKycDocuments())) {
+        if(source.getInvoiceTemplate() != null && source.getInvoiceTemplate().getId() != null) {
 
-            for(DocumentTypeDTO documentTypeDTO : source.getOrgKycDocuments()) {
+            target.setInvoiceTemplate(documentDao.documentDTOToEntity(source.getInvoiceTemplate()));
 
-                DocumentType type = documentTypeDao.documentTypeDTOToEntity(documentTypeDTO);
-                target.getOrgKycDocuments().add(type);
-            }
         }
 
-        if(CollectionUtils.isNotEmpty(source.getIndKycDocuments())) {
+        if(source.getQuotationDocumentType() != null && source.getQuotationDocumentType().getId() != null) {
 
-            for(DocumentTypeDTO documentTypeDTO : source.getIndKycDocuments()) {
+            target.setQuotationDocumentType(documentTypeRepository.getReferenceById(source.getQuotationDocumentType().getId()));
+        }
 
-                DocumentType type = documentTypeDao.documentTypeDTOToEntity(documentTypeDTO);
-                target.getIndKycDocuments().add(type);
-            }
+        if(source.getQuotationTemplateType() != null && source.getQuotationTemplateType().getId() != null) {
+
+            target.setQuotationTemplateType(documentTypeRepository.getReferenceById(source.getQuotationTemplateType().getId()));
+        }
+
+        if(source.getQuotationTemplate() != null && source.getQuotationTemplate().getId() != null) {
+
+            target.setQuotationTemplate(documentDao.documentDTOToEntity(source.getQuotationTemplate()));
         }
 
     }

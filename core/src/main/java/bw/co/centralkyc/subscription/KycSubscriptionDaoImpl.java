@@ -6,6 +6,7 @@
  */
 package bw.co.centralkyc.subscription;
 
+import bw.co.centralkyc.invoice.KycInvoiceRepository;
 import bw.co.centralkyc.organisation.Organisation;
 import bw.co.centralkyc.organisation.OrganisationRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -20,16 +21,11 @@ import org.springframework.stereotype.Repository;
 public class KycSubscriptionDaoImpl
     extends KycSubscriptionDaoBase
 {
-    
-    public KycSubscriptionDaoImpl(
-        OrganisationRepository organisationRepository,
-        KycSubscriptionRepository kycSubscriptionRepository
-    ) {
 
-        super(
-            organisationRepository,
-            kycSubscriptionRepository
-        );
+    public KycSubscriptionDaoImpl(OrganisationRepository organisationRepository,
+            KycInvoiceRepository kycInvoiceRepository, KycSubscriptionRepository kycSubscriptionRepository) {
+        super(organisationRepository, kycInvoiceRepository, kycSubscriptionRepository);
+        //TODO Auto-generated constructor stub
     }
 
     /**

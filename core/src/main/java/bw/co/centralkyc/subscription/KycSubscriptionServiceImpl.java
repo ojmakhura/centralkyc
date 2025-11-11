@@ -20,7 +20,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import bw.co.centralkyc.invoice.KycInvoiceDTO;
+import bw.co.centralkyc.invoice.KycInvoiceDao;
+import bw.co.centralkyc.invoice.KycInvoiceRepository;
 import bw.co.centralkyc.organisation.Organisation;
+import bw.co.centralkyc.organisation.OrganisationDao;
 import bw.co.centralkyc.organisation.OrganisationRepository;
 import bw.co.centralkyc.sequence.SequenceGenerator;
 import bw.co.centralkyc.sequence.SequenceGeneratorService;
@@ -36,23 +40,17 @@ public class KycSubscriptionServiceImpl
         extends KycSubscriptionServiceBase {
 
     private final SequenceGeneratorService sequenceGeneratorService;
-    private final OrganisationRepository organisationRepository;
     private static final String SEQUENCE_NAME = "KYC_SUBSCRIPTION_REF";
 
-    public KycSubscriptionServiceImpl(
-            KycSubscriptionDao kycSubscriptionDao,
-            KycSubscriptionRepository kycSubscriptionRepository,
+    public KycSubscriptionServiceImpl(KycSubscriptionDao kycSubscriptionDao,
+            KycSubscriptionRepository kycSubscriptionRepository, OrganisationDao organisationDao,
+            OrganisationRepository organisationRepository, KycInvoiceDao kycInvoiceDao,
             SequenceGeneratorService sequenceGeneratorService,
-            OrganisationRepository organisationRepository,
-            MessageSource messageSource) {
-
-        super(
-                kycSubscriptionDao,
-                kycSubscriptionRepository,
-                messageSource);
+            KycInvoiceRepository kycInvoiceRepository, MessageSource messageSource) {
+        super(kycSubscriptionDao, kycSubscriptionRepository, organisationDao, organisationRepository, kycInvoiceDao,
+                kycInvoiceRepository, messageSource);
 
         this.sequenceGeneratorService = sequenceGeneratorService;
-        this.organisationRepository = organisationRepository;
     }
 
     /**
@@ -86,7 +84,7 @@ public class KycSubscriptionServiceImpl
                 sequenceGenerator.setName(SEQUENCE_NAME);
 
                 Collection<SequencePart> sequenceParts = new HashSet<SequencePart>();
-                
+
                 SequencePart counterPart = new SequencePart();
                 counterPart.setPosition(0);
                 counterPart.setType(SequencePartType.STATIC);
@@ -143,8 +141,7 @@ public class KycSubscriptionServiceImpl
             String likeCriteria = "%" + criteria.toLowerCase() + "%";
             return builder.or(
                     builder.like(builder.lower(root.get("ref")), likeCriteria),
-                    builder.like(builder.lower(root.get("organisation").get("name")), likeCriteria)
-            );
+                    builder.like(builder.lower(root.get("organisation").get("name")), likeCriteria));
         };
     }
 
@@ -183,9 +180,23 @@ public class KycSubscriptionServiceImpl
             throws Exception {
         Specification<KycSubscription> specification = createSearchSpecification(criteria);
 
-        Page<KycSubscription> subscriptions = kycSubscriptionRepository.findAll(specification, PageRequest.of(pageNumber, pageSize));
+        Page<KycSubscription> subscriptions = kycSubscriptionRepository.findAll(specification,
+                PageRequest.of(pageNumber, pageSize));
 
         return subscriptions.map(arg0 -> kycSubscriptionDao.toKycSubscriptionDTO(arg0));
+    }
+
+    @Override
+    protected Collection<KycSubscriptionDTO> handleFindByOrganisation(String organisationId, String user)
+            throws Exception {
+
+        Specification<KycSubscription> specification = (root, query, cb) -> cb.equal(
+                root.get("organisation").get("id"),
+                organisationId);
+
+        Collection<KycSubscription> subscriptions = this.kycSubscriptionRepository.findAll(specification);
+        return this.kycSubscriptionDao.toKycSubscriptionDTOCollection(subscriptions);
+
     }
 
 }

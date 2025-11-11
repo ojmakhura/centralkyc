@@ -4,8 +4,7 @@ import { Observable } from 'rxjs';
 import { SettingsDTO } from '@app/model/bw/co/centralkyc/settings/settings-dto';
 import { HttpClient } from '@angular/common/http';
 import { Page } from '@app/model/page.model';
-import { SearchObject } from '@app/model/search-object';
-import { RestApiResponse } from '@app/model/rest-api-response.model';
+import { TargetEntity } from '@app/model/bw/co/centralkyc/target-entity';
 
 @Injectable({
   providedIn: 'root'
@@ -51,4 +50,11 @@ export class SettingsApi {
         return this.http.get<SettingsDTO[] | any[]>(`${this.path}/search?criteria=${criteria}`);
     }
 
+    uploadTemplate(template: File, target: TargetEntity): Observable<SettingsDTO> {
+
+        const formData: FormData = new FormData();
+        formData.append('template', template);
+
+        return this.http.post<SettingsDTO>(`${this.path}/upload?target=${target}`, formData);
+    }
 }

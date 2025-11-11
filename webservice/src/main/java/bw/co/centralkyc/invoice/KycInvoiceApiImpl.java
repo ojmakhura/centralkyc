@@ -119,4 +119,50 @@ public class KycInvoiceApiImpl extends KycInvoiceApiBase {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'handleUpload'");
     }
+
+    @Override
+    public ResponseEntity<KycInvoiceDTO> handleGenerateInvoice(String subscriptionId) throws Exception {
+        
+        try {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            String username = "anonymousUser";
+            if(authentication != null) {
+
+                username = authentication.getName();
+            }
+
+            return ResponseEntity.ok(kycInvoiceService.generateInvoice(subscriptionId, username));
+        } catch (Exception e) {
+
+            e.printStackTrace();
+            throw e;
+        }
+    }
+
+    @Override
+    public ResponseEntity<Collection<KycInvoiceDTO>> handleFindByOrganisation(String organisationId) throws Exception {
+        
+        try {
+
+            return ResponseEntity.ok(kycInvoiceService.findByOrganisation(organisationId));
+        } catch (Exception e) {
+
+            e.printStackTrace();
+            throw e;
+        }
+    }
+
+    @Override
+    public ResponseEntity<Collection<KycInvoiceDTO>> handleFindBySubscription(String subscriptionId) throws Exception {
+        
+        try {
+
+            return ResponseEntity.ok(kycInvoiceService.findBySubscription(subscriptionId));
+        } catch (Exception e) {
+
+            e.printStackTrace();
+            throw e;
+        }
+
+    }
 }

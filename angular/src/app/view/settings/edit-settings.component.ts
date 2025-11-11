@@ -11,11 +11,20 @@ import {
   AfterViewInit,
   signal,
   Signal,
+  linkedSignal,
+  WritableSignal,
   OnDestroy,
 } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { COMMA, ENTER } from '@angular/cdk/keycodes';
-import { FormGroup, FormControl, FormArray, FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import {
+  FormGroup,
+  FormControl,
+  FormArray,
+  FormBuilder,
+  ReactiveFormsModule,
+  Validators
+} from '@angular/forms';
 import { formatDate } from '@angular/common';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
@@ -31,13 +40,18 @@ import { MatTableDataSource } from '@angular/material/table';
 import { MatChipInputEvent } from '@angular/material/chips';
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { TableComponent } from '@app/components/table/table.component';
+import { SettingsApiStore } from '@app/store/bw/co/centralkyc/settings/settings-api.store';
 import { ColumnModel } from '@app/model/column.model';
 import { ActionTemplate } from '@app/model/action-template';
 
-import { SettingsControllerImpl } from '@app/controller/settings/settings-controller.impl';
-import { SettingsDTO } from '@app/model/bw/co/centralkyc/settings/settings-dto';
 import { DocumentTypeDTO } from '@app/model/bw/co/centralkyc/document/type/document-type-dto';
+import { TargetEntity } from '@app/model/bw/co/centralkyc/target-entity';
+import { SettingsApi } from '@app/service/bw/co/centralkyc/settings/settings-api';
+import { SettingsDTO } from '@app/model/bw/co/centralkyc/settings/settings-dto';
+import { DocumentDTO } from '@app/model/bw/co/centralkyc/document/document-dto';
+import { SettingsControllerImpl } from '@app/controller/settings/settings-controller.impl';
 import { ToastrService } from 'ngx-toastr';
+import { Page } from '@app/model/page.model';
 
 export class EditSettingsVarsForm {
   id?: string | any;
@@ -47,20 +61,23 @@ export class EditSettingsVarsForm {
   modifiedBy?: string | any;
   kycDuration?: number | any;
   selectedOrgDocument?: DocumentTypeDTO | any;
-  organisationDocuments?: Set<DocumentTypeDTO> | any[];
   selectedKycOrgDocument?: DocumentTypeDTO | any;
-  orgKycDocuments?: Set<DocumentTypeDTO> | any[];
   selectedIndDocument?: DocumentTypeDTO | any;
-  individualDocuments?: Set<DocumentTypeDTO> | any[];
   selectedKycIndDocument?: DocumentTypeDTO | any;
-  indKycDocuments?: Set<DocumentTypeDTO> | any[];
+  invoiceDocumentType?: DocumentTypeDTO | any;
+  invoiceTemplateType?: DocumentTypeDTO | any;
+  invoiceTemplate?: DocumentDTO | any;
+  quotationDocumentType?: DocumentTypeDTO | any;
+  quotationTemplateType?: DocumentTypeDTO | any;
+  quotationTemplate?: DocumentDTO | any;
 }
 
 @Component({
   selector: 'app-edit-settings-base',
-  template: '',
+  template: ''
 })
 export abstract class EditSettingsComponent implements OnInit, AfterViewInit, OnDestroy {
+
   separatorKeysCodes: number[] = [ENTER, COMMA];
   @Input() editSettingsVarsForm: EditSettingsVarsForm = {};
 
@@ -73,132 +90,198 @@ export abstract class EditSettingsComponent implements OnInit, AfterViewInit, On
   dialog: MatDialog = inject(MatDialog);
   toaster: ToastrService = inject(ToastrService);
   settingsController: SettingsControllerImpl = inject(SettingsControllerImpl);
+  readonly settingsApiStore = inject(SettingsApiStore);
   selectedOrgDocumentFilterCtrl: FormControl = new FormControl();
 
   selectedOrgDocumentCompare(o1: DocumentTypeDTO | any, o2: DocumentTypeDTO | any) {
-    return false;
+    return o1 && o2 && o1.id === o2.id;
   }
 
-  filterSelectedOrgDocument() {}
+  filterSelectedOrgDocument() { }
 
   selectedOrgDocumentBackingList: DocumentTypeDTO[] = [];
-  selectedOrgDocumentFilteredList$: Observable<DocumentTypeDTO[] | any[]> = of([]);
+  selectedOrgDocumentFilteredList: WritableSignal<DocumentTypeDTO[] | any[]> = linkedSignal(() => []);
   selectedOrgDocumentChipControl: FormControl = new FormControl([]);
 
-  selectedOrgDocumentDisplays: string[] = ['name'];
-
-  // Table org.andromda.cartridges.angular.metafacades.AngularParameterLogicImpl[settings.organisationDocuments] true false
-  @ViewChild('organisationDocumentsTable') organisationDocumentsTable?: TableComponent<DocumentTypeDTO>;
-  organisationDocumentsTableSignal: Signal<any>;
-  organisationDocumentsTablePaged = signal(false);
-
-  organisationDocumentsTableColumns: ColumnModel[] = [
-    new ColumnModel('id', 'id', false),
-    new ColumnModel('code', 'code', false),
-    new ColumnModel('name', 'name', false),
+  selectedOrgDocumentDisplays: string[] = [
+    'name',
   ];
 
-  organisationDocumentsTableColumnsActions: ActionTemplate[] = [];
+  @ViewChild('organisationDocumentsTable') organisationDocumentsTable?: TableComponent<DocumentTypeDTO>;
+  organisationDocumentsTableSignal: Signal<any | DocumentTypeDTO | Page<DocumentTypeDTO>> = signal(null);
+  organisationDocumentsTablePaged: WritableSignal<boolean> = linkedSignal(() => true);
+
+  organisationDocumentsTableColumnsActions: ActionTemplate[] = [
+  ];
 
   showOrganisationDocumentsActions = false;
 
   selectedKycOrgDocumentFilterCtrl: FormControl = new FormControl();
 
   selectedKycOrgDocumentCompare(o1: DocumentTypeDTO | any, o2: DocumentTypeDTO | any) {
-    return false;
+    return o1 && o2 && o1.id === o2.id;
   }
 
-  filterSelectedKycOrgDocument() {}
+  filterSelectedKycOrgDocument() { }
 
   selectedKycOrgDocumentBackingList: DocumentTypeDTO[] = [];
-  selectedKycOrgDocumentFilteredList$: Observable<DocumentTypeDTO[] | any[]> = of([]);
+  selectedKycOrgDocumentFilteredList: WritableSignal<DocumentTypeDTO[] | any[]> = linkedSignal(() => []);
   selectedKycOrgDocumentChipControl: FormControl = new FormControl([]);
 
-  selectedKycOrgDocumentDisplays: string[] = ['name'];
-
-  // Table org.andromda.cartridges.angular.metafacades.AngularParameterLogicImpl[settings.orgKycDocuments] true false
-  @ViewChild('orgKycDocumentsTable') orgKycDocumentsTable?: TableComponent<DocumentTypeDTO>;
-  orgKycDocumentsTableSignal: Signal<any>;
-  orgKycDocumentsTablePaged = signal(false);
-
-  orgKycDocumentsTableColumns: ColumnModel[] = [
-    new ColumnModel('id', 'id', false),
-    new ColumnModel('code', 'code', false),
-    new ColumnModel('name', 'name', false),
+  selectedKycOrgDocumentDisplays: string[] = [
+    'name',
   ];
 
-  orgKycDocumentsTableColumnsActions: ActionTemplate[] = [];
+  @ViewChild('orgKycDocumentsTable') orgKycDocumentsTable?: TableComponent<DocumentTypeDTO>;
+  orgKycDocumentsTableSignal: Signal<any | DocumentTypeDTO | Page<DocumentTypeDTO>> = signal(null);
+  orgKycDocumentsTablePaged: WritableSignal<boolean> = linkedSignal(() => true);
+
+  orgKycDocumentsTableColumnsActions: ActionTemplate[] = [
+  ];
 
   showOrgKycDocumentsActions = false;
 
   selectedIndDocumentFilterCtrl: FormControl = new FormControl();
 
   selectedIndDocumentCompare(o1: DocumentTypeDTO | any, o2: DocumentTypeDTO | any) {
-    return false;
+    return o1 && o2 && o1.id === o2.id;
   }
 
-  filterSelectedIndDocument() {}
+  filterSelectedIndDocument() { }
 
   selectedIndDocumentBackingList: DocumentTypeDTO[] = [];
-  selectedIndDocumentFilteredList$: Observable<DocumentTypeDTO[] | any[]> = of([]);
+  selectedIndDocumentFilteredList: WritableSignal<DocumentTypeDTO[] | any[]> = linkedSignal(() => []);
   selectedIndDocumentChipControl: FormControl = new FormControl([]);
 
-  selectedIndDocumentDisplays: string[] = ['name'];
-
-  // Table org.andromda.cartridges.angular.metafacades.AngularParameterLogicImpl[settings.individualDocuments] true false
-  @ViewChild('individualDocumentsTable') individualDocumentsTable?: TableComponent<DocumentTypeDTO>;
-  individualDocumentsTableSignal: Signal<any>;
-  individualDocumentsTablePaged = signal(true);
-
-  individualDocumentsTableColumns: ColumnModel[] = [
-    new ColumnModel('id', 'id', false),
-    new ColumnModel('code', 'code', false),
-    new ColumnModel('name', 'name', false),
+  selectedIndDocumentDisplays: string[] = [
+    'name',
   ];
 
-  individualDocumentsTableColumnsActions: ActionTemplate[] = [];
+  @ViewChild('individualDocumentsTable') individualDocumentsTable?: TableComponent<DocumentTypeDTO>;
+  individualDocumentsTableSignal: Signal<any | DocumentTypeDTO | Page<DocumentTypeDTO>> = signal(null);
+  individualDocumentsTablePaged: WritableSignal<boolean> = linkedSignal(() => true);
+
+  individualDocumentsTableColumnsActions: ActionTemplate[] = [
+  ];
 
   showIndividualDocumentsActions = false;
 
   selectedKycIndDocumentFilterCtrl: FormControl = new FormControl();
 
   selectedKycIndDocumentCompare(o1: DocumentTypeDTO | any, o2: DocumentTypeDTO | any) {
-    return false;
+    return o1 && o2 && o1.id === o2.id;
   }
 
-  filterSelectedKycIndDocument() {}
+  filterSelectedKycIndDocument() { }
 
   selectedKycIndDocumentBackingList: DocumentTypeDTO[] = [];
-  selectedKycIndDocumentFilteredList$: Observable<DocumentTypeDTO[] | any[]> = of([]);
+  selectedKycIndDocumentFilteredList: WritableSignal<DocumentTypeDTO[] | any[]> = linkedSignal(() => []);
   selectedKycIndDocumentChipControl: FormControl = new FormControl([]);
 
-  selectedKycIndDocumentDisplays: string[] = ['name'];
-
-  // Table org.andromda.cartridges.angular.metafacades.AngularParameterLogicImpl[settings.indKycDocuments] true false
-  @ViewChild('indKycDocumentsTable') indKycDocumentsTable?: TableComponent<DocumentTypeDTO>;
-  indKycDocumentsTableSignal: Signal<any>;
-  indKycDocumentsTablePaged = signal(true);
-
-  indKycDocumentsTableColumns: ColumnModel[] = [
-    new ColumnModel('id', 'id', false),
-    new ColumnModel('code', 'code', false),
-    new ColumnModel('name', 'name', false),
+  selectedKycIndDocumentDisplays: string[] = [
+    'name',
   ];
 
-  indKycDocumentsTableColumnsActions: ActionTemplate[] = [];
+  @ViewChild('indKycDocumentsTable') indKycDocumentsTable?: TableComponent<DocumentTypeDTO>;
+  indKycDocumentsTableSignal: Signal<any | DocumentTypeDTO | Page<DocumentTypeDTO>> = signal(null);
+  indKycDocumentsTablePaged: WritableSignal<boolean> = linkedSignal(() => true);
+
+  documentsTableColumns: ColumnModel[] = [
+    new ColumnModel(
+      'code',
+      'code',
+      false,
+    ),
+    new ColumnModel(
+      'name',
+      'name',
+      false,
+    ),
+  ];
+
+  indKycDocumentsTableColumnsActions: ActionTemplate[] = [
+  ];
 
   showIndKycDocumentsActions = false;
 
+  invoiceDocumentTypeFilterCtrl: FormControl = new FormControl();
+
+  invoiceDocumentTypeCompare(o1: DocumentTypeDTO | any, o2: DocumentTypeDTO | any) {
+    return o1 && o2 && o1.id === o2.id;
+  }
+
+  filterInvoiceDocumentType() { }
+
+  invoiceDocumentTypeBackingList: DocumentTypeDTO[] = [];
+  invoiceDocumentTypeFilteredList: WritableSignal<DocumentTypeDTO[] | any[]> = linkedSignal(() => []);
+  invoiceDocumentTypeChipControl: FormControl = new FormControl([]);
+
+  invoiceDocumentTypeDisplays: string[] = [
+    'name',
+  ];
+
+  invoiceTemplateTypeFilterCtrl: FormControl = new FormControl();
+
+  invoiceTemplateTypeCompare(o1: DocumentTypeDTO | any, o2: DocumentTypeDTO | any) {
+    return o1 && o2 && o1.id === o2.id;
+  }
+
+  filterInvoiceTemplateType() { }
+
+  invoiceTemplateTypeBackingList: DocumentTypeDTO[] = [];
+  invoiceTemplateTypeFilteredList: WritableSignal<DocumentTypeDTO[] | any[]> = linkedSignal(() => []);
+  invoiceTemplateTypeChipControl: FormControl = new FormControl([]);
+
+  invoiceTemplateTypeDisplays: string[] = [
+    'name',
+  ];
+
+  quotationDocumentTypeFilterCtrl: FormControl = new FormControl();
+
+  quotationDocumentTypeCompare(o1: DocumentTypeDTO | any, o2: DocumentTypeDTO | any) {
+    return o1 && o2 && o1.id === o2.id;
+  }
+
+  filterQuotationDocumentType() { }
+
+  quotationDocumentTypeBackingList: DocumentTypeDTO[] = [];
+  quotationDocumentTypeFilteredList: WritableSignal<DocumentTypeDTO[] | any[]> = linkedSignal(() => []);
+  quotationDocumentTypeChipControl: FormControl = new FormControl([]);
+
+  quotationDocumentTypeDisplays: string[] = [
+    'name',
+  ];
+
+  quotationTemplateTypeFilterCtrl: FormControl = new FormControl();
+
+  quotationTemplateTypeCompare(o1: DocumentTypeDTO | any, o2: DocumentTypeDTO | any) {
+    return o1 && o2 && o1.id === o2.id;
+  }
+
+  filterQuotationTemplateType() { }
+
+  quotationTemplateTypeBackingList: DocumentTypeDTO[] = [];
+  quotationTemplateTypeFilteredList: WritableSignal<DocumentTypeDTO[] | any[]> = linkedSignal(() => []);
+  quotationTemplateTypeChipControl: FormControl = new FormControl([]);
+
+  quotationTemplateTypeDisplays: string[] = [
+    'name',
+  ];
+
+  TargetEntityT: any = TargetEntity;
+  TargetEntityOptions = Object.keys(this.TargetEntityT);
   loaderMessage: Signal<string> = signal('');
-  messages: Signal<any> = signal({});
+  messages: Signal<string[]> = signal([]);
   success: Signal<boolean> = signal(false);
   loading: Signal<boolean> = signal(false);
   error: Signal<boolean> = signal(false);
-  selected: any = null;
+  selected: Signal<any> = signal(null);
 
   editSettingsFormValueSubscription?: Subscription;
 
   constructor() {
+
+
     effect(() => {
       let messages = this.messages();
 
@@ -209,26 +292,31 @@ export abstract class EditSettingsComponent implements OnInit, AfterViewInit, On
       if (this.error() && !this.loading()) {
         this.toaster.error(messages[0]);
       }
-    });
+    })
   }
 
   abstract beforeOnInit(form: EditSettingsVarsForm): EditSettingsVarsForm;
 
   ngOnInit() {
-    let form: EditSettingsVarsForm = this.beforeOnInit(new EditSettingsVarsForm());
+    let form: EditSettingsVarsForm = this.beforeOnInit(new EditSettingsVarsForm);
     this.editSettingsForm = this.newForm(form);
 
-    this.editSettingsFormValueSubscription = this.editSettingsForm.valueChanges.subscribe((change: any) => {
-      this.handleFormChanges(change);
-    });
+    this.editSettingsFormValueSubscription = this.editSettingsForm.valueChanges.subscribe(
+      (change: any) => {
+        this.handleFormChanges(change);
+      }
+    );
 
     this.afterOnInit();
   }
 
-  handleFormChanges(change: any): void {}
+  handleFormChanges(change: any): void {
+
+  }
 
   editSettingsFormReset() {
-    this.editSettingsForm.reset();
+
+    this.editSettingsForm.reset()
     this.editSettingsForm.markAsPristine();
 
     if (this.router.url.substring(0, this.router.url.indexOf('?'))) {
@@ -238,9 +326,9 @@ export abstract class EditSettingsComponent implements OnInit, AfterViewInit, On
     }
   }
 
-  afterOnInit(): void {}
+  afterOnInit(): void { }
 
-  doNgAfterViewInit(): void {}
+  doNgAfterViewInit(): void { }
 
   ngAfterViewInit() {
     this.doNgAfterViewInit();
@@ -249,16 +337,23 @@ export abstract class EditSettingsComponent implements OnInit, AfterViewInit, On
 
   newForm(editSettingsVarsForm: EditSettingsVarsForm): FormGroup {
     return this.formBuilder.group({
-      id: [{ value: this.editSettingsVarsForm.id, disabled: false }, [Validators.required]],
-      createdAt: [{ value: this.editSettingsVarsForm.createdAt, disabled: false }, [Validators.required]],
-      createdBy: [{ value: this.editSettingsVarsForm.createdBy, disabled: false }, [Validators.required]],
-      modifiedAt: [{ value: this.editSettingsVarsForm.modifiedAt, disabled: false }, [Validators.required]],
-      modifiedBy: [{ value: this.editSettingsVarsForm.modifiedBy, disabled: false }, [Validators.required]],
-      kycDuration: [{ value: this.editSettingsVarsForm.kycDuration, disabled: false }, [Validators.required]],
+      id: [{ value: this.editSettingsVarsForm.id, disabled: false }],
+      createdAt: [{ value: this.editSettingsVarsForm.createdAt, disabled: false }],
+      createdBy: [{ value: this.editSettingsVarsForm.createdBy, disabled: false }],
+      modifiedAt: [{ value: this.editSettingsVarsForm.modifiedAt, disabled: false }],
+      modifiedBy: [{ value: this.editSettingsVarsForm.modifiedBy, disabled: false }],
+      kycDuration: [{ value: this.editSettingsVarsForm.kycDuration, disabled: false }, [Validators.required,]],
       selectedOrgDocument: [{ value: this.editSettingsVarsForm.selectedOrgDocument, disabled: false }],
       selectedKycOrgDocument: [{ value: this.editSettingsVarsForm.selectedKycOrgDocument, disabled: false }],
       selectedIndDocument: [{ value: this.editSettingsVarsForm.selectedIndDocument, disabled: false }],
       selectedKycIndDocument: [{ value: this.editSettingsVarsForm.selectedKycIndDocument, disabled: false }],
+      invoiceDocumentType: [{ value: this.editSettingsVarsForm.invoiceDocumentType, disabled: false }, [Validators.required,]],
+      invoiceTemplateType: [{ value: this.editSettingsVarsForm.invoiceTemplateType, disabled: false }, [Validators.required,]],
+      invoiceTemplate: this.createDocumentDTOGroup(this.editSettingsVarsForm.invoiceTemplate),
+      quotationDocumentType: [{ value: this.editSettingsVarsForm.quotationDocumentType, disabled: false }, [Validators.required,]],
+      quotationTemplateType: [{ value: this.editSettingsVarsForm.quotationTemplateType, disabled: false }, [Validators.required,]],
+      quotationTemplate: this.createDocumentDTOGroup(this.editSettingsVarsForm.quotationTemplate),
+
     });
   }
 
@@ -274,12 +369,12 @@ export abstract class EditSettingsComponent implements OnInit, AfterViewInit, On
   /**
    * This method may be overwritten
    */
-  beforeEditSettingsSave(form: any): void {}
+  beforeEditSettingsSave(form: any): void { }
 
   /**
    * This method may be overwritten
    */
-  afterEditSettingsSave(form: any): void {}
+  afterEditSettingsSave(form: any): void { }
 
   /**
    * This method may be overwritten
@@ -289,6 +384,7 @@ export abstract class EditSettingsComponent implements OnInit, AfterViewInit, On
   }
 
   editSettingsSave(): void {
+
     let form: any = {
       settings: this.editSettingsSaveSettings,
     };
@@ -343,7 +439,7 @@ export abstract class EditSettingsComponent implements OnInit, AfterViewInit, On
   createDocumentTypeDTOArray(values?: DocumentTypeDTO[]): FormArray {
     if (values) {
       let formArray: FormArray = this.formBuilder.array([]);
-      values?.forEach((value) => formArray.push(this.createDocumentTypeDTOGroup(value)));
+      values?.forEach(value => formArray.push(this.createDocumentTypeDTOGroup(value)))
 
       return formArray;
     } else {
@@ -355,73 +451,226 @@ export abstract class EditSettingsComponent implements OnInit, AfterViewInit, On
     return this.editSettingsForm?.get('selectedOrgDocument') as FormControl;
   }
 
-  selectedOrgDocumentAddDialog() {}
+  selectedOrgDocumentAddDialog() { }
 
-  selectedOrgDocumentClear() {}
+  selectedOrgDocumentClear() { }
 
-  selectedOrgDocumentSelected(event: MatCheckboxChange, row: number) {}
+  selectedOrgDocumentSelected(event: MatCheckboxChange, row: number) { }
 
-  selectedOrgDocumentSearch() {}
+  selectedOrgDocumentSearch() { }
 
-  addSelectedSelectedOrgDocument() {}
-
-  get organisationDocumentsControl(): FormArray {
-    return this.editSettingsForm?.get('organisationDocuments') as FormArray;
-  }
-
+  addSelectedSelectedOrgDocument() { }
 
   get selectedKycOrgDocumentControl(): FormControl {
     return this.editSettingsForm?.get('selectedKycOrgDocument') as FormControl;
   }
 
-  selectedKycOrgDocumentAddDialog() {}
+  selectedKycOrgDocumentAddDialog() { }
 
-  selectedKycOrgDocumentClear() {}
+  selectedKycOrgDocumentClear() { }
 
-  selectedKycOrgDocumentSelected(event: MatCheckboxChange, row: number) {}
+  selectedKycOrgDocumentSelected(event: MatCheckboxChange, row: number) { }
 
-  selectedKycOrgDocumentSearch() {}
+  selectedKycOrgDocumentSearch() { }
 
-  addSelectedSelectedKycOrgDocument() {}
-
-  get orgKycDocumentsControl(): FormArray {
-    return this.editSettingsForm?.get('orgKycDocuments') as FormArray;
-  }
+  addSelectedSelectedKycOrgDocument() { }
 
   get selectedIndDocumentControl(): FormControl {
     return this.editSettingsForm?.get('selectedIndDocument') as FormControl;
   }
 
-  selectedIndDocumentAddDialog() {}
+  selectedIndDocumentAddDialog() { }
 
-  selectedIndDocumentClear() {}
+  selectedIndDocumentClear() { }
 
-  selectedIndDocumentSelected(event: MatCheckboxChange, row: number) {}
+  selectedIndDocumentSelected(event: MatCheckboxChange, row: number) { }
 
-  selectedIndDocumentSearch() {}
+  selectedIndDocumentSearch() { }
 
-  addSelectedSelectedIndDocument() {}
-
-  get individualDocumentsControl(): FormArray {
-    return this.editSettingsForm?.get('individualDocuments') as FormArray;
-  }
+  addSelectedSelectedIndDocument() { }
 
   get selectedKycIndDocumentControl(): FormControl {
     return this.editSettingsForm?.get('selectedKycIndDocument') as FormControl;
   }
 
-  selectedKycIndDocumentAddDialog() {}
+  selectedKycIndDocumentAddDialog() { }
 
-  selectedKycIndDocumentClear() {}
+  selectedKycIndDocumentClear() { }
 
-  selectedKycIndDocumentSelected(event: MatCheckboxChange, row: number) {}
+  selectedKycIndDocumentSelected(event: MatCheckboxChange, row: number) { }
 
-  selectedKycIndDocumentSearch() {}
+  selectedKycIndDocumentSearch() { }
 
-  addSelectedSelectedKycIndDocument() {}
+  addSelectedSelectedKycIndDocument() { }
 
-  get indKycDocumentsControl(): FormArray {
-    return this.editSettingsForm?.get('indKycDocuments') as FormArray;
+  get invoiceDocumentTypeControl(): FormControl {
+    return this.editSettingsForm?.get('invoiceDocumentType') as FormControl;
+  }
+
+  invoiceDocumentTypeAddDialog() { }
+
+  invoiceDocumentTypeClear() { }
+
+  invoiceDocumentTypeSelected(event: MatCheckboxChange, row: number) { }
+
+  invoiceDocumentTypeSearch() { }
+
+  addSelectedInvoiceDocumentType() { }
+
+  get invoiceTemplateTypeControl(): FormControl {
+    return this.editSettingsForm?.get('invoiceTemplateType') as FormControl;
+  }
+
+  invoiceTemplateTypeAddDialog() { }
+
+  invoiceTemplateTypeClear() { }
+
+  invoiceTemplateTypeSelected(event: MatCheckboxChange, row: number) { }
+
+  invoiceTemplateTypeSearch() { }
+
+  addSelectedInvoiceTemplateType() { }
+
+
+
+  createDocumentDTOGroup(value?: DocumentDTO): FormGroup {
+    return this.formBuilder.group({
+      target: [value?.target],
+      documentTypeId: [value?.documentTypeId],
+      documentType: [value?.documentType],
+      url: [value?.url],
+      targetId: [value?.targetId],
+      metadata: [value?.metadata],
+      fileName: [value?.fileName],
+      id: [value?.id],
+      createdBy: [value?.createdBy],
+      createdAt: [value?.createdAt],
+      modifiedBy: [value?.modifiedBy],
+      modifiedAt: [value?.modifiedAt],
+    });
+  }
+
+  createDocumentDTOArray(values?: DocumentDTO[]): FormArray {
+    if (values) {
+      let formArray: FormArray = this.formBuilder.array([]);
+      values?.forEach(value => formArray.push(this.createDocumentDTOGroup(value)))
+
+      return formArray;
+    } else {
+      return new FormArray([] as any);
+    }
+  }
+
+  get invoiceTemplateControl(): FormGroup {
+    return this.editSettingsForm?.get('invoiceTemplate') as FormGroup;
+  }
+
+  invoiceTemplateAddDialog() { }
+
+  invoiceTemplateClear() { }
+
+  invoiceTemplateSelected(event: MatCheckboxChange, row: number) { }
+
+  invoiceTemplateSearch() { }
+
+  addSelectedInvoiceTemplate() { }
+
+  get invoiceTemplateTargetControl(): FormGroup {
+    return this.invoiceTemplateControl?.get('target') as FormGroup;
+  }
+
+  get invoiceTemplateDocumentTypeIdControl(): FormControl {
+    return this.invoiceTemplateControl?.get('documentTypeId') as FormControl;
+  }
+
+  get invoiceTemplateDocumentTypeControl(): FormControl {
+    return this.invoiceTemplateControl?.get('documentType') as FormControl;
+  }
+
+  get invoiceTemplateUrlControl(): FormControl {
+    return this.invoiceTemplateControl?.get('url') as FormControl;
+  }
+
+  get invoiceTemplateTargetIdControl(): FormControl {
+    return this.invoiceTemplateControl?.get('targetId') as FormControl;
+  }
+
+  get invoiceTemplateMetadataControl(): FormControl {
+    return this.invoiceTemplateControl?.get('metadata') as FormControl;
+  }
+
+  get invoiceTemplateFileNameControl(): FormControl {
+    return this.invoiceTemplateControl?.get('fileName') as FormControl;
+  }
+
+  get quotationDocumentTypeControl(): FormControl {
+    return this.editSettingsForm?.get('quotationDocumentType') as FormControl;
+  }
+
+  quotationDocumentTypeAddDialog() { }
+
+  quotationDocumentTypeClear() { }
+
+  quotationDocumentTypeSelected(event: MatCheckboxChange, row: number) { }
+
+  quotationDocumentTypeSearch() { }
+
+  addSelectedQuotationDocumentType() { }
+
+  get quotationTemplateTypeControl(): FormControl {
+    return this.editSettingsForm?.get('quotationTemplateType') as FormControl;
+  }
+
+  quotationTemplateTypeAddDialog() { }
+
+  quotationTemplateTypeClear() { }
+
+  quotationTemplateTypeSelected(event: MatCheckboxChange, row: number) { }
+
+  quotationTemplateTypeSearch() { }
+
+  addSelectedQuotationTemplateType() { }
+
+  get quotationTemplateControl(): FormGroup {
+    return this.editSettingsForm?.get('quotationTemplate') as FormGroup;
+  }
+
+  quotationTemplateAddDialog() { }
+
+  quotationTemplateClear() { }
+
+  quotationTemplateSelected(event: MatCheckboxChange, row: number) { }
+
+  quotationTemplateSearch() { }
+
+  addSelectedQuotationTemplate() { }
+
+  get quotationTemplateTargetControl(): FormGroup {
+    return this.quotationTemplateControl?.get('target') as FormGroup;
+  }
+
+  get quotationTemplateDocumentTypeIdControl(): FormControl {
+    return this.quotationTemplateControl?.get('documentTypeId') as FormControl;
+  }
+
+  get quotationTemplateDocumentTypeControl(): FormControl {
+    return this.quotationTemplateControl?.get('documentType') as FormControl;
+  }
+
+  get quotationTemplateUrlControl(): FormControl {
+    return this.quotationTemplateControl?.get('url') as FormControl;
+  }
+
+  get quotationTemplateTargetIdControl(): FormControl {
+    return this.quotationTemplateControl?.get('targetId') as FormControl;
+  }
+
+  get quotationTemplateMetadataControl(): FormControl {
+    return this.quotationTemplateControl?.get('metadata') as FormControl;
+  }
+
+  get quotationTemplateFileNameControl(): FormControl {
+    return this.quotationTemplateControl?.get('fileName') as FormControl;
   }
 
   getItemControl(name: string): FormControl {
@@ -455,21 +704,15 @@ export abstract class EditSettingsComponent implements OnInit, AfterViewInit, On
     if (form.kycDuration) {
       this.editSettingsForm?.get('kycDuration')?.setValue(form.kycDuration);
     }
-    if (form.selectedOrgDocument) {
-    }
-    if (form.selectedKycOrgDocument) {
-    }
-    if (form.selectedIndDocument) {
-    }
-    if (form.selectedKycIndDocument) {
-    }
   }
 
-  onAddToOrgDocumentsClick() {}
 
-  onAddToKycOrgDocumentsClick() {}
+  onAddToOrgDocumentsClick() { }
 
-  onAddToIndDocumentsClick() {}
+  onAddToKycOrgDocumentsClick() { }
 
-  onAddToKycIndDocumentsClick() {}
+  onAddToIndDocumentsClick() { }
+
+  onAddToKycIndDocumentsClick() { }
+
 }

@@ -13,7 +13,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.RestController;
 
 import bw.co.centralkyc.AuditTracker;
-
 @RestController
 public class KycSubscriptionApiImpl extends KycSubscriptionApiBase {
     
@@ -22,8 +21,6 @@ public class KycSubscriptionApiImpl extends KycSubscriptionApiBase {
         
         super(kycSubscriptionService);
     }
-
-
 
     @Override
     public ResponseEntity<KycSubscriptionDTO> handleFindById(String id) throws Exception {
@@ -36,7 +33,6 @@ public class KycSubscriptionApiImpl extends KycSubscriptionApiBase {
         } 
     }
 
-
     @Override
     public ResponseEntity<Collection<KycSubscriptionDTO>> handleGetAll() throws Exception {
         try {
@@ -47,7 +43,6 @@ public class KycSubscriptionApiImpl extends KycSubscriptionApiBase {
             throw e;
         } 
     }
-
 
     @Override
     public ResponseEntity<Page<KycSubscriptionDTO>> handleGetAllPaged(Integer pageNumber, Integer pageSize) throws Exception {
@@ -60,7 +55,6 @@ public class KycSubscriptionApiImpl extends KycSubscriptionApiBase {
         } 
     }
 
-
     @Override
     public ResponseEntity<Page<KycSubscriptionDTO>> handlePagedSearch(String criteria, Integer pageNumber, Integer pageSize) throws Exception {
         try {
@@ -72,7 +66,6 @@ public class KycSubscriptionApiImpl extends KycSubscriptionApiBase {
         } 
     }
 
-
     @Override
     public ResponseEntity<Boolean> handleRemove(String id) throws Exception {
         try {
@@ -83,7 +76,6 @@ public class KycSubscriptionApiImpl extends KycSubscriptionApiBase {
             throw e;
         } 
     }
-
 
     @Override
     public ResponseEntity<KycSubscriptionDTO> handleSave(KycSubscriptionDTO subscription) throws Exception {
@@ -99,7 +91,6 @@ public class KycSubscriptionApiImpl extends KycSubscriptionApiBase {
         } 
     }
 
-
     @Override
     public ResponseEntity<Collection<KycSubscriptionDTO>> handleSearch(String criteria) throws Exception {
         try {
@@ -109,5 +100,23 @@ public class KycSubscriptionApiImpl extends KycSubscriptionApiBase {
             e.printStackTrace();
             throw e;
         } 
+    }
+
+    @Override
+    public ResponseEntity<Collection<KycSubscriptionDTO>> handleFindByOrganisation(String arg0) throws Exception {
+        
+        try {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            String username = "anonymousUser";
+            if(authentication != null) {
+
+                username = authentication.getName();
+            }
+            return ResponseEntity.ok(kycSubscriptionService.findByOrganisation(arg0, username));
+        } catch (Exception e) {
+
+            e.printStackTrace();
+            throw e;
+        }
     }
 }

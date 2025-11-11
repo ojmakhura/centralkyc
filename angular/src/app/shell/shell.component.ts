@@ -53,6 +53,8 @@ export class ShellComponent implements OnInit {
       'document.type.title': 'description',
       'individual.title': 'people',
       'users.title': 'group',
+      'kyc.subscription.title': 'card_membership',
+      'invoice.title': 'receipt',
       home: 'home',
       about: 'info',
     };

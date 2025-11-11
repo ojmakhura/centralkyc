@@ -10,11 +10,17 @@ package bw.co.centralkyc.settings;
 
 import java.time.LocalDateTime;
 import java.util.Collection;
+
+import org.springframework.cglib.core.Local;
 import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+
+import bw.co.centralkyc.TargetEntity;
+import bw.co.centralkyc.document.Document;
+import bw.co.centralkyc.document.DocumentRepository;
 
 /**
  * @see bw.co.centralkyc.settings.SettingsService
@@ -24,10 +30,14 @@ import org.springframework.transaction.annotation.Transactional;
 public class SettingsServiceImpl
     extends SettingsServiceBase
 {
+
+    private final DocumentRepository documentRepository;
+
     public SettingsServiceImpl(
-        SettingsDao settingsDao,
+        SettingsDao settingsDao, 
         SettingsRepository settingsRepository,
-        MessageSource messageSource
+        MessageSource messageSource,
+        DocumentRepository documentRepository
     ) {
         
         super(
@@ -35,6 +45,8 @@ public class SettingsServiceImpl
             settingsRepository,
             messageSource
         );
+
+        this.documentRepository = documentRepository;
     }
 
     /**
@@ -118,10 +130,31 @@ public class SettingsServiceImpl
     }
 
     @Override
-    protected SettingsDTO handleUploadInvoiceTemplate(String invoiceTemplate, String user) throws Exception {
+    protected SettingsDTO handleUploadTemplate(String invoiceTemplate, TargetEntity target, String user) throws Exception {
+
+        if(target != TargetEntity.INVOICE && target != TargetEntity.QUOTATION) {
+            throw new IllegalArgumentException("Invalid target entity for template upload: " + target);
+        }
+
 
         Settings settings = settingsRepository.findAll().stream().findFirst().orElseThrow(() -> new Exception("Settings not found"));
-        settings.setInvoiceTemplate(invoiceTemplate);
+        Document document = new Document();
+        document.setCreatedAt(LocalDateTime.now());
+        document.setCreatedBy(user);
+        document.setUrl(invoiceTemplate);
+        document.setTarget(target);
+        document.setTargetId(settings.getId());
+        
+        document = documentRepository.save(document);
+
+        if(target == TargetEntity.INVOICE) {
+
+            settings.setInvoiceTemplate(document);
+        } else if (target == TargetEntity.QUOTATION) {
+            
+            settings.setQuotationTemplate(document);
+        } 
+
         settings.setModifiedBy(user);
         settings.setModifiedAt(LocalDateTime.now());
         

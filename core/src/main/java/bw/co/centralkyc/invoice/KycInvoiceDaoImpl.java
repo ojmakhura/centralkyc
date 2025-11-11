@@ -8,6 +8,7 @@ package bw.co.centralkyc.invoice;
 
 import bw.co.centralkyc.document.DocumentRepository;
 import bw.co.centralkyc.organisation.OrganisationRepository;
+import bw.co.centralkyc.subscription.KycSubscriptionRepository;
 import jakarta.persistence.EntityNotFoundException;
 
 import org.springframework.stereotype.Repository;
@@ -20,17 +21,11 @@ public class KycInvoiceDaoImpl
     extends KycInvoiceDaoBase
 {
     
-    public KycInvoiceDaoImpl(
-        OrganisationRepository organisationRepository,
-        DocumentRepository documentRepository,
-        KycInvoiceRepository kycInvoiceRepository
-    ) {
 
-        super(
-            organisationRepository,
-            documentRepository,
-            kycInvoiceRepository
-        );
+    public KycInvoiceDaoImpl(OrganisationRepository organisationRepository, DocumentRepository documentRepository,
+            KycSubscriptionRepository kycSubscriptionRepository, KycInvoiceRepository kycInvoiceRepository) {
+        super(organisationRepository, documentRepository, kycSubscriptionRepository, kycInvoiceRepository);
+        //TODO Auto-generated constructor stub
     }
 
     /**
@@ -45,6 +40,20 @@ public class KycInvoiceDaoImpl
         super.toKycInvoiceDTO(source, target);
         // WARNING! No conversion for target.issueDate (can't convert source.getIssueDate():java.util.Date to java.util.Date
         target.setIssueDate(source.getIssueDate());
+
+        if(source.getOrganisation() != null) {
+
+            target.setOrganisatonId(source.getOrganisation().getId());
+            target.setOrganisatonCode(source.getOrganisation().getCode());
+            target.setOrganisationName(source.getOrganisation().getName());
+            target.setOrganisationRegistrationNo(source.getOrganisation().getRegistrationNo());
+        }
+
+        if(source.getKycSubscription() != null) {
+
+            target.setSubscriptionId(source.getKycSubscription().getId());
+            target.setSubscriptionRef(source.getKycSubscription().getRef());
+        }
     }
 
     /**
