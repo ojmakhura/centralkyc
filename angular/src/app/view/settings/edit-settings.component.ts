@@ -6,8 +6,6 @@ import {
   inject,
   ViewChild,
   Input,
-  Output,
-  EventEmitter,
   AfterViewInit,
   signal,
   Signal,
@@ -17,28 +15,11 @@ import {
 } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { COMMA, ENTER } from '@angular/cdk/keycodes';
-import {
-  FormGroup,
-  FormControl,
-  FormArray,
-  FormBuilder,
-  ReactiveFormsModule,
-  Validators
-} from '@angular/forms';
-import { formatDate } from '@angular/common';
-import { MatPaginator } from '@angular/material/paginator';
-import { MatSort } from '@angular/material/sort';
-import { MatSelectChange } from '@angular/material/select';
-import { MatRadioChange } from '@angular/material/radio';
+import { FormGroup, FormControl, FormArray, FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatCheckboxChange } from '@angular/material/checkbox';
 import { UseCaseScope } from '@app/utils/use-case-scope';
-import { Store, select } from '@ngrx/store';
-import { Observable, of, Subscription } from 'rxjs';
-import { SearchObject } from '@app/model/search-object';
+import { Subscription } from 'rxjs';
 import { MatDialog } from '@angular/material/dialog';
-import { MatTableDataSource } from '@angular/material/table';
-import { MatChipInputEvent } from '@angular/material/chips';
-import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { TableComponent } from '@app/components/table/table.component';
 import { SettingsApiStore } from '@app/store/bw/co/centralkyc/settings/settings-api.store';
 import { ColumnModel } from '@app/model/column.model';
@@ -46,7 +27,6 @@ import { ActionTemplate } from '@app/model/action-template';
 
 import { DocumentTypeDTO } from '@app/model/bw/co/centralkyc/document/type/document-type-dto';
 import { TargetEntity } from '@app/model/bw/co/centralkyc/target-entity';
-import { SettingsApi } from '@app/service/bw/co/centralkyc/settings/settings-api';
 import { SettingsDTO } from '@app/model/bw/co/centralkyc/settings/settings-dto';
 import { DocumentDTO } from '@app/model/bw/co/centralkyc/document/document-dto';
 import { SettingsControllerImpl } from '@app/controller/settings/settings-controller.impl';
@@ -70,14 +50,14 @@ export class EditSettingsVarsForm {
   quotationDocumentType?: DocumentTypeDTO | any;
   quotationTemplateType?: DocumentTypeDTO | any;
   quotationTemplate?: DocumentDTO | any;
+  clientRequestFileType?: DocumentTypeDTO | any;
 }
 
 @Component({
   selector: 'app-edit-settings-base',
-  template: ''
+  template: '',
 })
 export abstract class EditSettingsComponent implements OnInit, AfterViewInit, OnDestroy {
-
   separatorKeysCodes: number[] = [ENTER, COMMA];
   @Input() editSettingsVarsForm: EditSettingsVarsForm = {};
 
@@ -103,16 +83,13 @@ export abstract class EditSettingsComponent implements OnInit, AfterViewInit, On
   selectedOrgDocumentFilteredList: WritableSignal<DocumentTypeDTO[] | any[]> = linkedSignal(() => []);
   selectedOrgDocumentChipControl: FormControl = new FormControl([]);
 
-  selectedOrgDocumentDisplays: string[] = [
-    'name',
-  ];
+  selectedOrgDocumentDisplays: string[] = ['name'];
 
   @ViewChild('organisationDocumentsTable') organisationDocumentsTable?: TableComponent<DocumentTypeDTO>;
   organisationDocumentsTableSignal: Signal<any | DocumentTypeDTO | Page<DocumentTypeDTO>> = signal(null);
   organisationDocumentsTablePaged: WritableSignal<boolean> = linkedSignal(() => true);
 
-  organisationDocumentsTableColumnsActions: ActionTemplate[] = [
-  ];
+  organisationDocumentsTableColumnsActions: ActionTemplate[] = [];
 
   showOrganisationDocumentsActions = false;
 
@@ -128,16 +105,13 @@ export abstract class EditSettingsComponent implements OnInit, AfterViewInit, On
   selectedKycOrgDocumentFilteredList: WritableSignal<DocumentTypeDTO[] | any[]> = linkedSignal(() => []);
   selectedKycOrgDocumentChipControl: FormControl = new FormControl([]);
 
-  selectedKycOrgDocumentDisplays: string[] = [
-    'name',
-  ];
+  selectedKycOrgDocumentDisplays: string[] = ['name'];
 
   @ViewChild('orgKycDocumentsTable') orgKycDocumentsTable?: TableComponent<DocumentTypeDTO>;
   orgKycDocumentsTableSignal: Signal<any | DocumentTypeDTO | Page<DocumentTypeDTO>> = signal(null);
   orgKycDocumentsTablePaged: WritableSignal<boolean> = linkedSignal(() => true);
 
-  orgKycDocumentsTableColumnsActions: ActionTemplate[] = [
-  ];
+  orgKycDocumentsTableColumnsActions: ActionTemplate[] = [];
 
   showOrgKycDocumentsActions = false;
 
@@ -153,16 +127,13 @@ export abstract class EditSettingsComponent implements OnInit, AfterViewInit, On
   selectedIndDocumentFilteredList: WritableSignal<DocumentTypeDTO[] | any[]> = linkedSignal(() => []);
   selectedIndDocumentChipControl: FormControl = new FormControl([]);
 
-  selectedIndDocumentDisplays: string[] = [
-    'name',
-  ];
+  selectedIndDocumentDisplays: string[] = ['name'];
 
   @ViewChild('individualDocumentsTable') individualDocumentsTable?: TableComponent<DocumentTypeDTO>;
   individualDocumentsTableSignal: Signal<any | DocumentTypeDTO | Page<DocumentTypeDTO>> = signal(null);
   individualDocumentsTablePaged: WritableSignal<boolean> = linkedSignal(() => true);
 
-  individualDocumentsTableColumnsActions: ActionTemplate[] = [
-  ];
+  individualDocumentsTableColumnsActions: ActionTemplate[] = [];
 
   showIndividualDocumentsActions = false;
 
@@ -178,29 +149,18 @@ export abstract class EditSettingsComponent implements OnInit, AfterViewInit, On
   selectedKycIndDocumentFilteredList: WritableSignal<DocumentTypeDTO[] | any[]> = linkedSignal(() => []);
   selectedKycIndDocumentChipControl: FormControl = new FormControl([]);
 
-  selectedKycIndDocumentDisplays: string[] = [
-    'name',
-  ];
+  selectedKycIndDocumentDisplays: string[] = ['name'];
 
   @ViewChild('indKycDocumentsTable') indKycDocumentsTable?: TableComponent<DocumentTypeDTO>;
   indKycDocumentsTableSignal: Signal<any | DocumentTypeDTO | Page<DocumentTypeDTO>> = signal(null);
   indKycDocumentsTablePaged: WritableSignal<boolean> = linkedSignal(() => true);
 
   documentsTableColumns: ColumnModel[] = [
-    new ColumnModel(
-      'code',
-      'code',
-      false,
-    ),
-    new ColumnModel(
-      'name',
-      'name',
-      false,
-    ),
+    new ColumnModel('code', 'code', false),
+    new ColumnModel('name', 'name', false),
   ];
 
-  indKycDocumentsTableColumnsActions: ActionTemplate[] = [
-  ];
+  indKycDocumentsTableColumnsActions: ActionTemplate[] = [];
 
   showIndKycDocumentsActions = false;
 
@@ -216,9 +176,7 @@ export abstract class EditSettingsComponent implements OnInit, AfterViewInit, On
   invoiceDocumentTypeFilteredList: WritableSignal<DocumentTypeDTO[] | any[]> = linkedSignal(() => []);
   invoiceDocumentTypeChipControl: FormControl = new FormControl([]);
 
-  invoiceDocumentTypeDisplays: string[] = [
-    'name',
-  ];
+  invoiceDocumentTypeDisplays: string[] = ['name'];
 
   invoiceTemplateTypeFilterCtrl: FormControl = new FormControl();
 
@@ -232,9 +190,7 @@ export abstract class EditSettingsComponent implements OnInit, AfterViewInit, On
   invoiceTemplateTypeFilteredList: WritableSignal<DocumentTypeDTO[] | any[]> = linkedSignal(() => []);
   invoiceTemplateTypeChipControl: FormControl = new FormControl([]);
 
-  invoiceTemplateTypeDisplays: string[] = [
-    'name',
-  ];
+  invoiceTemplateTypeDisplays: string[] = ['name'];
 
   quotationDocumentTypeFilterCtrl: FormControl = new FormControl();
 
@@ -248,9 +204,7 @@ export abstract class EditSettingsComponent implements OnInit, AfterViewInit, On
   quotationDocumentTypeFilteredList: WritableSignal<DocumentTypeDTO[] | any[]> = linkedSignal(() => []);
   quotationDocumentTypeChipControl: FormControl = new FormControl([]);
 
-  quotationDocumentTypeDisplays: string[] = [
-    'name',
-  ];
+  quotationDocumentTypeDisplays: string[] = ['name'];
 
   quotationTemplateTypeFilterCtrl: FormControl = new FormControl();
 
@@ -264,7 +218,22 @@ export abstract class EditSettingsComponent implements OnInit, AfterViewInit, On
   quotationTemplateTypeFilteredList: WritableSignal<DocumentTypeDTO[] | any[]> = linkedSignal(() => []);
   quotationTemplateTypeChipControl: FormControl = new FormControl([]);
 
-  quotationTemplateTypeDisplays: string[] = [
+  quotationTemplateTypeDisplays: string[] = ['name'];
+
+
+  clientRequestFileTypeFilterCtrl: FormControl = new FormControl();
+
+  clientRequestFileTypeCompare(o1: DocumentTypeDTO | any, o2: DocumentTypeDTO | any) {
+    return o1 && o2 && o1.id === o2.id;
+  }
+
+  filterClientRequestFileType() { }
+
+  clientRequestFileTypeBackingList: DocumentTypeDTO[] = [];
+  clientRequestFileTypeFilteredList: WritableSignal<DocumentTypeDTO[] | any[]> = linkedSignal(() => []);
+  clientRequestFileTypeChipControl: FormControl = new FormControl([]);
+
+  clientRequestFileTypeDisplays: string[] = [
     'name',
   ];
 
@@ -280,8 +249,6 @@ export abstract class EditSettingsComponent implements OnInit, AfterViewInit, On
   editSettingsFormValueSubscription?: Subscription;
 
   constructor() {
-
-
     effect(() => {
       let messages = this.messages();
 
@@ -292,31 +259,26 @@ export abstract class EditSettingsComponent implements OnInit, AfterViewInit, On
       if (this.error() && !this.loading()) {
         this.toaster.error(messages[0]);
       }
-    })
+    });
   }
 
   abstract beforeOnInit(form: EditSettingsVarsForm): EditSettingsVarsForm;
 
   ngOnInit() {
-    let form: EditSettingsVarsForm = this.beforeOnInit(new EditSettingsVarsForm);
+    let form: EditSettingsVarsForm = this.beforeOnInit(new EditSettingsVarsForm());
     this.editSettingsForm = this.newForm(form);
 
-    this.editSettingsFormValueSubscription = this.editSettingsForm.valueChanges.subscribe(
-      (change: any) => {
-        this.handleFormChanges(change);
-      }
-    );
+    this.editSettingsFormValueSubscription = this.editSettingsForm.valueChanges.subscribe((change: any) => {
+      this.handleFormChanges(change);
+    });
 
     this.afterOnInit();
   }
 
-  handleFormChanges(change: any): void {
-
-  }
+  handleFormChanges(change: any): void { }
 
   editSettingsFormReset() {
-
-    this.editSettingsForm.reset()
+    this.editSettingsForm.reset();
     this.editSettingsForm.markAsPristine();
 
     if (this.router.url.substring(0, this.router.url.indexOf('?'))) {
@@ -342,18 +304,30 @@ export abstract class EditSettingsComponent implements OnInit, AfterViewInit, On
       createdBy: [{ value: this.editSettingsVarsForm.createdBy, disabled: false }],
       modifiedAt: [{ value: this.editSettingsVarsForm.modifiedAt, disabled: false }],
       modifiedBy: [{ value: this.editSettingsVarsForm.modifiedBy, disabled: false }],
-      kycDuration: [{ value: this.editSettingsVarsForm.kycDuration, disabled: false }, [Validators.required,]],
+      kycDuration: [{ value: this.editSettingsVarsForm.kycDuration, disabled: false }, [Validators.required]],
       selectedOrgDocument: [{ value: this.editSettingsVarsForm.selectedOrgDocument, disabled: false }],
       selectedKycOrgDocument: [{ value: this.editSettingsVarsForm.selectedKycOrgDocument, disabled: false }],
       selectedIndDocument: [{ value: this.editSettingsVarsForm.selectedIndDocument, disabled: false }],
       selectedKycIndDocument: [{ value: this.editSettingsVarsForm.selectedKycIndDocument, disabled: false }],
-      invoiceDocumentType: [{ value: this.editSettingsVarsForm.invoiceDocumentType, disabled: false }, [Validators.required,]],
-      invoiceTemplateType: [{ value: this.editSettingsVarsForm.invoiceTemplateType, disabled: false }, [Validators.required,]],
+      invoiceDocumentType: [
+        { value: this.editSettingsVarsForm.invoiceDocumentType, disabled: false },
+        [Validators.required],
+      ],
+      invoiceTemplateType: [
+        { value: this.editSettingsVarsForm.invoiceTemplateType, disabled: false },
+        [Validators.required],
+      ],
       invoiceTemplate: this.createDocumentDTOGroup(this.editSettingsVarsForm.invoiceTemplate),
-      quotationDocumentType: [{ value: this.editSettingsVarsForm.quotationDocumentType, disabled: false }, [Validators.required,]],
-      quotationTemplateType: [{ value: this.editSettingsVarsForm.quotationTemplateType, disabled: false }, [Validators.required,]],
+      quotationDocumentType: [
+        { value: this.editSettingsVarsForm.quotationDocumentType, disabled: false },
+        [Validators.required],
+      ],
+      quotationTemplateType: [
+        { value: this.editSettingsVarsForm.quotationTemplateType, disabled: false },
+        [Validators.required],
+      ],
       quotationTemplate: this.createDocumentDTOGroup(this.editSettingsVarsForm.quotationTemplate),
-
+      clientRequestFileType: [{ value: this.editSettingsVarsForm.clientRequestFileType, disabled: false }],
     });
   }
 
@@ -384,7 +358,6 @@ export abstract class EditSettingsComponent implements OnInit, AfterViewInit, On
   }
 
   editSettingsSave(): void {
-
     let form: any = {
       settings: this.editSettingsSaveSettings,
     };
@@ -439,7 +412,7 @@ export abstract class EditSettingsComponent implements OnInit, AfterViewInit, On
   createDocumentTypeDTOArray(values?: DocumentTypeDTO[]): FormArray {
     if (values) {
       let formArray: FormArray = this.formBuilder.array([]);
-      values?.forEach(value => formArray.push(this.createDocumentTypeDTOGroup(value)))
+      values?.forEach((value) => formArray.push(this.createDocumentTypeDTOGroup(value)));
 
       return formArray;
     } else {
@@ -531,8 +504,6 @@ export abstract class EditSettingsComponent implements OnInit, AfterViewInit, On
 
   addSelectedInvoiceTemplateType() { }
 
-
-
   createDocumentDTOGroup(value?: DocumentDTO): FormGroup {
     return this.formBuilder.group({
       target: [value?.target],
@@ -553,7 +524,7 @@ export abstract class EditSettingsComponent implements OnInit, AfterViewInit, On
   createDocumentDTOArray(values?: DocumentDTO[]): FormArray {
     if (values) {
       let formArray: FormArray = this.formBuilder.array([]);
-      values?.forEach(value => formArray.push(this.createDocumentDTOGroup(value)))
+      values?.forEach((value) => formArray.push(this.createDocumentDTOGroup(value)));
 
       return formArray;
     } else {
@@ -706,7 +677,6 @@ export abstract class EditSettingsComponent implements OnInit, AfterViewInit, On
     }
   }
 
-
   onAddToOrgDocumentsClick() { }
 
   onAddToKycOrgDocumentsClick() { }
@@ -714,5 +684,4 @@ export abstract class EditSettingsComponent implements OnInit, AfterViewInit, On
   onAddToIndDocumentsClick() { }
 
   onAddToKycIndDocumentsClick() { }
-
 }

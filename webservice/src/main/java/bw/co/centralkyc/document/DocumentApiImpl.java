@@ -8,6 +8,7 @@ package bw.co.centralkyc.document;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.security.oauth2.jwt.Jwt;
@@ -22,7 +23,9 @@ import java.util.Optional;
 
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 
 import bw.co.centralkyc.AuditTracker;
 import bw.co.centralkyc.RestApiResponse;
@@ -164,21 +167,21 @@ public class DocumentApiImpl extends DocumentApiBase {
         }
     }
 
-    private InputStreamResource downloadFromMinio(String objectName) throws Exception {
-        // Download the file from MinIO
-        try (InputStream inputStream = minioService.downloadFile(objectName)) {
-            // Process the input stream as needed
-            System.out.println("File downloaded from MinIO: " + objectName);
-            InputStreamResource resource = new InputStreamResource(inputStream);
-            // byte[] fileBytes = inputStream.readAllBytes();
-            inputStream.close();
-            return resource;
+    // private InputStreamResource downloadFromMinio(String objectName) throws Exception {
+    //     // Download the file from MinIO
+    //     try (InputStream inputStream = minioService.downloadFile(objectName)) {
+    //         // Process the input stream as needed
+    //         System.out.println("File downloaded from MinIO: " + objectName);
+    //         InputStreamResource resource = new InputStreamResource(inputStream);
+    //         // byte[] fileBytes = inputStream.readAllBytes();
+    //         inputStream.close();
+    //         return resource;
 
-        } catch (IOException e) {
-            e.printStackTrace();
-            throw new DocumentServiceException("Error downloading file: " + objectName);
-        }
-    }
+    //     } catch (IOException e) {
+    //         e.printStackTrace();
+    //         throw new DocumentServiceException("Error downloading file: " + objectName);
+    //     }
+    // }
 
     @Override
     public ResponseEntity<DocumentDTO> handleUpload(TargetEntity target, String targetId,
@@ -227,29 +230,45 @@ public class DocumentApiImpl extends DocumentApiBase {
         }
 
     }
+    
+    private InputStreamResource downloadFromMinio(String url) throws Exception {
 
-    // @Override
-    // public ResponseEntity<InputStreamResource>>
-    // handleDownloadFile(String objectName) {
+        // Download the file from MinIO
+        InputStream inputStream = minioService.downloadFile(url);
+        // Process the input stream as needed
+        System.out.println("File downloaded from MinIO: " + url);
+        InputStreamResource resource = new InputStreamResource(inputStream);
+        return resource;
+    }
 
-    // InputStreamResource> responseData = new >();
+    @Override
+    public ResponseEntity<InputStreamResource> handleDownloadFile(String id) {
+        try {
 
-    // try {
-    // InputStreamResource data = downloadFromMinio(objectName);
-    // responseData.setData(data);
-    // responseData.setSuccess(true);
-    // responseData.setMessage("File downloaded successfully!");
-    // ResponseEntity<InputStreamResource>> response =
-    // ResponseEntity.status(HttpStatus.OK)
-    // .body(responseData);
+            DocumentDTO document = documentService.findById(id);
+            InputStreamResource data = downloadFromMinio(document.getUrl());
+            ResponseEntity<InputStreamResource> response = ResponseEntity.status(HttpStatus.OK)
+                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + document.getUrl() + "\"")
+                    .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                    .body(data);
 
-    // return response;
+            return response;
 
-    // } catch (Exception e) {
-    // // TODO Auto-generated catch block
-    // e.printStackTrace();
-    // throw new DocumentServiceException("Error downloading file: " +
-    // e.getMessage());
-    // }
-    // }
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new DocumentServiceException("Error downloading file: " + e.getMessage());
+        }
+    }
+
+    public ResponseEntity<InputStreamResource> handleDownloadFileByUrl(@RequestParam String objectName) throws Exception {
+
+        InputStreamResource data = downloadFromMinio(objectName);
+        ResponseEntity<InputStreamResource> response = ResponseEntity.status(HttpStatus.OK)
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + objectName + "\"")
+                .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                .body(data);
+
+        return response;
+
+    }
 }

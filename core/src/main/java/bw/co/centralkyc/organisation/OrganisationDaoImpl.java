@@ -11,6 +11,7 @@ import bw.co.centralkyc.document.type.DocumentTypeRepository;
 import bw.co.centralkyc.individual.employment.EmploymentRecordRepository;
 import bw.co.centralkyc.invoice.KycInvoiceRepository;
 import bw.co.centralkyc.organisation.branch.BranchRepository;
+import bw.co.centralkyc.organisation.client.ClientRequestRepository;
 import bw.co.centralkyc.subscription.KycSubscriptionRepository;
 import jakarta.persistence.EntityNotFoundException;
 
@@ -28,9 +29,10 @@ public class OrganisationDaoImpl
     public OrganisationDaoImpl(DocumentRepository documentRepository, BranchRepository branchRepository,
             DocumentTypeRepository documentTypeRepository, EmploymentRecordRepository employmentRecordRepository,
             KycSubscriptionRepository kycSubscriptionRepository, KycInvoiceRepository kycInvoiceRepository,
-            OrganisationRepository organisationRepository) {
+            ClientRequestRepository clientRequestRepository, OrganisationRepository organisationRepository) {
+                
         super(documentRepository, branchRepository, documentTypeRepository, employmentRecordRepository,
-                kycSubscriptionRepository, kycInvoiceRepository, organisationRepository);
+                kycSubscriptionRepository, kycInvoiceRepository, clientRequestRepository, organisationRepository);
         //TODO Auto-generated constructor stub
     }
 
