@@ -121,7 +121,7 @@ public class KycInvoiceApiImpl extends KycInvoiceApiBase {
     }
 
     @Override
-    public ResponseEntity<KycInvoiceDTO> handleGenerateInvoice(String subscriptionId) throws Exception {
+    public ResponseEntity<Collection<KycInvoiceDTO>> handleGenerateInvoice(String subscriptionId) throws Exception {
         
         try {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -164,5 +164,33 @@ public class KycInvoiceApiImpl extends KycInvoiceApiBase {
             throw e;
         }
 
+    }
+
+    @Override
+    public ResponseEntity<Page<KycInvoiceDTO>> handleFindByOrganisationPaged(String organisationId, Integer pageNumber,
+            Integer pageSize) throws Exception {
+        
+        try {
+
+            return ResponseEntity.ok(kycInvoiceService.findByOrganisation(organisationId, pageNumber, pageSize));
+        } catch (Exception e) {
+
+            e.printStackTrace();
+            throw e;
+        }
+    }
+
+    @Override
+    public ResponseEntity<Page<KycInvoiceDTO>> handleFindBySubscriptionPaged(String subscriptionId, Integer pageNumber,
+            Integer pageSize) throws Exception {
+        
+        try {
+
+            return ResponseEntity.ok(kycInvoiceService.findBySubscription(subscriptionId, pageNumber, pageSize));
+        } catch (Exception e) {
+
+            e.printStackTrace();
+            throw e;
+        }
     }
 }

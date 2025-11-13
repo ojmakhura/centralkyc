@@ -142,6 +142,8 @@ public class SequenceGeneratorServiceImpl
                     // Format with leading zeros
                     String formattedCounter = String.format("%0" + counterValue.length() + "d", counter);
                     nextValue.append(formattedCounter);
+
+                    part.setInitialValue(String.format("%0" + counterValue.length() + "d", counter));
                     
                     break;
             
@@ -166,6 +168,8 @@ public class SequenceGeneratorServiceImpl
                     break;
             }
         }
+
+        this.sequenceGeneratorRepository.save(generator);
 
         return nextValue.toString();
     }

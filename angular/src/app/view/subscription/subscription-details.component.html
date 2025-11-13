@@ -57,6 +57,48 @@
       <mat-card-header>
         <mat-card-title>
           <mat-icon class="section-icon">info</mat-icon>
+          Organisation
+        </mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="display-grid">
+
+          <div class="display-item">
+            <div class="display-label">
+              <mat-icon class="field-icon">tag</mat-icon>
+              <span>{{ 'organisation.code' | translate }}</span>
+            </div>
+            <div class="display-value">
+              {{ subscription()?.organisationCode || 'N/A' }}
+            </div>
+          </div>
+
+          <div class="display-item">
+            <div class="display-label">
+              <mat-icon class="field-icon">domain</mat-icon>
+              <span>{{ 'organisation.name' | translate }}</span>
+            </div>
+            <div class="display-value">
+              {{ subscription()?.organisationName || 'N/A' }}
+            </div>
+          </div>
+
+          <div class="display-item">
+            <div class="display-label">
+              <mat-icon class="field-icon">business</mat-icon>
+              <span>{{ 'organisation.registration.no' | translate }}</span>
+            </div>
+            <div class="display-value">
+              {{ subscription()?.organisationRegistrationNo || 'N/A' }}
+            </div>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+    <mat-card class="section-card basic-info-section" appearance="outlined">
+      <mat-card-header>
+        <mat-card-title>
+          <mat-icon class="section-icon">info</mat-icon>
           {{ 'subscription.information' | translate }}
         </mat-card-title>
       </mat-card-header>
@@ -89,16 +131,6 @@
             </div>
             <div class="display-value primary-value">
               {{ (subscription()?.amount | currency: 'BWP') || 'N/A' }}
-            </div>
-          </div>
-
-          <div class="display-item">
-            <div class="display-label">
-              <mat-icon class="field-icon">business</mat-icon>
-              <span>{{ 'organisation.registration.no' | translate }}</span>
-            </div>
-            <div class="display-value">
-              {{ subscription()?.organisationRegistrationNo || 'N/A' }}
             </div>
           </div>
         </div>
@@ -157,6 +189,7 @@
           [showActions]="showInvoicesActions"
           [paged]="invoicesTablePaged"
           [actions]="invoicesTableColumnsActions"
+          (actionClicked)="invoicesTableActionClicked($event)"
           [dataSignal]="invoicesTableSignal"
         >
         </app-table>

@@ -21,6 +21,11 @@ import { BranchEditorImplComponent } from '@app/components/organisation/branch/b
 import { BranchApi } from '@app/service/bw/co/centralkyc/organisation/branch/branch-api';
 import { ColumnModel } from '@app/model/column.model';
 import { ActionTemplate } from '@app/model/action-template';
+import { KycInvoiceApiStore } from '@app/store/bw/co/centralkyc/invoice/kyc-invoice-api.store';
+import { KycSubscriptionApiStore } from '@app/store/bw/co/centralkyc/subscription/kyc-subscription-api.store';
+import { KycInvoiceDTO } from '@app/model/bw/co/centralkyc/invoice/kyc-invoice-dto';
+import { KycSubscriptionDTO } from '@app/model/bw/co/centralkyc/subscription/kyc-subscription-dto';
+import { CurrencyPipe, DatePipe } from '@angular/common';
 
 @Component({
   selector: 'app-organisation-details',
@@ -36,11 +41,16 @@ import { ActionTemplate } from '@app/model/action-template';
     TableComponent,
     LoaderComponent,
   ],
+  providers: [DatePipe, CurrencyPipe],
 })
 export class OrganisationDetailsImplComponent extends OrganisationDetailsComponent {
   organisationApiStore = inject(OrganisationApiStore);
   branchApiStore = inject(BranchApiStore);
   branchApi = inject(BranchApi);
+  kycInvoiceApiStore = inject(KycInvoiceApiStore);
+  kycSubscriptionApiStore = inject(KycSubscriptionApiStore);
+  datePipe = inject(DatePipe);
+  currencyPipe = inject(CurrencyPipe);
 
   override error = linkedSignal(() => this.organisationApiStore.error());
   override messages = linkedSignal(() => this.organisationApiStore.messages());
@@ -54,6 +64,14 @@ export class OrganisationDetailsImplComponent extends OrganisationDetailsCompone
   pageSize = signal(10);
   totalBranches = signal(0);
 
+  // Invoices related properties
+  invoices = this.kycInvoiceApiStore.dataList;
+  invoicesLoading = this.kycInvoiceApiStore.loading;
+
+  // Subscriptions related properties
+  subscriptions = this.kycSubscriptionApiStore.dataList;
+  subscriptionsLoading = this.kycSubscriptionApiStore.loading;
+
   constructor() {
     super();
 
@@ -62,6 +80,8 @@ export class OrganisationDetailsImplComponent extends OrganisationDetailsCompone
       const org = this.organisation();
       if (org?.id) {
         this.loadBranches();
+        this.loadInvoices();
+        this.loadSubscriptions();
       }
     });
 
@@ -77,6 +97,8 @@ export class OrganisationDetailsImplComponent extends OrganisationDetailsCompone
   override beforeOnInit(form: OrganisationDetailsVarsForm): OrganisationDetailsVarsForm {
     this.organisationApiStore.reset();
     this.branchApiStore.reset();
+    this.kycInvoiceApiStore.reset();
+    this.kycSubscriptionApiStore.reset();
 
     this.route.queryParams.subscribe((params: any) => {
       if (params.id) {
@@ -96,6 +118,30 @@ export class OrganisationDetailsImplComponent extends OrganisationDetailsCompone
 
   refreshBranches(): void {
     this.loadBranches();
+  }
+
+  // Invoices Management Methods
+  loadInvoices(): void {
+    const org = this.organisation();
+    if (org?.id) {
+      this.kycInvoiceApiStore.findByOrganisation({ organisationId: org.id });
+    }
+  }
+
+  refreshInvoices(): void {
+    this.loadInvoices();
+  }
+
+  // Subscriptions Management Methods
+  loadSubscriptions(): void {
+    const org = this.organisation();
+    if (org?.id) {
+      this.kycSubscriptionApiStore.findByOrganisation({ organisationId: org.id });
+    }
+  }
+
+  refreshSubscriptions(): void {
+    this.loadSubscriptions();
   }
 
   doEditBranch(branch: BranchDTO): void {
@@ -200,6 +246,64 @@ export class OrganisationDetailsImplComponent extends OrganisationDetailsCompone
       case 'branch-delete':
         // TODO: Implement the action
         this.deleteBranch(event.id);
+        break;
+    }
+  }
+
+  // Invoices Table Configuration
+  invoicesTablePaged = signal(false);
+  invoicesTableColumns: ColumnModel[] = [
+    new ColumnModel('ref', 'ref', false),
+    new ColumnModel('amount', 'amount', false, undefined, this.currencyPipe, ['BWP']),
+    new ColumnModel('paid', 'paid', false),
+    new ColumnModel('paymentReference', 'payment.reference', false),
+  ];
+
+  invoicesTableColumnsActions: ActionTemplate[] = [
+    {
+      id: 'invoice-view',
+      label: 'view',
+      icon: 'visibility',
+      tooltip: 'view',
+    },
+  ];
+
+  invoicesTableActionClicked(event: any): void {
+    console.log(event);
+
+    switch (event.action) {
+      case 'invoice-view':
+        this.router.navigate(['/invoice/details'], { queryParams: { id: event.row.id } });
+        break;
+    }
+  }
+
+  // Subscriptions Table Configuration
+  subscriptionsTablePaged = signal(false);
+  subscriptionsTableColumns: ColumnModel[] = [
+    new ColumnModel('ref', 'ref', false),
+    new ColumnModel('period', 'period', false),
+    new ColumnModel('amount', 'amount', false, undefined, this.currencyPipe, ['BWP']),
+    new ColumnModel('startDate', 'start.date', false, undefined, this.datePipe, ['dd/MM/yyyy']),
+    new ColumnModel('endDate', 'end.date', false, undefined, this.datePipe, ['dd/MM/yyyy']),
+    new ColumnModel('status', 'status', false),
+  ];
+
+  subscriptionsTableColumnsActions: ActionTemplate[] = [
+    {
+      id: 'subscription-view',
+      label: 'view',
+      icon: 'visibility',
+      tooltip: 'view',
+    },
+  ];
+
+  subscriptionsTableActionClicked(event: any): void {
+    console.log(event);
+
+    switch (event.action) {
+      case 'subscription-view':
+        this.router.navigate(['/subscription/details'], { queryParams: { id: event.row.id } });
         break;
     }
   }

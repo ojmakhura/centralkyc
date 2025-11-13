@@ -76,6 +76,22 @@ export class EditSubscriptionImplComponent extends EditSubscriptionComponent {
           period: subscription.period,
         });
 
+        this.organisationFilteredList.set([{
+          id: subscription.organisationId,
+          name: subscription.organisationName,
+          code: subscription.organisationCode,
+          registrationNo: subscription.organisationRegistrationNo,
+        }]);
+
+        this.organisationControl.setValue(
+          {
+            id: subscription.organisationId,
+            name: subscription.organisationName,
+            code: subscription.organisationCode,
+            registrationNo: subscription.organisationRegistrationNo,
+          }
+        );
+
       }
     });
   }

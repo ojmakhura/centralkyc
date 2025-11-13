@@ -25,6 +25,8 @@ import {
   withAutoRefreshToken,
 } from 'keycloak-angular';
 import { provideAnimations } from '@angular/platform-browser/animations';
+import { DATE_PIPE_DEFAULT_OPTIONS } from '@angular/common';
+import { MAT_DATE_FORMATS, MAT_DATE_LOCALE, MatDateFormats } from '@angular/material/core';
 
 export const provideKeycloakAndInterceptor = (env: any) => {
   const urlConditions = [
@@ -70,8 +72,20 @@ export const provideKeycloakAndInterceptor = (env: any) => {
 export function initFactory() {
   const envStore = inject(AppEnvStore);
 
-  return async () => {};
+  return async () => { };
 }
+
+export const MY_DATE_FORMATS: MatDateFormats = {
+  parse: {
+    dateInput: 'DD/MM/YYYY', // how the input string is parsed
+  },
+  display: {
+    dateInput: 'DD/MM/YYYY', // how it appears in the input
+    monthYearLabel: 'MMM YYYY', // month-year label in calendar
+    dateA11yLabel: 'LL', // accessibility label
+    monthYearA11yLabel: 'MMMM YYYY', // accessibility label for month/year
+  },
+};
 
 export const appConfig = (env: any) => {
   return {
@@ -92,6 +106,8 @@ export const appConfig = (env: any) => {
         ServiceWorkerModule.register('./ngsw-worker.js', { enabled: environment.production }),
       ),
       { provide: MAT_FORM_FIELD_DEFAULT_OPTIONS, useValue: { appearance: 'outline' } },
+      { provide: MAT_DATE_FORMATS, useValue: MY_DATE_FORMATS },
+      { provide: MAT_DATE_LOCALE, useValue: 'en-GB' },
       {
         provide: RouteReuseStrategy,
         useClass: RouteReusableStrategy,

@@ -8,6 +8,7 @@
  */
 package bw.co.centralkyc.invoice;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.Date;
@@ -36,6 +37,7 @@ import bw.co.centralkyc.sequence.SequenceGenerator;
 import bw.co.centralkyc.sequence.SequenceGeneratorService;
 import bw.co.centralkyc.sequence.SequencePart;
 import bw.co.centralkyc.sequence.SequencePartType;
+import bw.co.centralkyc.subscription.KycSubsciptionStatus;
 import bw.co.centralkyc.subscription.KycSubscription;
 import bw.co.centralkyc.subscription.KycSubscriptionDao;
 import bw.co.centralkyc.subscription.KycSubscriptionRepository;
@@ -277,11 +279,16 @@ public class KycInvoiceServiceImpl
     }
 
     @Override
-    protected KycInvoiceDTO handleGenerateInvoice(String subscriptionId, String user) throws Exception {
+    protected Collection<KycInvoiceDTO> handleGenerateInvoice(String subscriptionId, String user) throws Exception {
 
         KycSubscription subscription = this.kycSubscriptionRepository.findById(subscriptionId).orElseThrow(
                 () -> new KycRecordServiceException(
                         String.format("Subscription with id %s not found", subscriptionId)));
+
+        if(subscription.getStatus() != KycSubsciptionStatus.ACTIVE) {
+            throw new KycRecordServiceException(
+                String.format("Cannot generate invoice for subscription with ref %s because it is not active", subscription.getRef()));
+        }
 
         KycInvoice invoice = KycInvoice.Factory.newInstance();
         invoice.setKycSubscription(subscription);
@@ -295,9 +302,32 @@ public class KycInvoiceServiceImpl
         invoice.setRef(createInvoiceRef());
         invoice.setIssueDate(new Date());
 
+        switch (subscription.getPeriod()) {
+            case MONTH:
+                // set start date to the beginning of the current month
+                LocalDate firstDayOfMonth = LocalDate.now().withDayOfMonth(1);
+                invoice.setStartDate(firstDayOfMonth);
+
+                LocalDate lastDayOfMonth = firstDayOfMonth.plusMonths(1).minusDays(1);
+                invoice.setEndDate(lastDayOfMonth);
+                break;
+            case WEEK:
+                throw new UnsupportedOperationException("Weekly subscriptions are not supported yet");
+                // break;
+            case YEAR:
+                LocalDate firstDayOfYear = LocalDate.now().withDayOfYear(1);
+                LocalDate lastDayOfYear = firstDayOfYear.plusYears(1).minusDays(1);
+                invoice.setStartDate(firstDayOfYear);
+                invoice.setEndDate(lastDayOfYear);
+                break;
+        
+            default:
+                break;
+        }
+
         invoice = this.kycInvoiceRepository.save(invoice);
 
-        return this.kycInvoiceDao.toKycInvoiceDTO(invoice);
+        return kycInvoiceRepository.findInvoicesBySubscriptionId(subscriptionId);
     }
 
     @Override
@@ -323,6 +353,20 @@ public class KycInvoiceServiceImpl
 
         return this.kycInvoiceDao.toKycInvoiceDTOCollection(invoices);
 
+    }
+
+    @Override
+    protected Page<KycInvoiceDTO> handleFindByOrganisation(String organisationId, Integer pageNumber,
+            Integer pageSize) throws Exception {
+
+        return kycInvoiceRepository.findInvoicesByOrganisationId(organisationId, PageRequest.of(pageNumber, pageSize));
+    }
+
+    @Override
+    protected Page<KycInvoiceDTO> handleFindBySubscription(String subscriptionId, Integer pageNumber,
+            Integer pageSize) throws Exception {
+        
+        return kycInvoiceRepository.findInvoicesBySubscriptionId(subscriptionId, PageRequest.of(pageNumber, pageSize));
     }
 
 }

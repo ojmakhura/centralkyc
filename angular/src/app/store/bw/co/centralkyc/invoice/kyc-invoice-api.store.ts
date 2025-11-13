@@ -1,4 +1,3 @@
-
 import { inject } from '@angular/core';
 import { patchState, signalStore, withMethods, withState } from '@ngrx/signals';
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
@@ -24,7 +23,7 @@ const initialState: KycInvoiceApiState = {
   messages: [],
   loaderMessage: '',
   details: '',
-  error: false
+  error: false,
 };
 
 export const KycInvoiceApiStore = signalStore(
@@ -36,129 +35,163 @@ export const KycInvoiceApiStore = signalStore(
       reset: () => {
         patchState(store, initialState);
       },
-      findById: rxMethod<{id: string | any }>(
+      findById: rxMethod<{ id: string | any }>(
         switchMap((data: any) => {
           patchState(store, { loading: true, loaderMessage: 'Loading ...' });
-          return kycInvoiceApi.findById(data.id, ).pipe(
+          return kycInvoiceApi.findById(data.id).pipe(
             tapResponse({
               next: (response: KycInvoiceDTO | any) => {
-                patchState(
-                  store,
-                  {
-                    data: response,
-                    loading: false,
-                    success: true,
-                    messages: ['Success!!'],
-                    error: false,
-                  }
-                );
+                patchState(store, {
+                  data: response,
+                  loading: false,
+                  success: true,
+                  messages: ['Success!!'],
+                  error: false,
+                });
               },
               error: (error: any) => {
-                patchState(
-                  store, {
-                    status: (error?.status || 0),
-                    loading: false,
-                    success: false,
-                    error: true,
-                    messages: [error.message || 'An error occurred'],
-                  }
-                );
+                patchState(store, {
+                  status: error?.status || 0,
+                  loading: false,
+                  success: false,
+                  error: true,
+                  messages: [error.message || 'An error occurred'],
+                });
               },
             }),
           );
         }),
       ),
-      findByOrganisation: rxMethod<{organisationId: string | any }>(
+      findByOrganisation: rxMethod<{ organisationId: string | any }>(
         switchMap((data: any) => {
           patchState(store, { loading: true, loaderMessage: 'Loading ...' });
-          return kycInvoiceApi.findByOrganisation(data.organisationId, ).pipe(
+          return kycInvoiceApi.findByOrganisation(data.organisationId).pipe(
             tapResponse({
               next: (response: KycInvoiceDTO[] | any[]) => {
-                patchState(
-                  store,
-                  {
-                    dataList: response,
-                    loading: false,
-                    success: true,
-                    messages: ['Success!!'],
-                    error: false,
-                  }
-                );
+                patchState(store, {
+                  dataList: response,
+                  loading: false,
+                  success: true,
+                  messages: ['Success!!'],
+                  error: false,
+                });
               },
               error: (error: any) => {
-                patchState(
-                  store, {
-                    status: (error?.status || 0),
-                    loading: false,
-                    success: false,
-                    error: true,
-                    messages: [error.message || 'An error occurred'],
-                  }
-                );
+                patchState(store, {
+                  status: error?.status || 0,
+                  loading: false,
+                  success: false,
+                  error: true,
+                  messages: [error.message || 'An error occurred'],
+                });
               },
             }),
           );
         }),
       ),
-      findBySubscription: rxMethod<{subscriptionId: string | any }>(
+      findByOrganisationPaged: rxMethod<{ organisationId: string; pageNumber: number; pageSize: number }>(
         switchMap((data: any) => {
           patchState(store, { loading: true, loaderMessage: 'Loading ...' });
-          return kycInvoiceApi.findBySubscription(data.subscriptionId, ).pipe(
+          return kycInvoiceApi.findByOrganisationPaged(data.organisationId, data.pageNumber, data.pageSize).pipe(
+            tapResponse({
+              next: (response: Page<KycInvoiceDTO>) => {
+                patchState(store, {
+                  dataPage: response,
+                  loading: false,
+                  success: true,
+                  messages: ['Success!!'],
+                  error: false,
+                });
+              },
+              error: (error: any) => {
+                patchState(store, {
+                  status: error?.status || 0,
+                  loading: false,
+                  success: false,
+                  error: true,
+                  messages: [error.message || 'An error occurred'],
+                });
+              },
+            }),
+          );
+        }),
+      ),
+      findBySubscription: rxMethod<{ subscriptionId: string | any }>(
+        switchMap((data: any) => {
+          patchState(store, { loading: true, loaderMessage: 'Loading ...' });
+          return kycInvoiceApi.findBySubscription(data.subscriptionId).pipe(
             tapResponse({
               next: (response: KycInvoiceDTO[] | any[]) => {
-                patchState(
-                  store,
-                  {
-                    dataList: response,
-                    loading: false,
-                    success: true,
-                    messages: ['Success!!'],
-                    error: false,
-                  }
-                );
+                patchState(store, {
+                  dataList: response,
+                  loading: false,
+                  success: true,
+                  messages: ['Success!!'],
+                  error: false,
+                });
               },
               error: (error: any) => {
-                patchState(
-                  store, {
-                    status: (error?.status || 0),
-                    loading: false,
-                    success: false,
-                    error: true,
-                    messages: [error.message || 'An error occurred'],
-                  }
-                );
+                patchState(store, {
+                  status: error?.status || 0,
+                  loading: false,
+                  success: false,
+                  error: true,
+                  messages: [error.message || 'An error occurred'],
+                });
               },
             }),
           );
         }),
       ),
-      generateInvoice: rxMethod<{subscriptionId: string | any }>(
+      findBySubscriptionPaged: rxMethod<{ subscriptionId: string; pageNumber: number; pageSize: number }>(
         switchMap((data: any) => {
           patchState(store, { loading: true, loaderMessage: 'Loading ...' });
-          return kycInvoiceApi.generateInvoice(data.subscriptionId, ).pipe(
+          return kycInvoiceApi.findBySubscriptionPaged(data.subscriptionId, data.pageNumber, data.pageSize).pipe(
+            tapResponse({
+              next: (response: Page<KycInvoiceDTO>) => {
+                patchState(store, {
+                  dataPage: response,
+                  loading: false,
+                  success: true,
+                  messages: ['Success!!'],
+                  error: false,
+                });
+              },
+              error: (error: any) => {
+                patchState(store, {
+                  status: error?.status || 0,
+                  loading: false,
+                  success: false,
+                  error: true,
+                  messages: [error.message || 'An error occurred'],
+                });
+              },
+            }),
+          );
+        }),
+      ),
+      generateInvoice: rxMethod<{ subscriptionId: string | any }>(
+        switchMap((data: any) => {
+          patchState(store, { loading: true, loaderMessage: 'Loading ...' });
+          return kycInvoiceApi.generateInvoice(data.subscriptionId).pipe(
             tapResponse({
               next: (response: KycInvoiceDTO | any) => {
-                patchState(
-                  store,
-                  {
-                    data: response,
-                    loading: false,
-                    success: true,
-                    messages: ['Success!!'],
-                    error: false,
-                  }
-                );
+                patchState(store, {
+                  dataList: response,
+                  loading: false,
+                  success: true,
+                  messages: ['Success!!'],
+                  error: false,
+                });
               },
               error: (error: any) => {
-                patchState(
-                  store, {
-                    status: (error?.status || 0),
-                    loading: false,
-                    success: false,
-                    error: true,
-                    messages: [error.message || 'An error occurred'],
-                  }
-                );
+                patchState(store, {
+                  status: error?.status || 0,
+                  loading: false,
+                  success: false,
+                  error: true,
+                  messages: [error.message || 'An error occurred'],
+                });
               },
             }),
           );
@@ -170,224 +203,189 @@ export const KycInvoiceApiStore = signalStore(
           return kycInvoiceApi.getAll().pipe(
             tapResponse({
               next: (response: KycInvoiceDTO[] | any[]) => {
-                patchState(
-                  store,
-                  {
-                    dataList: response,
-                    loading: false,
-                    success: true,
-                    messages: ['Success!!'],
-                    error: false,
-                  }
-                );
+                patchState(store, {
+                  dataList: response,
+                  loading: false,
+                  success: true,
+                  messages: ['Success!!'],
+                  error: false,
+                });
               },
               error: (error: any) => {
-                patchState(
-                  store, {
-                    status: (error?.status || 0),
-                    loading: false,
-                    success: false,
-                    error: true,
-                    messages: [error.message || 'An error occurred'],
-                  }
-                );
+                patchState(store, {
+                  status: error?.status || 0,
+                  loading: false,
+                  success: false,
+                  error: true,
+                  messages: [error.message || 'An error occurred'],
+                });
               },
             }),
           );
         }),
       ),
-      getAllPaged: rxMethod<{pageNumber: number | any , pageSize: number | any }>(
+      getAllPaged: rxMethod<{ pageNumber: number | any; pageSize: number | any }>(
         switchMap((data: any) => {
           patchState(store, { loading: true, loaderMessage: 'Loading ...' });
-          return kycInvoiceApi.getAllPaged(data.pageNumber, data.pageSize, ).pipe(
+          return kycInvoiceApi.getAllPaged(data.pageNumber, data.pageSize).pipe(
             tapResponse({
               next: (response: Page<KycInvoiceDTO> | any) => {
-                patchState(
-                  store,
-                  {
-                    dataPage: response,
-                    loading: false,
-                    success: true,
-                    messages: ['Success!!'],
-                    error: false,
-                  }
-                );
+                patchState(store, {
+                  dataPage: response,
+                  loading: false,
+                  success: true,
+                  messages: ['Success!!'],
+                  error: false,
+                });
               },
               error: (error: any) => {
-                patchState(
-                  store, {
-                    status: (error?.status || 0),
-                    loading: false,
-                    success: false,
-                    error: true,
-                    messages: [error.message || 'An error occurred'],
-                  }
-                );
+                patchState(store, {
+                  status: error?.status || 0,
+                  loading: false,
+                  success: false,
+                  error: true,
+                  messages: [error.message || 'An error occurred'],
+                });
               },
             }),
           );
         }),
       ),
-      pagedSearch: rxMethod<{criteria: SearchObject<InvoiceSearchCriteria> | any }>(
+      pagedSearch: rxMethod<{ criteria: SearchObject<InvoiceSearchCriteria> | any }>(
         switchMap((data: any) => {
           patchState(store, { loading: true, loaderMessage: 'Loading ...' });
-          return kycInvoiceApi.pagedSearch(data.criteria, ).pipe(
+          return kycInvoiceApi.pagedSearch(data.criteria).pipe(
             tapResponse({
               next: (response: Page<KycInvoiceDTO> | any) => {
-                patchState(
-                  store,
-                  {
-                    dataPage: response,
-                    loading: false,
-                    success: true,
-                    messages: ['Success!!'],
-                    error: false,
-                  }
-                );
+                patchState(store, {
+                  dataPage: response,
+                  loading: false,
+                  success: true,
+                  messages: ['Success!!'],
+                  error: false,
+                });
               },
               error: (error: any) => {
-                patchState(
-                  store, {
-                    status: (error?.status || 0),
-                    loading: false,
-                    success: false,
-                    error: true,
-                    messages: [error.message || 'An error occurred'],
-                  }
-                );
+                patchState(store, {
+                  status: error?.status || 0,
+                  loading: false,
+                  success: false,
+                  error: true,
+                  messages: [error.message || 'An error occurred'],
+                });
               },
             }),
           );
         }),
       ),
-      remove: rxMethod<{id: string | any }>(
+      remove: rxMethod<{ id: string | any }>(
         switchMap((data: any) => {
           patchState(store, { loading: true, loaderMessage: 'Loading ...' });
-          return kycInvoiceApi.remove(data.id, ).pipe(
+          return kycInvoiceApi.remove(data.id).pipe(
             tapResponse({
               next: (response: boolean | any) => {
-                patchState(
-                  store,
-                  {
-                    data: response,
-                    loading: false,
-                    success: true,
-                    messages: ['Success!!'],
-                    error: false,
-                  }
-                );
+                patchState(store, {
+                  data: response,
+                  loading: false,
+                  success: true,
+                  messages: ['Success!!'],
+                  error: false,
+                });
               },
               error: (error: any) => {
-                patchState(
-                  store, {
-                    status: (error?.status || 0),
-                    loading: false,
-                    success: false,
-                    error: true,
-                    messages: [error.message || 'An error occurred'],
-                  }
-                );
+                patchState(store, {
+                  status: error?.status || 0,
+                  loading: false,
+                  success: false,
+                  error: true,
+                  messages: [error.message || 'An error occurred'],
+                });
               },
             }),
           );
         }),
       ),
-      save: rxMethod<{invoice: KycInvoiceDTO | any }>(
+      save: rxMethod<{ invoice: KycInvoiceDTO | any }>(
         switchMap((data: any) => {
           patchState(store, { loading: true, loaderMessage: 'Loading ...' });
-          return kycInvoiceApi.save(data.invoice, ).pipe(
+          return kycInvoiceApi.save(data.invoice).pipe(
             tapResponse({
               next: (response: KycInvoiceDTO | any) => {
-                patchState(
-                  store,
-                  {
-                    data: response,
-                    loading: false,
-                    success: true,
-                    messages: ['Success!!'],
-                    error: false,
-                  }
-                );
+                patchState(store, {
+                  data: response,
+                  loading: false,
+                  success: true,
+                  messages: ['Success!!'],
+                  error: false,
+                });
               },
               error: (error: any) => {
-                patchState(
-                  store, {
-                    status: (error?.status || 0),
-                    loading: false,
-                    success: false,
-                    error: true,
-                    messages: [error.message || 'An error occurred'],
-                  }
-                );
+                patchState(store, {
+                  status: error?.status || 0,
+                  loading: false,
+                  success: false,
+                  error: true,
+                  messages: [error.message || 'An error occurred'],
+                });
               },
             }),
           );
         }),
       ),
-      search: rxMethod<{criteria: SearchObject<InvoiceSearchCriteria> | any }>(
+      search: rxMethod<{ criteria: SearchObject<InvoiceSearchCriteria> | any }>(
         switchMap((data: any) => {
           patchState(store, { loading: true, loaderMessage: 'Loading ...' });
-          return kycInvoiceApi.search(data.criteria, ).pipe(
+          return kycInvoiceApi.search(data.criteria).pipe(
             tapResponse({
               next: (response: KycInvoiceDTO[] | any[]) => {
-                patchState(
-                  store,
-                  {
-                    dataList: response,
-                    loading: false,
-                    success: true,
-                    messages: ['Success!!'],
-                    error: false,
-                  }
-                );
+                patchState(store, {
+                  dataList: response,
+                  loading: false,
+                  success: true,
+                  messages: ['Success!!'],
+                  error: false,
+                });
               },
               error: (error: any) => {
-                patchState(
-                  store, {
-                    status: (error?.status || 0),
-                    loading: false,
-                    success: false,
-                    error: true,
-                    messages: [error.message || 'An error occurred'],
-                  }
-                );
+                patchState(store, {
+                  status: error?.status || 0,
+                  loading: false,
+                  success: false,
+                  error: true,
+                  messages: [error.message || 'An error occurred'],
+                });
               },
             }),
           );
         }),
       ),
-      upload: rxMethod<{id: string | any , purpose: UploadPurpose | any , file: File | any }>(
+      upload: rxMethod<{ id: string | any; purpose: UploadPurpose | any; file: File | any }>(
         switchMap((data: any) => {
           patchState(store, { loading: true, loaderMessage: 'Loading ...' });
-          return kycInvoiceApi.upload(data.id, data.purpose, data.file, ).pipe(
+          return kycInvoiceApi.upload(data.id, data.purpose, data.file).pipe(
             tapResponse({
               next: (response: KycInvoiceDTO | any) => {
-                patchState(
-                  store,
-                  {
-                    data: response,
-                    loading: false,
-                    success: true,
-                    messages: ['Success!!'],
-                    error: false,
-                  }
-                );
+                patchState(store, {
+                  data: response,
+                  loading: false,
+                  success: true,
+                  messages: ['Success!!'],
+                  error: false,
+                });
               },
               error: (error: any) => {
-                patchState(
-                  store, {
-                    status: (error?.status || 0),
-                    loading: false,
-                    success: false,
-                    error: true,
-                    messages: [error.message || 'An error occurred'],
-                  }
-                );
+                patchState(store, {
+                  status: error?.status || 0,
+                  loading: false,
+                  success: false,
+                  error: true,
+                  messages: [error.message || 'An error occurred'],
+                });
               },
             }),
           );
         }),
       ),
-    }
+    };
   }),
 );

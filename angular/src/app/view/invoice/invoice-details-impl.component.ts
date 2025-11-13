@@ -190,4 +190,9 @@ export class InvoiceDetailsImplComponent extends InvoiceDetailsComponent {
 
   doNgOnDestroy(): void {
   }
+
+  override invoiceDetailsEdit() {
+
+    this.router.navigate(['/invoice/edit'], { queryParams: { id: this.kycInvoice()?.id } });
+  }
 }

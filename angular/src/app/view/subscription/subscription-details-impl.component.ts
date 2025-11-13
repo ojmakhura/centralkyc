@@ -28,10 +28,7 @@ import { KycInvoiceApiStore } from '@app/store/bw/co/centralkyc/invoice/kyc-invo
     TableComponent,
     LoaderComponent,
   ],
-  providers: [
-    DatePipe,
-    CurrencyPipe
-  ],
+  providers: [DatePipe, CurrencyPipe],
 })
 export class SubscriptionDetailsImplComponent extends SubscriptionDetailsComponent {
   organisationApiStore = inject(OrganisationApiStore);
@@ -39,10 +36,10 @@ export class SubscriptionDetailsImplComponent extends SubscriptionDetailsCompone
 
   @Input() id: string | any;
 
-  override loading = linkedSignal(() => this.kycSubscriptionApiStore.loading());
-  override error = linkedSignal(() => this.kycSubscriptionApiStore.error());
-  override messages = linkedSignal(() => this.kycSubscriptionApiStore.messages());
-  override success = linkedSignal(() => this.kycSubscriptionApiStore.success());
+  override loading = linkedSignal(() => this.kycSubscriptionApiStore.loading() || this.kycInvoiceApiStore.loading());
+  override error = linkedSignal(() => this.kycSubscriptionApiStore.error() || this.kycInvoiceApiStore.error());
+  override messages = linkedSignal(() => this.kycSubscriptionApiStore.messages() || this.kycInvoiceApiStore.messages());
+  override success = linkedSignal(() => this.kycSubscriptionApiStore.success() || this.kycInvoiceApiStore.success());
 
   subscription = linkedSignal(() => this.kycSubscriptionApiStore.data());
   override invoicesTableSignal = linkedSignal(() => this.kycInvoiceApiStore.dataList());
@@ -51,7 +48,6 @@ export class SubscriptionDetailsImplComponent extends SubscriptionDetailsCompone
     super();
 
     this.invoicesTablePaged.set(false);
-
   }
 
   override beforeOnInit(form: SubscriptionDetailsVarsForm): SubscriptionDetailsVarsForm {
@@ -66,9 +62,7 @@ export class SubscriptionDetailsImplComponent extends SubscriptionDetailsCompone
     return form;
   }
 
-
   addInvoice(): void {
-
     Swal.fire({
       title: 'Are you sure?',
       text: 'Do you want to generate a new invoice for this subscription?',
@@ -82,8 +76,7 @@ export class SubscriptionDetailsImplComponent extends SubscriptionDetailsCompone
       } else if (result.dismiss === Swal.DismissReason.cancel) {
       }
     });
-
   }
 
-  doNgOnDestroy(): void { }
+  doNgOnDestroy(): void {}
 }

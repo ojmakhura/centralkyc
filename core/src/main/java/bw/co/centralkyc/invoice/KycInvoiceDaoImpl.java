@@ -11,6 +11,7 @@ import bw.co.centralkyc.organisation.OrganisationRepository;
 import bw.co.centralkyc.subscription.KycSubscriptionRepository;
 import jakarta.persistence.EntityNotFoundException;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Repository;
 
 /**
@@ -43,8 +44,8 @@ public class KycInvoiceDaoImpl
 
         if(source.getOrganisation() != null) {
 
-            target.setOrganisatonId(source.getOrganisation().getId());
-            target.setOrganisatonCode(source.getOrganisation().getCode());
+            target.setOrganisationId(source.getOrganisation().getId());
+            target.setOrganisationCode(source.getOrganisation().getCode());
             target.setOrganisationName(source.getOrganisation().getName());
             target.setOrganisationRegistrationNo(source.getOrganisation().getRegistrationNo());
         }
@@ -53,6 +54,7 @@ public class KycInvoiceDaoImpl
 
             target.setSubscriptionId(source.getKycSubscription().getId());
             target.setSubscriptionRef(source.getKycSubscription().getRef());
+            target.setSubscriptionPeriod(source.getKycSubscription().getPeriod());
         }
     }
 
@@ -108,5 +110,12 @@ public class KycInvoiceDaoImpl
         super.kycInvoiceDTOToEntity(source, target, copyIfNull);
         // No conversion for target.issueDate (can't convert source.getIssueDate():java.util.Date to java.util.Date
         target.setIssueDate(source.getIssueDate());
+
+        if(StringUtils.isNotBlank(source.getOrganisationId())) {
+            target.setOrganisation(this.organisationRepository.findById(source.getOrganisationId())
+                .orElseThrow(() -> new EntityNotFoundException("Organisation not found for id: " + source.getOrganisationId())));
+        } else if (copyIfNull) {
+            target.setOrganisation(null);
+        }
     }
 }

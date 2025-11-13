@@ -9,67 +9,66 @@ import { InvoiceSearchCriteria } from '@app/model/bw/co/centralkyc/invoice/invoi
 import { UploadPurpose } from '@app/model/bw/co/centralkyc/invoice/upload-purpose';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class KycInvoiceApi {
+  protected path = '/invoice';
 
-    protected path = '/invoice';
+  private http = inject(HttpClient);
 
-    private http = inject(HttpClient);
+  public findById(id: string | any): Observable<KycInvoiceDTO | any> {
+    return this.http.get<KycInvoiceDTO | any>(`${this.path}/${id}`);
+  }
 
-    public findById(id: string | any ): Observable<KycInvoiceDTO | any> {
+  public findByOrganisation(organisationId: string | any): Observable<KycInvoiceDTO[] | any[]> {
+    return this.http.get<KycInvoiceDTO[] | any[]>(`${this.path}/by-organisation/${organisationId}`);
+  }
 
-        return this.http.get<KycInvoiceDTO | any>(`${this.path}/${id}`);
-    }
+  public findByOrganisationPaged(organisationId: string, pageNumber: number, pageSize: number): Observable<Page<KycInvoiceDTO>> {
+    return this.http.get<Page<KycInvoiceDTO>>(`${this.path}/by-organisation/${organisationId}?pageNumber=${pageNumber}&pageSize=${pageSize}`);
+  }
 
-    public findByOrganisation(organisationId: string | any ): Observable<KycInvoiceDTO[] | any[]> {
+  public findBySubscription(subscriptionId: string | any): Observable<KycInvoiceDTO[] | any[]> {
+    return this.http.get<KycInvoiceDTO[] | any[]>(`${this.path}/by-subscription/${subscriptionId}`);
+  }
 
-        return this.http.get<KycInvoiceDTO[] | any[]>(`${this.path}/by-organisation/${organisationId}`);
-    }
+  public findBySubscriptionPaged(subscriptionId: string, pageNumber: number, pageSize: number): Observable<Page<KycInvoiceDTO>> {
+    return this.http.get<Page<KycInvoiceDTO>>(`${this.path}/by-subscription/${subscriptionId}?pageNumber=${pageNumber}&pageSize=${pageSize}`);
+  }
 
-    public findBySubscription(subscriptionId: string | any ): Observable<KycInvoiceDTO[] | any[]> {
+  public generateInvoice(subscriptionId: string | any): Observable<KycInvoiceDTO | any> {
+    return this.http.get<KycInvoiceDTO | any>(`${this.path}/generate/${subscriptionId}`);
+  }
 
-        return this.http.get<KycInvoiceDTO[] | any[]>(`${this.path}/by-subscription/${subscriptionId}`);
-    }
+  public getAll(): Observable<KycInvoiceDTO[] | any[]> {
+    return this.http.get<KycInvoiceDTO[] | any[]>(`${this.path}`);
+  }
 
-    public generateInvoice(subscriptionId: string | any ): Observable<KycInvoiceDTO | any> {
+  public getAllPaged(pageNumber: number | any, pageSize: number | any): Observable<Page<KycInvoiceDTO> | any> {
+    return this.http.get<Page<KycInvoiceDTO> | any>(`${this.path}/paged?pageNumber=${pageNumber}&pageSize=${pageSize}`);
+  }
 
-        return this.http.get<KycInvoiceDTO | any>(`${this.path}/generate/${subscriptionId}`);
-    }
+  public pagedSearch(criteria: SearchObject<InvoiceSearchCriteria> | any): Observable<Page<KycInvoiceDTO> | any> {
+    return this.http.post<Page<KycInvoiceDTO> | any>(`${this.path}/search/paged`, criteria);
+  }
 
-    public getAll(): Observable<KycInvoiceDTO[] | any[]> {
+  public remove(id: string | any): Observable<boolean | any> {
+    return this.http.delete<boolean | any>(`${this.path}/${id}`);
+  }
 
-        return this.http.get<KycInvoiceDTO[] | any[]>(`${this.path}`);
-    }
+  public save(invoice: KycInvoiceDTO | any): Observable<KycInvoiceDTO | any> {
+    return this.http.post<KycInvoiceDTO | any>(`${this.path}`, invoice);
+  }
 
-    public getAllPaged(pageNumber: number | any , pageSize: number | any ): Observable<Page<KycInvoiceDTO> | any> {
+  public search(criteria: SearchObject<InvoiceSearchCriteria> | any): Observable<KycInvoiceDTO[] | any[]> {
+    return this.http.post<KycInvoiceDTO[] | any[]>(`${this.path}/search`, criteria);
+  }
 
-        return this.http.get<Page<KycInvoiceDTO> | any>(`${this.path}/paged?pageNumber=${pageNumber}&pageSize=${pageSize}`);
-    }
-
-    public pagedSearch(criteria: SearchObject<InvoiceSearchCriteria> | any ): Observable<Page<KycInvoiceDTO> | any> {
-
-        return this.http.post<Page<KycInvoiceDTO> | any>(`${this.path}/search/paged`, criteria);
-    }
-
-    public remove(id: string | any ): Observable<boolean | any> {
-
-        return this.http.delete<boolean | any>(`${this.path}/${id}`);
-    }
-
-    public save(invoice: KycInvoiceDTO | any ): Observable<KycInvoiceDTO | any> {
-
-        return this.http.post<KycInvoiceDTO | any>(`${this.path}`, invoice);
-    }
-
-    public search(criteria: SearchObject<InvoiceSearchCriteria> | any ): Observable<KycInvoiceDTO[] | any[]> {
-
-        return this.http.post<KycInvoiceDTO[] | any[]>(`${this.path}/search`, criteria);
-    }
-
-    public upload(id: string | any , purpose: UploadPurpose | any , file: File | any ): Observable<KycInvoiceDTO | any> {
-
-        return this.http.post<KycInvoiceDTO | any>(`${this.path}/${id}/upload?purpose=${purpose}&file=${file}`, {id: id, purpose: purpose, file: file});
-    }
-
+  public upload(id: string | any, purpose: UploadPurpose | any, file: File | any): Observable<KycInvoiceDTO | any> {
+    return this.http.post<KycInvoiceDTO | any>(`${this.path}/${id}/upload?purpose=${purpose}&file=${file}`, {
+      id: id,
+      purpose: purpose,
+      file: file,
+    });
+  }
 }

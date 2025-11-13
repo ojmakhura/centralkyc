@@ -150,57 +150,156 @@
         </mat-card-content>
       </mat-card>
 
-      <!-- Branches Section -->
-      <mat-card class="section-card branches-section" appearance="outlined">
-        <mat-card-header>
-          <mat-card-title>
-            <mat-icon class="section-icon">account_tree</mat-icon>
-            {{ 'organisation.branches' | translate }}
-          </mat-card-title>
-          <div class="branch-actions">
-            <button mat-raised-button color="accent" (click)="addNewBranch()" class="branch-action-button">
-              <mat-icon>add</mat-icon>
-              {{ 'add.branch' | translate }}
-            </button>
-            <button mat-stroked-button color="primary" (click)="refreshBranches()" class="branch-action-button">
-              <mat-icon>refresh</mat-icon>
-              {{ 'refresh' | translate }}
-            </button>
-          </div>
-        </mat-card-header>
+      <!-- Tabbed Sections -->
+      <mat-card class="section-card tabs-section" appearance="outlined">
         <mat-card-content>
-          @if (branchesLoading()) {
-            <div class="branches-loading">
-              <app-loader
-                [isLoading]="branchesLoading()"
-                [size]="1"
-                [message]="'Loading branches...' | translate"
-              ></app-loader>
-            </div>
-          } @else if (branches() && branches().length > 0) {
-            <app-table
-              #organisationsTable
-              [dataColumns]="branchesTableColumns"
-              [showActions]="true"
-              [paged]="branchTablePaged"
-              [actions]="branchesTableColumnsActions"
-              (actionClicked)="branchesTableActionClicked($event)"
-              [dataSignal]="branches"
-            >
-            </app-table>
-          } @else {
-            <div class="no-branches">
-              <div class="no-branches-content">
-                <mat-icon class="no-branches-icon">account_tree</mat-icon>
-                <h3>{{ 'no.branches.found' | translate }}</h3>
-                <p>{{ 'no.branches.message' | translate }}</p>
-                <button mat-raised-button color="primary" (click)="addNewBranch()" class="add-first-branch-button">
-                  <mat-icon>add</mat-icon>
-                  {{ 'add.first.branch' | translate }}
-                </button>
+          <mat-tab-group>
+            <!-- Branches Tab -->
+            <mat-tab>
+              <ng-template mat-tab-label>
+                <mat-icon class="tab-icon">account_tree</mat-icon>
+                {{ 'organisation.branches' | translate }}
+              </ng-template>
+              <div class="tab-content">
+                <div class="tab-header">
+                  <div class="branch-actions">
+                    <button mat-raised-button color="accent" (click)="addNewBranch()" class="branch-action-button">
+                      <mat-icon>add</mat-icon>
+                      {{ 'add.branch' | translate }}
+                    </button>
+                    <button mat-stroked-button color="primary" (click)="refreshBranches()" class="branch-action-button">
+                      <mat-icon>refresh</mat-icon>
+                      {{ 'refresh' | translate }}
+                    </button>
+                  </div>
+                </div>
+                @if (branchesLoading()) {
+                  <div class="branches-loading">
+                    <app-loader
+                      [isLoading]="branchesLoading()"
+                      [size]="1"
+                      [message]="'Loading branches...' | translate"
+                    ></app-loader>
+                  </div>
+                } @else if (branches() && branches().length > 0) {
+                  <app-table
+                    #organisationsTable
+                    [dataColumns]="branchesTableColumns"
+                    [showActions]="true"
+                    [paged]="branchTablePaged"
+                    [actions]="branchesTableColumnsActions"
+                    (actionClicked)="branchesTableActionClicked($event)"
+                    [dataSignal]="branches"
+                  >
+                  </app-table>
+                } @else {
+                  <div class="no-branches">
+                    <div class="no-branches-content">
+                      <mat-icon class="no-branches-icon">account_tree</mat-icon>
+                      <h3>{{ 'no.branches.found' | translate }}</h3>
+                      <p>{{ 'no.branches.message' | translate }}</p>
+                      <button mat-raised-button color="primary" (click)="addNewBranch()" class="add-first-branch-button">
+                        <mat-icon>add</mat-icon>
+                        {{ 'add.first.branch' | translate }}
+                      </button>
+                    </div>
+                  </div>
+                }
               </div>
-            </div>
-          }
+            </mat-tab>
+
+            <!-- Invoices Tab -->
+            <mat-tab>
+              <ng-template mat-tab-label>
+                <mat-icon class="tab-icon">receipt</mat-icon>
+                {{ 'invoices' | translate }}
+              </ng-template>
+              <div class="tab-content">
+                <div class="tab-header">
+                  <div class="invoice-actions">
+                    <button mat-stroked-button color="primary" (click)="refreshInvoices()" class="action-button">
+                      <mat-icon>refresh</mat-icon>
+                      {{ 'refresh' | translate }}
+                    </button>
+                  </div>
+                </div>
+                @if (invoicesLoading()) {
+                  <div class="invoices-loading">
+                    <app-loader
+                      [isLoading]="invoicesLoading()"
+                      [size]="1"
+                      [message]="'Loading invoices...' | translate"
+                    ></app-loader>
+                  </div>
+                } @else if (invoices() && invoices().length > 0) {
+                  <app-table
+                    #invoicesTable
+                    [dataColumns]="invoicesTableColumns"
+                    [showActions]="true"
+                    [paged]="invoicesTablePaged"
+                    [actions]="invoicesTableColumnsActions"
+                    (actionClicked)="invoicesTableActionClicked($event)"
+                    [dataSignal]="invoices"
+                  >
+                  </app-table>
+                } @else {
+                  <div class="no-invoices">
+                    <div class="no-content">
+                      <mat-icon class="no-content-icon">receipt</mat-icon>
+                      <h3>{{ 'no.invoices.found' | translate }}</h3>
+                      <p>{{ 'no.invoices.message' | translate }}</p>
+                    </div>
+                  </div>
+                }
+              </div>
+            </mat-tab>
+
+            <!-- Subscriptions Tab -->
+            <mat-tab>
+              <ng-template mat-tab-label>
+                <mat-icon class="tab-icon">card_membership</mat-icon>
+                {{ 'subscriptions' | translate }}
+              </ng-template>
+              <div class="tab-content">
+                <div class="tab-header">
+                  <div class="subscription-actions">
+                    <button mat-stroked-button color="primary" (click)="refreshSubscriptions()" class="action-button">
+                      <mat-icon>refresh</mat-icon>
+                      {{ 'refresh' | translate }}
+                    </button>
+                  </div>
+                </div>
+                @if (subscriptionsLoading()) {
+                  <div class="subscriptions-loading">
+                    <app-loader
+                      [isLoading]="subscriptionsLoading()"
+                      [size]="1"
+                      [message]="'Loading subscriptions...' | translate"
+                    ></app-loader>
+                  </div>
+                } @else if (subscriptions() && subscriptions().length > 0) {
+                  <app-table
+                    #subscriptionsTable
+                    [dataColumns]="subscriptionsTableColumns"
+                    [showActions]="true"
+                    [paged]="subscriptionsTablePaged"
+                    [actions]="subscriptionsTableColumnsActions"
+                    (actionClicked)="subscriptionsTableActionClicked($event)"
+                    [dataSignal]="subscriptions"
+                  >
+                  </app-table>
+                } @else {
+                  <div class="no-subscriptions">
+                    <div class="no-content">
+                      <mat-icon class="no-content-icon">card_membership</mat-icon>
+                      <h3>{{ 'no.subscriptions.found' | translate }}</h3>
+                      <p>{{ 'no.subscriptions.message' | translate }}</p>
+                    </div>
+                  </div>
+                }
+              </div>
+            </mat-tab>
+          </mat-tab-group>
         </mat-card-content>
       </mat-card>
     </div>
