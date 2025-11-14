@@ -198,7 +198,12 @@
                       <mat-icon class="no-branches-icon">account_tree</mat-icon>
                       <h3>{{ 'no.branches.found' | translate }}</h3>
                       <p>{{ 'no.branches.message' | translate }}</p>
-                      <button mat-raised-button color="primary" (click)="addNewBranch()" class="add-first-branch-button">
+                      <button
+                        mat-raised-button
+                        color="primary"
+                        (click)="addNewBranch()"
+                        class="add-first-branch-button"
+                      >
                         <mat-icon>add</mat-icon>
                         {{ 'add.first.branch' | translate }}
                       </button>
@@ -294,6 +299,80 @@
                       <mat-icon class="no-content-icon">card_membership</mat-icon>
                       <h3>{{ 'no.subscriptions.found' | translate }}</h3>
                       <p>{{ 'no.subscriptions.message' | translate }}</p>
+                    </div>
+                  </div>
+                }
+              </div>
+            </mat-tab>
+
+            <!-- Client Requests Tab -->
+            <mat-tab>
+              <ng-template mat-tab-label>
+                <mat-icon class="tab-icon">assignment</mat-icon>
+                {{ 'client.requests' | translate }}
+              </ng-template>
+              <div class="tab-content">
+                <div class="tab-header">
+                  <div class="actions-group">
+                    <div class="primary-actions">
+                      <button mat-raised-button color="accent" (click)="addNewClientRequest()">
+                        <mat-icon>add</mat-icon>
+                        <span>{{ 'add.client.request' | translate }}</span>
+                      </button>
+                      <button mat-stroked-button color="primary" (click)="downloadRequestTemplate()">
+                        <mat-icon>download</mat-icon>
+                        <span>{{ 'download.template' | translate }}</span>
+                      </button>
+                      <input
+                        type="file"
+                        #clientRequestFileInput
+                        (change)="onClientRequestFileSelected($event)"
+                        accept=".csv,.xlsx,.xls"
+                        style="display: none"
+                      />
+                      <button mat-raised-button color="primary" (click)="clientRequestFileInput.click()">
+                        <mat-icon>upload_file</mat-icon>
+                        <span>{{ 'upload.bulk.requests' | translate }}</span>
+                      </button>
+                    </div>
+                    <div class="secondary-actions">
+                      <button mat-icon-button matTooltip="{{ 'refresh' | translate }}" (click)="refreshClientRequests()">
+                        <mat-icon>refresh</mat-icon>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                @if (isUploadingClientRequestFile()) {
+                  <div class="field-row">
+                    <mat-progress-bar
+                      mode="determinate"
+                      [value]="clientRequestFileUploadProgress()"
+                    ></mat-progress-bar>
+                  </div>
+                }
+
+                @if (clientRequestsLoading()) {
+                  <div class="loading-state">
+                    <mat-progress-spinner mode="indeterminate" diameter="50"></mat-progress-spinner>
+                    <p>{{ 'loading.client.requests' | translate }}</p>
+                  </div>
+                } @else if (clientRequests() && clientRequests().numberOfElements) {
+                  <app-table
+                    #clientRequestsTable
+                    [showActions]="true"
+                    [dataColumns]="clientRequestsTableColumns"
+                    [actions]="clientRequestsTableColumnsActions"
+                    (actionClicked)="clientRequestsTableActionClicked($event)"
+                    [dataSignal]="clientRequests"
+                    [paged]="clientsTablePaged"
+                  ></app-table>
+                } @else {
+                  <div class="empty-state">
+                    <div class="empty-state-content">
+                      <mat-icon class="empty-icon">assignment</mat-icon>
+                      <h3>{{ 'no.client.requests.found' | translate }}</h3>
+                      <p>{{ 'no.client.requests.message' | translate }}</p>
                     </div>
                   </div>
                 }

@@ -88,6 +88,11 @@ public class SettingsDaoImpl
 
             target.setQuotationTemplate(this.getDocumentDao().toDocumentDTO(source.getQuotationTemplate()));
         }
+
+        if(source.getClientRequestFileType() != null) {
+
+            target.setClientRequestFileType(this.getDocumentTypeDao().toDocumentTypeDTO(source.getClientRequestFileType()));
+        }
     }
 
     /**
@@ -207,6 +212,11 @@ public class SettingsDaoImpl
         if(source.getQuotationTemplate() != null && source.getQuotationTemplate().getId() != null) {
 
             target.setQuotationTemplate(documentDao.documentDTOToEntity(source.getQuotationTemplate()));
+        }
+
+        if(source.getClientRequestFileType() != null && source.getClientRequestFileType().getId() != null) {
+
+            target.setClientRequestFileType(documentTypeRepository.getReferenceById(source.getClientRequestFileType().getId()));
         }
 
     }

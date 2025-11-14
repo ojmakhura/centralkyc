@@ -1,4 +1,3 @@
-
 import { inject } from '@angular/core';
 import { patchState, signalStore, withMethods, withState } from '@ngrx/signals';
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
@@ -12,10 +11,10 @@ import { ClientRequestApi } from '@app/service/bw/co/centralkyc/organisation/cli
 import { ClientRequestStatus } from '@app/model/bw/co/centralkyc/organisation/client/client-request-status';
 import { ClientRequestSearchCriteria } from '@app/model/bw/co/centralkyc/organisation/client/client-request-search-criteria';
 
-export type ClientRequestApiState = AppState<any, any> & {};
+export type ClientRequestApiState = AppState<ClientRequestDTO, ClientRequestDTO> & {};
 
 const initialState: ClientRequestApiState = {
-  data: null,
+  data: new ClientRequestDTO(),
   dataList: [],
   dataPage: new Page<any>(),
   searchCriteria: new SearchObject<any>(),
@@ -24,7 +23,7 @@ const initialState: ClientRequestApiState = {
   messages: [],
   loaderMessage: '',
   details: '',
-  error: false
+  error: false,
 };
 
 export const ClientRequestApiStore = signalStore(
@@ -36,289 +35,283 @@ export const ClientRequestApiStore = signalStore(
       reset: () => {
         patchState(store, initialState);
       },
-      findByDocument: rxMethod<{documentId: string | any }>(
+      downloadRequestTemplate: rxMethod<void>(
+        switchMap(() => {
+          patchState(store, { loading: true, loaderMessage: 'Downloading template ...' });
+          return clientRequestApi.downloadRequestTemplate().pipe(
+            tapResponse({
+              next: (response: Blob | any) => {
+                patchState(store, {
+                  // data: response,
+                  loading: false,
+                  success: true,
+                  messages: ['Template downloaded successfully!!'],
+                  error: false,
+                });
+              },
+              error: (error: any) => {
+                patchState(store, {
+                  status: error?.status || 0,
+                  loading: false,
+                  success: false,
+                  error: true,
+                  messages: [error.message || 'An error occurred while downloading the template'],
+                });
+              },
+            }),
+          );
+        }),
+      ),
+      findByDocument: rxMethod<{ documentId: string | any }>(
         switchMap((data: any) => {
           patchState(store, { loading: true, loaderMessage: 'Loading ...' });
-          return clientRequestApi.findByDocument(data.documentId, ).pipe(
+          return clientRequestApi.findByDocument(data.documentId).pipe(
             tapResponse({
               next: (response: ClientRequestDTO[] | any[]) => {
-                patchState(
-                  store,
-                  {
-                    dataList: response,
-                    loading: false,
-                    success: true,
-                    messages: ['Success!!'],
-                    error: false,
-                  }
-                );
+                patchState(store, {
+                  dataList: response,
+                  loading: false,
+                  success: true,
+                  messages: ['Success!!'],
+                  error: false,
+                });
               },
               error: (error: any) => {
-                patchState(
-                  store, {
-                    status: (error?.status || 0),
-                    loading: false,
-                    success: false,
-                    error: true,
-                    messages: [error.message || 'An error occurred'],
-                  }
-                );
+                patchState(store, {
+                  status: error?.status || 0,
+                  loading: false,
+                  success: false,
+                  error: true,
+                  messages: [error.message || 'An error occurred'],
+                });
               },
             }),
           );
         }),
       ),
-      findByDocumentPaged: rxMethod<{documentId: string | any , pageNumber: number | any , pageSize: number | any }>(
+      findByDocumentPaged: rxMethod<{ documentId: string | any; pageNumber: number | any; pageSize: number | any }>(
         switchMap((data: any) => {
           patchState(store, { loading: true, loaderMessage: 'Loading ...' });
-          return clientRequestApi.findByDocumentPaged(data.documentId, data.pageNumber, data.pageSize, ).pipe(
+          return clientRequestApi.findByDocumentPaged(data.documentId, data.pageNumber, data.pageSize).pipe(
             tapResponse({
               next: (response: Page<ClientRequestDTO> | any) => {
-                patchState(
-                  store,
-                  {
-                    dataPage: response,
-                    loading: false,
-                    success: true,
-                    messages: ['Success!!'],
-                    error: false,
-                  }
-                );
+                patchState(store, {
+                  dataPage: response,
+                  loading: false,
+                  success: true,
+                  messages: ['Success!!'],
+                  error: false,
+                });
               },
               error: (error: any) => {
-                patchState(
-                  store, {
-                    status: (error?.status || 0),
-                    loading: false,
-                    success: false,
-                    error: true,
-                    messages: [error.message || 'An error occurred'],
-                  }
-                );
+                patchState(store, {
+                  status: error?.status || 0,
+                  loading: false,
+                  success: false,
+                  error: true,
+                  messages: [error.message || 'An error occurred'],
+                });
               },
             }),
           );
         }),
       ),
-      findById: rxMethod<{id: string | any }>(
+      findById: rxMethod<{ id: string | any }>(
         switchMap((data: any) => {
           patchState(store, { loading: true, loaderMessage: 'Loading ...' });
-          return clientRequestApi.findById(data.id, ).pipe(
+          return clientRequestApi.findById(data.id).pipe(
             tapResponse({
               next: (response: ClientRequestDTO | any) => {
-                patchState(
-                  store,
-                  {
-                    data: response,
-                    loading: false,
-                    success: true,
-                    messages: ['Success!!'],
-                    error: false,
-                  }
-                );
+                patchState(store, {
+                  data: response,
+                  loading: false,
+                  success: true,
+                  messages: ['Success!!'],
+                  error: false,
+                });
               },
               error: (error: any) => {
-                patchState(
-                  store, {
-                    status: (error?.status || 0),
-                    loading: false,
-                    success: false,
-                    error: true,
-                    messages: [error.message || 'An error occurred'],
-                  }
-                );
+                patchState(store, {
+                  status: error?.status || 0,
+                  loading: false,
+                  success: false,
+                  error: true,
+                  messages: [error.message || 'An error occurred'],
+                });
               },
             }),
           );
         }),
       ),
-      findByIndividual: rxMethod<{organisationId: string | any }>(
+      findByIndividual: rxMethod<{ organisationId: string | any }>(
         switchMap((data: any) => {
           patchState(store, { loading: true, loaderMessage: 'Loading ...' });
-          return clientRequestApi.findByIndividual(data.organisationId, ).pipe(
+          return clientRequestApi.findByIndividual(data.organisationId).pipe(
             tapResponse({
               next: (response: ClientRequestDTO[] | any[]) => {
-                patchState(
-                  store,
-                  {
-                    dataList: response,
-                    loading: false,
-                    success: true,
-                    messages: ['Success!!'],
-                    error: false,
-                  }
-                );
+                patchState(store, {
+                  dataList: response,
+                  loading: false,
+                  success: true,
+                  messages: ['Success!!'],
+                  error: false,
+                });
               },
               error: (error: any) => {
-                patchState(
-                  store, {
-                    status: (error?.status || 0),
-                    loading: false,
-                    success: false,
-                    error: true,
-                    messages: [error.message || 'An error occurred'],
-                  }
-                );
+                patchState(store, {
+                  status: error?.status || 0,
+                  loading: false,
+                  success: false,
+                  error: true,
+                  messages: [error.message || 'An error occurred'],
+                });
               },
             }),
           );
         }),
       ),
-      findByIndividualPaged: rxMethod<{organisationId: string | any , pageNumber: number | any , pageSize: number | any }>(
+      findByIndividualPaged: rxMethod<{
+        organisationId: string | any;
+        pageNumber: number | any;
+        pageSize: number | any;
+      }>(
         switchMap((data: any) => {
           patchState(store, { loading: true, loaderMessage: 'Loading ...' });
-          return clientRequestApi.findByIndividualPaged(data.organisationId, data.pageNumber, data.pageSize, ).pipe(
+          return clientRequestApi.findByIndividualPaged(data.organisationId, data.pageNumber, data.pageSize).pipe(
             tapResponse({
               next: (response: Page<ClientRequestDTO> | any) => {
-                patchState(
-                  store,
-                  {
-                    dataPage: response,
-                    loading: false,
-                    success: true,
-                    messages: ['Success!!'],
-                    error: false,
-                  }
-                );
+                patchState(store, {
+                  dataPage: response,
+                  loading: false,
+                  success: true,
+                  messages: ['Success!!'],
+                  error: false,
+                });
               },
               error: (error: any) => {
-                patchState(
-                  store, {
-                    status: (error?.status || 0),
-                    loading: false,
-                    success: false,
-                    error: true,
-                    messages: [error.message || 'An error occurred'],
-                  }
-                );
+                patchState(store, {
+                  status: error?.status || 0,
+                  loading: false,
+                  success: false,
+                  error: true,
+                  messages: [error.message || 'An error occurred'],
+                });
               },
             }),
           );
         }),
       ),
-      findByOrganisation: rxMethod<{organisationId: string | any }>(
+      findByOrganisation: rxMethod<{ organisationId: string | any }>(
         switchMap((data: any) => {
           patchState(store, { loading: true, loaderMessage: 'Loading ...' });
-          return clientRequestApi.findByOrganisation(data.organisationId, ).pipe(
+          return clientRequestApi.findByOrganisation(data.organisationId).pipe(
             tapResponse({
               next: (response: ClientRequestDTO[] | any[]) => {
-                patchState(
-                  store,
-                  {
-                    dataList: response,
-                    loading: false,
-                    success: true,
-                    messages: ['Success!!'],
-                    error: false,
-                  }
-                );
+                patchState(store, {
+                  dataList: response,
+                  loading: false,
+                  success: true,
+                  messages: ['Success!!'],
+                  error: false,
+                });
               },
               error: (error: any) => {
-                patchState(
-                  store, {
-                    status: (error?.status || 0),
-                    loading: false,
-                    success: false,
-                    error: true,
-                    messages: [error.message || 'An error occurred'],
-                  }
-                );
+                patchState(store, {
+                  status: error?.status || 0,
+                  loading: false,
+                  success: false,
+                  error: true,
+                  messages: [error.message || 'An error occurred'],
+                });
               },
             }),
           );
         }),
       ),
-      findByOrganisationPaged: rxMethod<{organisationId: string | any , pageNumber: number | any , pageSize: number | any }>(
+      findByOrganisationPaged: rxMethod<{
+        organisationId: string | any;
+        pageNumber: number | any;
+        pageSize: number | any;
+      }>(
         switchMap((data: any) => {
           patchState(store, { loading: true, loaderMessage: 'Loading ...' });
-          return clientRequestApi.findByOrganisationPaged(data.organisationId, data.pageNumber, data.pageSize, ).pipe(
+          return clientRequestApi.findByOrganisationPaged(data.organisationId, data.pageNumber, data.pageSize).pipe(
             tapResponse({
               next: (response: Page<ClientRequestDTO> | any) => {
-                patchState(
-                  store,
-                  {
-                    dataPage: response,
-                    loading: false,
-                    success: true,
-                    messages: ['Success!!'],
-                    error: false,
-                  }
-                );
+                patchState(store, {
+                  dataPage: response,
+                  loading: false,
+                  success: true,
+                  messages: ['Success!!'],
+                  error: false,
+                });
               },
               error: (error: any) => {
-                patchState(
-                  store, {
-                    status: (error?.status || 0),
-                    loading: false,
-                    success: false,
-                    error: true,
-                    messages: [error.message || 'An error occurred'],
-                  }
-                );
+                patchState(store, {
+                  status: error?.status || 0,
+                  loading: false,
+                  success: false,
+                  error: true,
+                  messages: [error.message || 'An error occurred'],
+                });
               },
             }),
           );
         }),
       ),
-      findByStatus: rxMethod<{status: ClientRequestStatus | any }>(
+      findByStatus: rxMethod<{ status: ClientRequestStatus | any }>(
         switchMap((data: any) => {
           patchState(store, { loading: true, loaderMessage: 'Loading ...' });
-          return clientRequestApi.findByStatus(data.status, ).pipe(
+          return clientRequestApi.findByStatus(data.status).pipe(
             tapResponse({
               next: (response: ClientRequestDTO[] | any[]) => {
-                patchState(
-                  store,
-                  {
-                    dataList: response,
-                    loading: false,
-                    success: true,
-                    messages: ['Success!!'],
-                    error: false,
-                  }
-                );
+                patchState(store, {
+                  dataList: response,
+                  loading: false,
+                  success: true,
+                  messages: ['Success!!'],
+                  error: false,
+                });
               },
               error: (error: any) => {
-                patchState(
-                  store, {
-                    status: (error?.status || 0),
-                    loading: false,
-                    success: false,
-                    error: true,
-                    messages: [error.message || 'An error occurred'],
-                  }
-                );
+                patchState(store, {
+                  status: error?.status || 0,
+                  loading: false,
+                  success: false,
+                  error: true,
+                  messages: [error.message || 'An error occurred'],
+                });
               },
             }),
           );
         }),
       ),
-      findByStatusPaged: rxMethod<{status: ClientRequestStatus | any , pageNumber: number | any , pageSize: number | any }>(
+      findByStatusPaged: rxMethod<{
+        status: ClientRequestStatus | any;
+        pageNumber: number | any;
+        pageSize: number | any;
+      }>(
         switchMap((data: any) => {
           patchState(store, { loading: true, loaderMessage: 'Loading ...' });
-          return clientRequestApi.findByStatusPaged(data.status, data.pageNumber, data.pageSize, ).pipe(
+          return clientRequestApi.findByStatusPaged(data.status, data.pageNumber, data.pageSize).pipe(
             tapResponse({
               next: (response: Page<ClientRequestDTO> | any) => {
-                patchState(
-                  store,
-                  {
-                    dataPage: response,
-                    loading: false,
-                    success: true,
-                    messages: ['Success!!'],
-                    error: false,
-                  }
-                );
+                patchState(store, {
+                  dataPage: response,
+                  loading: false,
+                  success: true,
+                  messages: ['Success!!'],
+                  error: false,
+                });
               },
               error: (error: any) => {
-                patchState(
-                  store, {
-                    status: (error?.status || 0),
-                    loading: false,
-                    success: false,
-                    error: true,
-                    messages: [error.message || 'An error occurred'],
-                  }
-                );
+                patchState(store, {
+                  status: error?.status || 0,
+                  loading: false,
+                  success: false,
+                  error: true,
+                  messages: [error.message || 'An error occurred'],
+                });
               },
             }),
           );
@@ -330,224 +323,189 @@ export const ClientRequestApiStore = signalStore(
           return clientRequestApi.getAll().pipe(
             tapResponse({
               next: (response: ClientRequestDTO[] | any[]) => {
-                patchState(
-                  store,
-                  {
-                    dataList: response,
-                    loading: false,
-                    success: true,
-                    messages: ['Success!!'],
-                    error: false,
-                  }
-                );
+                patchState(store, {
+                  dataList: response,
+                  loading: false,
+                  success: true,
+                  messages: ['Success!!'],
+                  error: false,
+                });
               },
               error: (error: any) => {
-                patchState(
-                  store, {
-                    status: (error?.status || 0),
-                    loading: false,
-                    success: false,
-                    error: true,
-                    messages: [error.message || 'An error occurred'],
-                  }
-                );
+                patchState(store, {
+                  status: error?.status || 0,
+                  loading: false,
+                  success: false,
+                  error: true,
+                  messages: [error.message || 'An error occurred'],
+                });
               },
             }),
           );
         }),
       ),
-      getAllPaged: rxMethod<{pageNumber: number | any , pageSize: number | any }>(
+      getAllPaged: rxMethod<{ pageNumber: number | any; pageSize: number | any }>(
         switchMap((data: any) => {
           patchState(store, { loading: true, loaderMessage: 'Loading ...' });
-          return clientRequestApi.getAllPaged(data.pageNumber, data.pageSize, ).pipe(
+          return clientRequestApi.getAllPaged(data.pageNumber, data.pageSize).pipe(
             tapResponse({
               next: (response: Page<ClientRequestDTO> | any) => {
-                patchState(
-                  store,
-                  {
-                    dataPage: response,
-                    loading: false,
-                    success: true,
-                    messages: ['Success!!'],
-                    error: false,
-                  }
-                );
+                patchState(store, {
+                  dataPage: response,
+                  loading: false,
+                  success: true,
+                  messages: ['Success!!'],
+                  error: false,
+                });
               },
               error: (error: any) => {
-                patchState(
-                  store, {
-                    status: (error?.status || 0),
-                    loading: false,
-                    success: false,
-                    error: true,
-                    messages: [error.message || 'An error occurred'],
-                  }
-                );
+                patchState(store, {
+                  status: error?.status || 0,
+                  loading: false,
+                  success: false,
+                  error: true,
+                  messages: [error.message || 'An error occurred'],
+                });
               },
             }),
           );
         }),
       ),
-      pagedSearch: rxMethod<{criteria: SearchObject<ClientRequestSearchCriteria> | any }>(
+      pagedSearch: rxMethod<{ criteria: SearchObject<ClientRequestSearchCriteria> | any }>(
         switchMap((data: any) => {
           patchState(store, { loading: true, loaderMessage: 'Loading ...' });
-          return clientRequestApi.pagedSearch(data.criteria, ).pipe(
+          return clientRequestApi.pagedSearch(data.criteria).pipe(
             tapResponse({
               next: (response: Page<ClientRequestDTO> | any) => {
-                patchState(
-                  store,
-                  {
-                    dataPage: response,
-                    loading: false,
-                    success: true,
-                    messages: ['Success!!'],
-                    error: false,
-                  }
-                );
+                patchState(store, {
+                  dataPage: response,
+                  loading: false,
+                  success: true,
+                  messages: ['Success!!'],
+                  error: false,
+                });
               },
               error: (error: any) => {
-                patchState(
-                  store, {
-                    status: (error?.status || 0),
-                    loading: false,
-                    success: false,
-                    error: true,
-                    messages: [error.message || 'An error occurred'],
-                  }
-                );
+                patchState(store, {
+                  status: error?.status || 0,
+                  loading: false,
+                  success: false,
+                  error: true,
+                  messages: [error.message || 'An error occurred'],
+                });
               },
             }),
           );
         }),
       ),
-      remove: rxMethod<{id: string | any }>(
+      remove: rxMethod<{ id: string | any }>(
         switchMap((data: any) => {
           patchState(store, { loading: true, loaderMessage: 'Loading ...' });
-          return clientRequestApi.remove(data.id, ).pipe(
+          return clientRequestApi.remove(data.id).pipe(
             tapResponse({
               next: (response: boolean | any) => {
-                patchState(
-                  store,
-                  {
-                    data: response,
-                    loading: false,
-                    success: true,
-                    messages: ['Success!!'],
-                    error: false,
-                  }
-                );
+                patchState(store, {
+                  data: response,
+                  loading: false,
+                  success: true,
+                  messages: ['Success!!'],
+                  error: false,
+                });
               },
               error: (error: any) => {
-                patchState(
-                  store, {
-                    status: (error?.status || 0),
-                    loading: false,
-                    success: false,
-                    error: true,
-                    messages: [error.message || 'An error occurred'],
-                  }
-                );
+                patchState(store, {
+                  status: error?.status || 0,
+                  loading: false,
+                  success: false,
+                  error: true,
+                  messages: [error.message || 'An error occurred'],
+                });
               },
             }),
           );
         }),
       ),
-      save: rxMethod<{clientRequest: ClientRequestDTO | any }>(
+      save: rxMethod<{ clientRequest: ClientRequestDTO | any }>(
         switchMap((data: any) => {
           patchState(store, { loading: true, loaderMessage: 'Loading ...' });
-          return clientRequestApi.save(data.clientRequest, ).pipe(
+          return clientRequestApi.save(data.clientRequest).pipe(
             tapResponse({
               next: (response: ClientRequestDTO | any) => {
-                patchState(
-                  store,
-                  {
-                    data: response,
-                    loading: false,
-                    success: true,
-                    messages: ['Success!!'],
-                    error: false,
-                  }
-                );
+                patchState(store, {
+                  data: response,
+                  loading: false,
+                  success: true,
+                  messages: ['Success!!'],
+                  error: false,
+                });
               },
               error: (error: any) => {
-                patchState(
-                  store, {
-                    status: (error?.status || 0),
-                    loading: false,
-                    success: false,
-                    error: true,
-                    messages: [error.message || 'An error occurred'],
-                  }
-                );
+                patchState(store, {
+                  status: error?.status || 0,
+                  loading: false,
+                  success: false,
+                  error: true,
+                  messages: [error.message || 'An error occurred'],
+                });
               },
             }),
           );
         }),
       ),
-      search: rxMethod<{criteria: SearchObject<ClientRequestSearchCriteria> | any }>(
+      search: rxMethod<{ criteria: SearchObject<ClientRequestSearchCriteria> | any }>(
         switchMap((data: any) => {
           patchState(store, { loading: true, loaderMessage: 'Loading ...' });
-          return clientRequestApi.search(data.criteria, ).pipe(
+          return clientRequestApi.search(data.criteria).pipe(
             tapResponse({
               next: (response: ClientRequestDTO[] | any[]) => {
-                patchState(
-                  store,
-                  {
-                    dataList: response,
-                    loading: false,
-                    success: true,
-                    messages: ['Success!!'],
-                    error: false,
-                  }
-                );
+                patchState(store, {
+                  dataList: response,
+                  loading: false,
+                  success: true,
+                  messages: ['Success!!'],
+                  error: false,
+                });
               },
               error: (error: any) => {
-                patchState(
-                  store, {
-                    status: (error?.status || 0),
-                    loading: false,
-                    success: false,
-                    error: true,
-                    messages: [error.message || 'An error occurred'],
-                  }
-                );
+                patchState(store, {
+                  status: error?.status || 0,
+                  loading: false,
+                  success: false,
+                  error: true,
+                  messages: [error.message || 'An error occurred'],
+                });
               },
             }),
           );
         }),
       ),
-      uploadRequests: rxMethod<{file: File | any }>(
+      uploadRequests: rxMethod<{ file: File | any }>(
         switchMap((data: any) => {
           patchState(store, { loading: true, loaderMessage: 'Loading ...' });
-          return clientRequestApi.uploadRequests(data.file, ).pipe(
+          return clientRequestApi.uploadRequests(data.file).pipe(
             tapResponse({
               next: (response: Page<ClientRequestDTO> | any) => {
-                patchState(
-                  store,
-                  {
-                    dataPage: response,
-                    loading: false,
-                    success: true,
-                    messages: ['Success!!'],
-                    error: false,
-                  }
-                );
+                patchState(store, {
+                  dataPage: response,
+                  loading: false,
+                  success: true,
+                  messages: ['Success!!'],
+                  error: false,
+                });
               },
               error: (error: any) => {
-                patchState(
-                  store, {
-                    status: (error?.status || 0),
-                    loading: false,
-                    success: false,
-                    error: true,
-                    messages: [error.message || 'An error occurred'],
-                  }
-                );
+                patchState(store, {
+                  status: error?.status || 0,
+                  loading: false,
+                  success: false,
+                  error: true,
+                  messages: [error.message || 'An error occurred'],
+                });
               },
             }),
           );
         }),
       ),
-    }
+    };
   }),
 );

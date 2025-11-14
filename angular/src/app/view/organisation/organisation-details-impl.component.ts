@@ -25,7 +25,10 @@ import { KycInvoiceApiStore } from '@app/store/bw/co/centralkyc/invoice/kyc-invo
 import { KycSubscriptionApiStore } from '@app/store/bw/co/centralkyc/subscription/kyc-subscription-api.store';
 import { KycInvoiceDTO } from '@app/model/bw/co/centralkyc/invoice/kyc-invoice-dto';
 import { KycSubscriptionDTO } from '@app/model/bw/co/centralkyc/subscription/kyc-subscription-dto';
+import { ClientRequestApiStore } from '@app/store/bw/co/centralkyc/organisation/client/client-request-api.store';
+import { ClientRequestDTO } from '@app/model/bw/co/centralkyc/organisation/client/client-request-dto';
 import { CurrencyPipe, DatePipe } from '@angular/common';
+import { ClientRequestApi } from '@app/service/bw/co/centralkyc/organisation/client/client-request-api';
 
 @Component({
   selector: 'app-organisation-details',
@@ -49,6 +52,8 @@ export class OrganisationDetailsImplComponent extends OrganisationDetailsCompone
   branchApi = inject(BranchApi);
   kycInvoiceApiStore = inject(KycInvoiceApiStore);
   kycSubscriptionApiStore = inject(KycSubscriptionApiStore);
+  clientRequestApiStore = inject(ClientRequestApiStore);
+  clientRequestApi = inject(ClientRequestApi);
   datePipe = inject(DatePipe);
   currencyPipe = inject(CurrencyPipe);
 
@@ -72,6 +77,14 @@ export class OrganisationDetailsImplComponent extends OrganisationDetailsCompone
   subscriptions = this.kycSubscriptionApiStore.dataList;
   subscriptionsLoading = this.kycSubscriptionApiStore.loading;
 
+  // Client Requests related properties
+  clientRequests = this.clientRequestApiStore.dataPage;
+  clientsTablePaged = signal(true);
+  clientRequestsLoading = this.clientRequestApiStore.loading;
+  uploadedClientRequestFiles = signal<any[]>([]);
+  isUploadingClientRequestFile = signal(false);
+  clientRequestFileUploadProgress = signal(0);
+
   constructor() {
     super();
 
@@ -82,6 +95,7 @@ export class OrganisationDetailsImplComponent extends OrganisationDetailsCompone
         this.loadBranches();
         this.loadInvoices();
         this.loadSubscriptions();
+        this.loadClientRequests();
       }
     });
 
@@ -99,6 +113,7 @@ export class OrganisationDetailsImplComponent extends OrganisationDetailsCompone
     this.branchApiStore.reset();
     this.kycInvoiceApiStore.reset();
     this.kycSubscriptionApiStore.reset();
+    this.clientRequestApiStore.reset();
 
     this.route.queryParams.subscribe((params: any) => {
       if (params.id) {
@@ -212,7 +227,7 @@ export class OrganisationDetailsImplComponent extends OrganisationDetailsCompone
     // For now, we'll just update the pagination state
   }
 
-  doNgOnDestroy(): void {}
+  doNgOnDestroy(): void { }
 
   branchTablePaged = signal(false);
   branchesTableColumns: ColumnModel[] = [
@@ -306,6 +321,155 @@ export class OrganisationDetailsImplComponent extends OrganisationDetailsCompone
         this.router.navigate(['/subscription/details'], { queryParams: { id: event.row.id } });
         break;
     }
+  }
+
+  // Client Requests Management Methods
+  loadClientRequests(): void {
+    const org = this.organisation();
+    if (org?.id) {
+      this.clientRequestApiStore.findByOrganisationPaged({
+        organisationId: this.organisation().id,
+        pageNumber: 0,
+        pageSize: 10
+      });
+    }
+  }
+
+  refreshClientRequests(): void {
+    this.loadClientRequests();
+  }
+
+  addNewClientRequest(): void {
+    this.router.navigate(['/client-request/edit'], {
+      queryParams: { organisationId: this.organisation().id }
+    });
+  }
+
+  // Client Requests Table Configuration
+  clientRequestsTablePaged = signal(false);
+  clientRequestsTableColumns: ColumnModel[] = [
+    new ColumnModel('name', 'name', false),
+    new ColumnModel('identityType', 'identity.type', false),
+    new ColumnModel('identityNo', 'identity.no', false),
+    new ColumnModel('status', 'status', false)
+  ];
+
+  clientRequestsTableColumnsActions: ActionTemplate[] = [
+    {
+      id: 'client-request-view',
+      label: 'view',
+      icon: 'visibility',
+      tooltip: 'view',
+    },
+    {
+      id: 'client-request-edit',
+      label: 'edit',
+      icon: 'edit',
+      tooltip: 'edit',
+    },
+  ];
+
+  clientRequestsTableActionClicked(event: any): void {
+    console.log(event);
+
+    switch (event.action) {
+      case 'client-request-view':
+        this.router.navigate(['/client-request/details'], { queryParams: { id: event.row.id } });
+        break;
+      case 'client-request-edit':
+        this.router.navigate(['/client-request/edit'], { queryParams: { id: event.row.id } });
+        break;
+    }
+  }
+
+  // Client Request File Upload Methods
+  onClientRequestFileSelected(event: any): void {
+    const files: FileList = event.target.files;
+    if (files && files.length > 0) {
+      this.isUploadingClientRequestFile.set(true);
+      this.clientRequestFileUploadProgress.set(0);
+
+      // Simulate file upload progress
+      const interval = setInterval(() => {
+        const currentProgress = this.clientRequestFileUploadProgress();
+        if (currentProgress < 100) {
+          this.clientRequestFileUploadProgress.set(currentProgress + 10);
+        } else {
+          clearInterval(interval);
+
+          // Add files to the uploaded list
+          const newFiles = Array.from(files).map((file, index) => ({
+            id: `file-${Date.now()}-${index}`,
+            fileName: file.name,
+            fileSize: file.size,
+            file: file,
+          }));
+
+          this.uploadedClientRequestFiles.set([...this.uploadedClientRequestFiles(), ...newFiles]);
+          this.isUploadingClientRequestFile.set(false);
+          this.clientRequestFileUploadProgress.set(0);
+
+          // Reset the file input
+          event.target.value = '';
+        }
+      }, 300);
+
+      // TODO: Implement actual file upload to server
+      this.clientRequestApiStore.uploadRequests({ file: files[0], organisationId: this.organisation().id });
+    }
+  }
+
+  formatFileSize(bytes: number): string {
+    if (bytes === 0) return '0 Bytes';
+    const k = 1024;
+    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return Math.round(bytes / Math.pow(k, i) * 100) / 100 + ' ' + sizes[i];
+  }
+
+  downloadClientRequestFile(file: any): void {
+    // Create a blob URL and trigger download
+    const url = window.URL.createObjectURL(file.file);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = file.fileName;
+    document.body.appendChild(a);
+    a.click();
+    window.URL.revokeObjectURL(url);
+    document.body.removeChild(a);
+
+    // TODO: Implement actual file download from server
+    // this.clientRequestApiStore.downloadFile({ fileId: file.id });
+  }
+
+  deleteClientRequestFile(fileId: string): void {
+    if (confirm('Are you sure you want to delete this file?')) {
+      const currentFiles = this.uploadedClientRequestFiles();
+      const updatedFiles = currentFiles.filter(f => f.id !== fileId);
+      this.uploadedClientRequestFiles.set(updatedFiles);
+
+      // TODO: Implement actual file deletion from server
+      // this.clientRequestApiStore.deleteFile({ fileId });
+    }
+  }
+
+  downloadRequestTemplate(): void {
+    // TODO: Optionally fetch template from server if backend provides a specific format
+    this.clientRequestApi.downloadRequestTemplate().subscribe({
+      next: (blob: Blob) => {
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'client_requests_template.xlsx';
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(url);
+        document.body.removeChild(a);
+      },
+      error: (err) => {
+        console.error('Error downloading template:', err);
+      }
+    });
   }
 
   override organisationDetailsEdit(): void {

@@ -14,12 +14,17 @@ import bw.co.centralkyc.document.DocumentDTO;
 import bw.co.centralkyc.settings.SettingsDTO;
 import bw.co.centralkyc.settings.SettingsService;
 
+import java.io.InputStream;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.core.io.Resource;
 import org.springframework.data.domain.Page;
-import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -219,9 +224,9 @@ public class ClientRequestApiImpl extends ClientRequestApiBase {
     }
 
     @Override
-    public ResponseEntity<Page<ClientRequestDTO>> handleUploadRequests(MultipartFile file) throws Exception {
+    public ResponseEntity<Page<ClientRequestDTO>> handleUploadRequests(MultipartFile file, String organisationId) throws Exception {
 
-        try {
+        try(InputStream inputStream = file.getInputStream()) {
 
             SettingsDTO settings = settingsService.getAll().stream().findFirst()
                     .orElseThrow(() -> new Exception("Settings not found"));
@@ -234,7 +239,56 @@ public class ClientRequestApiImpl extends ClientRequestApiBase {
                             file)
                     .getBody();
 
-            return ResponseEntity.ok(null);
+            return ResponseEntity.ok(clientRequestService.uploadRequests(inputStream, doc.getCreatedBy(), organisationId, doc));
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw e;
+        }
+    }
+
+        @Override
+    public ResponseEntity<InputStreamResource> handleDownloadRequestTemplate() throws Exception {
+        
+        try {
+            // Read the individual template file from resources
+            Resource resource = new ClassPathResource("templates/client-request-template.xlsx");
+            
+            if (!resource.exists()) {
+                // Try CSV template as fallback
+                resource = new ClassPathResource("templates/client-request-template.csv");
+            }
+            
+            if (!resource.exists()) {
+                throw new Exception("Template file not found in resources/templates directory");
+            }
+            
+            InputStream inputStream = resource.getInputStream();
+            InputStreamResource inputStreamResource = new InputStreamResource(inputStream);
+            
+            // Determine content type based on file extension
+            String filename = resource.getFilename();
+            MediaType mediaType = MediaType.APPLICATION_OCTET_STREAM;
+            if (filename != null) {
+                if (filename.endsWith(".xlsx")) {
+                    mediaType = MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+                } else if (filename.endsWith(".xls")) {
+                    mediaType = MediaType.parseMediaType("application/vnd.ms-excel");
+                } else if (filename.endsWith(".csv")) {
+                    mediaType = MediaType.parseMediaType("text/csv");
+                }
+            }
+            
+            // Set headers for file download
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(mediaType);
+            headers.setContentDispositionFormData("attachment", filename);
+            headers.setCacheControl("must-revalidate, post-check=0, pre-check=0");
+            
+            return ResponseEntity.ok()
+                    .headers(headers)
+                    .contentLength(resource.contentLength())
+                    .body(inputStreamResource);
+                    
         } catch (Exception e) {
             e.printStackTrace();
             throw e;
