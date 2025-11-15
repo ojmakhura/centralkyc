@@ -336,7 +336,11 @@
                       </button>
                     </div>
                     <div class="secondary-actions">
-                      <button mat-icon-button matTooltip="{{ 'refresh' | translate }}" (click)="refreshClientRequests()">
+                      <button
+                        mat-icon-button
+                        matTooltip="{{ 'refresh' | translate }}"
+                        (click)="refreshClientRequests()"
+                      >
                         <mat-icon>refresh</mat-icon>
                       </button>
                     </div>
@@ -345,10 +349,7 @@
 
                 @if (isUploadingClientRequestFile()) {
                   <div class="field-row">
-                    <mat-progress-bar
-                      mode="determinate"
-                      [value]="clientRequestFileUploadProgress()"
-                    ></mat-progress-bar>
+                    <mat-progress-bar mode="determinate" [value]="clientRequestFileUploadProgress()"></mat-progress-bar>
                   </div>
                 }
 
@@ -360,13 +361,13 @@
                 } @else if (clientRequests() && clientRequests().numberOfElements) {
                   <app-table
                     #clientRequestsTable
-                    [showActions]="true"
                     [dataColumns]="clientRequestsTableColumns"
+                    [showActions]="showClientRequestsActions"
+                    [paged]="clientRequestsTablePaged"
                     [actions]="clientRequestsTableColumnsActions"
-                    (actionClicked)="clientRequestsTableActionClicked($event)"
-                    [dataSignal]="clientRequests"
-                    [paged]="clientsTablePaged"
-                  ></app-table>
+                    [dataSignal]="clientRequests">
+                  </app-table>
+
                 } @else {
                   <div class="empty-state">
                     <div class="empty-state-content">

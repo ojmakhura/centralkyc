@@ -479,10 +479,10 @@ export const ClientRequestApiStore = signalStore(
           );
         }),
       ),
-      uploadRequests: rxMethod<{ file: File | any }>(
+      uploadRequests: rxMethod<{ file: File | any; organisationId: string }>(
         switchMap((data: any) => {
           patchState(store, { loading: true, loaderMessage: 'Loading ...' });
-          return clientRequestApi.uploadRequests(data.file).pipe(
+          return clientRequestApi.uploadRequests(data.file, data.organisationId).pipe(
             tapResponse({
               next: (response: Page<ClientRequestDTO> | any) => {
                 patchState(store, {

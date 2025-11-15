@@ -104,11 +104,14 @@ export class ClientRequestApi {
     return this.http.post<ClientRequestDTO[] | any[]>(`${this.path}/search`, criteria);
   }
 
-  public uploadRequests(file: File | any): Observable<Page<ClientRequestDTO> | any> {
+  public uploadRequests(file: File | any, organisationId: string): Observable<Page<ClientRequestDTO> | any> {
     const formData: FormData = new FormData();
     formData.append('file', file);
 
-    return this.http.post<Page<ClientRequestDTO> | any>(`${this.path}/upload`, formData);
+    return this.http.post<Page<ClientRequestDTO> | any>(
+      `${this.path}/upload?organisationId=${organisationId}`,
+      formData,
+    );
   }
 
   downloadRequestTemplate(): Observable<Blob | any> {
