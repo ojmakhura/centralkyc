@@ -18,7 +18,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 
 import bw.co.centralkyc.AuditTracker;
 import bw.co.centralkyc.PropertySearchOrder;
-import bw.co.centralkyc.RestApiResponse;
 import bw.co.centralkyc.SearchObject;
 
 @org.springframework.web.bind.annotation.RestController

@@ -114,35 +114,42 @@ public class OrganisationServiceImpl
 
     private Specification<Organisation> createSpecification(OrganisationSearchCriteria criteria) {
 
-        Specification<Organisation> spec = Specification.unrestricted();
+        Specification<Organisation> spec = null;
 
         if(criteria == null) {
             return spec;
         }
 
         if(StringUtils.isNotBlank(criteria.getId())) {
-            spec = spec.and((root, query, builder) ->
+
+            Specification<Organisation>  tmp = ((root, query, builder) ->
                 builder.equal(root.get("id"), criteria.getId()));
+            spec = spec == null ? tmp : spec.and(tmp);
+
         }
 
         if (StringUtils.isNotBlank(criteria.getName())) {
-            spec = spec.and((root, query, builder) ->
+            Specification<Organisation>  tmp = ((root, query, builder) ->
                 builder.like(builder.upper(root.get("name")), "%" + criteria.getName().toUpperCase() + "%"));
+            spec = spec == null ? tmp : spec.and(tmp);
         }
 
         if (StringUtils.isNotBlank(criteria.getRegistrationNo())) {
-            spec = spec.and((root, query, builder) ->
+            Specification<Organisation>  tmp = ((root, query, builder) ->
                 builder.equal(root.get("registrationNo"), criteria.getRegistrationNo()));
+            spec = spec == null ? tmp : spec.and(tmp);
         }
 
         if(StringUtils.isNotBlank(criteria.getContactEmailAddress())) {
-            spec = spec.and((root, query, builder) ->
+            Specification<Organisation>  tmp = ((root, query, builder) ->
                 builder.like(builder.upper(root.get("contactEmailAddress")), "%" + criteria.getContactEmailAddress().toUpperCase() + "%"));
+            spec = spec == null ? tmp : spec.and(tmp);
         }
 
         if(criteria.getStatus() != null) {
-            spec = spec.and((root, query, builder) ->
+            Specification<Organisation>  tmp = ((root, query, builder) ->
                 builder.equal(root.get("status"), criteria.getStatus()));
+            spec = spec == null ? tmp : spec.and(tmp);
         }
 
         return spec;

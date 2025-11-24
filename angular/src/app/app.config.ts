@@ -1,118 +1,75 @@
-import { ApplicationConfig, isDevMode, importProvidersFrom, inject, provideAppInitializer } from '@angular/core';
-import { RouteReuseStrategy, provideRouter, withHashLocation } from '@angular/router';
+import { ApplicationConfig, importProvidersFrom } from '@angular/core';
+import { provideRouter, RouteReuseStrategy } from '@angular/router';
 
 import { routes } from './app.routes';
-import { TranslateModule } from '@ngx-translate/core';
-import { StoreDevtoolsModule, provideStoreDevtools } from '@ngrx/store-devtools';
-import { ServiceWorkerModule } from '@angular/service-worker';
-import { environment } from '@env/environment';
-import { UseCaseScope } from './utils/use-case-scope';
-import { withInterceptors, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
-import { RouteReusableStrategy } from './@shared';
+import { provideAnimations } from '@angular/platform-browser/animations';
+import { provideHttpClient, withFetch, withInterceptors, withInterceptorsFromDi, HttpClient } from '@angular/common/http';
+import { CUSTOM_DATE_FORMATS } from './@shared/custom-date-formats';
+import { MAT_DATE_FORMATS } from '@angular/material/core';
+import { RouteReusableStrategy } from './@core/route-reusable-strategy';
 import { MAT_FORM_FIELD_DEFAULT_OPTIONS } from '@angular/material/form-field';
 import { apiPrefixInterceptor } from './@core/http/api-prefix.interceptor';
 import { errorHandlerInterceptor } from './@core/http/error-handler.interceptor';
+import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
+import { Observable, of } from 'rxjs';
+import { catchError } from 'rxjs/operators';
 import { provideToastr } from 'ngx-toastr';
-import { AppEnvStore } from './store/app-env.state';
-import {
-  AutoRefreshTokenService,
-  createInterceptorCondition,
-  INCLUDE_BEARER_TOKEN_INTERCEPTOR_CONFIG,
-  IncludeBearerTokenCondition,
-  includeBearerTokenInterceptor,
-  provideKeycloak,
-  UserActivityService,
-  withAutoRefreshToken,
-} from 'keycloak-angular';
-import { provideAnimations } from '@angular/platform-browser/animations';
-import { DATE_PIPE_DEFAULT_OPTIONS } from '@angular/common';
-import { MAT_DATE_FORMATS, MAT_DATE_LOCALE, MatDateFormats } from '@angular/material/core';
 
-export const provideKeycloakAndInterceptor = (env: any) => {
-  const urlConditions = [
-    createInterceptorCondition<IncludeBearerTokenCondition>({
-      // eslint-disable-next-line no-useless-escape
-      urlPattern: new RegExp(`^${env.apiUrl}(\/.*)?$`, 'i'),
-      bearerPrefix: 'Bearer',
-    }),
-    createInterceptorCondition<IncludeBearerTokenCondition>({
-      // eslint-disable-next-line no-useless-escape
-      urlPattern: new RegExp(`^${env.authDomain}(\/.*)?$`, 'i'),
-      bearerPrefix: 'Bearer',
-    }),
-    // you can add more interceptors in this array...
-  ];
+export class CustomTranslateLoader implements TranslateLoader {
+  constructor(private http: HttpClient) {}
 
-  // in our case, we put the identity configuration in the environment files
-  // const { identityServerUrl, clientId, realm } = environment.auth;
-
-  return [
-    provideKeycloak({
-      config: {
-        url: env.authDomain,
-        realm: env.realm,
-        clientId: env.clientId,
-      },
-      initOptions: {
-        onLoad: 'check-sso',
-        checkLoginIframe: true,
-      },
-      features: [
-        withAutoRefreshToken({
-          sessionTimeout: 300000,
-          onInactivityTimeout: 'logout',
-        }),
-      ],
-      providers: [AutoRefreshTokenService, UserActivityService],
-    }),
-    { provide: INCLUDE_BEARER_TOKEN_INTERCEPTOR_CONFIG, useValue: urlConditions },
-  ];
-};
-
-export function initFactory() {
-  const envStore = inject(AppEnvStore);
-
-  return async () => { };
+  getTranslation(lang: string): Observable<any> {
+    return this.http.get(`/i18n/${lang}.json`).pipe(
+      catchError(() => of({}))
+    );
+  }
 }
 
-export const MY_DATE_FORMATS: MatDateFormats = {
-  parse: {
-    dateInput: 'DD/MM/YYYY', // how the input string is parsed
-  },
-  display: {
-    dateInput: 'DD/MM/YYYY', // how it appears in the input
-    monthYearLabel: 'MMM YYYY', // month-year label in calendar
-    dateA11yLabel: 'LL', // accessibility label
-    monthYearA11yLabel: 'MMMM YYYY', // accessibility label for month/year
-  },
-};
+export function HttpLoaderFactory(http: HttpClient) {
+  return new CustomTranslateLoader(http);
+}
 
 export const appConfig = (env: any) => {
   return {
     providers: [
-      UseCaseScope,
-      provideRouter(routes, withHashLocation()),
-      provideKeycloakAndInterceptor(env),
+      provideRouter(routes),
       provideAnimations(),
       provideHttpClient(
+        withFetch(),
         withInterceptorsFromDi(),
-        withInterceptors([apiPrefixInterceptor, errorHandlerInterceptor, includeBearerTokenInterceptor]),
+        withInterceptors([
+          apiPrefixInterceptor, 
+          errorHandlerInterceptor, 
+        ]),
       ),
-      provideStoreDevtools({ maxAge: 25, logOnly: !isDevMode() }),
-      provideToastr(),
+      provideToastr({
+        timeOut: 3000,
+        positionClass: 'toast-top-right',
+        preventDuplicates: true,
+        progressBar: true,
+        closeButton: true,
+        newestOnTop: true,
+        enableHtml: true,
+        tapToDismiss: true,
+        maxOpened: 5,
+        autoDismiss: true
+      }),
       importProvidersFrom(
-        StoreDevtoolsModule.instrument({}),
-        TranslateModule.forRoot(),
-        ServiceWorkerModule.register('./ngsw-worker.js', { enabled: environment.production }),
+        TranslateModule.forRoot({
+          defaultLanguage: 'en',
+          loader: {
+            provide: TranslateLoader,
+            useFactory: HttpLoaderFactory,
+            deps: [HttpClient]
+          }
+        }),
       ),
       { provide: MAT_FORM_FIELD_DEFAULT_OPTIONS, useValue: { appearance: 'outline' } },
-      { provide: MAT_DATE_FORMATS, useValue: MY_DATE_FORMATS },
-      { provide: MAT_DATE_LOCALE, useValue: 'en-GB' },
       {
         provide: RouteReuseStrategy,
         useClass: RouteReusableStrategy,
       },
-      provideAppInitializer(() => initFactory()()),
+      { provide: MAT_DATE_FORMATS, useValue: CUSTOM_DATE_FORMATS },
     ],
   } as ApplicationConfig;
 };

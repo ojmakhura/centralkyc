@@ -18,7 +18,6 @@ import org.springframework.http.HttpStatus;
 
 import bw.co.centralkyc.AuditTracker;
 import bw.co.centralkyc.PropertySearchOrder;
-import bw.co.centralkyc.RestApiResponse;
 import bw.co.centralkyc.SearchObject;
 import bw.co.centralkyc.keycloak.KeycloakUserService;
 import bw.co.centralkyc.organisation.OrganisationListDTO;

@@ -16,7 +16,6 @@ import java.util.Optional;
 import java.util.Set;
 
 import org.springframework.http.HttpStatus;
-import bw.co.centralkyc.RestApiResponse;
 import bw.co.centralkyc.keycloak.KeycloakUserService;
 
 @RestController

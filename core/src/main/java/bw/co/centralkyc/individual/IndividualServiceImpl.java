@@ -103,40 +103,45 @@ public class IndividualServiceImpl
 
     private Specification<Individual> createSpecification(IndividualSearchCriteria criteria) {
 
-        Specification<Individual> spec = Specification.unrestricted();
+        Specification<Individual> spec = null;
 
         if(StringUtils.isNotBlank(criteria.getEmailAddress())) {
 
-            spec = spec.and((root, query, builder) ->
+            Specification<Individual>  tmp = ((root, query, builder) ->
                     builder.equal(builder.lower(root.get("email")), criteria.getEmailAddress().toLowerCase()));
+            spec = spec == null ? tmp : spec.and(tmp);
 
         }
 
         if(StringUtils.isNotBlank(criteria.getFirstName())) {
 
-            spec = spec.and((root, query, builder) ->
+            Specification<Individual>  tmp = ((root, query, builder) ->
                     builder.equal(builder.lower(root.get("firstName")), criteria.getFirstName().toLowerCase()));
+            spec = spec == null ? tmp : spec.and(tmp);
 
         }
 
         if(StringUtils.isNotBlank(criteria.getSurname())) {
 
-            spec = spec.and((root, query, builder) ->
+            Specification<Individual>  tmp = ((root, query, builder) ->
                     builder.equal(builder.lower(root.get("surname")), criteria.getSurname().toLowerCase()));
+            spec = spec == null ? tmp : spec.and(tmp);
 
         }
 
         if(StringUtils.isNotBlank(criteria.getMiddleName())) {
 
-            spec = spec.and((root, query, builder) ->
+            Specification<Individual>  tmp = ((root, query, builder) ->
                     builder.equal(builder.lower(root.get("middleName")), criteria.getMiddleName().toLowerCase()));
+            spec = spec == null ? tmp : spec.and(tmp);
 
         }
 
         if(StringUtils.isNotBlank(criteria.getIdentityNo())) {
 
-            spec = spec.and((root, query, builder) ->
+            Specification<Individual>  tmp = ((root, query, builder) ->
                     builder.equal(builder.lower(root.get("identityNo")), criteria.getIdentityNo().toLowerCase()));
+            spec = spec == null ? tmp : spec.and(tmp);
 
         }
 

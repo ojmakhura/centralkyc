@@ -6,7 +6,6 @@
 package bw.co.centralkyc.settings;
 
 import bw.co.centralkyc.AuditTracker;
-import bw.co.centralkyc.RestApiResponse;
 import bw.co.centralkyc.TargetEntity;
 import bw.co.centralkyc.document.DocumentApi;
 import bw.co.centralkyc.document.DocumentDTO;

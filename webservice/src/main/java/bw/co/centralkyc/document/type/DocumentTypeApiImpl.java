@@ -15,7 +15,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 import bw.co.centralkyc.AuditTracker;
-import bw.co.centralkyc.RestApiResponse;
 
 @org.springframework.web.bind.annotation.RestController
 public class DocumentTypeApiImpl extends DocumentTypeApiBase {

@@ -6,53 +6,69 @@
  * MODEL CLASS:  $validationName
  */
 import { Routes } from '@angular/router';
-import { Shell } from '@app/shell/shell.service';
-// import { LoginComponent } from './auth/login.component';
+import { Shell } from '@app/shell/shell';
+import { UseCaseScope } from './utils/use-case-scope';
 
 export const routes: Routes = [
-  // Uncomment the following lines to enable login route
-  //{
-  //  path: 'login',
-  //  component: LoginComponent,
-  //},
   Shell.childRoutes([
     {
       path: '',
       data: { title: 'Home' },
-      loadChildren: () => import('./home/home.routes').then((m) => m.routes),
+      loadComponent: () => import('./views/home/home').then((c) => c.Home),
     },
     {
       path: 'about',
       data: { title: 'About' },
-      loadChildren: () => import('./about/about.routes').then((m) => m.routes),
+      loadComponent: () => import('./views/about/about').then((c) => c.About),
     },
     {
       path: 'organisation', 
-      loadChildren: () => import('@app/view/organisation/organisation.routes').then((m) => m.routes),
+      loadChildren: () => import('@views/organisation/organisation.routes').then((m) => m.routes),
+      providers: [
+        UseCaseScope
+      ]
     },
     {
       path: 'settings', 
-      loadChildren: () => import('@app/view/settings/settings.routes').then((m) => m.routes),
+      loadChildren: () => import('@views/settings/settings.routes').then((m) => m.routes),
+      providers: [
+        UseCaseScope
+      ]
     },
     {
       path: 'document/type', 
-      loadChildren: () => import('@app/view/document/type/document-type.routes').then((m) => m.routes),
+      loadChildren: () => import('@views/document/type/document-type.routes').then((m) => m.routes),
+      providers: [
+        UseCaseScope
+      ]
     },
     {
       path: 'individual', 
-      loadChildren: () => import('@app/view/individual/individual.routes').then((m) => m.routes),
+      loadChildren: () => import('@views/individual/individual.routes').then((m) => m.routes),
+      providers: [
+        UseCaseScope
+      ]
     },
     {
       path: 'user', 
-      loadChildren: () => import('@app/view/user/user.routes').then((m) => m.routes),
+      loadChildren: () => import('@views/user/user.routes').then((m) => m.routes),
+      providers: [
+        UseCaseScope
+      ]
     },
     {
       path: 'subscription', 
-      loadChildren: () => import('@app/view/subscription/subcription.routes').then((m) => m.routes),
+      loadChildren: () => import('@views/subscription/subcription.routes').then((m) => m.routes),
+      providers: [
+        UseCaseScope
+      ]
     },
     {
       path: 'invoice', 
-      loadChildren: () => import('@app/view/invoice/invoice.routes').then((m) => m.routes),
+      loadChildren: () => import('@views/invoice/invoice.routes').then((m) => m.routes),
+      providers: [
+        UseCaseScope
+      ]
     },
   ]),
   // Fallback when no prior route is matched

@@ -28,7 +28,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 
 import bw.co.centralkyc.AuditTracker;
-import bw.co.centralkyc.RestApiResponse;
 import bw.co.centralkyc.TargetEntity;
 import bw.co.centralkyc.minio.MinioService;
 

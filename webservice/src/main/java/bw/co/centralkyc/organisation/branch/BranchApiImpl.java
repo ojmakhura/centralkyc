@@ -17,7 +17,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 
 import bw.co.centralkyc.AuditTracker;
-import bw.co.centralkyc.RestApiResponse;
 
 @RestController
 public class BranchApiImpl extends BranchApiBase {
