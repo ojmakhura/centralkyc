@@ -288,8 +288,8 @@
                       <div class="kyc-record-card modern-record-card">
                         <div class="record-header">
                           <div class="record-icon">
-                            <mat-icon
-                              [class]="kycRecord.kycStatus === 'APPROVED' ? 'status-approved' : 'status-pending'">
+                            <!-- <mat-icon
+                              [class]="kycRecord.kycStatus === kycStatus.APPROVED ? 'status-approved' : 'status-pending'">
                               @if (kycRecord.kycStatus === 'APPROVED') {
                               check_circle
                               } @else if (kycRecord.kycStatus === 'PENDING') {
@@ -299,7 +299,7 @@
                               } @else {
                               help
                               }
-                            </mat-icon>
+                            </mat-icon> -->
                           </div>
                           <div class="record-info">
                             <h4 class="record-title">{{ kycRecord.name || 'KYC Record' }}</h4>
@@ -307,7 +307,7 @@
                               individual()?.identityNo }}</p>
                           </div>
                           <div class="record-status">
-                            <span class="status-badge" [class.approved]="kycRecord.kycStatus === 'APPROVED'"
+                            <!-- <span class="status-badge" [class.approved]="kycRecord.kycStatus === 'APPROVED'"
                               [class.pending]="kycRecord.kycStatus === 'PENDING'"
                               [class.rejected]="kycRecord.kycStatus === 'REJECTED'">
                               @if (kycRecord.kycStatus === 'APPROVED') {
@@ -319,7 +319,7 @@
                               } @else {
                               {{ 'unknown' | translate }}
                               }
-                            </span>
+                            </span> -->
                           </div>
                         </div>
 
@@ -353,7 +353,7 @@
                               <label class="detail-label">{{ 'status' | translate }}</label>
                               <div class="detail-value">
                                 <mat-icon class="detail-icon">info</mat-icon>
-                                @if (kycRecord.kycStatus === 'APPROVED') {
+                                <!-- @if (kycRecord.kycStatus === 'APPROVED') {
                                 {{ 'approved' | translate }}
                                 } @else if (kycRecord.kycStatus === 'PENDING') {
                                 {{ 'pending' | translate }}
@@ -361,7 +361,7 @@
                                 {{ 'rejected' | translate }}
                                 } @else {
                                 {{ 'unknown' | translate }}
-                                }
+                                } -->
                               </div>
                             </div>
 
@@ -383,14 +383,14 @@
                               <div class="kyc-document-item">
                                 <div class="document-preview">
                                   <mat-icon class="document-type-icon">
-                                    @if (document.fileName?.toLowerCase().includes('.pdf')) {
+                                    @if ((document.fileName || '').toLowerCase().includes('.pdf')) {
                                     picture_as_pdf
-                                    } @else if (document.fileName?.toLowerCase().includes('.jpg') ||
-                                    document.fileName?.toLowerCase().includes('.jpeg') ||
-                                    document.fileName?.toLowerCase().includes('.png')) {
+                                    } @else if ((document.fileName || '').toLowerCase().includes('.jpg') ||
+                                    (document.fileName || '').toLowerCase().includes('.jpeg') ||
+                                    (document.fileName || '').toLowerCase().includes('.png')) {
                                     image
-                                    } @else if (document.fileName?.toLowerCase().includes('.doc') ||
-                                    document.fileName?.toLowerCase().includes('.docx')) {
+                                    } @else if ((document.fileName || '').toLowerCase().includes('.doc') ||
+                                    (document.fileName || '').toLowerCase().includes('.docx')) {
                                     description
                                     } @else {
                                     insert_drive_file
@@ -401,9 +401,9 @@
                                     <div class="document-meta">
                                       <span class="document-size">{{ formatFileSize(document.metadata?.fileSize || 0)
                                         }}</span>
-                                      @if (document.uploadDate) {
+                                      <!-- @if (document.) {
                                       <span class="document-date">{{ document.uploadDate | date:'MMM dd, yyyy' }}</span>
-                                      }
+                                      } -->
                                     </div>
                                   </div>
                                 </div>
@@ -459,12 +459,12 @@
                               <mat-icon>delete</mat-icon>
                               {{ 'delete' | translate }}
                             </button>
-                            @if (kycRecord.kycStatus !== 'APPROVED') {
+                            <!-- @if (kycRecord.kycStatus !== 'APPROVED') {
                             <button mat-raised-button color="primary" class="action-button primary">
                               <mat-icon>check_circle</mat-icon>
                               {{ 'submit.for.approval' | translate }}
                             </button>
-                            }
+                            } -->
                           </div>
                         </div>
                       </div>
@@ -518,15 +518,15 @@
                           <div class="record-icon">
                             <mat-icon>business</mat-icon>
                           </div>
-                          <div class="record-info">
+                          <!-- <div class="record-info">
                             <h4 class="record-title">{{ employment.companyName || 'Unknown Company' }}</h4>
                             <p class="record-subtitle">{{ employment.position || 'Position not specified' }}</p>
-                          </div>
-                          <div class="record-status">
+                          </div> -->
+                          <!-- <div class="record-status">
                             <span class="status-badge" [class.current]="employment.isCurrent">
                               {{ employment.isCurrent ? ('current' | translate) : ('previous' | translate) }}
                             </span>
-                          </div>
+                          </div> -->
                         </div>
 
                         <div class="record-details">
@@ -535,11 +535,11 @@
                               <label class="detail-label">{{ 'start.date' | translate }}</label>
                               <div class="detail-value">
                                 <mat-icon class="detail-icon">event</mat-icon>
-                                @if (employment.startDate) {
+                                <!-- @if (employment.startDate) {
                                 {{ employment.startDate | date:'MMM yyyy' }}
                                 } @else {
                                 -
-                                }
+                                } -->
                               </div>
                             </div>
 
@@ -547,13 +547,13 @@
                               <label class="detail-label">{{ 'end.date' | translate }}</label>
                               <div class="detail-value">
                                 <mat-icon class="detail-icon">event</mat-icon>
-                                @if (employment.isCurrent) {
+                                <!-- @if (employment.isCurrent) {
                                 {{ 'present' | translate }}
                                 } @else if (employment.endDate) {
                                 {{ employment.endDate | date:'MMM yyyy' }}
                                 } @else {
                                 -
-                                }
+                                } -->
                               </div>
                             </div>
 
@@ -561,7 +561,7 @@
                               <label class="detail-label">{{ 'department' | translate }}</label>
                               <div class="detail-value">
                                 <mat-icon class="detail-icon">business_center</mat-icon>
-                                {{ employment.department || '-' }}
+                                <!-- {{ employment.department || '-' }} -->
                               </div>
                             </div>
 
@@ -569,15 +569,15 @@
                               <label class="detail-label">{{ 'salary' | translate }}</label>
                               <div class="detail-value">
                                 <mat-icon class="detail-icon">attach_money</mat-icon>
-                                @if (employment.salary) {
+                                <!-- @if (employment.salary) {
                                 {{ employment.salary | currency:'BWP':'symbol':'1.0-0' }}
                                 } @else {
                                 -
-                                }
+                                } -->
                               </div>
                             </div>
 
-                            @if (employment.contactPerson) {
+                            <!-- @if (employment.contactPerson) {
                             <div class="detail-item">
                               <label class="detail-label">{{ 'contact.person' | translate }}</label>
                               <div class="detail-value">
@@ -585,9 +585,9 @@
                                 {{ employment.contactPerson }}
                               </div>
                             </div>
-                            }
+                            } -->
 
-                            @if (employment.contactPhone) {
+                            <!-- @if (employment.contactPhone) {
                             <div class="detail-item">
                               <label class="detail-label">{{ 'contact.phone' | translate }}</label>
                               <div class="detail-value">
@@ -595,17 +595,17 @@
                                 {{ employment.contactPhone }}
                               </div>
                             </div>
-                            }
+                            } -->
                           </div>
 
-                          @if (employment.description) {
+                          <!-- @if (employment.description) {
                           <div class="employment-description">
                             <label class="detail-label">{{ 'job.description' | translate }}</label>
                             <div class="description-text">{{ employment.description }}</div>
                           </div>
-                          }
+                          } -->
 
-                          @if (employment.address) {
+                          <!-- @if (employment.address) {
                           <div class="employment-address">
                             <label class="detail-label">{{ 'company.address' | translate }}</label>
                             <div class="address-text">
@@ -613,7 +613,7 @@
                               {{ employment.address }}
                             </div>
                           </div>
-                          }
+                          } -->
                         </div>
                       </div>
                       }

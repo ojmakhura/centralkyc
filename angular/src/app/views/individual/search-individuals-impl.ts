@@ -34,10 +34,14 @@ export class SearchIndividualsImplComponent extends SearchIndividualsComponent {
         super();
     }
 
-    override beforeOnInit(form: SearchIndividualsVarsForm): SearchIndividualsVarsForm{     
+    override beforeOnInit(form: SearchIndividualsVarsForm): SearchIndividualsVarsForm{
         return form;
     }
 
     doNgOnDestroy(): void {
+    }
+
+    individualsTableActionClicked(event: any): void {
+
     }
 }
