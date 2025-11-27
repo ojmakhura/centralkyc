@@ -3,6 +3,7 @@ package bw.co.centralkyc.keycloak;
 import org.keycloak.admin.client.Keycloak;
 import org.keycloak.admin.client.KeycloakBuilder;
 import org.keycloak.admin.client.resource.ClientsResource;
+import org.keycloak.admin.client.resource.OrganizationsResource;
 import org.keycloak.admin.client.resource.RealmResource;
 import org.keycloak.admin.client.resource.RolesResource;
 import org.keycloak.admin.client.resource.UsersResource;
@@ -72,6 +73,11 @@ public class KeycloakService {
         }
 
         return null;
+    }
+
+    public OrganizationsResource getOrganizationsResource() {
+
+        return getKeycloak().realm(getRealm()).organizations();
     }
 
     public UsersResource getUsersResource() {

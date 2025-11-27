@@ -19,15 +19,16 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import bw.co.centralkyc.AuditTracker;
 import bw.co.centralkyc.PropertySearchOrder;
 import bw.co.centralkyc.SearchObject;
+import bw.co.centralkyc.keycloak.KeycloakOrganisationService;
 
 @org.springframework.web.bind.annotation.RestController
 public class OrganisationApiImpl extends OrganisationApiBase {
 
-    public OrganisationApiImpl(
-            OrganisationService organisationService) {
+    private final KeycloakOrganisationService orgService;
+    public OrganisationApiImpl(OrganisationService organisationService, KeycloakOrganisationService orgService) {
 
-        super(
-                organisationService);
+        super(organisationService);
+        this.orgService = orgService;
     }
 
     @Override
@@ -88,7 +89,6 @@ public class OrganisationApiImpl extends OrganisationApiBase {
             e.printStackTrace();
             throw e;
         }
-
     }
 
     @Override
@@ -97,7 +97,8 @@ public class OrganisationApiImpl extends OrganisationApiBase {
             
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             AuditTracker.auditTrail(organisation, authentication);
-            return ResponseEntity.ok(organisationService.save(organisation));
+
+            return ResponseEntity.ok(orgService.createOrganisation(organisation));
 
         } catch (Exception e) {
             e.printStackTrace();
