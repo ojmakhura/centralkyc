@@ -2,7 +2,6 @@ package bw.co.centralkyc.config;
 
 import java.time.format.DateTimeFormatter;
 
-import org.springframework.boot.autoconfigure.jackson.Jackson2ObjectMapperBuilderCustomizer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
@@ -16,7 +15,6 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalTimeSerializer;
-import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
 @Configuration
 public class SpringRestConfiguration {
 
@@ -25,23 +23,23 @@ public class SpringRestConfiguration {
         return new RestTemplate();
     }
     
-    @Bean
-    public Jackson2ObjectMapperBuilderCustomizer jsonCustomizer() {
+    // @Bean
+    // public Jackson2ObjectMapperBuilderCustomizer jsonCustomizer() {
         
-        return builder -> {
-            builder.simpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
-            builder.serializers(new LocalTimeSerializer(DateTimeFormatter.ofPattern("HH:mm:ss")));
-            builder.serializers(new LocalDateSerializer(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
-            builder.serializers(new LocalDateTimeSerializer(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss")));
-        };
-    }
+    //     return builder -> {
+    //         builder.simpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+    //         builder.serializers(new LocalTimeSerializer(DateTimeFormatter.ofPattern("HH:mm:ss")));
+    //         builder.serializers(new LocalDateSerializer(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
+    //         builder.serializers(new LocalDateTimeSerializer(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss")));
+    //     };
+    // }
     
     @Bean
     @Primary
     public ObjectMapper objectMapper() {
         
         return new ObjectMapper()
-                    .registerModule(new ParameterNamesModule())
+                    // .registerModule(new ParameterNamesModul)
                     .registerModule(new Jdk8Module())
                     .registerModule(new JavaTimeModule())
                     .setSerializationInclusion(JsonInclude.Include.NON_NULL)
