@@ -12,6 +12,7 @@ import {
     signal,
     Signal,
     OnDestroy,
+    linkedSignal,
 } from '@angular/core';
 import { 
     form,
@@ -119,7 +120,7 @@ export abstract class EditSettingsComponent implements OnInit, AfterViewInit, On
     selectedOrgDocumentControl = new FormControl();
 
     selectedOrgDocumentBackingList: DocumentTypeDTO[] = [];
-    selectedOrgDocumentFilteredList$: Observable<DocumentTypeDTO[] | any[]> = of([]);
+    selectedOrgDocumentFilteredList = linkedSignal<DocumentTypeDTO[]>(() => []);
     selectedOrgDocumentChipControl: FormControl = new FormControl([]);
 
     selectedOrgDocumentDisplays: string[] = [
@@ -146,36 +147,6 @@ export abstract class EditSettingsComponent implements OnInit, AfterViewInit, On
             'name',
             false,
         ),
-        new ColumnModel(
-            'description', 
-            'description',
-            false,
-        ),
-        new ColumnModel(
-            'id', 
-            'id',
-            false,
-        ),
-        new ColumnModel(
-            'createdBy', 
-            'created.by',
-            false,
-        ),
-        new ColumnModel(
-            'createdAt', 
-            'created.at',
-            false,
-        ),
-        new ColumnModel(
-            'modifiedBy', 
-            'modified.by',
-            false,
-        ),
-        new ColumnModel(
-            'modifiedAt', 
-            'modified.at',
-            false,
-        ),
     ];
 
     organisationDocumentsTableColumnsActions: ActionTemplate[] = [
@@ -194,7 +165,7 @@ export abstract class EditSettingsComponent implements OnInit, AfterViewInit, On
     selectedKycOrgDocumentControl = new FormControl();
 
     selectedKycOrgDocumentBackingList: DocumentTypeDTO[] = [];
-    selectedKycOrgDocumentFilteredList$: Observable<DocumentTypeDTO[] | any[]> = of([]);
+    selectedKycOrgDocumentFilteredList = linkedSignal<DocumentTypeDTO[]>(() => []);
     selectedKycOrgDocumentChipControl: FormControl = new FormControl([]);
 
     selectedKycOrgDocumentDisplays: string[] = [
@@ -216,36 +187,6 @@ export abstract class EditSettingsComponent implements OnInit, AfterViewInit, On
             'name',
             false,
         ),
-        new ColumnModel(
-            'description', 
-            'description',
-            false,
-        ),
-        new ColumnModel(
-            'id', 
-            'id',
-            false,
-        ),
-        new ColumnModel(
-            'createdBy', 
-            'created.by',
-            false,
-        ),
-        new ColumnModel(
-            'createdAt', 
-            'created.at',
-            false,
-        ),
-        new ColumnModel(
-            'modifiedBy', 
-            'modified.by',
-            false,
-        ),
-        new ColumnModel(
-            'modifiedAt', 
-            'modified.at',
-            false,
-        ),
     ];
 
     orgKycDocumentsTableColumnsActions: ActionTemplate[] = [
@@ -264,7 +205,7 @@ export abstract class EditSettingsComponent implements OnInit, AfterViewInit, On
     selectedIndDocumentControl = new FormControl();
 
     selectedIndDocumentBackingList: DocumentTypeDTO[] = [];
-    selectedIndDocumentFilteredList$: Observable<DocumentTypeDTO[] | any[]> = of([]);
+    selectedIndDocumentFilteredList = linkedSignal<DocumentTypeDTO[]>(() => []);
     selectedIndDocumentChipControl: FormControl = new FormControl([]);
 
     selectedIndDocumentDisplays: string[] = [
@@ -286,36 +227,6 @@ export abstract class EditSettingsComponent implements OnInit, AfterViewInit, On
             'name',
             false,
         ),
-        new ColumnModel(
-            'description', 
-            'description',
-            false,
-        ),
-        new ColumnModel(
-            'id', 
-            'id',
-            false,
-        ),
-        new ColumnModel(
-            'createdBy', 
-            'created.by',
-            false,
-        ),
-        new ColumnModel(
-            'createdAt', 
-            'created.at',
-            false,
-        ),
-        new ColumnModel(
-            'modifiedBy', 
-            'modified.by',
-            false,
-        ),
-        new ColumnModel(
-            'modifiedAt', 
-            'modified.at',
-            false,
-        ),
     ];
 
     individualDocumentsTableColumnsActions: ActionTemplate[] = [
@@ -334,7 +245,7 @@ export abstract class EditSettingsComponent implements OnInit, AfterViewInit, On
     
     selectedKycIndDocumentControl = new FormControl();
     selectedKycIndDocumentBackingList: DocumentTypeDTO[] = [];
-    selectedKycIndDocumentFilteredList$: Observable<DocumentTypeDTO[] | any[]> = of([]);
+    selectedKycIndDocumentFilteredList = linkedSignal<DocumentTypeDTO[]>(() => []);
     selectedKycIndDocumentChipControl: FormControl = new FormControl([]);
 
     selectedKycIndDocumentDisplays: string[] = [
@@ -356,36 +267,6 @@ export abstract class EditSettingsComponent implements OnInit, AfterViewInit, On
             'name',
             false,
         ),
-        new ColumnModel(
-            'description', 
-            'description',
-            false,
-        ),
-        new ColumnModel(
-            'id', 
-            'id',
-            false,
-        ),
-        new ColumnModel(
-            'createdBy', 
-            'created.by',
-            false,
-        ),
-        new ColumnModel(
-            'createdAt', 
-            'created.at',
-            false,
-        ),
-        new ColumnModel(
-            'modifiedBy', 
-            'modified.by',
-            false,
-        ),
-        new ColumnModel(
-            'modifiedAt', 
-            'modified.at',
-            false,
-        ),
     ];
 
     indKycDocumentsTableColumnsActions: ActionTemplate[] = [
@@ -402,7 +283,7 @@ export abstract class EditSettingsComponent implements OnInit, AfterViewInit, On
     filterInvoiceDocumentType() {}
 
     invoiceDocumentTypeBackingList: DocumentTypeDTO[] = [];
-    invoiceDocumentTypeFilteredList$: Observable<DocumentTypeDTO[] | any[]> = of([]);
+    invoiceDocumentTypeFilteredList = linkedSignal<DocumentTypeDTO[]>(() => []);
     invoiceDocumentTypeChipControl: FormControl = new FormControl([]);
 
     invoiceDocumentTypeDisplays: string[] = [
@@ -418,7 +299,7 @@ export abstract class EditSettingsComponent implements OnInit, AfterViewInit, On
     filterInvoiceTemplateType() {}
 
     invoiceTemplateTypeBackingList: DocumentTypeDTO[] = [];
-    invoiceTemplateTypeFilteredList$: Observable<DocumentTypeDTO[] | any[]> = of([]);
+    invoiceTemplateTypeFilteredList = linkedSignal<DocumentTypeDTO[]>(() => []);
     invoiceTemplateTypeChipControl: FormControl = new FormControl([]);
 
     invoiceTemplateTypeDisplays: string[] = [
@@ -434,7 +315,7 @@ export abstract class EditSettingsComponent implements OnInit, AfterViewInit, On
     filterQuotationDocumentType() {}
 
     quotationDocumentTypeBackingList: DocumentTypeDTO[] = [];
-    quotationDocumentTypeFilteredList$: Observable<DocumentTypeDTO[] | any[]> = of([]);
+    quotationDocumentTypeFilteredList = linkedSignal<DocumentTypeDTO[]>(() => []);
     quotationDocumentTypeChipControl: FormControl = new FormControl([]);
 
     quotationDocumentTypeDisplays: string[] = [
@@ -450,7 +331,7 @@ export abstract class EditSettingsComponent implements OnInit, AfterViewInit, On
     filterQuotationTemplateType() {}
 
     quotationTemplateTypeBackingList: DocumentTypeDTO[] = [];
-    quotationTemplateTypeFilteredList$: Observable<DocumentTypeDTO[] | any[]> = of([]);
+    quotationTemplateTypeFilteredList = linkedSignal<DocumentTypeDTO[]>(() => []);
     quotationTemplateTypeChipControl: FormControl = new FormControl([]);
 
     quotationTemplateTypeDisplays: string[] = [
@@ -466,7 +347,7 @@ export abstract class EditSettingsComponent implements OnInit, AfterViewInit, On
     filterClientRequestFileType() {}
 
     clientRequestFileTypeBackingList: DocumentTypeDTO[] = [];
-    clientRequestFileTypeFilteredList$: Observable<DocumentTypeDTO[] | any[]> = of([]);
+    clientRequestFileTypeFilteredList = linkedSignal<DocumentTypeDTO[]>(() => []);
     clientRequestFileTypeChipControl: FormControl = new FormControl([]);
 
     clientRequestFileTypeDisplays: string[] = [
@@ -476,11 +357,11 @@ export abstract class EditSettingsComponent implements OnInit, AfterViewInit, On
 
     TargetEntityT: any = TargetEntity;
     TargetEntityOptions = Object.keys(this.TargetEntityT);
-    loaderMessage: Signal<string> = signal('');
+    loaderMessage = linkedSignal(() => '');
     messages: Signal<any> = signal({});
-    success: Signal<boolean> = signal(false);
-    loading: Signal<boolean> = signal(false);
-    error: Signal<boolean> = signal(false);
+    success = linkedSignal(() => false);
+    loading= linkedSignal(() => false);
+    error = linkedSignal(() => false);
     selected: any = null;
 
     

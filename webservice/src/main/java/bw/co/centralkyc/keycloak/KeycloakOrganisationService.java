@@ -3,8 +3,11 @@ package bw.co.centralkyc.keycloak;
 import java.net.URI;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -14,6 +17,7 @@ import org.keycloak.admin.client.resource.OrganizationsResource;
 import org.keycloak.admin.client.resource.RealmResource;
 import org.keycloak.admin.client.resource.UserResource;
 import org.keycloak.admin.client.resource.UsersResource;
+import org.keycloak.representations.idm.OrganizationDomainRepresentation;
 import org.keycloak.representations.idm.OrganizationRepresentation;
 import org.keycloak.representations.idm.UserRepresentation;
 import org.springframework.data.domain.Page;
@@ -23,7 +27,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 
 import bw.co.centralkyc.GeneralStatus;
+import bw.co.centralkyc.organisation.OganisationDomain;
 import bw.co.centralkyc.organisation.OrganisationDTO;
+import bw.co.centralkyc.organisation.OrganisationDomain;
 import bw.co.centralkyc.organisation.OrganisationListDTO;
 import jakarta.ws.rs.WebApplicationException;
 import jakarta.ws.rs.core.Response;
@@ -55,12 +61,36 @@ public class KeycloakOrganisationService {
         Map<String, List<String>> attributes = new HashMap<>();
         attributes.put("registrationNo", List.of(organisation.getRegistrationNo()));
         attributes.put("status", List.of(organisation.getStatus().toString()));
-        attributes.put("physicalAddress", List.of(organisation.getPhysicalAddress()));
-        attributes.put("postalAddress", List.of(organisation.getPostalAddress()));
-        attributes.put("contactEmailAddress", List.of(organisation.getContactEmailAddress()));
 
-        attributes.put("createdBy", List.of(organisation.getCreatedBy()));
-        attributes.put("createdAt", List.of(formatter.format(organisation.getCreatedAt())));
+        if (organisation.getDomains() != null) {
+            for (OrganisationDomain dom : organisation.getDomains()) {
+
+                OrganizationDomainRepresentation od = new OrganizationDomainRepresentation(dom.getName());
+                od.setVerified(dom.getVerified());
+
+                rep.getDomains().add(od);
+            }
+        }
+
+        if (organisation.getPhysicalAddress() != null) {
+            attributes.put("physicalAddress", List.of(organisation.getPhysicalAddress()));
+        }
+
+        if (organisation.getPostalAddress() != null) {
+            attributes.put("postalAddress", List.of(organisation.getPostalAddress()));
+        }
+
+        if (organisation.getContactEmailAddress() != null) {
+            attributes.put("contactEmailAddress", List.of(organisation.getContactEmailAddress()));
+        }
+
+        if (organisation.getCreatedBy() != null) {
+            attributes.put("createdBy", List.of(organisation.getCreatedBy()));
+        }
+
+        if (organisation.getCreatedAt() != null) {
+            attributes.put("createdAt", List.of(formatter.format(organisation.getCreatedAt())));
+        }
 
         attributes.put("modifiedBy",
                 organisation.getModifiedBy() != null ? List.of(organisation.getModifiedBy()) : List.of());
@@ -138,6 +168,10 @@ public class KeycloakOrganisationService {
         org.setCreatedBy(attributes.get("createdBy").listIterator().hasNext()
                 ? attributes.get("createdBy").get(0)
                 : null);
+
+        org.setDomains(
+                rep.getDomains().stream().map(r -> new OrganisationDomain(r.getName(), r.isVerified()))
+                        .collect(Collectors.toSet()));
 
         return org;
     }
@@ -243,8 +277,7 @@ public class KeycloakOrganisationService {
         long count = orgsResource.count("");
 
         List<OrganisationListDTO> orgs = orgsReps.stream().map(
-            rep -> toOrganisationListDTO(rep)
-        ).toList();
+                rep -> toOrganisationListDTO(rep)).toList();
 
         return new PageImpl<>(orgs, PageRequest.of(pageNumber, pageSize), count);
 
@@ -255,7 +288,7 @@ public class KeycloakOrganisationService {
         OrganizationsResource orgsResource = keycloakService.getOrganizationsResource();
         OrganizationResource orgResource = orgsResource.get(id);
         Response res = orgResource.delete();
-        
+
         return res.getStatus() == HttpStatus.OK.value();
     }
 }

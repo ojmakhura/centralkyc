@@ -204,6 +204,31 @@
               } -->
             </mat-form-field>
           </div>
+          <!-- <div class="field-row">
+            <mat-form-field appearance="outline" class="field-full-width">
+              <mat-label>{{ 'domain' | translate }}</mat-label>
+              <input
+                matInput
+                type="text"
+                id="domain"
+                [field]="editOrganisationSignalForm.domains"
+                placeholder="{{ 'enter.domain' | translate }}"
+              />
+            </mat-form-field>
+          </div> -->
+          <div class="field-row">
+            <mat-form-field appearance="outline" class="field-full-width">
+              <mat-label>{{ 'contact.email.address' | translate }}</mat-label>
+              <input
+                matInput
+                type="text"
+                id="contactEmailAddress"
+                [field]="editOrganisationSignalForm.contactEmailAddress"
+                placeholder="{{ 'enter.email.address' | translate }}"
+              />
+              <mat-icon matSuffix>email</mat-icon>
+            </mat-form-field>
+          </div>
         </mat-card-content>
       </mat-card>
 

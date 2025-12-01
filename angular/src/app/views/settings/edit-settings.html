@@ -98,9 +98,9 @@
                     [noEntriesFoundLabel]="'No Entries Found'"></ngx-mat-select-search>
                   <button mat-flat-button color="primary" (click)="filterInvoiceDocumentType()">Search</button>
                 </mat-option>
-                <!-- @for (item of invoiceDocumentTypeFilteredList(); track item) {
+                @for (item of invoiceDocumentTypeFilteredList(); track item.id) {
                 <mat-option [value]="item">{{ item?.name }}</mat-option>
-                } -->
+                }
               </mat-select>
               <mat-icon matSuffix>category</mat-icon>
             </mat-form-field>
@@ -114,9 +114,9 @@
                     [noEntriesFoundLabel]="'No Entries Found'"></ngx-mat-select-search>
                   <button mat-flat-button color="primary" (click)="filterInvoiceTemplateType()">Search</button>
                 </mat-option>
-                <!-- @for (item of invoiceTemplateTypeFilteredList(); track item) {
+                @for (item of invoiceTemplateTypeFilteredList(); track item.id) {
                 <mat-option [value]="item">{{ item?.name }}</mat-option>
-                } -->
+                }
               </mat-select>
               <mat-icon matSuffix>description</mat-icon>
             </mat-form-field>
@@ -177,9 +177,9 @@
                     [noEntriesFoundLabel]="'No Entries Found'"></ngx-mat-select-search>
                   <button mat-flat-button color="primary" (click)="filterQuotationDocumentType()">Search</button>
                 </mat-option>
-                <!-- @for (item of quotationDocumentTypeFilteredList(); track item) {
+                @for (item of quotationDocumentTypeFilteredList(); track item.id) {
                 <mat-option [value]="item">{{ item?.name }}</mat-option>
-                } -->
+                }
               </mat-select>
               <mat-icon matSuffix>category</mat-icon>
             </mat-form-field>
@@ -193,9 +193,9 @@
                     [noEntriesFoundLabel]="'No Entries Found'"></ngx-mat-select-search>
                   <button mat-flat-button color="primary" (click)="filterQuotationTemplateType()">Search</button>
                 </mat-option>
-                <!-- @for (item of quotationTemplateTypeFilteredList(); track item) {
+                @for (item of quotationTemplateTypeFilteredList(); track item.id) {
                 <mat-option [value]="item">{{ item?.name }}</mat-option>
-                } -->
+                }
               </mat-select>
               <mat-icon matSuffix>description</mat-icon>
             </mat-form-field>
@@ -282,9 +282,9 @@
                         [noEntriesFoundLabel]="'No Entries Found'"></ngx-mat-select-search>
                       <button mat-flat-button color="primary" (click)="filterSelectedOrgDocument()">Search</button>
                     </mat-option>
-                    <!-- @for (item of selectedOrgDocumentFilteredList(); track item) {
-                    <mat-option [value]="item">{{ item[selectedOrgDocumentDisplays[0]] }}</mat-option>
-                    } -->
+                    @for (item of selectedOrgDocumentFilteredList(); track item.id) {
+                    <mat-option [value]="item">{{ item.name }}</mat-option>
+                    }
                   </mat-select>
                   <mat-icon matSuffix>description</mat-icon>
                 </mat-form-field>
@@ -323,9 +323,9 @@
                         [noEntriesFoundLabel]="'No Entries Found'"></ngx-mat-select-search>
                       <button mat-flat-button color="primary" (click)="filterSelectedKycOrgDocument()">Search</button>
                     </mat-option>
-                    <!-- @for (item of selectedKycOrgDocumentFilteredList(); track item) {
-                    <mat-option [value]="item">{{ item[selectedKycOrgDocumentDisplays[0]] }}</mat-option>
-                    } -->
+                    @for (item of selectedKycOrgDocumentFilteredList(); track item.id) {
+                    <mat-option [value]="item">{{ item.name }}</mat-option>
+                    }
                   </mat-select>
                   <mat-icon matSuffix>description</mat-icon>
                 </mat-form-field>
@@ -364,9 +364,9 @@
                         [noEntriesFoundLabel]="'No Entries Found'"></ngx-mat-select-search>
                       <button mat-flat-button color="primary" (click)="filterSelectedIndDocument()">Search</button>
                     </mat-option>
-                    <!-- @for (item of selectedIndDocumentFilteredList(); track item) {
-                    <mat-option [value]="item">{{ item[selectedIndDocumentDisplays[0]] }}</mat-option>
-                    } -->
+                    @for (item of selectedIndDocumentFilteredList(); track item.id) {
+                    <mat-option [value]="item">{{ item.name }}</mat-option>
+                    }
                   </mat-select>
                   <mat-icon matSuffix>description</mat-icon>
                 </mat-form-field>
@@ -405,9 +405,9 @@
                         [noEntriesFoundLabel]="'No Entries Found'"></ngx-mat-select-search>
                       <button mat-flat-button color="primary" (click)="filterSelectedKycIndDocument()">Search</button>
                     </mat-option>
-                    <!-- @for (item of selectedKycIndDocumentFilteredList(); track item) {
-                    <mat-option [value]="item">{{ item[selectedKycIndDocumentDisplays[0]] }}</mat-option>
-                    } -->
+                    @for (item of selectedKycIndDocumentFilteredList(); track item.id) {
+                    <mat-option [value]="item">{{ item.name }}</mat-option>
+                    }
                   </mat-select>
                   <mat-icon matSuffix>description</mat-icon>
                 </mat-form-field>

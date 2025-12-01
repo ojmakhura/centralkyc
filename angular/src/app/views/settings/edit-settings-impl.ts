@@ -37,7 +37,7 @@ import { TargetEntity } from '@app/models/bw/co/centralkyc/target-entity';
 export class EditSettingsImplComponent extends EditSettingsComponent {
   // settingApiStore = inject(SettingsApiStore);
   settingApi = inject(SettingsApi);
-  settingsSignal = linkedSignal(() => new SettingsDTO());
+  // settingsSignal = linkedSignal(() => new SettingsDTO());
   // documentTypeApiStore = inject(DocumentTypeApiStore);
   documentTypeApi = inject(DocumentTypeApi);
   documentApi = inject(DocumentApi);
@@ -58,14 +58,28 @@ export class EditSettingsImplComponent extends EditSettingsComponent {
     super();
 
     effect(() => {
-      this.settings = this.settingsSignal();
+      this.settings = this.editSettingsSignal();
       // this.editSettingsForm.patchValue(this.settings);
 
-      // this.invoiceDocumentTypeFilteredList.set([this.settings.invoiceDocumentType]);
-      // this.invoiceTemplateTypeFilteredList.set([this.settings.invoiceTemplateType]);
-      // this.quotationDocumentTypeFilteredList.set([this.settings.quotationDocumentType]);
-      // this.quotationTemplateTypeFilteredList.set([this.settings.quotationTemplateType]);
-      // this.clientRequestFileTypeFilteredList.set([this.settings.clientRequestFileType]);
+      if (this.settings.invoiceDocumentType && this.settings.invoiceDocumentType.id) {
+        this.invoiceDocumentTypeFilteredList.set([this.settings.invoiceDocumentType || null]);
+      }
+
+      if (this.settings.invoiceTemplateType && this.settings.invoiceTemplateType.id) {
+        this.invoiceTemplateTypeFilteredList.set([this.settings.invoiceTemplateType]);
+      }
+
+      if (this.settings.quotationDocumentType && this.settings.quotationDocumentType.id) {
+        this.quotationDocumentTypeFilteredList.set([this.settings.quotationDocumentType]);
+      }
+
+      if (this.settings.quotationTemplateType && this.settings.quotationTemplateType.id) {
+        this.quotationTemplateTypeFilteredList.set([this.settings.quotationTemplateType]);
+      }
+
+      if (this.settings.clientRequestFileType && this.settings.clientRequestFileType.id) {
+        this.clientRequestFileTypeFilteredList.set([this.settings.clientRequestFileType]);
+      }
     });
   }
 
@@ -88,10 +102,17 @@ export class EditSettingsImplComponent extends EditSettingsComponent {
 
     this.route.queryParams.subscribe((params: any) => {
       if (params.id) {
+        this.loading.set(true);
+        this.loaderMessage.set(`Loading settings`);
         this.settingApi.findById(params.id).subscribe({
           next: (settings: SettingsDTO) => {
-            this.settingsSignal.set(settings);
+            // this.settingsSignal.set(settings);
             this.updateSettingForm(settings);
+            this.loading.set(false);
+          },
+          error: (error) => {
+            this.toaster.error(error.error?.message ? error.error.message : error.message);
+            this.loading.set(false);
           },
         });
       }
@@ -152,122 +173,251 @@ export class EditSettingsImplComponent extends EditSettingsComponent {
   override beforeEditSettingsSave(form: any): void {
     let val: any = this.editSettingsSignal();
     let settings = this.getSettings(val);
+    this.loading.set(true);
+    this.loaderMessage.set(`Saving settings`);
     this.settingApi.save(settings).subscribe({
       next: (settings: SettingsDTO) => {
-        this.settingsSignal.set(settings);
+        // this.settingsSignal.set(settings);
         this.updateSettingForm(settings);
+        this.loading.set(false);
+      },
+      error: (error) => {
+        this.toaster.error(error.error?.message ? error.error.message : error.message);
+        this.loading.set(false);
       },
     });
   }
 
   override filterSelectedOrgDocument(): void {
     const search = this.selectedOrgDocumentFilterCtrl.value?.toLowerCase() || '';
-    // this.documentTypeApi.search(search).subscribe((data) => {
-    //   this.selectedOrgDocumentFilteredList.set(data || []);
-    // });
+    this.loading.set(true);
+    this.loaderMessage.set(`Searching document types.`);
+    this.documentTypeApi.search(search).subscribe(
+      (data) => {
+        this.selectedOrgDocumentFilteredList.set(data || []);
+        this.loading.set(false);
+      },
+      (error) => {
+        this.toaster.error(error.error?.message ? error.error.message : error.message);
+        this.loading.set(false);
+      }
+    );
   }
 
   override filterInvoiceDocumentType(): void {
     const search = this.invoiceDocumentTypeFilterCtrl.value?.toLowerCase() || '';
-    // this.documentTypeApi.search(search).subscribe((data) => {
-    //   this.invoiceDocumentTypeFilteredList.set(data || []);
-    // });
+    this.loading.set(true);
+    this.loaderMessage.set(`Searching document types.`);
+    this.documentTypeApi.search(search).subscribe(
+      (data) => {
+        this.invoiceDocumentTypeFilteredList.set(data || []);
+        this.loading.set(false);
+      },
+      (error) => {
+        this.toaster.error(error.error?.message ? error.error.message : error.message);
+        this.loading.set(false);
+      }
+    );
   }
 
   override filterClientRequestFileType(): void {
     const search = this.clientRequestFileTypeFilterCtrl.value?.toLowerCase() || '';
-    // this.documentTypeApi.search(search).subscribe((data) => {
-    //   this.clientRequestFileTypeFilteredList.set(data || []);
-    // });
+    this.loading.set(true);
+    this.loaderMessage.set(`Searching document types.`);
+    this.documentTypeApi.search(search).subscribe(
+      (data) => {
+        this.clientRequestFileTypeFilteredList.set(data || []);
+        this.loading.set(false);
+      },
+      (error) => {
+        this.toaster.error(error.error?.message ? error.error.message : error.message);
+        this.loading.set(false);
+      }
+    );
   }
 
   override filterInvoiceTemplateType(): void {
     const search = this.invoiceTemplateTypeFilterCtrl.value?.toLowerCase() || '';
-    // this.documentTypeApi.search(search).subscribe((data) => {
-    //   this.invoiceTemplateTypeFilteredList.set(data || []);
-    // });
+    this.loading.set(true);
+    this.loaderMessage.set(`Searching document types.`);
+    this.documentTypeApi.search(search).subscribe(
+      (data) => {
+        this.invoiceTemplateTypeFilteredList.set(data || []);
+        this.loading.set(false);
+      },
+      (error) => {
+        this.toaster.error(error.error?.message ? error.error.message : error.message);
+        this.loading.set(false);
+      }
+    );
   }
 
   override filterQuotationDocumentType(): void {
     const search = this.quotationDocumentTypeFilterCtrl.value?.toLowerCase() || '';
-    // this.documentTypeApi.search(search).subscribe((data) => {
-    //   this.quotationDocumentTypeFilteredList.set(data || []);
-    // });
+    this.loading.set(true);
+    this.loaderMessage.set(`Searching document types.`);
+    this.documentTypeApi.search(search).subscribe(
+      (data) => {
+        this.quotationDocumentTypeFilteredList.set(data || []);
+        this.loading.set(false);
+      },
+      (error) => {
+        this.toaster.error(error.error?.message ? error.error.message : error.message);
+        this.loading.set(false);
+      }
+    );
   }
 
   override filterQuotationTemplateType(): void {
     const search = this.quotationTemplateTypeFilterCtrl.value?.toLowerCase() || '';
-    // this.documentTypeApi.search(search).subscribe((data) => {
-    //   this.quotationTemplateTypeFilteredList.set(data || []);
-    // });
+    this.loading.set(true);
+    this.loaderMessage.set(`Searching document types.`);
+    this.documentTypeApi.search(search).subscribe(
+      (data) => {
+        this.quotationTemplateTypeFilteredList.set(data || []);
+        this.loading.set(false);
+      },
+      (error) => {
+        this.toaster.error(error.error?.message ? error.error.message : error.message);
+        this.loading.set(false);
+      }
+    );
   }
 
   override filterSelectedKycOrgDocument(): void {
     const search = this.selectedKycOrgDocumentFilterCtrl.value?.toLowerCase() || '';
-    // this.documentTypeApi.search(search).subscribe((data) => {
-    //   this.selectedKycOrgDocumentFilteredList.set(data || []);
-    // });
+    this.loading.set(true);
+    this.loaderMessage.set(`Searching document types.`);
+    this.documentTypeApi.search(search).subscribe(
+      (data) => {
+        this.selectedKycOrgDocumentFilteredList.set(data || []);
+        this.loading.set(false);
+      },
+      (error) => {
+        this.toaster.error(error.error?.message ? error.error.message : error.message);
+        this.loading.set(false);
+      }
+    );
   }
 
   override filterSelectedIndDocument(): void {
     const search = this.selectedIndDocumentFilterCtrl.value?.toLowerCase() || '';
-    // this.documentTypeApi.search(search).subscribe((data) => {
-    //   this.selectedIndDocumentFilteredList.set(data || []);
-    // });
+    this.loading.set(true);
+    this.loaderMessage.set(`Searching document types.`);
+    this.documentTypeApi.search(search).subscribe(
+      (data) => {
+        this.selectedIndDocumentFilteredList.set(data || []);
+        this.loading.set(false);
+      },
+      (error) => {
+        this.toaster.error(error.error?.message ? error.error.message : error.message);
+        this.loading.set(false);
+      }
+    );
   }
 
   override filterSelectedKycIndDocument(): void {
     const search = this.selectedKycIndDocumentFilterCtrl.value?.toLowerCase() || '';
-    // this.documentTypeApi.search(search).subscribe((data) => {
-    //   this.selectedKycIndDocumentFilteredList.set(data || []);
-    // });
+    this.loading.set(true);
+    this.loaderMessage.set(`Searching document types.`);
+    this.documentTypeApi.search(search).subscribe(
+      (data) => {
+        this.selectedKycIndDocumentFilteredList.set(data || []);
+        this.loading.set(false);
+      },
+      (error) => {
+        this.toaster.error(error.error?.message ? error.error.message : error.message);
+        this.loading.set(false);
+      }
+    );
   }
 
   override onAddToIndDocumentsClick() {
-    //   console.log(this.selectedIndDocumentControl.value);
-    //   let val: any = this.editSettingsForm.value;
-    //   let settings = this.getSettings(val);
-    //   let found = settings.individualDocuments?.find((d) => d.id === this.selectedIndDocumentControl.value.id);
-    //   if (!found) {
-    //     settings.individualDocuments?.push(this.selectedIndDocumentControl.value);
-    //   }
-    //   this.settingApiStore.save({ setttings: settings });
-    //   this.selectedIndDocumentControl.setValue(null);
-    // }
-    // override onAddToKycOrgDocumentsClick() {
-    //   console.log(this.selectedKycOrgDocumentControl.value);
-    //   let val: any = this.editSettingsForm.value;
-    //   let settings: SettingsDTO = this.getSettings(val);
-    //   let found = settings.orgKycDocuments?.find((d) => d.id === this.selectedKycOrgDocumentControl.value.id);
-    //   if (!found) {
-    //     settings.orgKycDocuments?.push(this.selectedKycOrgDocumentControl.value);
-    //   }
-    //   this.settingApiStore.save({ setttings: settings });
-    //   this.selectedKycOrgDocumentControl.setValue(null);
+    console.log(this.selectedIndDocumentControl.value);
+    let val: any = this.editSettingsSignal();
+    let settings = this.getSettings(val);
+    let found = settings.individualDocuments?.find(
+      (d) => d.id === this.selectedIndDocumentControl.value.id
+    );
+    if (!found) {
+      settings.individualDocuments?.push(this.selectedIndDocumentControl.value);
+    }
+    this.settingApi.save(settings).subscribe({
+      next: (settings: SettingsDTO) => {
+        this.updateSettingForm(settings);
+        this.loading.set(false);
+      },
+      error: (error) => {
+        this.toaster.error(error.error?.message ? error.error.message : error.message);
+        this.loading.set(false);
+      },
+    });
+    this.selectedIndDocumentControl.setValue(null);
+  }
+
+  override onAddToKycOrgDocumentsClick() {
+    console.log(this.selectedKycOrgDocumentControl.value);
+    let val: any = this.editSettingsSignal();
+    let settings: SettingsDTO = this.getSettings(val);
+    let found = settings.orgKycDocuments?.find(
+      (d) => d.id === this.selectedKycOrgDocumentControl.value.id
+    );
+    if (!found) {
+      settings.orgKycDocuments?.push(this.selectedKycOrgDocumentControl.value);
+    }
+    this.settingApi.save(settings).subscribe({
+      next: (settings: SettingsDTO) => {
+        this.updateSettingForm(settings);
+        this.loading.set(false);
+      },
+      error: (error) => {
+        this.toaster.error(error.error?.message ? error.error.message : error.message);
+        this.loading.set(false);
+      },
+    });
+    this.selectedKycOrgDocumentControl.setValue(null);
   }
 
   override onAddToOrgDocumentsClick() {
-    // console.log(this.selectedOrgDocumentControl.value);
-    // let val: any = this.editSettingsForm.value;
-    // let settings: SettingsDTO = this.getSettings(val);
-    // let found = settings.organisationDocuments?.find((d) => d.id === this.selectedOrgDocumentControl.value.id);
-    // if (!found) {
-    //   settings.organisationDocuments?.push(this.selectedOrgDocumentControl.value);
-    // }
-    // this.settingApiStore.save({ setttings: settings });
-    // this.selectedOrgDocumentControl.setValue(null);
+    console.log(this.selectedOrgDocumentControl.value);
+    let val: any = this.editSettingsSignal();
+    let settings: SettingsDTO = this.getSettings(val);
+    let found = settings.organisationDocuments?.find((d) => d.id === this.selectedOrgDocumentControl.value.id);
+    if (!found) {
+      settings.organisationDocuments?.push(this.selectedOrgDocumentControl.value);
+    }
+    this.settingApi.save(settings).subscribe({
+      next: (settings: SettingsDTO) => {
+        this.updateSettingForm(settings);
+        this.loading.set(false);
+      },
+      error: (error) => {
+        this.toaster.error(error.error?.message ? error.error.message : error.message);
+        this.loading.set(false);
+      },
+    });
+    this.selectedOrgDocumentControl.setValue(null);
   }
 
   override onAddToKycIndDocumentsClick() {
-    // console.log(this.selectedKycIndDocumentControl.value);
-    // let val: any = this.editSettingsForm.value;
-    // let settings: SettingsDTO = this.getSettings(val);
-    // let found = settings.indKycDocuments?.find((d) => d.id === this.selectedKycIndDocumentControl.value.id);
-    // if (!found) {
-    //   settings.indKycDocuments?.push(this.selectedKycIndDocumentControl.value);
-    // }
-    // this.settingApiStore.save({ setttings: settings });
-    // this.selectedKycIndDocumentControl.setValue(null);
+    console.log(this.selectedKycIndDocumentControl.value);
+    let val: any = this.editSettingsSignal();
+    let settings: SettingsDTO = this.getSettings(val);
+    let found = settings.indKycDocuments?.find((d) => d.id === this.selectedKycIndDocumentControl.value.id);
+    if (!found) {
+      settings.indKycDocuments?.push(this.selectedKycIndDocumentControl.value);
+    }
+    this.settingApi.save(settings).subscribe({
+      next: (settings: SettingsDTO) => {
+        this.updateSettingForm(settings);
+        this.loading.set(false);
+      },
+      error: (error) => {
+        this.toaster.error(error.error?.message ? error.error.message : error.message);
+        this.loading.set(false);
+      },
+    });
+    this.selectedKycIndDocumentControl.setValue(null);
   }
 
   attachInvoiceTemplate(): void {
@@ -302,14 +452,32 @@ export class EditSettingsImplComponent extends EditSettingsComponent {
     // TODO: Implement invoice template upload logic
     console.log('Invoice template upload:', file.name);
 
-    // this.settingApiStore.uploadTemplate({ template: file, target: TargetEntity.INVOICE });
+    this.settingApi.uploadTemplate(file, TargetEntity.INVOICE).subscribe({
+      next: (settings: SettingsDTO) => {
+        this.updateSettingForm(settings);
+        this.loading.set(false);
+      },
+      error: (error) => {
+        this.toaster.error(error.error?.message ? error.error.message : error.message);
+        this.loading.set(false);
+      },
+    });
   }
 
   private handleQuotationTemplateUpload(file: File): void {
     // TODO: Implement quotation template upload logic
     console.log('Quotation template upload:', file.name);
 
-    // this.settingApiStore.uploadTemplate({ template: file, target: TargetEntity.QUOTATION });
+    this.settingApi.uploadTemplate( file, TargetEntity.QUOTATION).subscribe({
+      next: (settings: SettingsDTO) => {
+        this.updateSettingForm(settings);
+        this.loading.set(false);
+      },
+      error: (error) => {
+        this.toaster.error(error.error?.message ? error.error.message : error.message);
+        this.loading.set(false);
+      },
+    });
   }
 
   downloadTemplate(target: TargetEntity): void {
@@ -317,15 +485,15 @@ export class EditSettingsImplComponent extends EditSettingsComponent {
     } else if (target === TargetEntity.QUOTATION) {
     }
 
-    // const docId =
-    //   target === TargetEntity.INVOICE
-    //     ? this.editSettingsForm.get('invoiceTemplate')?.value?.id
-    //     : this.editSettingsForm.get('quotationTemplate')?.value?.id;
+    const docId =
+      target === TargetEntity.INVOICE
+        ? this.editSettingsSignal().invoiceTemplate?.id
+        : this.editSettingsSignal().quotationTemplate?.id;
 
-    // if (!docId) {
-    //   this.toaster.error('No template document available for download', 'Download Error');
-    //   return;
-    // }
+    if (!docId) {
+      this.toaster.error('No template document available for download', 'Download Error');
+      return;
+    }
 
     let doc =
       target === TargetEntity.INVOICE
