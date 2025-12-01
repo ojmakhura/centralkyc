@@ -5,7 +5,7 @@ import { routes } from './app.routes';
 import { provideAnimations } from '@angular/platform-browser/animations';
 import { provideHttpClient, withFetch, withInterceptors, withInterceptorsFromDi, HttpClient } from '@angular/common/http';
 import { CUSTOM_DATE_FORMATS } from './@shared/custom-date-formats';
-import { MAT_DATE_FORMATS } from '@angular/material/core';
+import { MAT_DATE_FORMATS, MAT_DATE_LOCALE, MatDateFormats } from '@angular/material/core';
 import { RouteReusableStrategy } from './@core/route-reusable-strategy';
 import { MAT_FORM_FIELD_DEFAULT_OPTIONS } from '@angular/material/form-field';
 import { apiPrefixInterceptor } from './@core/http/api-prefix.interceptor';
@@ -14,6 +14,7 @@ import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
 import { Observable, of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { provideToastr } from 'ngx-toastr';
+import { AutoRefreshTokenService, createInterceptorCondition, INCLUDE_BEARER_TOKEN_INTERCEPTOR_CONFIG, IncludeBearerTokenCondition, includeBearerTokenInterceptor, provideKeycloak, UserActivityService, withAutoRefreshToken } from 'keycloak-angular';
 
 export class CustomTranslateLoader implements TranslateLoader {
   constructor(private http: HttpClient) {}
@@ -29,10 +30,70 @@ export function HttpLoaderFactory(http: HttpClient) {
   return new CustomTranslateLoader(http);
 }
 
+export const provideKeycloakAndInterceptor = (env: any) => {
+  const urlConditions = [
+    createInterceptorCondition<IncludeBearerTokenCondition>({
+      // eslint-disable-next-line no-useless-escape
+      urlPattern: new RegExp(`^${env.apiUrl}(\/.*)?$`, 'i'),
+      bearerPrefix: 'Bearer',
+    }),
+    createInterceptorCondition<IncludeBearerTokenCondition>({
+      // eslint-disable-next-line no-useless-escape
+      urlPattern: new RegExp(`^${env.authDomain}(\/.*)?$`, 'i'),
+      bearerPrefix: 'Bearer',
+    }),
+    // you can add more interceptors in this array...
+  ];
+
+  // in our case, we put the identity configuration in the environment files
+  // const { identityServerUrl, clientId, realm } = environment.auth;
+
+  return [
+    provideKeycloak({
+      config: {
+        url: env.authDomain,
+        realm: env.realm,
+        clientId: env.clientId,
+      },
+      initOptions: {
+        onLoad: 'check-sso',
+        checkLoginIframe: true,
+      },
+      features: [
+        withAutoRefreshToken({
+          sessionTimeout: 300000,
+          onInactivityTimeout: 'logout',
+        }),
+      ],
+      providers: [AutoRefreshTokenService, UserActivityService],
+    }),
+    { provide: INCLUDE_BEARER_TOKEN_INTERCEPTOR_CONFIG, useValue: urlConditions },
+  ];
+};
+
+export function initFactory() {
+  // const envStore = inject(AppEnvStore);
+
+  return async () => { };
+}
+
+export const MY_DATE_FORMATS: MatDateFormats = {
+  parse: {
+    dateInput: 'DD/MM/YYYY', // how the input string is parsed
+  },
+  display: {
+    dateInput: 'DD/MM/YYYY', // how it appears in the input
+    monthYearLabel: 'MMM YYYY', // month-year label in calendar
+    dateA11yLabel: 'LL', // accessibility label
+    monthYearA11yLabel: 'MMMM YYYY', // accessibility label for month/year
+  },
+};
+
 export const appConfig = (env: any) => {
   return {
     providers: [
       provideRouter(routes),
+      provideKeycloakAndInterceptor(env),
       provideAnimations(),
       provideHttpClient(
         withFetch(),
@@ -40,6 +101,7 @@ export const appConfig = (env: any) => {
         withInterceptors([
           apiPrefixInterceptor, 
           errorHandlerInterceptor, 
+          includeBearerTokenInterceptor
         ]),
       ),
       provideToastr({
@@ -69,7 +131,10 @@ export const appConfig = (env: any) => {
         provide: RouteReuseStrategy,
         useClass: RouteReusableStrategy,
       },
-      { provide: MAT_DATE_FORMATS, useValue: CUSTOM_DATE_FORMATS },
+      // { provide: MAT_DATE_FORMATS, useValue: CUSTOM_DATE_FORMATS },
+      { provide: MAT_FORM_FIELD_DEFAULT_OPTIONS, useValue: { appearance: 'outline' } },
+      { provide: MAT_DATE_FORMATS, useValue: MY_DATE_FORMATS },
+      { provide: MAT_DATE_LOCALE, useValue: 'en-GB' },
     ],
   } as ApplicationConfig;
 };

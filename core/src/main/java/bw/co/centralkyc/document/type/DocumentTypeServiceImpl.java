@@ -145,7 +145,10 @@ public class DocumentTypeServiceImpl
 
         Pageable pageable = PageRequest.of(pageNumber, pageSize, Sort.by(Direction.ASC, "name"));
         Specification<DocumentType> spec = this.createSpecification(criteria);
-        Page<DocumentType> types = documentTypeRepository.findAll(spec, pageable);
+        Page<DocumentType> types = 
+                spec == null ? 
+                documentTypeRepository.findAll(pageable) :
+                documentTypeRepository.findAll(spec, pageable);
 
         return types.map(type -> documentTypeDao.toDocumentTypeDTO(type));
 

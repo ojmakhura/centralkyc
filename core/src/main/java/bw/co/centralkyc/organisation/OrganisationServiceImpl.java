@@ -163,7 +163,10 @@ public class OrganisationServiceImpl
         throws Exception
     {
         Specification<Organisation> spec = createSpecification(criteria);
-        Collection<Organisation> orgs = organisationRepository.findAll(spec, Sort.by(Direction.ASC, "name"));
+        Collection<Organisation> orgs = 
+                spec == null ?
+                organisationRepository.findAll(Sort.by(Direction.ASC, "name")) :
+                organisationRepository.findAll(spec, Sort.by(Direction.ASC, "name"));
 
         return organisationDao.toOrganisationListDTOCollection(orgs);
 
@@ -178,7 +181,10 @@ public class OrganisationServiceImpl
     {
         Specification<Organisation> spec = createSpecification(criteria.getCriteria());
         Pageable pageable = PageRequest.of(criteria.getPageNumber(), criteria.getPageSize(), Sort.by(Direction.ASC, "name"));
-        Page<Organisation> page = organisationRepository.findAll(spec, pageable);
+        Page<Organisation> page = 
+                spec == null ?
+                organisationRepository.findAll(pageable) :
+                organisationRepository.findAll(spec, pageable);
 
         return page.map(org -> organisationDao.toOrganisationListDTO(org));
     }
