@@ -93,8 +93,7 @@ public class BranchServiceImpl
             return builder.or(
                 builder.like(builder.lower(root.get("name")), likeCriteria),
                 builder.like(builder.lower(root.get("code")), likeCriteria),
-                builder.like(builder.lower(root.get("organisation").get("name")), likeCriteria),
-                builder.like(builder.lower(root.get("organisation").get("code")), likeCriteria)
+                builder.like(builder.lower(root.get("organisation")), likeCriteria)
             );
         };
     }
@@ -147,7 +146,7 @@ public class BranchServiceImpl
     {
 
         Specification<Branch> spec = (root, query, builder) -> 
-            builder.equal(root.get("organisation").get("id"), organisationId);
+            builder.equal(root.get("organisationId"), organisationId);
         Collection<Branch> branches = branchRepository.findAll(spec, Sort.by(Direction.ASC, "name"));
         return this.getBranchDao().toBranchDTOCollection(branches);
     }
@@ -162,7 +161,7 @@ public class BranchServiceImpl
 
         Pageable pageable = PageRequest.of(pageNumber, pageSize, Sort.by(Direction.ASC, "name"));
         Specification<Branch> spec = (root, query, builder) -> 
-            builder.equal(root.get("organisation").get("id"), organisationId);
+            builder.equal(root.get("organisationId"), organisationId);
         Page<Branch> branchPage = branchRepository.findAll(spec, pageable);
         return this.getBranchDao().toBranchDTOCollection(branchPage.getContent());
     }

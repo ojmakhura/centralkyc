@@ -18,23 +18,23 @@ import org.springframework.security.core.context.SecurityContextHolder;
 
 import bw.co.centralkyc.AuditTracker;
 import bw.co.centralkyc.PropertySearchOrder;
-import bw.co.centralkyc.RestApiResponse;
 import bw.co.centralkyc.SearchObject;
+import bw.co.centralkyc.keycloak.KeycloakOrganisationService;
 
 @org.springframework.web.bind.annotation.RestController
 public class OrganisationApiImpl extends OrganisationApiBase {
 
-    public OrganisationApiImpl(
-            OrganisationService organisationService) {
+    private final KeycloakOrganisationService orgService;
+    public OrganisationApiImpl(OrganisationService organisationService, KeycloakOrganisationService orgService) {
 
-        super(
-                organisationService);
+        super(organisationService);
+        this.orgService = orgService;
     }
 
     @Override
     public ResponseEntity<OrganisationDTO> handleFindById(String id) {
         try {
-            return ResponseEntity.ok(organisationService.findById(id));
+            return ResponseEntity.ok(orgService.findById(id));
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -71,7 +71,7 @@ public class OrganisationApiImpl extends OrganisationApiBase {
             SearchObject<OrganisationSearchCriteria> criteria) {
         try {
 
-            return ResponseEntity.ok(organisationService.search(criteria));
+            return ResponseEntity.ok(orgService.search(criteria));
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -83,13 +83,12 @@ public class OrganisationApiImpl extends OrganisationApiBase {
     @Override
     public ResponseEntity<Boolean> handleRemove(String id) {
         try {
-            return ResponseEntity.ok(organisationService.remove(id));
+            return ResponseEntity.ok(orgService.remove(id));
 
         } catch (Exception e) {
             e.printStackTrace();
             throw e;
         }
-
     }
 
     @Override
@@ -98,7 +97,8 @@ public class OrganisationApiImpl extends OrganisationApiBase {
             
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             AuditTracker.auditTrail(organisation, authentication);
-            return ResponseEntity.ok(organisationService.save(organisation));
+
+            return ResponseEntity.ok(orgService.createOrganisation(organisation));
 
         } catch (Exception e) {
             e.printStackTrace();

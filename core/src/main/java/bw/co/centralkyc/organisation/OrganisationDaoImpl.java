@@ -26,13 +26,12 @@ public class OrganisationDaoImpl
 {
     
 
-    public OrganisationDaoImpl(DocumentRepository documentRepository, BranchRepository branchRepository,
-            DocumentTypeRepository documentTypeRepository, EmploymentRecordRepository employmentRecordRepository,
-            KycSubscriptionRepository kycSubscriptionRepository, KycInvoiceRepository kycInvoiceRepository,
-            ClientRequestRepository clientRequestRepository, OrganisationRepository organisationRepository) {
-                
-        super(documentRepository, branchRepository, documentTypeRepository, employmentRecordRepository,
-                kycSubscriptionRepository, kycInvoiceRepository, clientRequestRepository, organisationRepository);
+    public OrganisationDaoImpl(DocumentRepository documentRepository, DocumentTypeRepository documentTypeRepository,
+            EmploymentRecordRepository employmentRecordRepository, KycSubscriptionRepository kycSubscriptionRepository,
+            KycInvoiceRepository kycInvoiceRepository, ClientRequestRepository clientRequestRepository,
+            OrganisationRepository organisationRepository) {
+        super(documentRepository, documentTypeRepository, employmentRecordRepository, kycSubscriptionRepository,
+                kycInvoiceRepository, clientRequestRepository, organisationRepository);
         //TODO Auto-generated constructor stub
     }
 

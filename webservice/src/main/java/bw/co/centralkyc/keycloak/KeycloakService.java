@@ -3,6 +3,7 @@ package bw.co.centralkyc.keycloak;
 import org.keycloak.admin.client.Keycloak;
 import org.keycloak.admin.client.KeycloakBuilder;
 import org.keycloak.admin.client.resource.ClientsResource;
+import org.keycloak.admin.client.resource.OrganizationsResource;
 import org.keycloak.admin.client.resource.RealmResource;
 import org.keycloak.admin.client.resource.RolesResource;
 import org.keycloak.admin.client.resource.UsersResource;
@@ -59,6 +60,8 @@ public class KeycloakService {
 
     private String getRealm() {
         Jwt jwt = getJwt();
+        System.out.println(jwt.getClaimAsString("iss"));
+        System.out.println(jwt.getClaims());
 
         int i = jwt.getClaimAsString("iss").lastIndexOf("/");
         return jwt.getClaimAsString("iss").substring(i + 1);
@@ -72,6 +75,11 @@ public class KeycloakService {
         }
 
         return null;
+    }
+
+    public OrganizationsResource getOrganizationsResource() {
+
+        return getKeycloak().realm(getRealm()).organizations();
     }
 
     public UsersResource getUsersResource() {

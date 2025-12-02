@@ -13,20 +13,25 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.Collection;
 import java.util.Optional;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 
 import bw.co.centralkyc.AuditTracker;
 import bw.co.centralkyc.RestApiResponse;
+import bw.co.centralkyc.keycloak.KeycloakOrganisationService;
+import bw.co.centralkyc.organisation.OrganisationDTO;
 
 @RestController
 public class BranchApiImpl extends BranchApiBase {
+
+    private final KeycloakOrganisationService orgService;
     
-    public BranchApiImpl(
-        BranchService branchService    ) {
+    public BranchApiImpl(BranchService branchService, KeycloakOrganisationService orgService) {
         
-        super(
-            branchService        );
+        super(branchService);
+
+        this.orgService = orgService;
     }
 
 
@@ -34,6 +39,16 @@ public class BranchApiImpl extends BranchApiBase {
     public ResponseEntity<BranchDTO> handleFindById(String id) {
         
         try {
+
+            BranchDTO branch = branchService.findById(id);
+
+            if(StringUtils.isBlank(branch.getOrganisationId())) {
+
+                throw new BranchServiceException("This branch has no organisation.");
+            }
+
+            OrganisationDTO org = orgService.findById(branch.getOrganisationId());
+            branch.setOrganisation(org.getName());
             
             return ResponseEntity.ok(branchService.findById(id));
         } catch (Exception e) {
@@ -49,7 +64,8 @@ public class BranchApiImpl extends BranchApiBase {
     public ResponseEntity<Collection<BranchDTO>> handleFindByOrganisation(String organisationId) {
         
         try {
-            return ResponseEntity.ok(branchService.findByOrganisation(organisationId));
+            OrganisationDTO org = orgService.findById(organisationId);
+            return ResponseEntity.ok(branchService.findByOrganisation(org.getId()));
         } catch (Exception e) {
             logger.error(e.getMessage());
             e.printStackTrace();
@@ -63,6 +79,8 @@ public class BranchApiImpl extends BranchApiBase {
     public ResponseEntity<Collection<BranchDTO>> handleFindByOrganisationPaged(String organisationId, Integer pageNumber, Integer pageSize) {
         
         try {
+            OrganisationDTO org = orgService.findById(organisationId);
+
             return ResponseEntity.ok(branchService.findByOrganisation(organisationId, pageNumber, pageSize));
             
         } catch (Exception e) {
@@ -137,6 +155,8 @@ public class BranchApiImpl extends BranchApiBase {
         try {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             AuditTracker.auditTrail(branch, authentication);
+            OrganisationDTO org = orgService.findById(branch.getOrganisationId());
+            branch.setOrganisation(org.getName());
             return ResponseEntity.ok(branchService.save(branch));
 
         } catch (Exception e) {

@@ -21,17 +21,10 @@ public class BranchDaoImpl
     extends BranchDaoBase
 {
     
-    public BranchDaoImpl(
-        OrganisationRepository organisationRepository,
-        DocumentRepository documentRepository,
-        BranchRepository branchRepository
-    ) {
 
-        super(
-            organisationRepository,
-            documentRepository,
-            branchRepository
-        );
+    public BranchDaoImpl(DocumentRepository documentRepository, BranchRepository branchRepository) {
+        super(documentRepository, branchRepository);
+        //TODO Auto-generated constructor stub
     }
 
     /**
@@ -44,11 +37,7 @@ public class BranchDaoImpl
     {
         // TODO verify behavior of toBranchDTO
         super.toBranchDTO(source, target);
-        if(source.getOrganisation() != null)
-        {
-            target.setOrganisationId(source.getOrganisation().getId());
-            target.setOrganisation(source.getOrganisation().getName());
-        }
+        
     }
 
     /**
@@ -101,10 +90,5 @@ public class BranchDaoImpl
     {
         // TODO verify behavior of branchDTOToEntity
         super.branchDTOToEntity(source, target, copyIfNull);
-
-        if(StringUtils.isNotBlank(source.getOrganisation())) {
-
-            target.setOrganisation(organisationRepository.getReferenceById(source.getOrganisationId()));
-        }
     }
 }

@@ -8,13 +8,12 @@ package bw.co.centralkyc.user;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.vladmihalcea.hibernate.util.StringUtils;
-
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpStatus;
 import bw.co.centralkyc.RestApiResponse;
 import bw.co.centralkyc.keycloak.KeycloakUserService;

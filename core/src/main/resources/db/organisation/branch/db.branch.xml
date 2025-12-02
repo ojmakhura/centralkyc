@@ -5,6 +5,10 @@
                         http://www.liquibase.org/xml/ns/dbchangelog
                         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.3.xsd">
 
-    <!-- MASTER -->
-    <include file="organisation/branch/db.branch.xml" relativeToChangelogFile="true"/>
+    <changeSet id="drop_organisation_fk_column" author="ojmakhura">
+        <preConditions onFail="MARK_RAN">
+            <columnExists tableName="branch" columnName="organisation_fk"/>
+        </preConditions>
+        <dropColumn tableName="branch" columnName="organisation_fk"/>
+    </changeSet>
 </databaseChangeLog>
