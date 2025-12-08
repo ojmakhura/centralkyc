@@ -15,6 +15,8 @@ import { SettingsDTO } from '@app/model/bw/co/centralkyc/settings/settings-dto';
 import { DocumentApi } from '@app/service/bw/co/centralkyc/document/document-api';
 import { TargetEntity } from '@app/model/bw/co/centralkyc/target-entity';
 import { SettingsApi } from '@app/service/bw/co/centralkyc/settings/settings-api';
+import { DocumentTypePurpose } from '@app/model/bw/co/centralkyc/settings/document-type-purpose';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-edit-settings',
@@ -178,58 +180,38 @@ export class EditSettingsImplComponent extends EditSettingsComponent {
   }
 
   override onAddToIndDocumentsClick() {
-    console.log(this.selectedIndDocumentControl.value);
-    let val: any = this.editSettingsForm.value;
-    let settings = this.getSettings(val);
-
-    let found = settings.individualDocuments?.find((d) => d.id === this.selectedIndDocumentControl.value.id);
-    if (!found) {
-      settings.individualDocuments?.push(this.selectedIndDocumentControl.value);
-    }
-
-    this.settingApiStore.save({ setttings: settings });
+    
+    this.settingApiStore.attachDocumentType({
+      documentTypeId: this.selectedIndDocumentControl.value.id,
+      purpose: DocumentTypePurpose.INDIVIDUAL,
+    });
     this.selectedIndDocumentControl.setValue(null);
   }
 
   override onAddToKycOrgDocumentsClick() {
-    console.log(this.selectedKycOrgDocumentControl.value);
-    let val: any = this.editSettingsForm.value;
-    let settings: SettingsDTO = this.getSettings(val);
 
-    let found = settings.orgKycDocuments?.find((d) => d.id === this.selectedKycOrgDocumentControl.value.id);
-    if (!found) {
-      settings.orgKycDocuments?.push(this.selectedKycOrgDocumentControl.value);
-    }
-
-    this.settingApiStore.save({ setttings: settings });
+    this.settingApiStore.attachDocumentType({
+      documentTypeId: this.selectedKycOrgDocumentControl.value.id,
+      purpose: DocumentTypePurpose.ORGANISATION_KYC,
+    });
     this.selectedKycOrgDocumentControl.setValue(null);
   }
 
   override onAddToOrgDocumentsClick() {
     console.log(this.selectedOrgDocumentControl.value);
-    let val: any = this.editSettingsForm.value;
-    let settings: SettingsDTO = this.getSettings(val);
-
-    let found = settings.organisationDocuments?.find((d) => d.id === this.selectedOrgDocumentControl.value.id);
-    if (!found) {
-      settings.organisationDocuments?.push(this.selectedOrgDocumentControl.value);
-    }
-
-    this.settingApiStore.save({ setttings: settings });
+    
+    this.settingApiStore.attachDocumentType({
+      documentTypeId: this.selectedOrgDocumentControl.value.id,
+      purpose: DocumentTypePurpose.ORGANISATION,
+    });
     this.selectedOrgDocumentControl.setValue(null);
   }
 
   override onAddToKycIndDocumentsClick() {
-    console.log(this.selectedKycIndDocumentControl.value);
-    let val: any = this.editSettingsForm.value;
-    let settings: SettingsDTO = this.getSettings(val);
-
-    let found = settings.indKycDocuments?.find((d) => d.id === this.selectedKycIndDocumentControl.value.id);
-    if (!found) {
-      settings.indKycDocuments?.push(this.selectedKycIndDocumentControl.value);
-    }
-
-    this.settingApiStore.save({ setttings: settings });
+    this.settingApiStore.attachDocumentType({
+      documentTypeId: this.selectedKycIndDocumentControl.value.id,
+      purpose: DocumentTypePurpose.INDIVIDUAL_KYC,
+    });
     this.selectedKycIndDocumentControl.setValue(null);
   }
 
@@ -312,4 +294,114 @@ export class EditSettingsImplComponent extends EditSettingsComponent {
       },
     });
   }
+
+  organisationDocumentsTableActionClicked(event: any): void {
+
+    console.log(event)
+
+    switch (event.action) {
+      case 'settings-detach-org-documents':
+        Swal.fire({
+          title: 'Are you sure?',
+          text: 'You are about to detach this document type from organisation documents. This action cannot be undone.',
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonText: 'Yes',
+          cancelButtonText: 'No',
+        }).then((result) => {
+          if (result.isConfirmed) {
+            this.settingApiStore.detachDocumentType({
+              documentTypeId: event.row.id,
+              purpose: DocumentTypePurpose.ORGANISATION,
+            });
+            Swal.fire('Detached!', 'The document type has been detached from organisation documents.', 'success');
+          }
+        });
+
+        break;
+    }
+  }
+
+  individualDocumentsTableActionClicked(event: any): void {
+    switch (event.action) {
+      case 'settings-detach-individual-documents':
+        // TODO: Implement the action
+
+        Swal.fire({
+          title: 'Are you sure?',
+          text: 'You are about to detach this document type from individual documents. This action cannot be undone.',
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonText: 'Yes',
+          cancelButtonText: 'No',
+        }).then((result) => {
+          if (result.isConfirmed) {
+
+            this.settingApiStore.detachDocumentType({
+              documentTypeId: event.row.id,
+              purpose: DocumentTypePurpose.INDIVIDUAL,
+            });
+            Swal.fire('Detached!', 'The document type has been detached from individual documents.', 'success');
+          }
+        });
+
+        break;
+    }
+  }
+
+  orgKycDocumentsTableActionClicked(event: any): void {
+    switch (event.action) {
+      case 'settings-detach-org-kyc-documents':
+        // TODO: Implement the action
+        Swal.fire({
+          title: 'Are you sure?',
+          text: 'You are about to detach this document type from organisation KYC documents. This action cannot be undone.',
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonText: 'Yes',
+          cancelButtonText: 'No',
+        }).then((result) => {
+          if (result.isConfirmed) {
+
+            this.settingApiStore.detachDocumentType({
+              documentTypeId: event.row.id,
+              purpose: DocumentTypePurpose.ORGANISATION_KYC,
+            });
+            Swal.fire('Detached!', 'The document type has been detached from organisation KYC documents.', 'success');
+          }
+        });
+        break;
+    }
+  }
+
+  indKycDocumentsTableActionClicked(event: any): void {
+      let form: any = {};
+      let queryParams: any = {};
+      let params: any = {};
+  
+      switch (event.action) {
+        case 'settings-detach-ind-kyc-documents':
+          // TODO: Implement the action
+          
+          Swal.fire({
+            title: 'Are you sure?',
+            text: 'You are about to detach this document type from individual KYC documents. This action cannot be undone.',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Yes',
+            cancelButtonText: 'No',
+          }).then((result) => {
+            if (result.isConfirmed) {
+  
+              this.settingApiStore.detachDocumentType({
+                documentTypeId: event.row.id,
+                purpose: DocumentTypePurpose.INDIVIDUAL_KYC,
+              });
+              Swal.fire('Detached!', 'The document type has been detached from individual KYC documents.', 'success');
+            }
+          });
+
+          break;
+      }
+    }
 }

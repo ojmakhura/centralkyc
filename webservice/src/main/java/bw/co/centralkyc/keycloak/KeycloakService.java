@@ -60,8 +60,6 @@ public class KeycloakService {
 
     private String getRealm() {
         Jwt jwt = getJwt();
-        System.out.println(jwt.getClaimAsString("iss"));
-        System.out.println(jwt.getClaims());
 
         int i = jwt.getClaimAsString("iss").lastIndexOf("/");
         return jwt.getClaimAsString("iss").substring(i + 1);

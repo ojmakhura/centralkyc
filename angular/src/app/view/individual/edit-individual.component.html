@@ -47,6 +47,14 @@
         </mat-card-header>
         <mat-card-content>
           <div class="field-row">
+            <mat-radio-group id="kycStatus" formControlName="identityType">
+              @for(status of KycComplianceStatusOptions; track status) {
+                <mat-radio-button [value]="status">{{ status }}</mat-radio-button>
+              }
+              
+            </mat-radio-group>
+          </div>
+          <div class="field-row">
             <mat-form-field class="field-half">
               <mat-label id="identityType_label" for="identityType">
                 <span translate>identity.type</span>

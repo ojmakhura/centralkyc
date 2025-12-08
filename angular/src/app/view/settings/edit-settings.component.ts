@@ -77,7 +77,7 @@ export abstract class EditSettingsComponent implements OnInit, AfterViewInit, On
     return o1 && o2 && o1.id === o2.id;
   }
 
-  filterSelectedOrgDocument() { }
+  filterSelectedOrgDocument() {}
 
   selectedOrgDocumentBackingList: DocumentTypeDTO[] = [];
   selectedOrgDocumentFilteredList: WritableSignal<DocumentTypeDTO[] | any[]> = linkedSignal(() => []);
@@ -89,9 +89,21 @@ export abstract class EditSettingsComponent implements OnInit, AfterViewInit, On
   organisationDocumentsTableSignal: Signal<any | DocumentTypeDTO | Page<DocumentTypeDTO>> = signal(null);
   organisationDocumentsTablePaged: WritableSignal<boolean> = linkedSignal(() => true);
 
-  organisationDocumentsTableColumnsActions: ActionTemplate[] = [];
+  organisationDocumentsTableColumnsActions: ActionTemplate[] = [
+    {
+      id: 'settings-detach-org-documents',
+      label: 'detach.org.documents',
+      icon: 'delete',
+      tooltip: 'detach.org.documents',
+    },
+  ];
 
-  showOrganisationDocumentsActions = false;
+  showOrganisationDocumentsActions = true;
+
+  // Should be overriden to handle the actions
+  doEditSettingsDetachOrgDocuments(form: any): any {}
+
+  
 
   selectedKycOrgDocumentFilterCtrl: FormControl = new FormControl();
 
@@ -99,7 +111,7 @@ export abstract class EditSettingsComponent implements OnInit, AfterViewInit, On
     return o1 && o2 && o1.id === o2.id;
   }
 
-  filterSelectedKycOrgDocument() { }
+  filterSelectedKycOrgDocument() {}
 
   selectedKycOrgDocumentBackingList: DocumentTypeDTO[] = [];
   selectedKycOrgDocumentFilteredList: WritableSignal<DocumentTypeDTO[] | any[]> = linkedSignal(() => []);
@@ -111,9 +123,19 @@ export abstract class EditSettingsComponent implements OnInit, AfterViewInit, On
   orgKycDocumentsTableSignal: Signal<any | DocumentTypeDTO | Page<DocumentTypeDTO>> = signal(null);
   orgKycDocumentsTablePaged: WritableSignal<boolean> = linkedSignal(() => true);
 
-  orgKycDocumentsTableColumnsActions: ActionTemplate[] = [];
+  orgKycDocumentsTableColumnsActions: ActionTemplate[] = [
+    {
+      id: 'settings-detach-org-kyc-documents',
+      label: 'detach.org.kyc.documents',
+      icon: 'delete',
+      tooltip: 'detach.org.kyc.documents',
+    },
+  ];
 
-  showOrgKycDocumentsActions = false;
+  showOrgKycDocumentsActions = true;
+
+  // Should be overriden to handle the actions
+  doEditSettingsDetachOrgKycDocuments(form: any): any {}
 
   selectedIndDocumentFilterCtrl: FormControl = new FormControl();
 
@@ -121,7 +143,7 @@ export abstract class EditSettingsComponent implements OnInit, AfterViewInit, On
     return o1 && o2 && o1.id === o2.id;
   }
 
-  filterSelectedIndDocument() { }
+  filterSelectedIndDocument() {}
 
   selectedIndDocumentBackingList: DocumentTypeDTO[] = [];
   selectedIndDocumentFilteredList: WritableSignal<DocumentTypeDTO[] | any[]> = linkedSignal(() => []);
@@ -133,9 +155,21 @@ export abstract class EditSettingsComponent implements OnInit, AfterViewInit, On
   individualDocumentsTableSignal: Signal<any | DocumentTypeDTO | Page<DocumentTypeDTO>> = signal(null);
   individualDocumentsTablePaged: WritableSignal<boolean> = linkedSignal(() => true);
 
-  individualDocumentsTableColumnsActions: ActionTemplate[] = [];
+  individualDocumentsTableColumnsActions: ActionTemplate[] = [
+    {
+      id: 'settings-detach-individual-documents',
+      label: 'detach.individual.documents',
+      icon: 'delete',
+      tooltip: 'detach.individual.documents',
+    },
+  ];
 
-  showIndividualDocumentsActions = false;
+  showIndividualDocumentsActions = true;
+
+  // Should be overriden to handle the actions
+  doEditSettingsDetachIndividualDocuments(form: any): any {}
+
+  
 
   selectedKycIndDocumentFilterCtrl: FormControl = new FormControl();
 
@@ -143,7 +177,7 @@ export abstract class EditSettingsComponent implements OnInit, AfterViewInit, On
     return o1 && o2 && o1.id === o2.id;
   }
 
-  filterSelectedKycIndDocument() { }
+  filterSelectedKycIndDocument() {}
 
   selectedKycIndDocumentBackingList: DocumentTypeDTO[] = [];
   selectedKycIndDocumentFilteredList: WritableSignal<DocumentTypeDTO[] | any[]> = linkedSignal(() => []);
@@ -160,9 +194,19 @@ export abstract class EditSettingsComponent implements OnInit, AfterViewInit, On
     new ColumnModel('name', 'name', false),
   ];
 
-  indKycDocumentsTableColumnsActions: ActionTemplate[] = [];
+  indKycDocumentsTableColumnsActions: ActionTemplate[] = [
+    {
+      id: 'settings-detach-ind-kyc-documents',
+      label: 'detach.ind.kyc.documents',
+      icon: 'delete',
+      tooltip: 'detach.ind.kyc.documents',
+    },
+  ];
 
-  showIndKycDocumentsActions = false;
+  showIndKycDocumentsActions = true;
+
+  // Should be overriden to handle the actions
+  doEditSettingsDetachIndKycDocuments(form: any): any {}
 
   invoiceDocumentTypeFilterCtrl: FormControl = new FormControl();
 
@@ -170,7 +214,7 @@ export abstract class EditSettingsComponent implements OnInit, AfterViewInit, On
     return o1 && o2 && o1.id === o2.id;
   }
 
-  filterInvoiceDocumentType() { }
+  filterInvoiceDocumentType() {}
 
   invoiceDocumentTypeBackingList: DocumentTypeDTO[] = [];
   invoiceDocumentTypeFilteredList: WritableSignal<DocumentTypeDTO[] | any[]> = linkedSignal(() => []);
@@ -184,7 +228,7 @@ export abstract class EditSettingsComponent implements OnInit, AfterViewInit, On
     return o1 && o2 && o1.id === o2.id;
   }
 
-  filterInvoiceTemplateType() { }
+  filterInvoiceTemplateType() {}
 
   invoiceTemplateTypeBackingList: DocumentTypeDTO[] = [];
   invoiceTemplateTypeFilteredList: WritableSignal<DocumentTypeDTO[] | any[]> = linkedSignal(() => []);
@@ -198,7 +242,7 @@ export abstract class EditSettingsComponent implements OnInit, AfterViewInit, On
     return o1 && o2 && o1.id === o2.id;
   }
 
-  filterQuotationDocumentType() { }
+  filterQuotationDocumentType() {}
 
   quotationDocumentTypeBackingList: DocumentTypeDTO[] = [];
   quotationDocumentTypeFilteredList: WritableSignal<DocumentTypeDTO[] | any[]> = linkedSignal(() => []);
@@ -212,7 +256,7 @@ export abstract class EditSettingsComponent implements OnInit, AfterViewInit, On
     return o1 && o2 && o1.id === o2.id;
   }
 
-  filterQuotationTemplateType() { }
+  filterQuotationTemplateType() {}
 
   quotationTemplateTypeBackingList: DocumentTypeDTO[] = [];
   quotationTemplateTypeFilteredList: WritableSignal<DocumentTypeDTO[] | any[]> = linkedSignal(() => []);
@@ -220,22 +264,19 @@ export abstract class EditSettingsComponent implements OnInit, AfterViewInit, On
 
   quotationTemplateTypeDisplays: string[] = ['name'];
 
-
   clientRequestFileTypeFilterCtrl: FormControl = new FormControl();
 
   clientRequestFileTypeCompare(o1: DocumentTypeDTO | any, o2: DocumentTypeDTO | any) {
     return o1 && o2 && o1.id === o2.id;
   }
 
-  filterClientRequestFileType() { }
+  filterClientRequestFileType() {}
 
   clientRequestFileTypeBackingList: DocumentTypeDTO[] = [];
   clientRequestFileTypeFilteredList: WritableSignal<DocumentTypeDTO[] | any[]> = linkedSignal(() => []);
   clientRequestFileTypeChipControl: FormControl = new FormControl([]);
 
-  clientRequestFileTypeDisplays: string[] = [
-    'name',
-  ];
+  clientRequestFileTypeDisplays: string[] = ['name'];
 
   TargetEntityT: any = TargetEntity;
   TargetEntityOptions = Object.keys(this.TargetEntityT);
@@ -275,7 +316,7 @@ export abstract class EditSettingsComponent implements OnInit, AfterViewInit, On
     this.afterOnInit();
   }
 
-  handleFormChanges(change: any): void { }
+  handleFormChanges(change: any): void {}
 
   editSettingsFormReset() {
     this.editSettingsForm.reset();
@@ -288,9 +329,9 @@ export abstract class EditSettingsComponent implements OnInit, AfterViewInit, On
     }
   }
 
-  afterOnInit(): void { }
+  afterOnInit(): void {}
 
-  doNgAfterViewInit(): void { }
+  doNgAfterViewInit(): void {}
 
   ngAfterViewInit() {
     this.doNgAfterViewInit();
@@ -343,12 +384,12 @@ export abstract class EditSettingsComponent implements OnInit, AfterViewInit, On
   /**
    * This method may be overwritten
    */
-  beforeEditSettingsSave(form: any): void { }
+  beforeEditSettingsSave(form: any): void {}
 
   /**
    * This method may be overwritten
    */
-  afterEditSettingsSave(form: any): void { }
+  afterEditSettingsSave(form: any): void {}
 
   /**
    * This method may be overwritten
@@ -424,85 +465,85 @@ export abstract class EditSettingsComponent implements OnInit, AfterViewInit, On
     return this.editSettingsForm?.get('selectedOrgDocument') as FormControl;
   }
 
-  selectedOrgDocumentAddDialog() { }
+  selectedOrgDocumentAddDialog() {}
 
-  selectedOrgDocumentClear() { }
+  selectedOrgDocumentClear() {}
 
-  selectedOrgDocumentSelected(event: MatCheckboxChange, row: number) { }
+  selectedOrgDocumentSelected(event: MatCheckboxChange, row: number) {}
 
-  selectedOrgDocumentSearch() { }
+  selectedOrgDocumentSearch() {}
 
-  addSelectedSelectedOrgDocument() { }
+  addSelectedSelectedOrgDocument() {}
 
   get selectedKycOrgDocumentControl(): FormControl {
     return this.editSettingsForm?.get('selectedKycOrgDocument') as FormControl;
   }
 
-  selectedKycOrgDocumentAddDialog() { }
+  selectedKycOrgDocumentAddDialog() {}
 
-  selectedKycOrgDocumentClear() { }
+  selectedKycOrgDocumentClear() {}
 
-  selectedKycOrgDocumentSelected(event: MatCheckboxChange, row: number) { }
+  selectedKycOrgDocumentSelected(event: MatCheckboxChange, row: number) {}
 
-  selectedKycOrgDocumentSearch() { }
+  selectedKycOrgDocumentSearch() {}
 
-  addSelectedSelectedKycOrgDocument() { }
+  addSelectedSelectedKycOrgDocument() {}
 
   get selectedIndDocumentControl(): FormControl {
     return this.editSettingsForm?.get('selectedIndDocument') as FormControl;
   }
 
-  selectedIndDocumentAddDialog() { }
+  selectedIndDocumentAddDialog() {}
 
-  selectedIndDocumentClear() { }
+  selectedIndDocumentClear() {}
 
-  selectedIndDocumentSelected(event: MatCheckboxChange, row: number) { }
+  selectedIndDocumentSelected(event: MatCheckboxChange, row: number) {}
 
-  selectedIndDocumentSearch() { }
+  selectedIndDocumentSearch() {}
 
-  addSelectedSelectedIndDocument() { }
+  addSelectedSelectedIndDocument() {}
 
   get selectedKycIndDocumentControl(): FormControl {
     return this.editSettingsForm?.get('selectedKycIndDocument') as FormControl;
   }
 
-  selectedKycIndDocumentAddDialog() { }
+  selectedKycIndDocumentAddDialog() {}
 
-  selectedKycIndDocumentClear() { }
+  selectedKycIndDocumentClear() {}
 
-  selectedKycIndDocumentSelected(event: MatCheckboxChange, row: number) { }
+  selectedKycIndDocumentSelected(event: MatCheckboxChange, row: number) {}
 
-  selectedKycIndDocumentSearch() { }
+  selectedKycIndDocumentSearch() {}
 
-  addSelectedSelectedKycIndDocument() { }
+  addSelectedSelectedKycIndDocument() {}
 
   get invoiceDocumentTypeControl(): FormControl {
     return this.editSettingsForm?.get('invoiceDocumentType') as FormControl;
   }
 
-  invoiceDocumentTypeAddDialog() { }
+  invoiceDocumentTypeAddDialog() {}
 
-  invoiceDocumentTypeClear() { }
+  invoiceDocumentTypeClear() {}
 
-  invoiceDocumentTypeSelected(event: MatCheckboxChange, row: number) { }
+  invoiceDocumentTypeSelected(event: MatCheckboxChange, row: number) {}
 
-  invoiceDocumentTypeSearch() { }
+  invoiceDocumentTypeSearch() {}
 
-  addSelectedInvoiceDocumentType() { }
+  addSelectedInvoiceDocumentType() {}
 
   get invoiceTemplateTypeControl(): FormControl {
     return this.editSettingsForm?.get('invoiceTemplateType') as FormControl;
   }
 
-  invoiceTemplateTypeAddDialog() { }
+  invoiceTemplateTypeAddDialog() {}
 
-  invoiceTemplateTypeClear() { }
+  invoiceTemplateTypeClear() {}
 
-  invoiceTemplateTypeSelected(event: MatCheckboxChange, row: number) { }
+  invoiceTemplateTypeSelected(event: MatCheckboxChange, row: number) {}
 
-  invoiceTemplateTypeSearch() { }
+  invoiceTemplateTypeSearch() {}
 
-  addSelectedInvoiceTemplateType() { }
+  addSelectedInvoiceTemplateType() {}
 
   createDocumentDTOGroup(value?: DocumentDTO): FormGroup {
     return this.formBuilder.group({
@@ -536,15 +577,15 @@ export abstract class EditSettingsComponent implements OnInit, AfterViewInit, On
     return this.editSettingsForm?.get('invoiceTemplate') as FormGroup;
   }
 
-  invoiceTemplateAddDialog() { }
+  invoiceTemplateAddDialog() {}
 
-  invoiceTemplateClear() { }
+  invoiceTemplateClear() {}
 
-  invoiceTemplateSelected(event: MatCheckboxChange, row: number) { }
+  invoiceTemplateSelected(event: MatCheckboxChange, row: number) {}
 
-  invoiceTemplateSearch() { }
+  invoiceTemplateSearch() {}
 
-  addSelectedInvoiceTemplate() { }
+  addSelectedInvoiceTemplate() {}
 
   get invoiceTemplateTargetControl(): FormGroup {
     return this.invoiceTemplateControl?.get('target') as FormGroup;
@@ -578,43 +619,43 @@ export abstract class EditSettingsComponent implements OnInit, AfterViewInit, On
     return this.editSettingsForm?.get('quotationDocumentType') as FormControl;
   }
 
-  quotationDocumentTypeAddDialog() { }
+  quotationDocumentTypeAddDialog() {}
 
-  quotationDocumentTypeClear() { }
+  quotationDocumentTypeClear() {}
 
-  quotationDocumentTypeSelected(event: MatCheckboxChange, row: number) { }
+  quotationDocumentTypeSelected(event: MatCheckboxChange, row: number) {}
 
-  quotationDocumentTypeSearch() { }
+  quotationDocumentTypeSearch() {}
 
-  addSelectedQuotationDocumentType() { }
+  addSelectedQuotationDocumentType() {}
 
   get quotationTemplateTypeControl(): FormControl {
     return this.editSettingsForm?.get('quotationTemplateType') as FormControl;
   }
 
-  quotationTemplateTypeAddDialog() { }
+  quotationTemplateTypeAddDialog() {}
 
-  quotationTemplateTypeClear() { }
+  quotationTemplateTypeClear() {}
 
-  quotationTemplateTypeSelected(event: MatCheckboxChange, row: number) { }
+  quotationTemplateTypeSelected(event: MatCheckboxChange, row: number) {}
 
-  quotationTemplateTypeSearch() { }
+  quotationTemplateTypeSearch() {}
 
-  addSelectedQuotationTemplateType() { }
+  addSelectedQuotationTemplateType() {}
 
   get quotationTemplateControl(): FormGroup {
     return this.editSettingsForm?.get('quotationTemplate') as FormGroup;
   }
 
-  quotationTemplateAddDialog() { }
+  quotationTemplateAddDialog() {}
 
-  quotationTemplateClear() { }
+  quotationTemplateClear() {}
 
-  quotationTemplateSelected(event: MatCheckboxChange, row: number) { }
+  quotationTemplateSelected(event: MatCheckboxChange, row: number) {}
 
-  quotationTemplateSearch() { }
+  quotationTemplateSearch() {}
 
-  addSelectedQuotationTemplate() { }
+  addSelectedQuotationTemplate() {}
 
   get quotationTemplateTargetControl(): FormGroup {
     return this.quotationTemplateControl?.get('target') as FormGroup;
@@ -677,11 +718,11 @@ export abstract class EditSettingsComponent implements OnInit, AfterViewInit, On
     }
   }
 
-  onAddToOrgDocumentsClick() { }
+  onAddToOrgDocumentsClick() {}
 
-  onAddToKycOrgDocumentsClick() { }
+  onAddToKycOrgDocumentsClick() {}
 
-  onAddToIndDocumentsClick() { }
+  onAddToIndDocumentsClick() {}
 
-  onAddToKycIndDocumentsClick() { }
+  onAddToKycIndDocumentsClick() {}
 }

@@ -32,6 +32,7 @@ export class EditDocumentTypeImplComponent extends EditDocumentTypeComponent {
   override error = linkedSignal(() => this.documentTypeApiStore.error());
   override messages = linkedSignal(() => this.documentTypeApiStore.messages());
   override success = linkedSignal(() => this.documentTypeApiStore.success());
+  override loading = linkedSignal(() => this.documentTypeApiStore.loading());
 
   constructor() {
     super();

@@ -43,6 +43,10 @@ export const routes: Routes = [
       loadChildren: () => import('@app/view/individual/individual.routes').then((m) => m.routes),
     },
     {
+      path: 'kyc', 
+      loadChildren: () => import('@app/view/individual/kyc/kyc-record.routes').then((m) => m.routes),
+    },
+    {
       path: 'user', 
       loadChildren: () => import('@app/view/user/user.routes').then((m) => m.routes),
     },

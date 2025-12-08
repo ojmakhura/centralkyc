@@ -117,8 +117,8 @@ public class OrganisationApiImpl extends OrganisationApiBase {
                 sortings.addAll(sortings);
             }
             
-            return ResponseEntity.ok(organisationService
-                    .search(criteria.getCriteria(), sortings));
+            return ResponseEntity.ok(orgService
+                    .search(criteria.getCriteria()));
 
         } catch (Exception e) {
             e.printStackTrace();

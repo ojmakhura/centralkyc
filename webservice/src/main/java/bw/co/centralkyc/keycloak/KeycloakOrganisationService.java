@@ -225,7 +225,7 @@ public class KeycloakOrganisationService {
 
         Map<String, List<String>> attributes = rep.getAttributes();
 
-        System.out.println(rep);
+        System.out.println("******************** " + attributes);
 
         if (attributes != null) {
             org.setRegistrationNo(attributes.get("registrationNo").listIterator().hasNext()
@@ -289,14 +289,21 @@ public class KeycloakOrganisationService {
         return organisation;
     }
 
-    public OrganisationDTO findById(String id) {
+    public OrganizationRepresentation getOrganisationRepresentationById(String id) {
 
         OrganizationsResource orgsResource = keycloakService.getOrganizationsResource();
         OrganizationResource orgResource = orgsResource.get(id);
 
         OrganizationRepresentation orgRep = orgResource.toRepresentation();
 
-        return toOrganisationDTO(orgRep);
+        return orgRep;
+
+    }
+
+    public OrganisationDTO findById(String id) {
+
+
+        return toOrganisationDTO(getOrganisationRepresentationById(id));
     }
 
     public List<OrganisationListDTO> getAll() {
