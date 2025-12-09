@@ -8,6 +8,7 @@
  */
 package bw.co.centralkyc.individual.kyc;
 
+import java.time.LocalDate;
 import java.util.Collection;
 import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Page;
@@ -60,6 +61,17 @@ public class KycRecordServiceImpl
     {
 
         KycRecord kycRecordEntity = this.kycRecordDao.kycRecordDTOToEntity(kycRecord);
+
+        if(kycRecordEntity.getUploadDate() == null) {
+            kycRecordEntity.setUploadDate(LocalDate.now());
+        }
+
+        if(kycRecordEntity.getExpiryDate() == null) {
+
+            kycRecordEntity.setExpiryDate(kycRecordEntity.getUploadDate().plusYears(2));
+        }
+
+            System.out.println("************************************************************ " + kycRecordEntity.getExpiryDate());
         kycRecordEntity = this.kycRecordRepository.save(kycRecordEntity);
 
         return this.kycRecordDao.toKycRecordDTO(kycRecordEntity);
