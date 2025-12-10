@@ -3,7 +3,7 @@ import { Component, computed, effect, inject, Input, linkedSignal } from '@angul
 import { EditIndividualComponent } from '@app/view/individual/edit-individual.component';
 import { EditIndividualVarsForm } from '@app/view/individual/edit-individual.component';
 import { CommonModule } from '@angular/common';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { AbstractControl, FormGroup, FormsModule, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
 import { MaterialModule } from '@app/material.module';
 import { LoaderComponent } from '@app/@shared/loader/loader.component';
@@ -13,6 +13,7 @@ import { OrganisationListDTO } from '@app/model/bw/co/centralkyc/organisation/or
 import { BranchDTO } from '@app/model/bw/co/centralkyc/organisation/branch/branch-dto';
 import { SearchObject } from '@app/model/search-object';
 import { OrganisationSearchCriteria } from '@app/model/bw/co/centralkyc/organisation/organisation-search-criteria';
+import { IndividualIdentityType } from '@app/model/bw/co/centralkyc/individual/individual-identity-type';
 
 @Component({
   selector: 'app-edit-individual',
@@ -32,7 +33,7 @@ export class EditIndividualImplComponent extends EditIndividualComponent {
   );
 
   organisationList = linkedSignal(() => this.organisationApiStore.dataList());
-  branchList = linkedSignal(() => this.branchApiStore.dataList())
+  branchList = linkedSignal(() => this.branchApiStore.dataList());
 
   override error = linkedSignal(() => this.individualApiStore.error());
   override messages = linkedSignal(() => this.individualApiStore.messages());
@@ -46,8 +47,7 @@ export class EditIndividualImplComponent extends EditIndividualComponent {
     effect(() => {
       let individual = this.individualApiStore.data();
 
-      if(!individual) {
-
+      if (!individual) {
         return;
       }
 
@@ -56,15 +56,12 @@ export class EditIndividualImplComponent extends EditIndividualComponent {
       if (individual.hasUser) {
         if (individual.organisation?.id) {
           this.organisationList.set([individual.organisation]);
-
         }
 
-        if(individual?.branch?.id) {
+        if (individual?.branch?.id) {
           this.branchList.set([individual.branch]);
         }
-
       }
-
     });
   }
 
@@ -92,6 +89,7 @@ export class EditIndividualImplComponent extends EditIndividualComponent {
   doNgOnDestroy(): void {}
 
   override beforeEditIndividualSave(form: any): void {
+
     this.individualApiStore.save({ individual: this.editIndividualForm.value });
   }
 
@@ -99,8 +97,8 @@ export class EditIndividualImplComponent extends EditIndividualComponent {
     let criteria = new SearchObject<OrganisationSearchCriteria>();
     criteria.criteria = {
       registrationNo: this.organisationFilterCtrl.value || '',
-      name: this.organisationFilterCtrl.value || ''
-    }
+      name: this.organisationFilterCtrl.value || '',
+    };
     this.organisationApiStore.search({ criteria: criteria });
   }
 
@@ -117,5 +115,54 @@ export class EditIndividualImplComponent extends EditIndividualComponent {
 
   override branchCompare(o1: BranchDTO | any, o2: BranchDTO | any) {
     return o1 && o2 ? o1.id === o2.id : false;
+  }
+
+  private omangValidator(): ValidatorFn {
+    return (control: AbstractControl): ValidationErrors | null => {
+      const identityType = this.editIndividualForm?.get('identityType')?.value;
+      
+      if (identityType !== IndividualIdentityType.OMANG) {
+        return null; // Only validate when identity type is OMANG
+      }
+      
+      const value = control.value;
+      if (!value) {
+        return null; // Let required validator handle empty values
+      }
+      
+      // OMANG must be exactly 9 digits with middle digit being 1 or 2
+      const omangPattern = /^\d{4}[12]\d{4}$/;
+      
+      if (!omangPattern.test(value)) {
+        return { invalidOmang: true };
+      }
+      
+      return null;
+    };
+  }
+
+  override newForm(editIndividualVarsForm: EditIndividualVarsForm): FormGroup {
+    return this.formBuilder.group({
+      id: [{ value: this.editIndividualVarsForm.id, disabled: false }],
+      createdAt: [{ value: this.editIndividualVarsForm.createdAt, disabled: false }],
+      createdBy: [{ value: this.editIndividualVarsForm.createdBy, disabled: false }],
+      modifiedAt: [{ value: this.editIndividualVarsForm.modifiedAt, disabled: false }],
+      modifiedBy: [{ value: this.editIndividualVarsForm.modifiedBy, disabled: false }],
+      kycStatus: [{ value: this.editIndividualVarsForm.kycStatus, disabled: false }, [Validators.required]],
+      identityType: [{ value: this.editIndividualVarsForm.identityType, disabled: false }, [Validators.required]],
+      identityNo: [{ value: this.editIndividualVarsForm.identityNo, disabled: false }, [Validators.required, this.omangValidator()]],
+      firstName: [{ value: this.editIndividualVarsForm.firstName, disabled: false }, [Validators.required]],
+      middleName: [{ value: this.editIndividualVarsForm.middleName, disabled: false }],
+      surname: [{ value: this.editIndividualVarsForm.surname, disabled: false }, [Validators.required]],
+      // phoneNumbers: this.formBuilder.array(this.editIndividualVarsForm.phoneNumbers ? this.editIndividualVarsForm.phoneNumbers : []),
+      phoneNumbers: [{ value: this.editIndividualVarsForm.phoneNumbers || [], disabled: false }],
+      postalAddress: [{ value: this.editIndividualVarsForm.postalAddress, disabled: false }],
+      physicalAddress: [{ value: this.editIndividualVarsForm.physicalAddress, disabled: false }],
+      emailAddress: [{ value: this.editIndividualVarsForm.emailAddress, disabled: false }, [Validators.required]],
+      hasUser: [{ value: this.editIndividualVarsForm.hasUser, disabled: false }, [Validators.required]],
+      organisation: [{ value: this.editIndividualVarsForm.organisation, disabled: false }],
+      branch: [{ value: this.editIndividualVarsForm.branch, disabled: false }],
+      sex: [{value: this.editIndividualVarsForm.sex, disabled: false}, [Validators.required, ]],
+    });
   }
 }
