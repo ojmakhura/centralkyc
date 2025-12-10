@@ -161,4 +161,29 @@ public class SettingsApiImpl extends SettingsApiBase {
             throw e;
         }
     }
+
+    @Override
+    public ResponseEntity<SettingsDTO> handleAttachDocumentType(String documentTypeId, DocumentTypePurpose purpose)
+            throws Exception {
+        
+
+        try {
+            return ResponseEntity.ok(settingsService.attachDocumentType(documentTypeId, purpose));
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw e;
+        }
+    }
+
+    @Override
+    public ResponseEntity<SettingsDTO> handleDetachDocumentType(String documentTypeId, DocumentTypePurpose purpose)
+            throws Exception {
+        
+        try {
+            return ResponseEntity.ok(settingsService.detachDocumentType(documentTypeId, purpose));
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw e;
+        }
+    }
 }

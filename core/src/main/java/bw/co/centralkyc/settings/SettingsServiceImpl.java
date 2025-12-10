@@ -21,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 import bw.co.centralkyc.TargetEntity;
 import bw.co.centralkyc.document.Document;
 import bw.co.centralkyc.document.DocumentRepository;
+import bw.co.centralkyc.document.type.DocumentTypeRepository;
 
 /**
  * @see bw.co.centralkyc.settings.SettingsService
@@ -32,12 +33,14 @@ public class SettingsServiceImpl
 {
 
     private final DocumentRepository documentRepository;
+    private final DocumentTypeRepository documentTypeRepository;
 
     public SettingsServiceImpl(
         SettingsDao settingsDao, 
         SettingsRepository settingsRepository,
         MessageSource messageSource,
-        DocumentRepository documentRepository
+        DocumentRepository documentRepository,
+        DocumentTypeRepository documentTypeRepository
     ) {
         
         super(
@@ -47,6 +50,7 @@ public class SettingsServiceImpl
         );
 
         this.documentRepository = documentRepository;
+        this.documentTypeRepository = documentTypeRepository;
     }
 
     /**
@@ -158,6 +162,58 @@ public class SettingsServiceImpl
         settings.setModifiedBy(user);
         settings.setModifiedAt(LocalDateTime.now());
         
+        settings = settingsRepository.save(settings);
+
+        return settingsDao.toSettingsDTO(settings);
+    }
+
+    @Override
+    protected SettingsDTO handleAttachDocumentType(String documentTypeId, DocumentTypePurpose purpose)
+            throws Exception {
+        // TODO Auto-generated method stub
+        Settings settings = settingsRepository.findAll().stream().findFirst().orElseThrow(() -> new Exception("Settings not found"));
+
+        switch(purpose) {
+            case ORGANISATION_KYC:
+                settings.getOrgKycDocuments().add(this.documentTypeRepository.findById(documentTypeId).orElseThrow(() -> new Exception("Document Type not found")));
+                break;
+            case INDIVIDUAL_KYC:
+                settings.getIndKycDocuments().add(this.documentTypeRepository.findById(documentTypeId).orElseThrow(() -> new Exception("Document Type not found")));
+                break;
+            case ORGANISATION:
+                settings.getOrganisationDocuments().add(this.documentTypeRepository.findById(documentTypeId).orElseThrow(() -> new Exception("Document Type not found")));
+                break;
+            case INDIVIDUAL:
+                settings.getIndividualDocuments().add(this.documentTypeRepository.findById(documentTypeId).orElseThrow(() -> new Exception("Document Type not found")));
+                break;
+        }
+
+        settings = settingsRepository.save(settings);
+
+        return settingsDao.toSettingsDTO(settings);
+    }
+
+    @Override
+    protected SettingsDTO handleDetachDocumentType(String documentTypeId, DocumentTypePurpose purpose)
+            throws Exception {
+        
+        Settings settings = settingsRepository.findAll().stream().findFirst().orElseThrow(() -> new Exception("Settings not found"));
+
+        switch(purpose) {
+            case ORGANISATION_KYC:
+                settings.getOrgKycDocuments().removeIf(dt -> dt.getId().equals(documentTypeId));
+                break;
+            case INDIVIDUAL_KYC:
+                settings.getIndKycDocuments().removeIf(dt -> dt.getId().equals(documentTypeId));
+                break;
+            case ORGANISATION:
+                settings.getOrganisationDocuments().removeIf(dt -> dt.getId().equals(documentTypeId));
+                break;
+            case INDIVIDUAL:
+                settings.getIndividualDocuments().removeIf(dt -> dt.getId().equals(documentTypeId));
+                break;
+        }
+
         settings = settingsRepository.save(settings);
 
         return settingsDao.toSettingsDTO(settings);

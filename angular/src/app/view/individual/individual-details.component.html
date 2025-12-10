@@ -476,7 +476,7 @@
                         <mat-icon class="empty-icon">verified_user</mat-icon>
                         <h4>{{ 'no.kyc.records' | translate }}</h4>
                         <p>{{ 'no.kyc.records.description' | translate }}</p>
-                        <button mat-raised-button color="primary" class="add-record-btn">
+                        <button mat-raised-button color="primary" class="add-record-btn" (click)="addKycRecord()">
                           <mat-icon>add</mat-icon>
                           {{ 'add.first.kyc.record' | translate }}
                         </button>

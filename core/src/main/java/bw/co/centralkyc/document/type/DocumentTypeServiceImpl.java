@@ -96,9 +96,8 @@ public class DocumentTypeServiceImpl
 
         return (root, cq, cb) -> {
             return cb.or(
-                cb.like(cb.upper(root.get("code")), "%" + criteria.toUpperCase() + "%"),
-                cb.like(cb.upper(root.get("name")), "%" + criteria.toUpperCase() + "%")
-            );
+                    cb.like(cb.upper(root.get("code")), "%" + criteria.toUpperCase() + "%"),
+                    cb.like(cb.upper(root.get("name")), "%" + criteria.toUpperCase() + "%"));
         };
 
     }
@@ -114,7 +113,8 @@ public class DocumentTypeServiceImpl
 
         Specification<DocumentType> spec = this.createSpecification(criteria);
 
-        Collection<DocumentType> types = documentTypeRepository.findAll(spec, Sort.by(Direction.ASC, "name"));
+        Collection<DocumentType> types = spec == null ? documentTypeRepository.findAll(Sort.by(Direction.ASC, "name"))
+                : documentTypeRepository.findAll(spec, Sort.by(Direction.ASC, "name"));
 
         return documentTypeDao.toDocumentTypeDTOCollection(types);
     }
@@ -145,7 +145,8 @@ public class DocumentTypeServiceImpl
 
         Pageable pageable = PageRequest.of(pageNumber, pageSize, Sort.by(Direction.ASC, "name"));
         Specification<DocumentType> spec = this.createSpecification(criteria);
-        Page<DocumentType> types = documentTypeRepository.findAll(spec, pageable);
+        Page<DocumentType> types = spec == null ? documentTypeRepository.findAll(pageable)
+                : documentTypeRepository.findAll(spec, pageable);
 
         return types.map(type -> documentTypeDao.toDocumentTypeDTO(type));
 

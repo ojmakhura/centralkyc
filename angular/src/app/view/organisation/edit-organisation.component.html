@@ -214,6 +214,78 @@
         </mat-card-content>
       </mat-card>
 
+      <!-- Online Presence Section -->
+      <mat-card class="form-section">
+        <mat-card-header>
+          <mat-card-title>
+            <mat-icon>contact_phone</mat-icon>
+            {{ 'online.presence' | translate }}
+          </mat-card-title>
+        </mat-card-header>
+
+        <mat-card-content>
+          <div class="field-row">
+            <mat-form-field appearance="outline" class="field-full-width">
+              <mat-label>{{ 'contact.email.address' | translate }}</mat-label>
+              <input
+                matInput
+                type="text"
+                id="contactEmailAddress"
+                formControlName="contactEmailAddress"
+                placeholder="{{ 'enter.contact.email.address' | translate }}"
+              />
+              <mat-icon matSuffix>phone</mat-icon>
+              <!-- <mat-hint>{{ 'separate.multiple.numbers.with.commas' | translate }}</mat-hint> -->
+            </mat-form-field>
+          </div>
+          <div class="field-row">
+            <button
+              mat-raised-button
+              color="primary"
+              type="submit"
+              class="action-primary"
+              (click)="addDomain()"
+              [disabled]="!domainsControl.valid"
+            >
+              <mat-icon>add</mat-icon>
+              <!-- <span>{{ 'save' | translate }}</span> -->
+            </button>
+          </div>
+
+          <ng-container formArrayName="domains">
+            @for (domain of domainsControl.controls; let i = $index; track domain) {
+              <div class="field-row" [formGroup]="domain">
+                <mat-form-field appearance="outline" class="field-half">
+                  <mat-label>{{ 'domain.name' | translate }}</mat-label>
+                  <input
+                    matInput
+                    id="domainName"
+                    formControlName="name"
+                    placeholder="{{ 'enter.domain.name' | translate }}"
+                    rows="3"
+                    required
+                  />
+                  <!-- <mat-icon matSuffix>mail</mat-icon> -->
+                  @if (domain.get('name')?.hasError('required')) {
+                    <mat-error>{{ 'domain.name.required' | translate }}</mat-error>
+                  }
+                </mat-form-field>
+
+                <mat-checkbox id="verified" formControlName="verified" required>
+                  <span translate>verified</span>
+                </mat-checkbox>
+
+                <button mat-raised-button color="danger" type="button" class="action-primary" (click)="removeDomain(i)">
+                  <mat-icon>delete</mat-icon>
+                  <!-- <span>{{ 'save' | translate }}</span> -->
+                </button>
+              </div>
+            }
+          </ng-container>
+
+        </mat-card-content>
+      </mat-card>
+
       <!-- Form Actions (Bottom) -->
       <div class="form-actions">
         <button

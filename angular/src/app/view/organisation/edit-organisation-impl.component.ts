@@ -7,20 +7,15 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
 import { MaterialModule } from '@app/material.module';
 import { LoaderComponent } from '@app/@shared/loader/loader.component';
+import Swal from 'sweetalert2';
+import { OrganisationDTO } from '@app/model/bw/co/centralkyc/organisation/organisation-dto';
 
 @Component({
   selector: 'app-edit-organisation',
   templateUrl: './edit-organisation.component.html',
   styleUrls: ['./edit-organisation.component.scss'],
   standalone: true,
-  imports: [
-    CommonModule,
-    FormsModule,
-    ReactiveFormsModule,
-    TranslateModule,
-    MaterialModule,
-    LoaderComponent,
-  ],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, TranslateModule, MaterialModule, LoaderComponent],
 })
 export class EditOrganisationImplComponent extends EditOrganisationComponent {
   @Input() id: string | any;
@@ -34,8 +29,11 @@ export class EditOrganisationImplComponent extends EditOrganisationComponent {
     super();
 
     effect(() => {
-      let organisation = this.organisationApiStore.data();
+      let organisation: OrganisationDTO = this.organisationApiStore.data();
       this.editOrganisationForm.patchValue(organisation);
+
+      this.editOrganisationForm.setControl("domains", this.createOrganisationDomainArray(organisation.domains))
+
     });
 
     // Handle form control disabled state based on loading
@@ -52,7 +50,7 @@ export class EditOrganisationImplComponent extends EditOrganisationComponent {
   override beforeOnInit(form: EditOrganisationVarsForm): EditOrganisationVarsForm {
     this.organisationApiStore.reset();
 
-    this.route.queryParams.subscribe(params => {
+    this.route.queryParams.subscribe((params) => {
       const id = params['id'];
       if (id) {
         this.id = id;
@@ -60,13 +58,34 @@ export class EditOrganisationImplComponent extends EditOrganisationComponent {
       }
     });
 
-
     return form;
   }
 
-  doNgOnDestroy(): void { }
+  doNgOnDestroy(): void {}
 
   override beforeEditOrganisationSave(form: any): void {
     this.organisationApiStore.save({ organisation: this.editOrganisationForm.value });
+  }
+
+  addDomain() {
+    this.domainsControl.push(this.createOrganisationDomainGroup());
+  }
+
+  removeDomain(i: number) {
+    Swal.fire({
+      title: 'Are you sure?',
+      text: 'Do you want to remove the domain from the organisation?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Yes',
+      cancelButtonText: 'No',
+    }).then((result) => {
+      if (result.isConfirmed) {
+        // this.kycInvoiceApiStore.generateInvoice({ subscriptionId: this.subscription()?.id });
+        this.domainsControl.removeAt(i);
+      } else if (result.dismiss === Swal.DismissReason.cancel) {
+      }
+    });
+    
   }
 }

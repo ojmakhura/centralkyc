@@ -10,15 +10,12 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.util.Collection;
-import java.util.Optional;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.Page;
-import org.springframework.http.HttpStatus;
 
 import bw.co.centralkyc.AuditTracker;
 import bw.co.centralkyc.PropertySearchOrder;
-import bw.co.centralkyc.RestApiResponse;
 import bw.co.centralkyc.SearchObject;
 import bw.co.centralkyc.keycloak.KeycloakUserService;
 import bw.co.centralkyc.organisation.OrganisationListDTO;
@@ -135,22 +132,42 @@ public class IndividualApiImpl extends IndividualApiBase {
             keycloakUserService.getUserByIdentityNo(individual.getIdentityNo());
             UserDTO user = keycloakUserService.getUserByIdentityNo(individual.getIdentityNo());
 
+            System.out.println("------------------------------->>>>>>>>>>>>> " + user);
+
             if (user == null) {
 
-                user = new UserDTO();
-                user.setFirstName(individual.getFirstName());
-                user.setLastName(individual.getSurname());
-                user.setEmail(individual.getEmailAddress());
-                user.setUsername(individual.getEmailAddress());
-                user.setIdentityNo(individual.getIdentityNo());
-                user.setPassword("P@ssw0rd");
-                user.setEnabled(true);
-                user.setBranchId(individual.getBranch().getId());
-                user.setBranch(individual.getBranch().getName());
-                user.setOrganisation(individual.getOrganisation().getName());
-                user.setOrganisationId(individual.getOrganisation().getId());
+                UserDTO existing = keycloakUserService.getUserByEmail(individual.getEmailAddress());
 
-                user = keycloakUserService.createUser(user);
+                boolean createUser = existing == null;
+
+                if (createUser) {
+
+                    if (existing != null) {
+                        boolean sameUser = existing.getFirstName().equals(individual.getFirstName())
+                                && existing.getUsername().equals(individual.getSurname());
+
+                        if (!sameUser) {
+
+                            throw new IndividualServiceException(
+                                    "The provided individual has an email used by a user who does not match the given information.");
+                        }
+                    }
+
+                    user = new UserDTO();
+                    user.setFirstName(individual.getFirstName());
+                    user.setLastName(individual.getSurname());
+                    user.setEmail(individual.getEmailAddress());
+                    user.setUsername(individual.getEmailAddress());
+                    user.setIdentityNo(individual.getIdentityNo());
+                    user.setPassword("P@ssw0rd");
+                    user.setEnabled(true);
+                    user.setBranchId(individual.getBranch().getId());
+                    user.setBranch(individual.getBranch().getName());
+                    user.setOrganisation(individual.getOrganisation().getName());
+                    user.setOrganisationId(individual.getOrganisation().getId());
+
+                    user = keycloakUserService.createUser(user);
+                }
 
             }
 
@@ -166,9 +183,9 @@ public class IndividualApiImpl extends IndividualApiBase {
             SearchObject<IndividualSearchCriteria> criteria) {
 
         try {
-            
-            return ResponseEntity.ok(individualService.search(criteria.getCriteria(), (PropertySearchOrder) criteria.getSortings()));
-            
+
+            return ResponseEntity
+                    .ok(individualService.search(criteria.getCriteria(), (PropertySearchOrder) criteria.getSortings()));
 
         } catch (Exception e) {
             throw e;

@@ -20,6 +20,11 @@ import { Observable, of } from 'rxjs';
 import { DocumentDTO } from '@app/model/bw/co/centralkyc/document/document-dto';
 import { EmploymentRecordApiStore } from '@app/store/bw/co/centralkyc/individual/employment/employment-record-api.store';
 import { KycRecordApiStore } from '@app/store/bw/co/centralkyc/individual/kyc/kyc-record-api.store';
+import Swal from 'sweetalert2';
+import { KycRecordDTO } from '@app/model/bw/co/centralkyc/individual/kyc/kyc-record-dto';
+import { KycComplianceStatus } from '@app/model/bw/co/centralkyc/individual/kyc/kyc-compliance-status';
+import { IndividualDTO } from '@app/model/bw/co/centralkyc/individual/individual-dto';
+import { KycRecordApi } from '@app/service/bw/co/centralkyc/individual/kyc/kyc-record-api';
 
 // Interface for upload progress tracking
 interface UploadProgress {
@@ -46,6 +51,7 @@ export class IndividualDetailsImplComponent extends IndividualDetailsComponent {
   employmentRecords = this.employmentRecordStore.dataList;
 
   kycRecordStore = inject(KycRecordApiStore);
+  kycRecordApi = inject(KycRecordApi);
   kycRecords = this.kycRecordStore.dataList;
 
   // Settings and document types
@@ -85,7 +91,7 @@ export class IndividualDetailsImplComponent extends IndividualDetailsComponent {
     effect(() => {
       const doc = this.documentApiStore.data();
 
-      if (doc.targetId) {
+      if (doc?.targetId) {
         this.loadIndividualDocuments(doc.targetId);
       }
     });
@@ -295,5 +301,44 @@ export class IndividualDetailsImplComponent extends IndividualDetailsComponent {
 
   private loadIndividualDocuments(individualId: string): void {
     this.documentApiStore.findByTarget({ target: TargetEntity.INDIVIDUAL, targetId: individualId });
+  }
+
+  addKycRecord() {
+
+    Swal.fire({
+      title: 'Add KYC Record',
+      text: 'Are you sure you want to add a new KYC record for this individual?',
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonText: 'Yes, add it!',
+      cancelButtonText: 'No, cancel',
+    }).then((result) => {
+      if (result.isConfirmed) {
+        const individual: IndividualDTO = this.individual();
+
+        let kycRecord: KycRecordDTO = new KycRecordDTO();
+        kycRecord.individualId = individual?.id;
+        kycRecord.identityNo = individual?.identityNo || '';
+        kycRecord.kycStatus = KycComplianceStatus.CURRENT;
+        kycRecord.name = individual.firstName + ' ' + (individual.surname || '');
+
+        if (individual?.id) {
+          this.kycRecordApi.save(
+            kycRecord
+          ).subscribe({
+            next: (response) => {
+             this.router.navigate(['kyc'], { queryParams: { id: response.id } });
+            },
+            error: (error) => {
+              console.error('Add KYC record error:', error);
+              this.toaster.error(`Failed to add KYC record: ${error.message || 'Operation failed'}`);
+            },
+          });
+        } else {
+          this.toaster.error('No individual selected to add KYC record');
+        }
+      }
+    });
+
   }
 }

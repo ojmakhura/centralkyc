@@ -10,6 +10,7 @@ import { SettingsDTO } from '@app/model/bw/co/centralkyc/settings/settings-dto';
 import { SettingsApi } from '@app/service/bw/co/centralkyc/settings/settings-api';
 import { RestApiResponse } from '@app/model/rest-api-response.model';
 import { TargetEntity } from '@app/model/bw/co/centralkyc/target-entity';
+import { DocumentTypePurpose } from '@app/model/bw/co/centralkyc/settings/document-type-purpose';
 
 export type SettingsApiState = AppState<SettingsDTO, SettingsDTO> & {};
 
@@ -245,6 +246,58 @@ export const SettingsApiStore = signalStore(
                   success: false,
                   error: true,
                   messages: [error.message || 'An error occurred during template upload'],
+                });
+              },
+            }),
+          );
+        }),
+      ),
+      attachDocumentType: rxMethod<{ documentTypeId: string; purpose: DocumentTypePurpose }>(
+        switchMap((data: any) => {
+          patchState(store, { loading: true, loaderMessage: 'Attaching document type ...' });
+          return settingsApi.attachDocumentType(data.documentTypeId, data.purpose).pipe(
+            tapResponse({
+              next: (response: SettingsDTO) => {
+                patchState(store, {
+                  data: response,
+                  loading: false,
+                  success: true,
+                  messages: [ 'Document type attached successfully!'],
+                  error: false,
+                });
+              },
+              error: (error: any) => {
+                patchState(store, {
+                  loading: false,
+                  success: false,
+                  error: true,
+                  messages: [error.message || 'An error occurred while attaching document type'],
+                });
+              },
+            }),
+          );
+        }),
+      ),
+      detachDocumentType: rxMethod<{ documentTypeId: string; purpose: DocumentTypePurpose }>(
+        switchMap((data: any) => {
+          patchState(store, { loading: true, loaderMessage: 'Detaching document type ...' });
+          return settingsApi.detachDocumentType(data.documentTypeId, data.purpose).pipe(
+            tapResponse({
+              next: (response: SettingsDTO) => {
+                patchState(store, {
+                  data: response,
+                  loading: false,
+                  success: true,
+                  messages: [ 'Document type detached successfully!'],
+                  error: false,
+                });
+              },
+              error: (error: any) => {
+                patchState(store, {
+                  loading: false,
+                  success: false,
+                  error: true,
+                  messages: [error.message || 'An error occurred while detaching document type'],
                 });
               },
             }),
