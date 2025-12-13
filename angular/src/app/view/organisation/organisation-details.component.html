@@ -1,6 +1,14 @@
 <!-- Redesigned Organisation Details Component - Display Only -->
 @defer (when organisation()) {
   <div class="details-container">
+    <div class="breadcrumb-section">
+    <mat-icon class="breadcrumb-icon">home</mat-icon>
+    <span class="breadcrumb-text">{{ 'home' | translate }}</span>
+    <mat-icon class="breadcrumb-separator">chevron_right</mat-icon>
+    <span class="breadcrumb-text">{{ 'organisation' | translate }}</span>
+    <mat-icon class="breadcrumb-separator">chevron_right</mat-icon>
+    <span class="breadcrumb-text active">{{ organisation().name }} </span>
+  </div>
     <!-- Header Section -->
     <mat-card class="header-card" appearance="outlined">
       <mat-card-header>

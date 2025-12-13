@@ -1,5 +1,13 @@
 <!-- Redesigned Settings Component -->
 <div class="edit-container">
+  <div class="breadcrumb-section">
+    <mat-icon class="breadcrumb-icon">home</mat-icon>
+    <span class="breadcrumb-text">{{ 'home' | translate }}</span>
+    <mat-icon class="breadcrumb-separator">chevron_right</mat-icon>
+    <span class="breadcrumb-text">{{ 'settings' | translate }}</span>
+    <mat-icon class="breadcrumb-separator">chevron_right</mat-icon>
+    <span class="breadcrumb-text active">{{ (idControl.value ? 'edit' : 'create') | translate }}</span>
+  </div>
   <!-- Header Section -->
   <div class="page-header">
     <div class="header-content">

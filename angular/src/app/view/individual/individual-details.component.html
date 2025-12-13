@@ -1,6 +1,14 @@
 <!-- Redesigned Individual Details Component - Display Only -->
 @defer (when individual()) {
 <div class="details-container">
+  <div class="breadcrumb-section">
+    <mat-icon class="breadcrumb-icon">home</mat-icon>
+    <span class="breadcrumb-text">{{ 'home' | translate }}</span>
+    <mat-icon class="breadcrumb-separator">chevron_right</mat-icon>
+    <span class="breadcrumb-text">{{ 'individual' | translate }}</span>
+    <mat-icon class="breadcrumb-separator">chevron_right</mat-icon>
+    <span class="breadcrumb-text active">{{ individual().firstName }} {{ individual().middleName }} {{ individual().surname }} </span>
+  </div>
   <!-- Header Section -->
   <mat-card class="header-card" appearance="outlined">
     <mat-card-header>

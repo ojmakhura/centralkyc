@@ -1,5 +1,14 @@
 <!-- Redesigned Subscription Details Component -->
 <div class="details-container">
+  <div class="details-container">
+    <div class="breadcrumb-section">
+    <mat-icon class="breadcrumb-icon">home</mat-icon>
+    <span class="breadcrumb-text">{{ 'home' | translate }}</span>
+    <mat-icon class="breadcrumb-separator">chevron_right</mat-icon>
+    <span class="breadcrumb-text">{{ 'subscription' | translate }}</span>
+    <mat-icon class="breadcrumb-separator">chevron_right</mat-icon>
+    <span class="breadcrumb-text active">{{ subscription()?.ref || 'N/A' }} </span>
+  </div>
   <!-- Header Section -->
   <mat-card class="header-card" appearance="outlined">
     <mat-card-header>
