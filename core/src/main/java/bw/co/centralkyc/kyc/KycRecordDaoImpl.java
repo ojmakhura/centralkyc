@@ -4,7 +4,7 @@
  * This is only generated once! It will never be overwritten.
  * You can (and have to!) safely modify it by hand.
  */
-package bw.co.centralkyc.individual.kyc;
+package bw.co.centralkyc.kyc;
 
 import bw.co.centralkyc.document.Document;
 import bw.co.centralkyc.document.DocumentDTO;

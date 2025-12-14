@@ -30,7 +30,7 @@ import bw.co.centralkyc.PropertySearchOrder;
 import bw.co.centralkyc.SearchObject;
 import bw.co.centralkyc.SortOrder;
 import bw.co.centralkyc.SortOrderFactory;
-import bw.co.centralkyc.individual.kyc.KycRecordServiceException;
+import bw.co.centralkyc.kyc.KycRecordServiceException;
 import bw.co.centralkyc.organisation.OrganisationDao;
 import bw.co.centralkyc.organisation.OrganisationRepository;
 import bw.co.centralkyc.sequence.SequenceGenerator;

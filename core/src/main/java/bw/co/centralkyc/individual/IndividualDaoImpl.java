@@ -8,7 +8,7 @@ package bw.co.centralkyc.individual;
 
 import bw.co.centralkyc.document.DocumentRepository;
 import bw.co.centralkyc.individual.employment.EmploymentRecordRepository;
-import bw.co.centralkyc.individual.kyc.KycRecordRepository;
+import bw.co.centralkyc.kyc.KycRecordRepository;
 import bw.co.centralkyc.organisation.client.ClientRequestRepository;
 import jakarta.persistence.EntityNotFoundException;
 

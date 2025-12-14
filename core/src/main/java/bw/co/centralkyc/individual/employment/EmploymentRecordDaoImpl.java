@@ -9,9 +9,9 @@ package bw.co.centralkyc.individual.employment;
 import bw.co.centralkyc.document.DocumentRepository;
 import bw.co.centralkyc.individual.Individual;
 import bw.co.centralkyc.individual.IndividualRepository;
-import bw.co.centralkyc.individual.kyc.KycRecord;
-import bw.co.centralkyc.individual.kyc.KycRecordDTO;
-import bw.co.centralkyc.individual.kyc.KycRecordRepository;
+import bw.co.centralkyc.kyc.KycRecord;
+import bw.co.centralkyc.kyc.KycRecordDTO;
+import bw.co.centralkyc.kyc.KycRecordRepository;
 import bw.co.centralkyc.organisation.OrganisationRepository;
 import jakarta.persistence.EntityNotFoundException;
 

@@ -19,7 +19,7 @@ import bw.co.centralkyc.individual.IndividualDao;
 import bw.co.centralkyc.individual.IndividualIdentityType;
 import bw.co.centralkyc.individual.IndividualRepository;
 import bw.co.centralkyc.individual.Sex;
-import bw.co.centralkyc.individual.kyc.KycComplianceStatus;
+import bw.co.centralkyc.kyc.KycComplianceStatus;
 import bw.co.centralkyc.organisation.Organisation;
 import bw.co.centralkyc.organisation.OrganisationDao;
 import bw.co.centralkyc.organisation.OrganisationRepository;
