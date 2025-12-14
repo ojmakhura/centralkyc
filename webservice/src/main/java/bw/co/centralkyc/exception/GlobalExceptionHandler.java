@@ -1,5 +1,7 @@
 package bw.co.centralkyc.exception;
 
+import org.springframework.core.Ordered;
+import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
@@ -11,6 +13,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @RestControllerAdvice
+@Order(Ordered.LOWEST_PRECEDENCE)
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
@@ -38,7 +41,7 @@ public class GlobalExceptionHandler {
 
         ApiErrorResponse error = new ApiErrorResponse(
                 HttpStatus.INTERNAL_SERVER_ERROR.value(),
-                "Unexpected error occurred",
+                ex.getMessage(),
                 LocalDateTime.now(),
                 List.of(ex.getCause() != null ? ex.getCause().getMessage() : ex.getMessage())
         );

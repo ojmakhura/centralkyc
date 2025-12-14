@@ -30,6 +30,7 @@ import bw.co.centralkyc.organisation.branch.BranchDTO;
 import bw.co.centralkyc.organisation.branch.BranchService;
 import bw.co.centralkyc.user.UserDTO;
 import bw.co.roguesystems.comm.ContentType;
+import bw.co.roguesystems.comm.MessagingPlatform;
 import bw.co.roguesystems.comm.message.CommMessageDTO;
 
 @org.springframework.web.bind.annotation.RestController
@@ -43,6 +44,9 @@ public class IndividualApiImpl extends IndividualApiBase {
 
     @Value("${app.admin-web}")
     private String adminWebUrl;
+
+    @Value("${app.comm.source-email}")
+    private String sourceEmail;
 
     private final KeycloakUserService keycloakUserService;
     private final KeycloakOrganisationService keycloakOrgService;
@@ -93,19 +97,22 @@ public class IndividualApiImpl extends IndividualApiBase {
 
                 UserDTO user = keycloakUserService.getUserByIdentityNo(data.getIdentityNo());
 
-                if (StringUtils.isNotBlank(user.getBranchId())) {
+                if (user != null) {
 
-                    BranchDTO branch = branchService.findById(user.getBranchId());
-                    data.setBranch(branch);
-                }
+                    if (StringUtils.isNotBlank(user.getBranchId())) {
 
-                if (StringUtils.isNotBlank(user.getOrganisationId())) {
+                        BranchDTO branch = branchService.findById(user.getBranchId());
+                        data.setBranch(branch);
+                    }
 
-                    OrganisationListDTO orgList = new OrganisationListDTO();
-                    orgList.setId(user.getOrganisationId());
-                    orgList.setName(user.getOrganisation());
+                    if (StringUtils.isNotBlank(user.getOrganisationId())) {
 
-                    data.setOrganisation(orgList);
+                        OrganisationListDTO orgList = new OrganisationListDTO();
+                        orgList.setId(user.getOrganisationId());
+                        orgList.setName(user.getOrganisation());
+
+                        data.setOrganisation(orgList);
+                    }
                 }
 
             }
@@ -197,6 +204,7 @@ public class IndividualApiImpl extends IndividualApiBase {
 
         message.setContentType(ContentType.PLAIN_TEXT);
         message.setDestinations(List.of(individual.getEmailAddress()));
+        message.setSource(sourceEmail);
 
         StringBuilder nameBuilder = new StringBuilder();
         nameBuilder.append(individual.getFirstName()).append(' ');
@@ -212,6 +220,17 @@ public class IndividualApiImpl extends IndividualApiBase {
                 user.getPassword());
 
         message.setText(messageStr);
+        message.setPlatform(MessagingPlatform.EMAIL);
+
+        OrganisationDTO org = keycloakOrgService.findById(individual.getOrganisation().getId());
+
+        if(org != null) {
+
+            if(StringUtils.isNotBlank(org.getContactEmailAddress())) {
+                message.setCcs(List.of(org.getContactEmailAddress()));
+            }
+            
+        }
 
         return message;
 
@@ -255,8 +274,19 @@ public class IndividualApiImpl extends IndividualApiBase {
                     user.setIdentityNo(individual.getIdentityNo());
                     user.setPassword(generatePassword());
                     user.setEnabled(true);
-                    user.setBranchId(individual.getBranch().getId());
-                    user.setBranch(individual.getBranch().getName());
+
+                    if (individual.getBranch() != null && !StringUtils.isBlank(individual.getBranch().getId())) {
+
+                        user.setBranchId(individual.getBranch().getId());
+                        user.setBranch(individual.getBranch().getName());
+                    }
+
+                    if (individual.getOrganisation() == null
+                            || StringUtils.isBlank(individual.getOrganisation().getId())) {
+                        throw new IndividualServiceException(
+                                "Organisation information is required to create user for individual.");
+                    }
+
                     user.setOrganisation(individual.getOrganisation().getName());
                     user.setOrganisationId(individual.getOrganisation().getId());
                     user.setRoles(Set.of(organisationManagerRole));
@@ -268,7 +298,15 @@ public class IndividualApiImpl extends IndividualApiBase {
 
             individual = individualService.save(individual);
             if (isNewUser) {
-                emailService.sendEmail(List.of(newUserMessage(individual, user)));
+                try {
+                    emailService.sendEmail(List.of(newUserMessage(individual, user)));
+                } catch (Exception e) {
+                    // Log and continue
+                    System.err.println("Failed to send new user email: " + e.getMessage());
+                    throw new IndividualServiceException(
+                            "Individual saved but failed to send new user email notification.", e);
+                }
+
             }
 
             return ResponseEntity.ok(individual);

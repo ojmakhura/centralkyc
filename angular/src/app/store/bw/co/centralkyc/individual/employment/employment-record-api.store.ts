@@ -60,7 +60,7 @@ export const EmploymentRecordApiStore = signalStore(
                     loading: false,
                     success: false,
                     error: true,
-                    messages: [error.message || 'An error occurred'],
+                    messages: [error.error?.message ? error.error.message : error.message || 'An error occurred'],
                   }
                 );
               },
@@ -91,7 +91,7 @@ export const EmploymentRecordApiStore = signalStore(
                     loading: false,
                     success: false,
                     error: true,
-                    messages: [error.message || 'An error occurred'],
+                    messages: [error.error?.message ? error.error.message : error.message || 'An error occurred'],
                   }
                 );
               },
@@ -122,7 +122,7 @@ export const EmploymentRecordApiStore = signalStore(
                     loading: false,
                     success: false,
                     error: true,
-                    messages: [error.message || 'An error occurred'],
+                    messages: [error.error?.message ? error.error.message : error.message || 'An error occurred'],
                   }
                 );
               },
@@ -153,7 +153,7 @@ export const EmploymentRecordApiStore = signalStore(
                     loading: false,
                     success: false,
                     error: true,
-                    messages: [error.message || 'An error occurred'],
+                    messages: [error.error?.message ? error.error.message : error.message || 'An error occurred'],
                   }
                 );
               },
@@ -184,7 +184,7 @@ export const EmploymentRecordApiStore = signalStore(
                     loading: false,
                     success: false,
                     error: true,
-                    messages: [error.message || 'An error occurred'],
+                    messages: [error.error?.message ? error.error.message : error.message || 'An error occurred'],
                   }
                 );
               },
@@ -215,7 +215,7 @@ export const EmploymentRecordApiStore = signalStore(
                     loading: false,
                     success: false,
                     error: true,
-                    messages: [error.message || 'An error occurred'],
+                    messages: [error.error?.message ? error.error.message : error.message || 'An error occurred'],
                   }
                 );
               },
@@ -246,7 +246,7 @@ export const EmploymentRecordApiStore = signalStore(
                     loading: false,
                     success: false,
                     error: true,
-                    messages: [error.message || 'An error occurred'],
+                    messages: [error.error?.message ? error.error.message : error.message || 'An error occurred'],
                   }
                 );
               },
@@ -277,7 +277,7 @@ export const EmploymentRecordApiStore = signalStore(
                     loading: false,
                     success: false,
                     error: true,
-                    messages: [error.message || 'An error occurred'],
+                    messages: [error.error?.message ? error.error.message : error.message || 'An error occurred'],
                   }
                 );
               },
