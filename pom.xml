@@ -203,6 +203,11 @@
                 <artifactId>keycloak-admin-client</artifactId>
                 <version>26.0.7</version>
             </dependency>
+            <dependency>
+                <groupId>bw.co.roguesystems.comm</groupId>
+                <artifactId>roguecomm-common</artifactId>
+                <version>0.0.1</version>
+            </dependency>
             <!-- <dependency>
                 <groupId>org.keycloak</groupId>
                 <artifactId>keycloak-spring-security-adapter</artifactId>
@@ -330,7 +335,7 @@
         <maven.compiler.source>21</maven.compiler.source>
         <maven.compiler.target>21</maven.compiler.target>
         <maven.compiler.release>21</maven.compiler.release>
-        
+
         <andromda.version>5.0-SNAPSHOT</andromda.version>
         <downloadSources>true</downloadSources>
         <createChecksum>true</createChecksum>
@@ -394,7 +399,7 @@
         -->
         <hibernate.dialect>
             org.hibernate.dialect.PostgreSQLDialect
-        </hibernate.dialect> 
+        </hibernate.dialect>
         <tomcat.home>${env.CATALINA_HOME}</tomcat.home>
         <application.id>centralkyc</application.id>
         <application.package>bw.co.centralkyc</application.package>

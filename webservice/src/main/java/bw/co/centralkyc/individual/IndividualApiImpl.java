@@ -9,32 +9,77 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 
+import java.security.SecureRandom;
 import java.util.Collection;
+import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 
 import bw.co.centralkyc.AuditTracker;
 import bw.co.centralkyc.PropertySearchOrder;
 import bw.co.centralkyc.SearchObject;
+import bw.co.centralkyc.email.EmailService;
+import bw.co.centralkyc.keycloak.KeycloakOrganisationService;
 import bw.co.centralkyc.keycloak.KeycloakUserService;
+import bw.co.centralkyc.organisation.OrganisationDTO;
 import bw.co.centralkyc.organisation.OrganisationListDTO;
 import bw.co.centralkyc.organisation.branch.BranchDTO;
 import bw.co.centralkyc.organisation.branch.BranchService;
 import bw.co.centralkyc.user.UserDTO;
+import bw.co.roguesystems.comm.ContentType;
+import bw.co.roguesystems.comm.message.CommMessageDTO;
 
 @org.springframework.web.bind.annotation.RestController
 public class IndividualApiImpl extends IndividualApiBase {
 
+    @Value("${app.organisation.manager-role}")
+    private String organisationManagerRole;
+
+    @Value("${app.security.password.min-length}")
+    private int minPasswordLength;
+
+    @Value("${app.admin-web}")
+    private String adminWebUrl;
+
     private final KeycloakUserService keycloakUserService;
+    private final KeycloakOrganisationService keycloakOrgService;
     private final BranchService branchService;
+    private final EmailService emailService;
+
+    private static final SecureRandom RANDOM = new SecureRandom();
+
+    private static final String UPPER = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    private static final String LOWER = "abcdefghijklmnopqrstuvwxyz";
+    private static final String DIGITS = "0123456789";
+    private static final String SYMBOLS = "@#$%!";
+
+    private static final String newUserTemplate = """
+            Dear %s,
+
+            Welcome to Central KYC platform. Your organisation, %s, has selected you to manage
+            their account. This message alerts you that a user has been created for you on the
+            platform. Please find the login details below:
+
+            URL: %s
+            Username: %s
+            Password: %s
+
+            Regards
+
+            CentralKYC Team
+            """;
 
     public IndividualApiImpl(IndividualService individualService, KeycloakUserService keycloakUserService,
-            BranchService branchService) {
+            BranchService branchService, EmailService emailService, KeycloakOrganisationService keycloakOrgService) {
 
         super(individualService);
         this.keycloakUserService = keycloakUserService;
         this.branchService = branchService;
+        this.emailService = emailService;
+        this.keycloakOrgService = keycloakOrgService;
     }
 
     @Override
@@ -121,6 +166,57 @@ public class IndividualApiImpl extends IndividualApiBase {
 
     }
 
+    private String generatePassword() {
+        if (minPasswordLength < 8) {
+            throw new IllegalArgumentException("Password length must be at least 8");
+        }
+
+        List<String> groups = List.of(UPPER, LOWER, DIGITS, SYMBOLS);
+        String all = UPPER + LOWER + DIGITS + SYMBOLS;
+
+        StringBuilder password = new StringBuilder();
+
+        // Ensure at least one char from each group
+        for (String group : groups) {
+            password.append(group.charAt(RANDOM.nextInt(group.length())));
+        }
+
+        // Fill remaining chars
+        for (int i = password.length(); i < minPasswordLength; i++) {
+            password.append(all.charAt(RANDOM.nextInt(all.length())));
+        }
+
+        return password.toString();
+    }
+
+    private CommMessageDTO newUserMessage(IndividualDTO individual, UserDTO user) {
+
+        // OrganisationDTO org = keycloakOrgService.
+
+        CommMessageDTO message = new CommMessageDTO();
+
+        message.setContentType(ContentType.PLAIN_TEXT);
+        message.setDestinations(List.of(individual.getEmailAddress()));
+
+        StringBuilder nameBuilder = new StringBuilder();
+        nameBuilder.append(individual.getFirstName()).append(' ');
+        if (StringUtils.isNotBlank(individual.getMiddleName())) {
+
+            nameBuilder.append(individual.getMiddleName()).append(' ');
+        }
+
+        nameBuilder.append(individual.getSurname());
+
+        String messageStr = String.format(newUserTemplate, nameBuilder.toString(), individual.getOrganisation(),
+                adminWebUrl, user.getUsername(),
+                user.getPassword());
+
+        message.setText(messageStr);
+
+        return message;
+
+    }
+
     @Override
     public ResponseEntity<IndividualDTO> handleSave(IndividualDTO individual) {
 
@@ -129,16 +225,14 @@ public class IndividualApiImpl extends IndividualApiBase {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             AuditTracker.auditTrail(individual, authentication);
 
-            keycloakUserService.getUserByIdentityNo(individual.getIdentityNo());
             UserDTO user = keycloakUserService.getUserByIdentityNo(individual.getIdentityNo());
-
-            System.out.println("------------------------------->>>>>>>>>>>>> " + user);
+            boolean isNewUser = false;
 
             if (user == null) {
 
                 UserDTO existing = keycloakUserService.getUserByEmail(individual.getEmailAddress());
 
-                boolean createUser = existing == null;
+                boolean createUser = isNewUser = existing == null;
 
                 if (createUser) {
 
@@ -159,19 +253,25 @@ public class IndividualApiImpl extends IndividualApiBase {
                     user.setEmail(individual.getEmailAddress());
                     user.setUsername(individual.getEmailAddress());
                     user.setIdentityNo(individual.getIdentityNo());
-                    user.setPassword("P@ssw0rd");
+                    user.setPassword(generatePassword());
                     user.setEnabled(true);
                     user.setBranchId(individual.getBranch().getId());
                     user.setBranch(individual.getBranch().getName());
                     user.setOrganisation(individual.getOrganisation().getName());
                     user.setOrganisationId(individual.getOrganisation().getId());
+                    user.setRoles(Set.of(organisationManagerRole));
 
-                    user = keycloakUserService.createUser(user);
+                    keycloakUserService.createUser(user);
                 }
 
             }
 
-            return ResponseEntity.ok(individualService.save(individual));
+            individual = individualService.save(individual);
+            if (isNewUser) {
+                emailService.sendEmail(List.of(newUserMessage(individual, user)));
+            }
+
+            return ResponseEntity.ok(individual);
 
         } catch (Exception e) {
             throw e;
@@ -196,14 +296,28 @@ public class IndividualApiImpl extends IndividualApiBase {
     @Override
     public ResponseEntity<Collection<IndividualListDTO>> handleGetOrganisationClients(
             String organisationId) throws Exception {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'handleGetOrganisationClients'");
+
+        try {
+
+            return ResponseEntity
+                    .ok(null);
+
+        } catch (Exception e) {
+            throw e;
+        }
     }
 
     @Override
     public ResponseEntity<Page<IndividualListDTO>> handleGetOrganisationClientsPaged(
             String criteria, Integer pageNumber, Integer pageSize) throws Exception {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'handleGetOrganisationClientsPaged'");
+
+        try {
+
+            return ResponseEntity
+                    .ok(null);
+
+        } catch (Exception e) {
+            throw e;
+        }
     }
 }
