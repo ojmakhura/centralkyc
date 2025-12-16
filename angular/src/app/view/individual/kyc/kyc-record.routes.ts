@@ -6,7 +6,7 @@ import { KycRecordComponent } from '@app/view/individual/kyc/kyc-record.componen
 import { AuthenticationGuard } from '@app/auth';
 
 import { KycRecordControllerImpl } from '@app/controller/individual/kyc/kyc-record-controller.impl';
-import { KycRecordApi } from '@app/service/bw/co/centralkyc/individual/kyc/kyc-record-api';
+import { KycRecordApi } from '@app/service/bw/co/centralkyc/kyc/kyc-record-api';
 
 export const routes: Routes = [
   {

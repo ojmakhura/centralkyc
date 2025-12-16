@@ -19,12 +19,12 @@ import { HttpClient } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
 import { DocumentDTO } from '@app/model/bw/co/centralkyc/document/document-dto';
 import { EmploymentRecordApiStore } from '@app/store/bw/co/centralkyc/individual/employment/employment-record-api.store';
-import { KycRecordApiStore } from '@app/store/bw/co/centralkyc/individual/kyc/kyc-record-api.store';
+import { KycRecordApiStore } from '@app/store/bw/co/centralkyc/kyc/kyc-record-api.store';
 import Swal from 'sweetalert2';
-import { KycRecordDTO } from '@app/model/bw/co/centralkyc/individual/kyc/kyc-record-dto';
-import { KycComplianceStatus } from '@app/model/bw/co/centralkyc/individual/kyc/kyc-compliance-status';
+import { KycRecordDTO } from '@app/model/bw/co/centralkyc/kyc/kyc-record-dto';
+import { KycComplianceStatus } from '@app/model/bw/co/centralkyc/kyc/kyc-compliance-status';
 import { IndividualDTO } from '@app/model/bw/co/centralkyc/individual/individual-dto';
-import { KycRecordApi } from '@app/service/bw/co/centralkyc/individual/kyc/kyc-record-api';
+import { KycRecordApi } from '@app/service/bw/co/centralkyc/kyc/kyc-record-api';
 
 // Interface for upload progress tracking
 interface UploadProgress {
