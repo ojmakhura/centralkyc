@@ -20,6 +20,8 @@ import java.util.Collection;
 import java.util.Set;
 import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -64,8 +66,9 @@ public class OrganisationDocumentServiceImpl
     protected OrganisationDocumentDTO handleFindById(String id)
         throws Exception
     {
-        // TODO implement protected  OrganisationDocumentDTO handleFindById(String id)
-        throw new UnsupportedOperationException("bw.co.centralkyc.organisation.document.OrganisationDocumentService.handleFindById(String id) Not implemented!");
+
+        OrganisationDocument entity = organisationDocumentRepository.getReferenceById(id);
+        return organisationDocumentDao.toOrganisationDocumentDTO(entity);
     }
 
     /**
@@ -75,8 +78,10 @@ public class OrganisationDocumentServiceImpl
     protected OrganisationDocumentDTO handleSave(OrganisationDocumentDTO clientRequest)
         throws Exception
     {
-        // TODO implement protected  OrganisationDocumentDTO handleSave(OrganisationDocumentDTO clientRequest)
-        throw new UnsupportedOperationException("bw.co.centralkyc.organisation.document.OrganisationDocumentService.handleSave(OrganisationDocumentDTO clientRequest) Not implemented!");
+
+        OrganisationDocument organisationDocument = organisationDocumentDao.organisationDocumentDTOToEntity(clientRequest);
+        organisationDocument = organisationDocumentRepository.save(organisationDocument);
+        return organisationDocumentDao.toOrganisationDocumentDTO(organisationDocument);
     }
 
     /**
@@ -86,8 +91,10 @@ public class OrganisationDocumentServiceImpl
     protected boolean handleRemove(String id)
         throws Exception
     {
-        // TODO implement protected  boolean handleRemove(String id)
-        throw new UnsupportedOperationException("bw.co.centralkyc.organisation.document.OrganisationDocumentService.handleRemove(String id) Not implemented!");
+
+        organisationDocumentRepository.deleteById(id);
+        return true;
+
     }
 
     /**
@@ -97,8 +104,10 @@ public class OrganisationDocumentServiceImpl
     protected Collection<OrganisationDocumentDTO> handleGetAll()
         throws Exception
     {
-        // TODO implement protected  Collection<OrganisationDocumentDTO> handleGetAll()
-        throw new UnsupportedOperationException("bw.co.centralkyc.organisation.document.OrganisationDocumentService.handleGetAll() Not implemented!");
+
+        Collection<OrganisationDocument> entities = organisationDocumentRepository.findAll();
+        return organisationDocumentDao.toOrganisationDocumentDTOCollection(entities);
+
     }
 
     /**
@@ -119,8 +128,11 @@ public class OrganisationDocumentServiceImpl
     protected Page<OrganisationDocumentDTO> handleGetAll(Integer pageNumber, Integer pageSize)
         throws Exception
     {
-        // TODO implement protected  Page<OrganisationDocumentDTO> handleGetAll(Integer pageNumber, Integer pageSize)
-        throw new UnsupportedOperationException("bw.co.centralkyc.organisation.document.OrganisationDocumentService.handleGetAll(Integer pageNumber, Integer pageSize) Not implemented!");
+
+        PageRequest pageRequest = PageRequest.of(pageNumber, pageSize);
+        Page<OrganisationDocument> entities = organisationDocumentRepository.findAll(pageRequest);
+        return entities.map(entity -> organisationDocumentDao.toOrganisationDocumentDTO(entity));
+
     }
 
     /**
@@ -141,6 +153,10 @@ public class OrganisationDocumentServiceImpl
     protected Collection<OrganisationDocumentDTO> handleFindByOrganisation(String organisationId)
         throws Exception
     {
+
+        Specification<OrganisationDocument> specification = (root, query, criteriaBuilder) -> 
+            criteriaBuilder.equal(root.get("organisation").get("id"), organisationId);
+
         // TODO implement protected  Collection<OrganisationDocumentDTO> handleFindByOrganisation(String organisationId)
         throw new UnsupportedOperationException("bw.co.centralkyc.organisation.document.OrganisationDocumentService.handleFindByOrganisation(String organisationId) Not implemented!");
     }

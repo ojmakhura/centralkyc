@@ -8,6 +8,8 @@ package bw.co.centralkyc.organisation.document;
 
 import bw.co.centralkyc.document.type.DocumentTypeRepository;
 import bw.co.centralkyc.organisation.OrganisationRepository;
+import jakarta.persistence.EntityNotFoundException;
+
 import org.springframework.stereotype.Repository;
 
 /**
@@ -62,10 +64,6 @@ public class OrganisationDocumentDaoImpl
      */
     private OrganisationDocument loadOrganisationDocumentFromOrganisationDocumentDTO(OrganisationDocumentDTO organisationDocumentDTO)
     {
-        // TODO implement loadOrganisationDocumentFromOrganisationDocumentDTO
-        throw new UnsupportedOperationException("bw.co.centralkyc.organisation.document.loadOrganisationDocumentFromOrganisationDocumentDTO(OrganisationDocumentDTO) not yet implemented.");
-
-        /* A typical implementation looks like this:
         if (organisationDocumentDTO.getId() == null)
         {
             return  OrganisationDocument.Factory.newInstance();
@@ -75,7 +73,6 @@ public class OrganisationDocumentDaoImpl
             return this.organisationDocumentRepository.findById(organisationDocumentDTO.getId())
                 .orElseThrow(() -> new EntityNotFoundException("Entity not found for id: " + organisationDocumentDTO.getId()));
         }
-        */
     }
 
     /**
