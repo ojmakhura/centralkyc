@@ -116,7 +116,7 @@
             <dependency>
                 <groupId>commons-beanutils</groupId>
                 <artifactId>commons-beanutils</artifactId>
-                <version>1.9.4</version>
+                <version>1.11.0</version>
             </dependency>
             <dependency>
                 <groupId>commons-codec</groupId>
@@ -149,11 +149,11 @@
               <artifactId>commons-text</artifactId>
               <version>1.3</version>
             </dependency>
-            <dependency>
+            <!-- <dependency>
                 <groupId>commons-logging</groupId>
                 <artifactId>commons-logging</artifactId>
                 <version>1.2</version>
-            </dependency>
+            </dependency> -->
             <dependency>
                 <groupId>org.jboss.spec</groupId>
                 <artifactId>jboss-jboss-jakartaee-8.0</artifactId>
@@ -185,15 +185,15 @@
             <dependency>
                 <groupId>org.springdoc</groupId>
                 <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
-                <version>2.6.0</version>
+                <version>3.0.0</version>
             </dependency>
             <dependency>
                 <groupId>org.springdoc</groupId>
                 <artifactId>springdoc-openapi-starter-common</artifactId>
-                <version>2.6.0</version>
+                <version>3.0.0</version>
             </dependency>
             <dependency>
-                <groupId>org.liquibase</groupId>
+                <groupId>org.liquibase</groupId> 
                 <artifactId>liquibase-core</artifactId>
                 <version>5.0.1</version>
             </dependency>
@@ -217,17 +217,34 @@
             <dependency>
                 <groupId>org.keycloak</groupId>
                 <artifactId>keycloak-spring-boot-starter</artifactId>
-                <version>25.0.3</version>
+                <version>${keycloak.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.keycloak</groupId> 
+                <groupId>org.keycloak</groupId>
                 <artifactId>keycloak-admin-client</artifactId>
                 <version>26.0.7</version>
+            </dependency>
+            <dependency>
+                <groupId>bw.co.roguesystems.comm</groupId>
+                <artifactId>roguecomm-common</artifactId>
+                <version>0.0.1</version>
+            </dependency>
+            <!-- https://mvnrepository.com/artifact/net.sourceforge.tess4j/tess4j -->
+            <dependency>
+                <groupId>net.sourceforge.tess4j</groupId>
+                <artifactId>tess4j</artifactId>
+                <version>5.10.0</version>
+            </dependency>
+            <!-- https://mvnrepository.com/artifact/org.apache.pdfbox/pdfbox -->
+            <dependency>
+                <groupId>org.apache.pdfbox</groupId>
+                <artifactId>pdfbox</artifactId>
+                <version>3.0.6</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
     <build>
-        <pluginManagement> 
+        <pluginManagement>
             <plugins>
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
@@ -239,7 +256,7 @@
                             <phase>generate-sources</phase>
                             <goals>
                                 <goal>add-source</goal>
-                            </goals> 
+                            </goals>
                             <configuration>
                                 <sources>
                                     <source>target/src/main/java</source>
@@ -326,7 +343,7 @@
         embeddedWebServer=$embeddedWebServer
         jetty=$jetty
         tomcat=$tomcat
-        secure=false
+        secure=true
         -->
         <module>mda</module>
         <module>common</module>
@@ -336,6 +353,11 @@
     </modules>
     <properties>
         <andromda.version>6.0-SNAPSHOT</andromda.version>
+        <!-- Java 21 LTS Configuration -->
+        <java.version>21</java.version>
+        <maven.compiler.source>21</maven.compiler.source>
+        <maven.compiler.target>21</maven.compiler.target>
+        <maven.compiler.release>21</maven.compiler.release>
         <downloadSources>true</downloadSources>
         <createChecksum>true</createChecksum>
         <uniqueVersion>false</uniqueVersion>
@@ -343,12 +365,14 @@
         <stagingDirectory>${project.build.outputDirectory}/target/site</stagingDirectory>
         <testdb.groupId>com.h2database</testdb.groupId>
         <testdb.artifactId>h2</testdb.artifactId>
-        <testdb.version>1.4.180</testdb.version>
-        <testdb.driver>$${jdbc.driver}</testdb.driver>
-        <testdb.dialect>$${jdbc.dialect}</testdb.dialect>
-        <testdb.url>$${jdbc.url}</testdb.url>
-        <testdb.username>$${jdbc.username}</testdb.username>
-        <testdb.password>$${jdbc.password}</testdb.password>
+        <testdb.version>2.2.224</testdb.version>
+        <testdb.driver>org.h2.Driver</testdb.driver>
+        <testdb.dialect>org.hibernate.dialect.H2Dialect</testdb.dialect>
+        <!-- See http://www.h2database.com/html/features.html#database_url (mixed mode) -->
+        <testdb.url>
+            jdbc:h2:~/${application.id};AUTO_SERVER=TRUE;AUTO_RECONNECT=TRUE;DB_CLOSE_ON_EXIT=FALSE;DB_CLOSE_DELAY=-1</testdb.url>
+        <testdb.username>sa</testdb.username> 
+        <testdb.password>sa</testdb.password>
         <!--
             Change this to generate to the correct MDA database mappings,
             For MySql use: MySQL
@@ -402,6 +426,8 @@
         <dataSource>java:comp/env/${dataSource.name}</dataSource>
         <!-- Set andromda.xml hibernateVersion=7, sessionFactory and localTransactionManager to hibernate4.-->
         <hibernate.version>7.1.10.Final</hibernate.version>
+        <!-- Set andromda.xml hibernateVersion=7, sessionFactory and localTransactionManager to
+        hibernate4.-->
         <!-- v 9.x only supports JDK7 and you cannot configure jetty.port from maven.-->
         <!-- v5 migration needed -->
         <!-- <spring.version>5.3.2</spring.version> -->
@@ -420,6 +446,9 @@
         <!-- SCM user ID and Password here, or in user specific settings.xml file>
         <username></username>
         <password></password -->
+        <keycloak.version>25.0.3</keycloak.version>
+        <!-- Updated PostgreSQL driver to fix Java 21 compatibility issues -->
+        <postgresql.version>42.7.4</postgresql.version>
     </properties>
     <profiles>
         <!--Profile configuration for local builds, activeByDefault, customize for your project -->
@@ -812,7 +841,8 @@
                     <threshold>Normal</threshold>
                     <failOnError>false</failOnError>
                     <excludeFilterFile>${findbugs.excludeFilterFile}</excludeFilterFile>
-                    <!--xmlOutputDirectory>directory location of findbugs xdoc xml report</xmlOutputDirectory>
+                    <!--xmlOutputDirectory>directory
+                    location of findbugs xdoc xml report</xmlOutputDirectory>
                     <threshold>High|Normal|Low|Exp|Ignore</threshold>
                     <effort>Min|Default|Max</effort>
                     <includeFilterFile>findbugs-include.xml</includeFilterFile>
@@ -832,11 +862,11 @@
                 <version>${versions-maven-plugin.version}</version>
                 <reportSets>
                     <reportSet>
-                      <reports>
-                        <report>dependency-updates-report</report>
-                        <report>plugin-updates-report</report>
-                        <report>property-updates-report</report>
-                      </reports>
+                        <reports>
+                            <report>dependency-updates-report</report>
+                            <report>plugin-updates-report</report>
+                            <report>property-updates-report</report>
+                        </reports>
                     </reportSet>
                 </reportSets>
             </plugin>

@@ -19,10 +19,7 @@ import bw.co.centralkyc.individual.IndividualDao;
 import bw.co.centralkyc.individual.IndividualIdentityType;
 import bw.co.centralkyc.individual.IndividualRepository;
 import bw.co.centralkyc.individual.Sex;
-import bw.co.centralkyc.individual.kyc.KycComplianceStatus;
-import bw.co.centralkyc.organisation.Organisation;
-import bw.co.centralkyc.organisation.OrganisationDao;
-import bw.co.centralkyc.organisation.OrganisationRepository;
+import bw.co.centralkyc.kyc.KycComplianceStatus;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -66,11 +63,9 @@ public class ClientRequestServiceImpl
         extends ClientRequestServiceBase {
 
     public ClientRequestServiceImpl(ClientRequestDao clientRequestDao, ClientRequestRepository clientRequestRepository,
-            IndividualDao individualDao, IndividualRepository individualRepository, OrganisationDao organisationDao,
-            OrganisationRepository organisationRepository, DocumentDao documentDao,
+            IndividualDao individualDao, IndividualRepository individualRepository, DocumentDao documentDao,
             DocumentRepository documentRepository, MessageSource messageSource) {
-        super(clientRequestDao, clientRequestRepository, individualDao, individualRepository, organisationDao,
-                organisationRepository, documentDao, documentRepository, messageSource);
+        super(clientRequestDao, clientRequestRepository, individualDao, individualRepository, documentDao, documentRepository, messageSource);
         // TODO Auto-generated constructor stub
     }
 
@@ -171,7 +166,7 @@ public class ClientRequestServiceImpl
     protected Collection<ClientRequestDTO> handleFindByOrganisation(String organisationId)
             throws Exception {
 
-        return clientRequestRepository.findByOrganisationId(organisationId);
+        return clientRequestRepository.findByOrgId(organisationId);
     }
 
     /**
@@ -182,7 +177,7 @@ public class ClientRequestServiceImpl
     protected Page<ClientRequestDTO> handleFindByOrganisation(String organisationId, Integer pageNumber,
             Integer pageSize)
             throws Exception {
-        return clientRequestRepository.findByOrganisationId(organisationId, PageRequest.of(pageNumber, pageSize));
+        return null; //clientRequestRepository.findByOrganisationId(organisationId, PageRequest.of(pageNumber, pageSize));
     }
 
     /**
@@ -236,8 +231,8 @@ public class ClientRequestServiceImpl
 
         clientRequests = clientRequestRepository.saveAll(clientRequests);
 
-        return clientRequestRepository.findByOrganisationId(organisationId, 
-                PageRequest.of(0, 10));
+        return null; // clientRequestRepository.findByOrganisationId(organisationId, 
+                //PageRequest.of(0, 10));
     }
 
     /**
@@ -267,8 +262,8 @@ public class ClientRequestServiceImpl
         clientRequest.setIndividual(savedIndividual);
 
         // Set organisation
-        Organisation organisation = organisationRepository.getReferenceById(organisationId);
-        clientRequest.setOrganisation(organisation);
+        // Organisation organisation = organisationRepository.getReferenceById(organisationId);
+        // clientRequest.setOrganisation(organisation);
 
         // Set status and audit fields
         clientRequest.setStatus(ClientRequestStatus.PENDING);

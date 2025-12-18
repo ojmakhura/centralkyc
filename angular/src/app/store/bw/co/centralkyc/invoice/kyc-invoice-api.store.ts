@@ -9,6 +9,8 @@ import { SearchObject } from '@app/models/search-object';
 import { Page } from '@app/models/page.model';
 import { KycInvoiceDTO } from '@app/models/bw/co/centralkyc/invoice/kyc-invoice-dto';
 import { KycInvoiceApi } from '@app/services/bw/co/centralkyc/invoice/kyc-invoice-api';
+import { InvoiceSearchCriteria } from '@app/models/bw/co/centralkyc/invoice/invoice-search-criteria';
+import { UploadPurpose } from '@app/models/bw/co/centralkyc/invoice/upload-purpose';
 
 export type KycInvoiceApiState = AppState<any, any> & {};
 
@@ -417,7 +419,7 @@ export const KycInvoiceApiStore = signalStore(
           );
         }),
       ),
-      upload: rxMethod<{id: string | any , purpose: UploadPurpose | any , file: MultipartFile | any }>(
+      upload: rxMethod<{id: string | any , purpose: UploadPurpose | any , file: File | any }>(
         switchMap((data: any) => {
           patchState(store, { loading: true, loaderMessage: 'Loading ...' });
           return kycInvoiceApi.upload(data.id, data.purpose, data.file, ).pipe(

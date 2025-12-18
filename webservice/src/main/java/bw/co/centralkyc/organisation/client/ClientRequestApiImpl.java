@@ -32,23 +32,24 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 @RestController
-public class ClientRequestApiImpl extends ClientRequestApiBase {
+public class ClientRequestApiImpl implements ClientRequestApi {
     
     private final SettingsService settingsService;
     private final DocumentApi documentApi;
+    private final ClientRequestService clientRequestService;
 
     public ClientRequestApiImpl(
         ClientRequestService clientRequestService,
         SettingsService settingsService,
         DocumentApi documentApi) {
         
-        super(clientRequestService);
         this.settingsService = settingsService;
         this.documentApi = documentApi;
+        this.clientRequestService = clientRequestService;
     }
 
     @Override
-    public ResponseEntity<ClientRequestDTO> handleFindById(String id) throws Exception {
+    public ResponseEntity<ClientRequestDTO> findById(String id) throws Exception {
         try {
             return ResponseEntity.ok(clientRequestService.findById(id));
         } catch (Exception e) {
@@ -59,7 +60,7 @@ public class ClientRequestApiImpl extends ClientRequestApiBase {
     }
 
     @Override
-    public ResponseEntity<Collection<ClientRequestDTO>> handleFindByIndividual(String individualId) throws Exception {
+    public ResponseEntity<Collection<ClientRequestDTO>> findByIndividual(String individualId) throws Exception {
         try {
             return ResponseEntity.ok(clientRequestService.findByIndividual(individualId));
         } catch (Exception e) {
@@ -70,7 +71,7 @@ public class ClientRequestApiImpl extends ClientRequestApiBase {
     }
 
     @Override
-    public ResponseEntity<Page<ClientRequestDTO>> handleFindByIndividualPaged(String individualId, Integer pageNumber, Integer pageSize) throws Exception {
+    public ResponseEntity<Page<ClientRequestDTO>> findByIndividualPaged(String individualId, Integer pageNumber, Integer pageSize) throws Exception {
         try {
             return ResponseEntity.ok(clientRequestService.findByIndividual(individualId, pageNumber, pageSize));
         } catch (Exception e) {
@@ -81,7 +82,7 @@ public class ClientRequestApiImpl extends ClientRequestApiBase {
     }
 
     @Override
-    public ResponseEntity<Collection<ClientRequestDTO>> handleFindByOrganisation(String organisationId) throws Exception {
+    public ResponseEntity<Collection<ClientRequestDTO>> findByOrganisation(String organisationId) throws Exception {
         try {
             return ResponseEntity.ok(clientRequestService.findByOrganisation(organisationId));
         } catch (Exception e) {
@@ -92,7 +93,7 @@ public class ClientRequestApiImpl extends ClientRequestApiBase {
     }
 
     @Override
-    public ResponseEntity<Page<ClientRequestDTO>> handleFindByOrganisationPaged(String organisationId, Integer pageNumber, Integer pageSize) throws Exception {
+    public ResponseEntity<Page<ClientRequestDTO>> findByOrganisationPaged(String organisationId, Integer pageNumber, Integer pageSize) throws Exception {
         try {
             return ResponseEntity.ok(clientRequestService.findByOrganisation(organisationId, pageNumber, pageSize));
         } catch (Exception e) {
@@ -103,7 +104,7 @@ public class ClientRequestApiImpl extends ClientRequestApiBase {
     }
 
     @Override
-    public ResponseEntity<Collection<ClientRequestDTO>> handleFindByStatus(ClientRequestStatus status) throws Exception {
+    public ResponseEntity<Collection<ClientRequestDTO>> findByStatus(ClientRequestStatus status) throws Exception {
         try {
             return ResponseEntity.ok(clientRequestService.findByStatus(status));
         } catch (Exception e) {
@@ -114,7 +115,7 @@ public class ClientRequestApiImpl extends ClientRequestApiBase {
     }
 
     @Override
-    public ResponseEntity<Collection<ClientRequestDTO>> handleGetAll() throws Exception {
+    public ResponseEntity<Collection<ClientRequestDTO>> getAll() throws Exception {
         try {
             return ResponseEntity.ok(clientRequestService.getAll());
         } catch (Exception e) {
@@ -125,7 +126,7 @@ public class ClientRequestApiImpl extends ClientRequestApiBase {
     }
 
     @Override
-    public ResponseEntity<Page<ClientRequestDTO>> handleGetAllPaged(Integer pageNumber, Integer pageSize) throws Exception {
+    public ResponseEntity<Page<ClientRequestDTO>> getAllPaged(Integer pageNumber, Integer pageSize) throws Exception {
         try {
             return ResponseEntity.ok(clientRequestService.getAll(pageNumber, pageSize));
         } catch (Exception e) {
@@ -136,7 +137,7 @@ public class ClientRequestApiImpl extends ClientRequestApiBase {
     }
 
     @Override
-    public ResponseEntity<Page<ClientRequestDTO>> handlePagedSearch(SearchObject<ClientRequestSearchCriteria> criteria) throws Exception {
+    public ResponseEntity<Page<ClientRequestDTO>> pagedSearch(SearchObject<ClientRequestSearchCriteria> criteria) throws Exception {
         try {
             return ResponseEntity.ok(clientRequestService.search(criteria));
         } catch (Exception e) {
@@ -147,7 +148,7 @@ public class ClientRequestApiImpl extends ClientRequestApiBase {
     }
 
     @Override
-    public ResponseEntity<Boolean> handleRemove(String id) throws Exception {
+    public ResponseEntity<Boolean> remove(String id) throws Exception {
         try {
             return ResponseEntity.ok(clientRequestService.remove(id));
         } catch (Exception e) {
@@ -158,7 +159,7 @@ public class ClientRequestApiImpl extends ClientRequestApiBase {
     }
 
     @Override
-    public ResponseEntity<ClientRequestDTO> handleSave(ClientRequestDTO clientRequest) throws Exception {
+    public ResponseEntity<ClientRequestDTO> save(ClientRequestDTO clientRequest) throws Exception {
         try {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             AuditTracker.auditTrail(clientRequest, authentication);
@@ -171,7 +172,7 @@ public class ClientRequestApiImpl extends ClientRequestApiBase {
     }
 
     @Override
-    public ResponseEntity<Collection<ClientRequestDTO>> handleSearch(SearchObject<ClientRequestSearchCriteria> criteria) throws Exception {
+    public ResponseEntity<Collection<ClientRequestDTO>> search(SearchObject<ClientRequestSearchCriteria> criteria) throws Exception {
         try {
             Set<PropertySearchOrder> sorting = new HashSet<>();
             if(criteria.getSortings() != null) {
@@ -188,7 +189,7 @@ public class ClientRequestApiImpl extends ClientRequestApiBase {
     }
 
     @Override
-    public ResponseEntity<Collection<ClientRequestDTO>> handleFindByDocument(String documentId) throws Exception {
+    public ResponseEntity<Collection<ClientRequestDTO>> findByDocument(String documentId) throws Exception {
         
         try {
             return ResponseEntity.ok(clientRequestService.findByDocument(documentId));
@@ -200,7 +201,7 @@ public class ClientRequestApiImpl extends ClientRequestApiBase {
     }
 
     @Override
-    public ResponseEntity<Page<ClientRequestDTO>> handleFindByDocumentPaged(String documentId, Integer pageNumber,
+    public ResponseEntity<Page<ClientRequestDTO>> findByDocumentPaged(String documentId, Integer pageNumber,
             Integer pageSize) throws Exception {
         
         try {
@@ -212,7 +213,7 @@ public class ClientRequestApiImpl extends ClientRequestApiBase {
     }
 
     @Override
-    public ResponseEntity<Page<ClientRequestDTO>> handleFindByStatusPaged(ClientRequestStatus status,
+    public ResponseEntity<Page<ClientRequestDTO>> findByStatusPaged(ClientRequestStatus status,
             Integer pageNumber, Integer pageSize) throws Exception {
         
         try {
@@ -224,7 +225,7 @@ public class ClientRequestApiImpl extends ClientRequestApiBase {
     }
 
     @Override
-    public ResponseEntity<Page<ClientRequestDTO>> handleUploadRequests(MultipartFile file, String organisationId) throws Exception {
+    public ResponseEntity<Page<ClientRequestDTO>> uploadRequests(MultipartFile file, String organisationId) throws Exception {
 
         try(InputStream inputStream = file.getInputStream()) {
 
@@ -247,7 +248,7 @@ public class ClientRequestApiImpl extends ClientRequestApiBase {
     }
 
         @Override
-    public ResponseEntity<InputStreamResource> handleDownloadRequestTemplate() throws Exception {
+    public ResponseEntity<InputStreamResource> downloadRequestTemplate() throws Exception {
         
         try {
             // Read the individual template file from resources

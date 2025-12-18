@@ -4,7 +4,7 @@
  * This is only generated once! It will never be overwritten.
  * You can (and have to!) safely modify it by hand.
  */
-package bw.co.centralkyc.individual.kyc;
+package bw.co.centralkyc.kyc;
 
 import bw.co.centralkyc.document.Document;
 import bw.co.centralkyc.document.DocumentDTO;
@@ -14,6 +14,7 @@ import bw.co.centralkyc.individual.employment.EmploymentRecordRepository;
 import jakarta.persistence.EntityNotFoundException;
 
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Repository;
 
 /**
@@ -57,6 +58,10 @@ public class KycRecordDaoImpl
                 target.getDocuments().add(docDTO);
             }
         }
+
+        target.setIndividualId(source.getIndividual().getId());
+        target.setIdentityNo(source.getIndividual().getIdentityNo());
+        target.setName(source.getIndividual().getFirstName() + " " + source.getIndividual().getSurname());
     }
 
     /**
@@ -115,6 +120,16 @@ public class KycRecordDaoImpl
                 Document doc = this.documentDao.documentDTOToEntity(docDTO);
                 target.getDocuments().add(doc);
             }
+        }
+
+        if(StringUtils.isNotBlank(source.getIndividualId())) {
+
+            target.setIndividual(
+                this.individualRepository.findById(source.getIndividualId())
+                    .orElseThrow(() -> new KycRecordServiceException("Individual not found for id: " + source.getIndividualId()))
+            );
+        } else if (copyIfNull) {
+            target.setIndividual(null);
         }
     }
 }

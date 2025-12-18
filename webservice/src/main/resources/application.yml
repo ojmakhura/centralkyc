@@ -70,3 +70,16 @@ minio:
     access-key: ${MINIO_ACCESS_KEY:minio}
     secret-key: ${MINIO_SECRET_KEY:minio123}
     bucket-name: ${MINIO_BUCKET:zetaerdms}
+app:
+  admin-web: ${ADMIN_WEB_URL:http://localhost:4200}
+  tessdata-prefix: ${TESSDATA_PREFIX:/usr/share/tesseract-ocr/5/tessdata}
+  tessdata-langs: ${TESSDATA_LANGS:eng}
+  comm:
+    base-url: ${COMM_SERVICE_URL}
+    send-message: ${SEND_MESSAGE_URL}
+    source-email: ${SOURCE_EMAIL}
+  security:
+    password:
+      min-length: ${MIN_PASSWORD_LENGTH:8}
+  organisation:
+    manager-role: ${ORGANISATION_MANAGER_ROLE:ORG_MANAGER}

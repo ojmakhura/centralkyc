@@ -1,25 +1,19 @@
 package bw.co.centralkyc.keycloak;
 
 import java.net.URI;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.keycloak.admin.client.Keycloak;
 import org.keycloak.admin.client.resource.OrganizationResource;
 import org.keycloak.admin.client.resource.OrganizationsResource;
-import org.keycloak.admin.client.resource.RealmResource;
-import org.keycloak.admin.client.resource.UserResource;
-import org.keycloak.admin.client.resource.UsersResource;
 import org.keycloak.representations.idm.OrganizationDomainRepresentation;
 import org.keycloak.representations.idm.OrganizationRepresentation;
-import org.keycloak.representations.idm.UserRepresentation;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -27,10 +21,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 
 import bw.co.centralkyc.GeneralStatus;
-import bw.co.centralkyc.organisation.OganisationDomain;
+import bw.co.centralkyc.SearchObject;
 import bw.co.centralkyc.organisation.OrganisationDTO;
 import bw.co.centralkyc.organisation.OrganisationDomain;
 import bw.co.centralkyc.organisation.OrganisationListDTO;
+import bw.co.centralkyc.organisation.OrganisationSearchCriteria;
 import jakarta.ws.rs.WebApplicationException;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.Response.StatusType;
@@ -63,12 +58,13 @@ public class KeycloakOrganisationService {
         attributes.put("status", List.of(organisation.getStatus().toString()));
 
         if (organisation.getDomains() != null) {
+
             for (OrganisationDomain dom : organisation.getDomains()) {
 
                 OrganizationDomainRepresentation od = new OrganizationDomainRepresentation(dom.getName());
                 od.setVerified(dom.getVerified());
 
-                rep.getDomains().add(od);
+                rep.addDomain(od);
             }
         }
 
@@ -147,27 +143,63 @@ public class KeycloakOrganisationService {
 
         Map<String, List<String>> attributes = rep.getAttributes();
 
-        org.setRegistrationNo(attributes.get("registrationNo").listIterator().hasNext()
-                ? attributes.get("registrationNo").get(0)
-                : null);
-        org.setPhysicalAddress(attributes.get("physicalAddress").listIterator().hasNext()
-                ? attributes.get("physicalAddress").get(0)
-                : null);
-        org.setPostalAddress(attributes.get("postalAddress").listIterator().hasNext()
-                ? attributes.get("postalAddress").get(0)
-                : null);
-        org.setStatus(GeneralStatus.valueOf(attributes.get("status").listIterator().hasNext()
-                ? attributes.get("status").get(0)
-                : null));
-        org.setContactEmailAddress(attributes.get("contactEmailAddress").listIterator().hasNext()
-                ? attributes.get("contactEmailAddress").get(0)
-                : null);
-        org.setIsClient(Boolean.parseBoolean(attributes.get("isClient").listIterator().hasNext()
-                ? attributes.get("isClient").get(0)
-                : null));
-        org.setCreatedBy(attributes.get("createdBy").listIterator().hasNext()
-                ? attributes.get("createdBy").get(0)
-                : null);
+        if (attributes.containsKey("registrationNo")) {
+            org.setRegistrationNo(attributes.get("registrationNo").listIterator().hasNext()
+                    ? attributes.get("registrationNo").get(0)
+                    : null);
+        }
+
+        if (attributes.containsKey("physicalAddress")) {
+            org.setPhysicalAddress(attributes.get("physicalAddress").listIterator().hasNext()
+                    ? attributes.get("physicalAddress").get(0)
+                    : null);
+        }
+
+        if (attributes.containsKey("postalAddress")) {
+            org.setPostalAddress(attributes.get("postalAddress").listIterator().hasNext()
+                    ? attributes.get("postalAddress").get(0)
+                    : null);
+        }
+
+        if (attributes.containsKey("status")) {
+            org.setStatus(GeneralStatus.valueOf(attributes.get("status").listIterator().hasNext()
+                    ? attributes.get("status").get(0)
+                    : null));
+        }
+
+        if (attributes.containsKey("contactEmailAddress")) {
+            org.setContactEmailAddress(attributes.get("contactEmailAddress").listIterator().hasNext()
+                    ? attributes.get("contactEmailAddress").get(0)
+                    : null);
+        }
+
+        if (attributes.containsKey("isClient")) {
+            org.setIsClient(Boolean.parseBoolean(attributes.get("isClient").listIterator().hasNext()
+                    ? attributes.get("isClient").get(0)
+                    : null));
+        }
+
+        if (attributes.containsKey("createdBy")) {
+            org.setCreatedBy(attributes.get("createdBy").listIterator().hasNext()
+                    ? attributes.get("createdBy").get(0)
+                    : null);
+        }
+
+        if (attributes.containsKey("createdAt")) {
+
+            String time = attributes.get("createdAt").get(0);
+            org.setCreatedAt(LocalDateTime.from(formatter.parse(time)));
+        }
+
+        if (attributes.containsKey("modifiedBy")) {
+            org.setCreatedBy(attributes.get("modifiedBy").get(0));
+        }
+
+        if (attributes.containsKey("modifiedAt")) {
+
+            String time = attributes.get("modifiedAt").get(0);
+            org.setModifiedAt(LocalDateTime.from(formatter.parse(time)));
+        }
 
         org.setDomains(
                 rep.getDomains().stream().map(r -> new OrganisationDomain(r.getName(), r.isVerified()))
@@ -184,7 +216,8 @@ public class KeycloakOrganisationService {
         }
 
         OrganisationListDTO org = new OrganisationListDTO();
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ssssss");
+        // DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy
+        // HH:mm:ssssss");
 
         org.setId(rep.getId());
         org.setCode(rep.getAlias());
@@ -192,15 +225,20 @@ public class KeycloakOrganisationService {
 
         Map<String, List<String>> attributes = rep.getAttributes();
 
-        org.setRegistrationNo(attributes.get("registrationNo").listIterator().hasNext()
-                ? attributes.get("registrationNo").get(0)
-                : null);
-        org.setStatus(GeneralStatus.valueOf(attributes.get("status").listIterator().hasNext()
-                ? attributes.get("status").get(0)
-                : null));
-        org.setContactEmailAddress(attributes.get("contactEmailAddress").listIterator().hasNext()
-                ? attributes.get("contactEmailAddress").get(0)
-                : null);
+        System.out.println("******************** " + attributes);
+
+        if (attributes != null) {
+            org.setRegistrationNo(attributes.get("registrationNo").listIterator().hasNext()
+                    ? attributes.get("registrationNo").get(0)
+                    : null);
+
+            org.setStatus(GeneralStatus.valueOf(attributes.get("status").listIterator().hasNext()
+                    ? attributes.get("status").get(0)
+                    : null));
+            org.setContactEmailAddress(attributes.get("contactEmailAddress").listIterator().hasNext()
+                    ? attributes.get("contactEmailAddress").get(0)
+                    : null);
+        }
 
         return org;
     }
@@ -251,14 +289,21 @@ public class KeycloakOrganisationService {
         return organisation;
     }
 
-    public OrganisationDTO findById(String id) {
+    public OrganizationRepresentation getOrganisationRepresentationById(String id) {
 
         OrganizationsResource orgsResource = keycloakService.getOrganizationsResource();
         OrganizationResource orgResource = orgsResource.get(id);
 
         OrganizationRepresentation orgRep = orgResource.toRepresentation();
 
-        return toOrganisationDTO(orgRep);
+        return orgRep;
+
+    }
+
+    public OrganisationDTO findById(String id) {
+
+
+        return toOrganisationDTO(getOrganisationRepresentationById(id));
     }
 
     public List<OrganisationListDTO> getAll() {
@@ -273,7 +318,7 @@ public class KeycloakOrganisationService {
     public Page<OrganisationListDTO> getAll(Integer pageNumber, Integer pageSize) {
 
         OrganizationsResource orgsResource = keycloakService.getOrganizationsResource();
-        List<OrganizationRepresentation> orgsReps = orgsResource.list(pageNumber, pageSize);
+        List<OrganizationRepresentation> orgsReps = orgsResource.list(pageNumber * pageSize, pageSize);
         long count = orgsResource.count("");
 
         List<OrganisationListDTO> orgs = orgsReps.stream().map(
@@ -281,6 +326,67 @@ public class KeycloakOrganisationService {
 
         return new PageImpl<>(orgs, PageRequest.of(pageNumber, pageSize), count);
 
+    }
+
+    public List<OrganisationListDTO> search(OrganisationSearchCriteria criteria) {
+
+        OrganizationsResource orgsResource = keycloakService.getOrganizationsResource();
+
+        if (criteria == null) {
+
+            criteria = new OrganisationSearchCriteria();
+        }
+
+        String search = null;
+
+        if (criteria.getId() != null) {
+
+            search = criteria.getId();
+        } else if (criteria.getName() != null) {
+
+            search = criteria.getName();
+        }
+
+        List<OrganizationRepresentation> orgsReps = orgsResource.search(search);
+
+        return orgsReps.stream().map(
+                rep -> toOrganisationListDTO(rep)).toList();
+    }
+
+    public Page<OrganisationListDTO> search(SearchObject<OrganisationSearchCriteria> criteria) {
+
+        OrganizationsResource orgsResource = keycloakService.getOrganizationsResource();
+        if (criteria.getCriteria() == null) {
+            criteria.setCriteria(new OrganisationSearchCriteria());
+        }
+
+        String search = null;
+
+        if (criteria.getCriteria().getId() != null) {
+
+            search = criteria.getCriteria().getId();
+        } else if (criteria.getCriteria().getName() != null) {
+
+            search = criteria.getCriteria().getName();
+        }
+
+        Integer pageNumber = criteria.getPageNumber();
+        Integer pageSize = criteria.getPageSize();
+
+        List<OrganizationRepresentation> orgsReps = orgsResource.search(
+                search,
+                false,
+                pageNumber * pageSize,
+                pageSize);
+
+        long count = orgsResource.count(
+                StringUtils.isNotBlank(criteria.getCriteria().getId()) ? criteria.getCriteria().getId()
+                        : criteria.getCriteria().getName());
+
+        List<OrganisationListDTO> orgs = orgsReps.stream().map(
+                rep -> toOrganisationListDTO(rep)).toList();
+
+        return new PageImpl<>(orgs, PageRequest.of(criteria.getPageNumber(), criteria.getPageSize()), count);
     }
 
     public Boolean remove(String id) {

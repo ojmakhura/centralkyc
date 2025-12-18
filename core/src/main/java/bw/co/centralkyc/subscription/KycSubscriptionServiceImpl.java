@@ -23,9 +23,6 @@ import org.springframework.transaction.annotation.Transactional;
 import bw.co.centralkyc.invoice.KycInvoiceDTO;
 import bw.co.centralkyc.invoice.KycInvoiceDao;
 import bw.co.centralkyc.invoice.KycInvoiceRepository;
-import bw.co.centralkyc.organisation.Organisation;
-import bw.co.centralkyc.organisation.OrganisationDao;
-import bw.co.centralkyc.organisation.OrganisationRepository;
 import bw.co.centralkyc.sequence.SequenceGenerator;
 import bw.co.centralkyc.sequence.SequenceGeneratorService;
 import bw.co.centralkyc.sequence.SequencePart;
@@ -43,11 +40,10 @@ public class KycSubscriptionServiceImpl
     private static final String SEQUENCE_NAME = "KYC_SUBSCRIPTION_REF";
 
     public KycSubscriptionServiceImpl(KycSubscriptionDao kycSubscriptionDao,
-            KycSubscriptionRepository kycSubscriptionRepository, OrganisationDao organisationDao,
-            OrganisationRepository organisationRepository, KycInvoiceDao kycInvoiceDao,
+            KycSubscriptionRepository kycSubscriptionRepository, KycInvoiceDao kycInvoiceDao,
             SequenceGeneratorService sequenceGeneratorService,
             KycInvoiceRepository kycInvoiceRepository, MessageSource messageSource) {
-        super(kycSubscriptionDao, kycSubscriptionRepository, organisationDao, organisationRepository, kycInvoiceDao,
+        super(kycSubscriptionDao, kycSubscriptionRepository, kycInvoiceDao,
                 kycInvoiceRepository, messageSource);
 
         this.sequenceGeneratorService = sequenceGeneratorService;

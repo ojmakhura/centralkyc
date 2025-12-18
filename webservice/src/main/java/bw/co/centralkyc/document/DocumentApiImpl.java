@@ -11,7 +11,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.security.oauth2.jwt.Jwt;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -32,18 +31,19 @@ import bw.co.centralkyc.TargetEntity;
 import bw.co.centralkyc.minio.MinioService;
 
 @RestController
-public class DocumentApiImpl extends DocumentApiBase {
+public class DocumentApiImpl implements DocumentApi {
 
     private final MinioService minioService;
+    private final DocumentService documentService;
 
     public DocumentApiImpl(DocumentService documentService, MinioService minioService) {
 
-        super(documentService);
+        this.documentService = documentService;
         this.minioService = minioService;
     }
 
     @Override
-    public ResponseEntity<Collection<DocumentDTO>> handleFindByDocumentType(String documentTypeId) {
+    public ResponseEntity<Collection<DocumentDTO>> findByDocumentType(String documentTypeId) {
 
         try {
 
@@ -57,7 +57,7 @@ public class DocumentApiImpl extends DocumentApiBase {
     }
 
     @Override
-    public ResponseEntity<DocumentDTO> handleFindById(String id) {
+    public ResponseEntity<DocumentDTO> findById(String id) {
 
         try {
 
@@ -70,7 +70,7 @@ public class DocumentApiImpl extends DocumentApiBase {
     }
 
     @Override
-    public ResponseEntity<Collection<DocumentDTO>> handleFindByTarget(
+    public ResponseEntity<Collection<DocumentDTO>> findByTarget(
             bw.co.centralkyc.TargetEntity target, String targetId) {
 
         try {
@@ -83,13 +83,13 @@ public class DocumentApiImpl extends DocumentApiBase {
     }
 
     @Override
-    public ResponseEntity<Collection<DocumentDTO>> handleGetAll() {
+    public ResponseEntity<Collection<DocumentDTO>> getAll() {
         return ResponseEntity.ok(documentService.getAll());
 
     }
 
     @Override
-    public ResponseEntity<Page<DocumentDTO>> handleGetAllPaged(Integer pageNumber, Integer pageSize) {
+    public ResponseEntity<Page<DocumentDTO>> getAllPaged(Integer pageNumber, Integer pageSize) {
 
         try {
 
@@ -103,7 +103,7 @@ public class DocumentApiImpl extends DocumentApiBase {
     }
 
     @Override
-    public ResponseEntity<Boolean> handleRemove(String id) {
+    public ResponseEntity<Boolean> remove(String id) {
 
         try {
 
@@ -117,7 +117,7 @@ public class DocumentApiImpl extends DocumentApiBase {
     }
 
     @Override
-    public ResponseEntity<DocumentDTO> handleSave(DocumentDTO document) {
+    public ResponseEntity<DocumentDTO> save(DocumentDTO document) {
 
         try {
 
@@ -133,7 +133,7 @@ public class DocumentApiImpl extends DocumentApiBase {
     }
 
     @Override
-    public ResponseEntity<Collection<DocumentDTO>> handleSearch(String criteria) {
+    public ResponseEntity<Collection<DocumentDTO>> search(String criteria) {
 
         try {
 
@@ -183,45 +183,47 @@ public class DocumentApiImpl extends DocumentApiBase {
     // }
 
     @Override
-    public ResponseEntity<DocumentDTO> handleUpload(TargetEntity target, String targetId,
+    public ResponseEntity<DocumentDTO> upload(TargetEntity target, String targetId,
             String documentTypeId, MultipartFile file) {
 
         try {
 
-            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-            System.out.println(authentication);
-            Jwt jwt = (Jwt) authentication.getPrincipal();
+            // Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            // System.out.println(authentication);
+            // Jwt jwt = (Jwt) authentication.getPrincipal();
 
-            System.out.println(jwt.getClaims());
+            // System.out.println(jwt.getClaims());
 
-            String username = jwt.getClaimAsString("preferred_username");
+            // String username = jwt.getClaimAsString("preferred_username");
 
-            DocumentDTO document = new DocumentDTO();
-            document.setCreatedAt(LocalDateTime.now());
-            document.setCreatedBy(username);
-            document.setTarget(target);
-            document.setTargetId(targetId);
-            document.setFileName(file.getOriginalFilename());
+            // DocumentDTO document = new DocumentDTO();
+            // document.setCreatedAt(LocalDateTime.now());
+            // document.setCreatedBy(username);
+            // document.setTarget(target);
+            // document.setTargetId(targetId);
+            // document.setFileName(file.getOriginalFilename());
 
-            Map<String, Object> metadata = new HashMap<>();
-            metadata.put("fileSize", file.getSize());
-            metadata.put("fileType", file.getContentType());
-            metadata.put("contentType", file.getContentType());
+            // Map<String, Object> metadata = new HashMap<>();
+            // metadata.put("fileSize", file.getSize());
+            // metadata.put("fileType", file.getContentType());
+            // metadata.put("contentType", file.getContentType());
 
-            document.setMetadata(metadata);
+            // document.setMetadata(metadata);
 
-            String filePath = constructFilePath(target, targetId, file.getOriginalFilename());
-            try {
-                document.setUrl(uploadToMinio(file, filePath));
-            } catch (Exception e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-                throw new DocumentServiceException("Error uploading file: " + file.getOriginalFilename());
-            }
+            // String filePath = constructFilePath(target, targetId, file.getOriginalFilename());
+            // try {
+            //     document.setUrl(uploadToMinio(file, filePath));
+            // } catch (Exception e) {
+            //     // TODO Auto-generated catch block
+            //     e.printStackTrace();
+            //     throw new DocumentServiceException("Error uploading file: " + file.getOriginalFilename());
+            // }
 
-            document.setDocumentTypeId(documentTypeId);
+            // document.setDocumentTypeId(documentTypeId);
 
-            return ResponseEntity.ok(documentService.save(document)); 
+            // return ResponseEntity.ok(documentService.save(document)); 
+
+            return ResponseEntity.ok(documentService.save(null)); 
 
         } catch (Exception e) {
 
@@ -241,7 +243,7 @@ public class DocumentApiImpl extends DocumentApiBase {
     }
 
     @Override
-    public ResponseEntity<InputStreamResource> handleDownloadFile(String id) {
+    public ResponseEntity<InputStreamResource> downloadFile(String id) {
         try {
 
             DocumentDTO document = documentService.findById(id);
@@ -259,7 +261,7 @@ public class DocumentApiImpl extends DocumentApiBase {
         }
     }
 
-    public ResponseEntity<InputStreamResource> handleDownloadFileByUrl(@RequestParam String objectName) throws Exception {
+    public ResponseEntity<InputStreamResource> downloadFileByUrl(@RequestParam String objectName) throws Exception {
 
         InputStreamResource data = downloadFromMinio(objectName);
         ResponseEntity<InputStreamResource> response = ResponseEntity.status(HttpStatus.OK)

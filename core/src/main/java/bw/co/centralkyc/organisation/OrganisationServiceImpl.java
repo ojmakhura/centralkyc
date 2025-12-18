@@ -35,14 +35,10 @@ public class OrganisationServiceImpl
     extends OrganisationServiceBase
 {
     public OrganisationServiceImpl(
-        OrganisationDao organisationDao,
-        OrganisationRepository organisationRepository,
         MessageSource messageSource
     ) {
         
         super(
-            organisationDao,
-            organisationRepository,
             messageSource
         );
     }
@@ -55,10 +51,12 @@ public class OrganisationServiceImpl
         throws Exception
     {
 
-        Organisation org = organisationRepository.getReferenceById(id);
-        org = organisationRepository.save(org);
+        // Organisation org = organisationRepository.getReferenceById(id);
+        // org = organisationRepository.save(org);
 
-        return organisationDao.toOrganisationDTO(org);
+        // return organisationDao.toOrganisationDTO(org);
+
+        return null;
     }
 
     /**
@@ -69,8 +67,10 @@ public class OrganisationServiceImpl
         throws Exception
     {
 
-        Collection<Organisation> orgs = organisationRepository.findAll();
-        return organisationDao.toOrganisationListDTOCollection(orgs);
+        // Collection<Organisation> orgs = organisationRepository.findAll();
+        // return organisationDao.toOrganisationListDTOCollection(orgs);
+
+        return null;
 
     }
 
@@ -82,10 +82,9 @@ public class OrganisationServiceImpl
         throws Exception
     {
 
-        Pageable pageable = PageRequest.of(pageNumber, pageSize, Sort.by(Direction.ASC, "name"));
-        Page<Organisation> page = organisationRepository.findAll(pageable);
+        
 
-        return page.map(org -> organisationDao.toOrganisationListDTO(org));
+        return null;
     }
 
     /**
@@ -95,8 +94,9 @@ public class OrganisationServiceImpl
     protected boolean handleRemove(String id)
         throws Exception
     {
-        organisationRepository.deleteById(id);
-        return true;
+        
+
+        return false;
     }
 
     /**
@@ -106,54 +106,53 @@ public class OrganisationServiceImpl
     protected OrganisationDTO handleSave(OrganisationDTO organisation)
         throws Exception
     {
-        Organisation org = organisationDao.organisationDTOToEntity(organisation);
-        org = organisationRepository.save(org);
+        
 
-        return organisationDao.toOrganisationDTO(org);
+        return null;
     }
 
-    private Specification<Organisation> createSpecification(OrganisationSearchCriteria criteria) {
+    // private Specification<Organisation> createSpecification(OrganisationSearchCriteria criteria) {
 
-        Specification<Organisation> spec = null;
+    //     Specification<Organisation> spec = null;
 
-        if(criteria == null) {
-            return spec;
-        }
+    //     if(criteria == null) {
+    //         return spec;
+    //     }
 
-        if(StringUtils.isNotBlank(criteria.getId())) {
+    //     if(StringUtils.isNotBlank(criteria.getId())) {
 
-            Specification<Organisation>  tmp = ((root, query, builder) ->
-                builder.equal(root.get("id"), criteria.getId()));
-            spec = spec == null ? tmp : spec.and(tmp);
+    //         Specification<Organisation>  tmp = ((root, query, builder) ->
+    //             builder.equal(root.get("id"), criteria.getId()));
+    //         spec = spec == null ? tmp : spec.and(tmp);
 
-        }
+    //     }
 
-        if (StringUtils.isNotBlank(criteria.getName())) {
-            Specification<Organisation>  tmp = ((root, query, builder) ->
-                builder.like(builder.upper(root.get("name")), "%" + criteria.getName().toUpperCase() + "%"));
-            spec = spec == null ? tmp : spec.and(tmp);
-        }
+    //     if (StringUtils.isNotBlank(criteria.getName())) {
+    //         Specification<Organisation>  tmp = ((root, query, builder) ->
+    //             builder.like(builder.upper(root.get("name")), "%" + criteria.getName().toUpperCase() + "%"));
+    //         spec = spec == null ? tmp : spec.and(tmp);
+    //     }
 
-        if (StringUtils.isNotBlank(criteria.getRegistrationNo())) {
-            Specification<Organisation>  tmp = ((root, query, builder) ->
-                builder.equal(root.get("registrationNo"), criteria.getRegistrationNo()));
-            spec = spec == null ? tmp : spec.and(tmp);
-        }
+    //     if (StringUtils.isNotBlank(criteria.getRegistrationNo())) {
+    //         Specification<Organisation>  tmp = ((root, query, builder) ->
+    //             builder.equal(root.get("registrationNo"), criteria.getRegistrationNo()));
+    //         spec = spec == null ? tmp : spec.and(tmp);
+    //     }
 
-        if(StringUtils.isNotBlank(criteria.getContactEmailAddress())) {
-            Specification<Organisation>  tmp = ((root, query, builder) ->
-                builder.like(builder.upper(root.get("contactEmailAddress")), "%" + criteria.getContactEmailAddress().toUpperCase() + "%"));
-            spec = spec == null ? tmp : spec.and(tmp);
-        }
+    //     if(StringUtils.isNotBlank(criteria.getContactEmailAddress())) {
+    //         Specification<Organisation>  tmp = ((root, query, builder) ->
+    //             builder.like(builder.upper(root.get("contactEmailAddress")), "%" + criteria.getContactEmailAddress().toUpperCase() + "%"));
+    //         spec = spec == null ? tmp : spec.and(tmp);
+    //     }
 
-        if(criteria.getStatus() != null) {
-            Specification<Organisation>  tmp = ((root, query, builder) ->
-                builder.equal(root.get("status"), criteria.getStatus()));
-            spec = spec == null ? tmp : spec.and(tmp);
-        }
+    //     if(criteria.getStatus() != null) {
+    //         Specification<Organisation>  tmp = ((root, query, builder) ->
+    //             builder.equal(root.get("status"), criteria.getStatus()));
+    //         spec = spec == null ? tmp : spec.and(tmp);
+    //     }
 
-        return spec;
-    }
+    //     return spec;
+    // }
 
     /**
      * @see bw.co.centralkyc.organisation.OrganisationService#search(String)
@@ -162,13 +161,9 @@ public class OrganisationServiceImpl
     protected Collection<OrganisationListDTO> handleSearch(OrganisationSearchCriteria criteria, Set<PropertySearchOrder> orderings)
         throws Exception
     {
-        Specification<Organisation> spec = createSpecification(criteria);
-        Collection<Organisation> orgs = 
-                spec == null ?
-                organisationRepository.findAll(Sort.by(Direction.ASC, "name")) :
-                organisationRepository.findAll(spec, Sort.by(Direction.ASC, "name"));
+        
 
-        return organisationDao.toOrganisationListDTOCollection(orgs);
+        return null;
 
     }
 
@@ -179,14 +174,9 @@ public class OrganisationServiceImpl
     protected Page<OrganisationListDTO> handleSearch(SearchObject<OrganisationSearchCriteria> criteria)
         throws Exception
     {
-        Specification<Organisation> spec = createSpecification(criteria.getCriteria());
-        Pageable pageable = PageRequest.of(criteria.getPageNumber(), criteria.getPageSize(), Sort.by(Direction.ASC, "name"));
-        Page<Organisation> page = 
-                spec == null ?
-                organisationRepository.findAll(pageable) :
-                organisationRepository.findAll(spec, pageable);
+        
 
-        return page.map(org -> organisationDao.toOrganisationListDTO(org));
+        return null;
     }
 
 }

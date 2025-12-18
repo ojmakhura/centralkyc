@@ -30,9 +30,7 @@ import bw.co.centralkyc.PropertySearchOrder;
 import bw.co.centralkyc.SearchObject;
 import bw.co.centralkyc.SortOrder;
 import bw.co.centralkyc.SortOrderFactory;
-import bw.co.centralkyc.individual.kyc.KycRecordServiceException;
-import bw.co.centralkyc.organisation.OrganisationDao;
-import bw.co.centralkyc.organisation.OrganisationRepository;
+import bw.co.centralkyc.kyc.KycRecordServiceException;
 import bw.co.centralkyc.sequence.SequenceGenerator;
 import bw.co.centralkyc.sequence.SequenceGeneratorService;
 import bw.co.centralkyc.sequence.SequencePart;
@@ -55,10 +53,8 @@ public class KycInvoiceServiceImpl
 
     public KycInvoiceServiceImpl(KycInvoiceDao kycInvoiceDao, KycInvoiceRepository kycInvoiceRepository,
             KycSubscriptionDao kycSubscriptionDao, KycSubscriptionRepository kycSubscriptionRepository,
-            OrganisationDao organisationDao, OrganisationRepository organisationRepository,
             MessageSource messageSource, SequenceGeneratorService sequenceGeneratorService) {
-        super(kycInvoiceDao, kycInvoiceRepository, kycSubscriptionDao, kycSubscriptionRepository, organisationDao,
-                organisationRepository, messageSource);
+        super(kycInvoiceDao, kycInvoiceRepository, kycSubscriptionDao, kycSubscriptionRepository, messageSource);
 
         this.sequenceGeneratorService = sequenceGeneratorService;
     }
@@ -292,7 +288,7 @@ public class KycInvoiceServiceImpl
 
         KycInvoice invoice = KycInvoice.Factory.newInstance();
         invoice.setKycSubscription(subscription);
-        invoice.setOrganisation(subscription.getOrganisation());
+        // invoice.setOrganisation(subscription.getOrganisation());
         invoice.setAmount(subscription.getAmount());
         invoice.setPaid(false);
 

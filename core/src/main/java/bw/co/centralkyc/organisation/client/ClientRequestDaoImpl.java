@@ -8,7 +8,6 @@ package bw.co.centralkyc.organisation.client;
 
 import bw.co.centralkyc.document.DocumentRepository;
 import bw.co.centralkyc.individual.IndividualRepository;
-import bw.co.centralkyc.organisation.OrganisationRepository;
 import jakarta.persistence.EntityNotFoundException;
 
 import org.apache.commons.lang3.StringUtils;
@@ -23,14 +22,12 @@ public class ClientRequestDaoImpl
 {
     
     public ClientRequestDaoImpl(
-        OrganisationRepository organisationRepository,
         IndividualRepository individualRepository,
         DocumentRepository documentRepository,
         ClientRequestRepository clientRequestRepository
     ) {
 
         super(
-            organisationRepository,
             individualRepository,
             documentRepository,
             clientRequestRepository
@@ -49,12 +46,12 @@ public class ClientRequestDaoImpl
         super.toClientRequestDTO(source, target);
         // WARNING! No conversion for target.organisation (can't convert source.getOrganisation():bw.co.centralkyc.organisation.Organisation to java.lang.String
 
-        if(source.getOrganisation() != null) {
+        // if(source.getOrganisation() != null) {
 
-            target.setOrganisationId(source.getOrganisation().getId());
-            target.setOrganisation(source.getOrganisation().getName());
-            target.setOrganisationRegistrationNo(source.getOrganisation().getRegistrationNo());
-        }
+        //     target.setOrganisationId(source.getOrganisation().getId());
+        //     target.setOrganisation(source.getOrganisation().getName());
+        //     target.setOrganisationRegistrationNo(source.getOrganisation().getRegistrationNo());
+        // }
 
         if(source.getIndividual() != null) {
 
@@ -162,7 +159,7 @@ public class ClientRequestDaoImpl
 
         if(StringUtils.isNotBlank(source.getOrganisationId())) {
 
-            target.setOrganisation(organisationRepository.getReferenceById(source.getOrganisationId()));
+            // target.setOrganisation(organisationRepository.getReferenceById(source.getOrganisationId()));
         }
     }
 }

@@ -7,11 +7,9 @@ package bw.co.centralkyc.organisation;
 
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.Optional;
 import java.util.Set;
 
 import org.springframework.data.domain.Page;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -22,19 +20,21 @@ import bw.co.centralkyc.SearchObject;
 import bw.co.centralkyc.keycloak.KeycloakOrganisationService;
 
 @org.springframework.web.bind.annotation.RestController
-public class OrganisationApiImpl extends OrganisationApiBase {
+public class OrganisationApiImpl implements OrganisationApi {
 
     private final KeycloakOrganisationService orgService;
+    private final OrganisationService organisationService;
+
     public OrganisationApiImpl(OrganisationService organisationService, KeycloakOrganisationService orgService) {
 
-        super(organisationService);
         this.orgService = orgService;
+        this.organisationService = organisationService;
     }
 
     @Override
-    public ResponseEntity<OrganisationDTO> handleFindById(String id) {
+    public ResponseEntity<OrganisationDTO> findById(String id) {
         try {
-            return ResponseEntity.ok(organisationService.findById(id));
+            return ResponseEntity.ok(orgService.findById(id));
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -43,7 +43,7 @@ public class OrganisationApiImpl extends OrganisationApiBase {
     }
 
     @Override
-    public ResponseEntity<Collection<OrganisationListDTO>> handleGetAll() {
+    public ResponseEntity<Collection<OrganisationListDTO>> getAll() {
         try {
             return ResponseEntity.ok(organisationService.getAll());
 
@@ -54,7 +54,7 @@ public class OrganisationApiImpl extends OrganisationApiBase {
     }
 
     @Override
-    public ResponseEntity<Page<OrganisationListDTO>> handleGetAllPaged(Integer pageNumber,
+    public ResponseEntity<Page<OrganisationListDTO>> getAllPaged(Integer pageNumber,
             Integer pageSize) {
         try {
             return ResponseEntity.ok(organisationService.getAll(pageNumber, pageSize));
@@ -67,11 +67,11 @@ public class OrganisationApiImpl extends OrganisationApiBase {
     }
 
     @Override
-    public ResponseEntity<Page<OrganisationListDTO>> handlePagedSearch(
+    public ResponseEntity<Page<OrganisationListDTO>> pagedSearch(
             SearchObject<OrganisationSearchCriteria> criteria) {
         try {
 
-            return ResponseEntity.ok(organisationService.search(criteria));
+            return ResponseEntity.ok(orgService.search(criteria));
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -81,9 +81,9 @@ public class OrganisationApiImpl extends OrganisationApiBase {
     }
 
     @Override
-    public ResponseEntity<Boolean> handleRemove(String id) {
+    public ResponseEntity<Boolean> remove(String id) {
         try {
-            return ResponseEntity.ok(organisationService.remove(id));
+            return ResponseEntity.ok(orgService.remove(id));
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -92,7 +92,7 @@ public class OrganisationApiImpl extends OrganisationApiBase {
     }
 
     @Override
-    public ResponseEntity<OrganisationDTO> handleSave(OrganisationDTO organisation) {
+    public ResponseEntity<OrganisationDTO> save(OrganisationDTO organisation) {
         try {
             
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -107,7 +107,7 @@ public class OrganisationApiImpl extends OrganisationApiBase {
     }
 
     @Override
-    public ResponseEntity<Collection<OrganisationListDTO>> handleSearch(
+    public ResponseEntity<Collection<OrganisationListDTO>> search(
             SearchObject<OrganisationSearchCriteria> criteria) {
         try {
 
@@ -117,8 +117,8 @@ public class OrganisationApiImpl extends OrganisationApiBase {
                 sortings.addAll(sortings);
             }
             
-            return ResponseEntity.ok(organisationService
-                    .search(criteria.getCriteria(), sortings));
+            return ResponseEntity.ok(orgService
+                    .search(criteria.getCriteria()));
 
         } catch (Exception e) {
             e.printStackTrace();

@@ -3,7 +3,13 @@ import { provideRouter, RouteReuseStrategy } from '@angular/router';
 
 import { routes } from './app.routes';
 import { provideAnimations } from '@angular/platform-browser/animations';
-import { provideHttpClient, withFetch, withInterceptors, withInterceptorsFromDi, HttpClient } from '@angular/common/http';
+import {
+  provideHttpClient,
+  withFetch,
+  withInterceptors,
+  withInterceptorsFromDi,
+  HttpClient,
+} from '@angular/common/http';
 import { CUSTOM_DATE_FORMATS } from './@shared/custom-date-formats';
 import { MAT_DATE_FORMATS, MAT_DATE_LOCALE, MatDateFormats } from '@angular/material/core';
 import { RouteReusableStrategy } from './@core/route-reusable-strategy';
@@ -14,15 +20,22 @@ import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
 import { Observable, of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { provideToastr } from 'ngx-toastr';
-import { AutoRefreshTokenService, createInterceptorCondition, INCLUDE_BEARER_TOKEN_INTERCEPTOR_CONFIG, IncludeBearerTokenCondition, includeBearerTokenInterceptor, provideKeycloak, UserActivityService, withAutoRefreshToken } from 'keycloak-angular';
+import {
+  AutoRefreshTokenService,
+  createInterceptorCondition,
+  INCLUDE_BEARER_TOKEN_INTERCEPTOR_CONFIG,
+  IncludeBearerTokenCondition,
+  includeBearerTokenInterceptor,
+  provideKeycloak,
+  UserActivityService,
+  withAutoRefreshToken,
+} from 'keycloak-angular';
 
 export class CustomTranslateLoader implements TranslateLoader {
   constructor(private http: HttpClient) {}
 
   getTranslation(lang: string): Observable<any> {
-    return this.http.get(`/i18n/${lang}.json`).pipe(
-      catchError(() => of({}))
-    );
+    return this.http.get(`/i18n/${lang}.json`).pipe(catchError(() => of({})));
   }
 }
 
@@ -74,7 +87,7 @@ export const provideKeycloakAndInterceptor = (env: any) => {
 export function initFactory() {
   // const envStore = inject(AppEnvStore);
 
-  return async () => { };
+  return async () => {};
 }
 
 export const MY_DATE_FORMATS: MatDateFormats = {
@@ -99,10 +112,10 @@ export const appConfig = (env: any) => {
         withFetch(),
         withInterceptorsFromDi(),
         withInterceptors([
-          apiPrefixInterceptor, 
-          errorHandlerInterceptor, 
-          includeBearerTokenInterceptor
-        ]),
+          apiPrefixInterceptor,
+          errorHandlerInterceptor,
+          includeBearerTokenInterceptor,
+        ])
       ),
       provideToastr({
         timeOut: 3000,
@@ -114,7 +127,7 @@ export const appConfig = (env: any) => {
         enableHtml: true,
         tapToDismiss: true,
         maxOpened: 5,
-        autoDismiss: true
+        autoDismiss: true,
       }),
       importProvidersFrom(
         TranslateModule.forRoot({
@@ -122,9 +135,9 @@ export const appConfig = (env: any) => {
           loader: {
             provide: TranslateLoader,
             useFactory: HttpLoaderFactory,
-            deps: [HttpClient]
-          }
-        }),
+            deps: [HttpClient],
+          },
+        })
       ),
       { provide: MAT_FORM_FIELD_DEFAULT_OPTIONS, useValue: { appearance: 'outline' } },
       {

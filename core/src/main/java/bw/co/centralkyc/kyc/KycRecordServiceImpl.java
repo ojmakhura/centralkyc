@@ -6,8 +6,9 @@
  * MODEL CLASS: AndroMDAModel::backend::bw.co.centralkyc::individual::kyc::KycRecordService
  * STEREOTYPE:  Service
  */
-package bw.co.centralkyc.individual.kyc;
+package bw.co.centralkyc.kyc;
 
+import java.time.LocalDate;
 import java.util.Collection;
 import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Page;
@@ -17,7 +18,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
- * @see bw.co.centralkyc.individual.kyc.KycRecordService
+ * @see bw.co.centralkyc.kyc.KycRecordService
  */
 @Service("kycRecordService")
 @Transactional(propagation = Propagation.REQUIRED, readOnly=false)
@@ -60,6 +61,17 @@ public class KycRecordServiceImpl
     {
 
         KycRecord kycRecordEntity = this.kycRecordDao.kycRecordDTOToEntity(kycRecord);
+
+        if(kycRecordEntity.getUploadDate() == null) {
+            kycRecordEntity.setUploadDate(LocalDate.now());
+        }
+
+        // if(kycRecordEntity.getExpiryDate() == null) {
+
+        //     kycRecordEntity.setExpiryDate(kycRecordEntity.getUploadDate().plusYears(2));
+        // }
+
+            // System.out.println("************************************************************ " + kycRecordEntity.getExpiryDate());
         kycRecordEntity = this.kycRecordRepository.save(kycRecordEntity);
 
         return this.kycRecordDao.toKycRecordDTO(kycRecordEntity);

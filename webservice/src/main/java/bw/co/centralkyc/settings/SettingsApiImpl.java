@@ -11,10 +11,8 @@ import bw.co.centralkyc.document.DocumentApi;
 import bw.co.centralkyc.document.DocumentDTO;
 
 import java.util.Collection;
-import java.util.Optional;
 
 import org.springframework.data.domain.Page;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -22,18 +20,19 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 @RestController
-public class SettingsApiImpl extends SettingsApiBase {
+public class SettingsApiImpl implements SettingsApi {
 
     private final DocumentApi documentApi;
+    private final SettingsService settingsService;
 
     public SettingsApiImpl(SettingsService settingsService, DocumentApi documentApi) {
 
-        super(settingsService);
         this.documentApi = documentApi;
+        this.settingsService = settingsService;
     }
 
     @Override
-    public ResponseEntity<SettingsDTO> handleFindById(String id) {
+    public ResponseEntity<SettingsDTO> findById(String id) {
         try {
 
             return ResponseEntity.ok(null);
@@ -46,7 +45,7 @@ public class SettingsApiImpl extends SettingsApiBase {
     }
 
     @Override
-    public ResponseEntity<Collection<SettingsDTO>> handleGetAll() {
+    public ResponseEntity<Collection<SettingsDTO>> getAll() {
         try {
             return ResponseEntity.ok(settingsService.getAll());
 
@@ -58,7 +57,7 @@ public class SettingsApiImpl extends SettingsApiBase {
     }
 
     @Override
-    public ResponseEntity<Page<SettingsDTO>> handleGetAllPaged(Integer pageNumber, Integer pageSize) {
+    public ResponseEntity<Page<SettingsDTO>> getAllPaged(Integer pageNumber, Integer pageSize) {
         try {
             return ResponseEntity.ok(settingsService.getAll(pageNumber, pageSize));
 
@@ -70,7 +69,7 @@ public class SettingsApiImpl extends SettingsApiBase {
     }
 
     @Override
-    public ResponseEntity<Page<SettingsDTO>> handlePagedSearch(String criteria, Integer pageNumber,
+    public ResponseEntity<Page<SettingsDTO>> pagedSearch(String criteria, Integer pageNumber,
             Integer pageSize) {
         try {
             return ResponseEntity.ok(null);
@@ -83,7 +82,7 @@ public class SettingsApiImpl extends SettingsApiBase {
     }
 
     @Override
-    public ResponseEntity<Boolean> handleRemove(String id) {
+    public ResponseEntity<Boolean> remove(String id) {
         try {
             return ResponseEntity.ok(false);
 
@@ -95,7 +94,7 @@ public class SettingsApiImpl extends SettingsApiBase {
     }
 
     @Override
-    public ResponseEntity<SettingsDTO> handleSave(SettingsDTO setttings) {
+    public ResponseEntity<SettingsDTO> save(SettingsDTO setttings) {
         try {
 
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -112,7 +111,7 @@ public class SettingsApiImpl extends SettingsApiBase {
     }
 
     @Override
-    public ResponseEntity<Collection<SettingsDTO>> handleSearch(String criteria) {
+    public ResponseEntity<Collection<SettingsDTO>> search(String criteria) {
         try {
             return ResponseEntity.ok(null);
 
@@ -124,7 +123,7 @@ public class SettingsApiImpl extends SettingsApiBase {
     }
 
     @Override
-    public ResponseEntity<SettingsDTO> handleUploadTemplate(MultipartFile template, TargetEntity target)
+    public ResponseEntity<SettingsDTO> uploadTemplate(MultipartFile template, TargetEntity target)
             throws Exception {
 
         try {
@@ -155,6 +154,31 @@ public class SettingsApiImpl extends SettingsApiBase {
 
             return this.save(settings);
 
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw e;
+        }
+    }
+
+    @Override
+    public ResponseEntity<SettingsDTO> attachDocumentType(String documentTypeId, DocumentTypePurpose purpose)
+            throws Exception {
+        
+
+        try {
+            return ResponseEntity.ok(settingsService.attachDocumentType(documentTypeId, purpose));
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw e;
+        }
+    }
+
+    @Override
+    public ResponseEntity<SettingsDTO> detachDocumentType(String documentTypeId, DocumentTypePurpose purpose)
+            throws Exception {
+        
+        try {
+            return ResponseEntity.ok(settingsService.detachDocumentType(documentTypeId, purpose));
         } catch (Exception e) {
             e.printStackTrace();
             throw e;

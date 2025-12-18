@@ -10,6 +10,7 @@ import { Page } from '@app/models/page.model';
 import { IndividualListDTO } from '@app/models/bw/co/centralkyc/individual/individual-list-dto';
 import { IndividualDTO } from '@app/models/bw/co/centralkyc/individual/individual-dto';
 import { IndividualApi } from '@app/services/bw/co/centralkyc/individual/individual-api';
+import { IndividualSearchCriteria } from '@app/models/bw/co/centralkyc/individual/individual-search-criteria';
 
 export type IndividualApiState = AppState<any, any> & {};
 

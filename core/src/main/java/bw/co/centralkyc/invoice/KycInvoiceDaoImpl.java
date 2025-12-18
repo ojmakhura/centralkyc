@@ -7,7 +7,6 @@
 package bw.co.centralkyc.invoice;
 
 import bw.co.centralkyc.document.DocumentRepository;
-import bw.co.centralkyc.organisation.OrganisationRepository;
 import bw.co.centralkyc.subscription.KycSubscriptionRepository;
 import jakarta.persistence.EntityNotFoundException;
 
@@ -23,9 +22,9 @@ public class KycInvoiceDaoImpl
 {
     
 
-    public KycInvoiceDaoImpl(OrganisationRepository organisationRepository, DocumentRepository documentRepository,
+    public KycInvoiceDaoImpl(DocumentRepository documentRepository,
             KycSubscriptionRepository kycSubscriptionRepository, KycInvoiceRepository kycInvoiceRepository) {
-        super(organisationRepository, documentRepository, kycSubscriptionRepository, kycInvoiceRepository);
+        super(documentRepository, kycSubscriptionRepository, kycInvoiceRepository);
         //TODO Auto-generated constructor stub
     }
 
@@ -42,13 +41,13 @@ public class KycInvoiceDaoImpl
         // WARNING! No conversion for target.issueDate (can't convert source.getIssueDate():java.util.Date to java.util.Date
         target.setIssueDate(source.getIssueDate());
 
-        if(source.getOrganisation() != null) {
+        // if(source.getOrganisation() != null) {
 
-            target.setOrganisationId(source.getOrganisation().getId());
-            target.setOrganisationCode(source.getOrganisation().getCode());
-            target.setOrganisationName(source.getOrganisation().getName());
-            target.setOrganisationRegistrationNo(source.getOrganisation().getRegistrationNo());
-        }
+        //     target.setOrganisationId(source.getOrganisation().getId());
+        //     target.setOrganisationCode(source.getOrganisation().getCode());
+        //     target.setOrganisationName(source.getOrganisation().getName());
+        //     target.setOrganisationRegistrationNo(source.getOrganisation().getRegistrationNo());
+        // }
 
         if(source.getKycSubscription() != null) {
 
@@ -111,11 +110,11 @@ public class KycInvoiceDaoImpl
         // No conversion for target.issueDate (can't convert source.getIssueDate():java.util.Date to java.util.Date
         target.setIssueDate(source.getIssueDate());
 
-        if(StringUtils.isNotBlank(source.getOrganisationId())) {
-            target.setOrganisation(this.organisationRepository.findById(source.getOrganisationId())
-                .orElseThrow(() -> new EntityNotFoundException("Organisation not found for id: " + source.getOrganisationId())));
-        } else if (copyIfNull) {
-            target.setOrganisation(null);
-        }
+        // if(StringUtils.isNotBlank(source.getOrganisationId())) {
+        //     target.setOrganisation(this.organisationRepository.findById(source.getOrganisationId())
+        //         .orElseThrow(() -> new EntityNotFoundException("Organisation not found for id: " + source.getOrganisationId())));
+        // } else if (copyIfNull) {
+        //     target.setOrganisation(null);
+        // }
     }
 }

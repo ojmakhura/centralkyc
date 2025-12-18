@@ -17,15 +17,16 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import bw.co.centralkyc.AuditTracker;
 
 @org.springframework.web.bind.annotation.RestController
-public class DocumentTypeApiImpl extends DocumentTypeApiBase {
+public class DocumentTypeApiImpl implements DocumentTypeApi {
+
+    private final DocumentTypeService documentTypeService;
 
     public DocumentTypeApiImpl(DocumentTypeService documentTypeService) {
-
-        super(documentTypeService);
+        this.documentTypeService = documentTypeService;
     }
 
     @Override
-    public ResponseEntity<DocumentTypeDTO> handleFindById(String id) {
+    public ResponseEntity<DocumentTypeDTO> findById(String id) {
 
         try {
 
@@ -39,7 +40,7 @@ public class DocumentTypeApiImpl extends DocumentTypeApiBase {
     }
 
     @Override
-    public ResponseEntity<Collection<DocumentTypeDTO>> handleGetAll() {
+    public ResponseEntity<Collection<DocumentTypeDTO>> getAll() {
 
         try {
 
@@ -53,7 +54,7 @@ public class DocumentTypeApiImpl extends DocumentTypeApiBase {
     }
 
     @Override
-    public ResponseEntity<Page<DocumentTypeDTO>> handleGetAllPaged(Integer pageNumber,
+    public ResponseEntity<Page<DocumentTypeDTO>> getAllPaged(Integer pageNumber,
             Integer pageSize) {
 
         try {
@@ -65,7 +66,7 @@ public class DocumentTypeApiImpl extends DocumentTypeApiBase {
     }
 
     @Override
-    public ResponseEntity<Page<DocumentTypeDTO>> handlePagedSearch(String criteria,
+    public ResponseEntity<Page<DocumentTypeDTO>> pagedSearch(String criteria,
             Integer pageNumber,
             Integer pageSize) {
 
@@ -81,7 +82,7 @@ public class DocumentTypeApiImpl extends DocumentTypeApiBase {
     }
 
     @Override
-    public ResponseEntity<Boolean> handleRemove(String id) {
+    public ResponseEntity<Boolean> remove(String id) {
 
         try {
 
@@ -95,7 +96,7 @@ public class DocumentTypeApiImpl extends DocumentTypeApiBase {
     }
 
     @Override
-    public ResponseEntity<DocumentTypeDTO> handleSave(DocumentTypeDTO documentType) {
+    public ResponseEntity<DocumentTypeDTO> save(DocumentTypeDTO documentType) {
 
         try {
 
@@ -111,7 +112,7 @@ public class DocumentTypeApiImpl extends DocumentTypeApiBase {
     }
 
     @Override
-    public ResponseEntity<Collection<DocumentTypeDTO>> handleSearch(String criteria) {
+    public ResponseEntity<Collection<DocumentTypeDTO>> search(String criteria) {
 
         try {
             

@@ -21,15 +21,17 @@ import bw.co.centralkyc.PropertySearchOrder;
 import bw.co.centralkyc.SearchObject;
 
 @RestController
-public class KycInvoiceApiImpl extends KycInvoiceApiBase {
+public class KycInvoiceApiImpl implements KycInvoiceApi {
+
+    private final KycInvoiceService kycInvoiceService;
     
     public KycInvoiceApiImpl(KycInvoiceService kycInvoiceService) {
         
-        super(kycInvoiceService);
+        this.kycInvoiceService = kycInvoiceService;
     }
 
     @Override
-    public ResponseEntity<KycInvoiceDTO> handleFindById(String id) throws Exception {
+    public ResponseEntity<KycInvoiceDTO> findById(String id) throws Exception {
         try {
             return ResponseEntity.ok(kycInvoiceService.findById(id));
         } catch (Exception e) {
@@ -40,7 +42,7 @@ public class KycInvoiceApiImpl extends KycInvoiceApiBase {
     }
 
     @Override
-    public ResponseEntity<Collection<KycInvoiceDTO>> handleGetAll() throws Exception {
+    public ResponseEntity<Collection<KycInvoiceDTO>> getAll() throws Exception {
         try {
             return ResponseEntity.ok(kycInvoiceService.getAll());
         } catch (Exception e) {
@@ -51,7 +53,7 @@ public class KycInvoiceApiImpl extends KycInvoiceApiBase {
     }
 
     @Override
-    public ResponseEntity<Page<KycInvoiceDTO>> handleGetAllPaged(Integer pageNumber, Integer pageSize) throws Exception {
+    public ResponseEntity<Page<KycInvoiceDTO>> getAllPaged(Integer pageNumber, Integer pageSize) throws Exception {
         try {
             return ResponseEntity.ok(kycInvoiceService.getAll(pageNumber, pageSize));
         } catch (Exception e) {
@@ -62,7 +64,7 @@ public class KycInvoiceApiImpl extends KycInvoiceApiBase {
     }
 
     @Override
-    public ResponseEntity<Page<KycInvoiceDTO>> handlePagedSearch(SearchObject<InvoiceSearchCriteria> criteria) throws Exception {
+    public ResponseEntity<Page<KycInvoiceDTO>> pagedSearch(SearchObject<InvoiceSearchCriteria> criteria) throws Exception {
         try {
             return ResponseEntity.ok(kycInvoiceService.search(criteria));
         } catch (Exception e) {
@@ -73,7 +75,7 @@ public class KycInvoiceApiImpl extends KycInvoiceApiBase {
     }
 
     @Override
-    public ResponseEntity<Boolean> handleRemove(String id) throws Exception {
+    public ResponseEntity<Boolean> remove(String id) throws Exception {
         try {
             return ResponseEntity.ok(kycInvoiceService.remove(id));
         } catch (Exception e) {
@@ -84,7 +86,7 @@ public class KycInvoiceApiImpl extends KycInvoiceApiBase {
     }
 
     @Override
-    public ResponseEntity<KycInvoiceDTO> handleSave(KycInvoiceDTO invoice) throws Exception {
+    public ResponseEntity<KycInvoiceDTO> save(KycInvoiceDTO invoice) throws Exception {
         try {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             AuditTracker.auditTrail(invoice, authentication);
@@ -97,7 +99,7 @@ public class KycInvoiceApiImpl extends KycInvoiceApiBase {
     }
 
     @Override
-    public ResponseEntity<Collection<KycInvoiceDTO>> handleSearch(SearchObject<InvoiceSearchCriteria> criteria) throws Exception {
+    public ResponseEntity<Collection<KycInvoiceDTO>> search(SearchObject<InvoiceSearchCriteria> criteria) throws Exception {
         try {
 
             Set<PropertySearchOrder> sortOrders = new HashSet<>();
@@ -114,14 +116,14 @@ public class KycInvoiceApiImpl extends KycInvoiceApiBase {
     }
 
     @Override
-    public ResponseEntity<KycInvoiceDTO> handleUpload(String id, UploadPurpose purpose, MultipartFile file)
+    public ResponseEntity<KycInvoiceDTO> upload(String id, UploadPurpose purpose, MultipartFile file)
             throws Exception {
         // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'handleUpload'");
+        throw new UnsupportedOperationException("Unimplemented method 'upload'");
     }
 
     @Override
-    public ResponseEntity<Collection<KycInvoiceDTO>> handleGenerateInvoice(String subscriptionId) throws Exception {
+    public ResponseEntity<Collection<KycInvoiceDTO>> generateInvoice(String subscriptionId) throws Exception {
         
         try {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -140,7 +142,7 @@ public class KycInvoiceApiImpl extends KycInvoiceApiBase {
     }
 
     @Override
-    public ResponseEntity<Collection<KycInvoiceDTO>> handleFindByOrganisation(String organisationId) throws Exception {
+    public ResponseEntity<Collection<KycInvoiceDTO>> findByOrganisation(String organisationId) throws Exception {
         
         try {
 
@@ -153,7 +155,7 @@ public class KycInvoiceApiImpl extends KycInvoiceApiBase {
     }
 
     @Override
-    public ResponseEntity<Collection<KycInvoiceDTO>> handleFindBySubscription(String subscriptionId) throws Exception {
+    public ResponseEntity<Collection<KycInvoiceDTO>> findBySubscription(String subscriptionId) throws Exception {
         
         try {
 
@@ -167,7 +169,7 @@ public class KycInvoiceApiImpl extends KycInvoiceApiBase {
     }
 
     @Override
-    public ResponseEntity<Page<KycInvoiceDTO>> handleFindByOrganisationPaged(String organisationId, Integer pageNumber,
+    public ResponseEntity<Page<KycInvoiceDTO>> findByOrganisationPaged(String organisationId, Integer pageNumber,
             Integer pageSize) throws Exception {
         
         try {
@@ -181,7 +183,7 @@ public class KycInvoiceApiImpl extends KycInvoiceApiBase {
     }
 
     @Override
-    public ResponseEntity<Page<KycInvoiceDTO>> handleFindBySubscriptionPaged(String subscriptionId, Integer pageNumber,
+    public ResponseEntity<Page<KycInvoiceDTO>> findBySubscriptionPaged(String subscriptionId, Integer pageNumber,
             Integer pageSize) throws Exception {
         
         try {

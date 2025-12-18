@@ -50,6 +50,13 @@ export const routes: Routes = [
       ]
     },
     {
+      path: 'kyc', 
+      loadChildren: () => import('@views/individual/kyc/kyc-record.routes').then((m) => m.routes),
+      providers: [
+        UseCaseScope
+      ]
+    },
+    {
       path: 'user', 
       loadChildren: () => import('@views/user/user.routes').then((m) => m.routes),
       providers: [

@@ -10,6 +10,7 @@ import { Page } from '@app/models/page.model';
 import { OrganisationDTO } from '@app/models/bw/co/centralkyc/organisation/organisation-dto';
 import { OrganisationListDTO } from '@app/models/bw/co/centralkyc/organisation/organisation-list-dto';
 import { OrganisationApi } from '@app/services/bw/co/centralkyc/organisation/organisation-api';
+import { OrganisationSearchCriteria } from '@app/models/bw/co/centralkyc/organisation/organisation-search-criteria';
 
 export type OrganisationApiState = AppState<any, any> & {};
 

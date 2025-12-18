@@ -9,10 +9,9 @@ package bw.co.centralkyc.individual.employment;
 import bw.co.centralkyc.document.DocumentRepository;
 import bw.co.centralkyc.individual.Individual;
 import bw.co.centralkyc.individual.IndividualRepository;
-import bw.co.centralkyc.individual.kyc.KycRecord;
-import bw.co.centralkyc.individual.kyc.KycRecordDTO;
-import bw.co.centralkyc.individual.kyc.KycRecordRepository;
-import bw.co.centralkyc.organisation.OrganisationRepository;
+import bw.co.centralkyc.kyc.KycRecord;
+import bw.co.centralkyc.kyc.KycRecordDTO;
+import bw.co.centralkyc.kyc.KycRecordRepository;
 import jakarta.persistence.EntityNotFoundException;
 
 import org.apache.commons.collections4.CollectionUtils;
@@ -30,7 +29,6 @@ public class EmploymentRecordDaoImpl
     public EmploymentRecordDaoImpl(
         DocumentRepository documentRepository,
         KycRecordRepository kycRecordRepository,
-        OrganisationRepository organisationRepository,
         IndividualRepository individualRepository,
         EmploymentRecordRepository employmentRecordRepository
     ) {
@@ -38,7 +36,6 @@ public class EmploymentRecordDaoImpl
         super(
             documentRepository,
             kycRecordRepository,
-            organisationRepository,
             individualRepository,
             employmentRecordRepository
         );

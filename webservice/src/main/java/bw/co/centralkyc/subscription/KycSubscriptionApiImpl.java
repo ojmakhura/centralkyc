@@ -14,16 +14,18 @@ import org.springframework.web.bind.annotation.RestController;
 
 import bw.co.centralkyc.AuditTracker;
 @RestController
-public class KycSubscriptionApiImpl extends KycSubscriptionApiBase {
+public class KycSubscriptionApiImpl implements KycSubscriptionApi {
     
+    private final KycSubscriptionService kycSubscriptionService;
+
     public KycSubscriptionApiImpl(
         KycSubscriptionService kycSubscriptionService    ) {
         
-        super(kycSubscriptionService);
+        this.kycSubscriptionService = kycSubscriptionService;
     }
 
     @Override
-    public ResponseEntity<KycSubscriptionDTO> handleFindById(String id) throws Exception {
+    public ResponseEntity<KycSubscriptionDTO> findById(String id) throws Exception {
         try {
             return ResponseEntity.ok(kycSubscriptionService.findById(id));
         } catch (Exception e) {
@@ -34,7 +36,7 @@ public class KycSubscriptionApiImpl extends KycSubscriptionApiBase {
     }
 
     @Override
-    public ResponseEntity<Collection<KycSubscriptionDTO>> handleGetAll() throws Exception {
+    public ResponseEntity<Collection<KycSubscriptionDTO>> getAll() throws Exception {
         try {
             return ResponseEntity.ok(kycSubscriptionService.getAll());
         } catch (Exception e) {
@@ -45,7 +47,7 @@ public class KycSubscriptionApiImpl extends KycSubscriptionApiBase {
     }
 
     @Override
-    public ResponseEntity<Page<KycSubscriptionDTO>> handleGetAllPaged(Integer pageNumber, Integer pageSize) throws Exception {
+    public ResponseEntity<Page<KycSubscriptionDTO>> getAllPaged(Integer pageNumber, Integer pageSize) throws Exception {
         try {
             return ResponseEntity.ok(kycSubscriptionService.getAll(pageNumber, pageSize));
         } catch (Exception e) {
@@ -56,7 +58,7 @@ public class KycSubscriptionApiImpl extends KycSubscriptionApiBase {
     }
 
     @Override
-    public ResponseEntity<Page<KycSubscriptionDTO>> handlePagedSearch(String criteria, Integer pageNumber, Integer pageSize) throws Exception {
+    public ResponseEntity<Page<KycSubscriptionDTO>> pagedSearch(String criteria, Integer pageNumber, Integer pageSize) throws Exception {
         try {
             return ResponseEntity.ok(kycSubscriptionService.search(criteria, pageNumber, pageSize));
         } catch (Exception e) {
@@ -67,7 +69,7 @@ public class KycSubscriptionApiImpl extends KycSubscriptionApiBase {
     }
 
     @Override
-    public ResponseEntity<Boolean> handleRemove(String id) throws Exception {
+    public ResponseEntity<Boolean> remove(String id) throws Exception {
         try {
             return ResponseEntity.ok(kycSubscriptionService.remove(id));
         } catch (Exception e) {
@@ -78,7 +80,7 @@ public class KycSubscriptionApiImpl extends KycSubscriptionApiBase {
     }
 
     @Override
-    public ResponseEntity<KycSubscriptionDTO> handleSave(KycSubscriptionDTO subscription) throws Exception {
+    public ResponseEntity<KycSubscriptionDTO> save(KycSubscriptionDTO subscription) throws Exception {
 
         try {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -92,7 +94,7 @@ public class KycSubscriptionApiImpl extends KycSubscriptionApiBase {
     }
 
     @Override
-    public ResponseEntity<Collection<KycSubscriptionDTO>> handleSearch(String criteria) throws Exception {
+    public ResponseEntity<Collection<KycSubscriptionDTO>> search(String criteria) throws Exception {
         try {
             return ResponseEntity.ok(kycSubscriptionService.search(criteria));
         } catch (Exception e) {
@@ -103,7 +105,7 @@ public class KycSubscriptionApiImpl extends KycSubscriptionApiBase {
     }
 
     @Override
-    public ResponseEntity<Collection<KycSubscriptionDTO>> handleFindByOrganisation(String arg0) throws Exception {
+    public ResponseEntity<Collection<KycSubscriptionDTO>> findByOrganisation(String arg0) throws Exception {
         
         try {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
