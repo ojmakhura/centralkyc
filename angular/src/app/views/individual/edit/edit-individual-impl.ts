@@ -34,10 +34,6 @@ export class EditIndividualImplComponent extends EditIndividualComponent {
         super();
     }
 
-    override beforeOnInit(form: EditIndividualVarsForm): EditIndividualVarsForm{     
-        return form;
-    }
-
     doNgOnDestroy(): void {
     }
 }

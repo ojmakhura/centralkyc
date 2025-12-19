@@ -34,10 +34,6 @@ export class InvoicesImplComponent extends InvoicesComponent {
         super();
     }
 
-    override beforeOnInit(form: InvoicesVarsForm): InvoicesVarsForm{     
-        return form;
-    }
-
     doNgOnDestroy(): void {
     }
 }

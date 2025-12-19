@@ -22,6 +22,8 @@ import { KycRecordDTO } from '@app/models/bw/co/centralkyc/kyc/kyc-record-dto';
 import { EmploymentRecordDTO } from '@app/models/bw/co/centralkyc/individual/employment/employment-record-dto';
 import { DocumentTypeDTO } from '@app/models/bw/co/centralkyc/document/type/document-type-dto';
 import { TargetEntity } from '@app/models/bw/co/centralkyc/target-entity';
+import Swal from 'sweetalert2';
+import { KycComplianceStatus } from '@app/models/bw/co/centralkyc/kyc/kyc-compliance-status';
 
 interface UploadProgress {
   [documentTypeId: string]: {
@@ -116,7 +118,7 @@ export class IndividualDetailsImplComponent extends IndividualDetailsComponent {
     });
   }
 
-  override beforeOnInit(form: IndividualDetailsVarsForm): IndividualDetailsVarsForm {
+  override ngOnInit() {
     // this.individualApiStore.reset();
     // this.settingsApiStore.reset();
     // this.settingsApiStore.getAll();
@@ -138,7 +140,6 @@ export class IndividualDetailsImplComponent extends IndividualDetailsComponent {
       }
     });
 
-    return form;
   }
 
   loadKycRecords(individualId: string): void {
@@ -364,5 +365,44 @@ export class IndividualDetailsImplComponent extends IndividualDetailsComponent {
         console.error('Failed to load documents:', err);
       },
     });
+  }
+
+  addKycRecord() {
+
+    Swal.fire({
+      title: 'Add KYC Record',
+      text: 'Are you sure you want to add a new KYC record for this individual?',
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonText: 'Yes, add it!',
+      cancelButtonText: 'No, cancel',
+    }).then((result) => {
+      if (result.isConfirmed) {
+        const individual: IndividualDTO = this.individual();
+
+        let kycRecord: KycRecordDTO = new KycRecordDTO();
+        kycRecord.individualId = individual?.id;
+        kycRecord.identityNo = individual?.identityNo || '';
+        kycRecord.kycStatus = KycComplianceStatus.CURRENT;
+        kycRecord.name = individual.firstName + ' ' + (individual.surname || '');
+
+        if (individual?.id) {
+          this.kycRecordApi.save(
+            kycRecord
+          ).subscribe({
+            next: (response) => {
+             this.router.navigate(['kyc'], { queryParams: { id: response.id } });
+            },
+            error: (error) => {
+              console.error('Add KYC record error:', error);
+              this.toaster.error(`Failed to add KYC record: ${error.message || 'Operation failed'}`);
+            },
+          });
+        } else {
+          this.toaster.error('No individual selected to add KYC record');
+        }
+      }
+    });
+
   }
 }

@@ -33,11 +33,6 @@ export class SearchIndividualsImplComponent extends SearchIndividualsComponent {
     constructor() {
         super();
     }
-
-    override beforeOnInit(form: SearchIndividualsVarsForm): SearchIndividualsVarsForm{
-        return form;
-    }
-
     doNgOnDestroy(): void {
     }
 

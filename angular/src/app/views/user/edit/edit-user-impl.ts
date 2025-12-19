@@ -38,10 +38,6 @@ export class EditUserImplComponent extends EditUserComponent {
         super();
     }
 
-    override beforeOnInit(form: EditUserVarsForm): EditUserVarsForm{     
-        return form;
-    }
-
     doNgOnDestroy(): void {
     }
 }

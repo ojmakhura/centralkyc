@@ -25,6 +25,7 @@ import { BranchEditorImplComponent } from '@app/components/organisation/branch/b
 import { ActionTemplate } from '@app/models/action-template';
 import { KycSubscriptionDTO } from '@app/models/bw/co/centralkyc/subscription/kyc-subscription-dto';
 import { KycInvoiceDTO } from '@app/models/bw/co/centralkyc/invoice/kyc-invoice-dto';
+import { Field } from '@angular/forms/signals';
 
 @Component({
   selector: 'app-organisation-details',
@@ -39,6 +40,7 @@ import { KycInvoiceDTO } from '@app/models/bw/co/centralkyc/invoice/kyc-invoice-
     MaterialModule,
     TableComponent,
     Loader,
+    Field
   ],
   providers: [DatePipe, CurrencyPipe],
 })
@@ -148,7 +150,7 @@ export class OrganisationDetailsImplComponent extends OrganisationDetailsCompone
   }
 }
 
-  override beforeOnInit(form: OrganisationDetailsVarsForm): OrganisationDetailsVarsForm {
+  override ngOnInit() {
     // this.organisationApiStore.reset();
     // this.branchApiStore.reset();
     // this.kycInvoiceApiStore.reset();
@@ -160,7 +162,6 @@ export class OrganisationDetailsImplComponent extends OrganisationDetailsCompone
         // this.organisationApiStore.findById(params);
       }
     });
-    return form;
   }
 
   // override doNgAfterViewInit(): void {
@@ -169,22 +170,22 @@ export class OrganisationDetailsImplComponent extends OrganisationDetailsCompone
 
   private doSearchRequests(pageNumber: number = 0, pageSize: number = 10): void {
     let org = this.organisation();
-    if (org?.id) {
-      this.loading.set(true)
-      this.clientRequestApi.findByOrganisationPaged(
-        org.id,
-        pageNumber,
-        pageSize,
-      ).subscribe({
-        next: (page) => {
-          this.clientRequestsTableSignal.set(page);
-          this.loading.set(false);
-        }, 
-        error: (error) => {
+    // if (org?.id) {
+    //   this.loading.set(true)
+    //   this.clientRequestApi.findByOrganisationPaged(
+    //     org.id,
+    //     pageNumber,
+    //     pageSize,
+    //   ).subscribe({
+    //     next: (page) => {
+    //       this.clientRequestsTableSignal.set(page);
+    //       this.loading.set(false);
+    //     }, 
+    //     error: (error) => {
 
-        }
-      });
-    }
+    //     }
+    //   });
+    // }
   }
 
   // Branches Management Methods

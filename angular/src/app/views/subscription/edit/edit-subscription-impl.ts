@@ -34,10 +34,6 @@ export class EditSubscriptionImplComponent extends EditSubscriptionComponent {
         super();
     }
 
-    override beforeOnInit(form: EditSubscriptionVarsForm): EditSubscriptionVarsForm{     
-        return form;
-    }
-
     doNgOnDestroy(): void {
     }
 }

@@ -34,10 +34,6 @@ export class SearchUsersImplComponent extends SearchUsersComponent {
         super();
     }
 
-    override beforeOnInit(form: SearchUsersVarsForm): SearchUsersVarsForm{     
-        return form;
-    }
-
     doNgOnDestroy(): void {
     }
 }

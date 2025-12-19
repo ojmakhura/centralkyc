@@ -84,8 +84,4 @@ export class EditDocumentTypeImplComponent extends EditDocumentTypeComponent {
       }
     });
   }
-
-  override beforeOnInit(form: EditDocumentTypeVarsForm): EditDocumentTypeVarsForm {
-    return form;
-  }
 }

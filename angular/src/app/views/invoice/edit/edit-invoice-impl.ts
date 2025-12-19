@@ -34,10 +34,6 @@ export class EditInvoiceImplComponent extends EditInvoiceComponent {
         super();
     }
 
-    override beforeOnInit(form: EditInvoiceVarsForm): EditInvoiceVarsForm{     
-        return form;
-    }
-
     doNgOnDestroy(): void {
     }
 }

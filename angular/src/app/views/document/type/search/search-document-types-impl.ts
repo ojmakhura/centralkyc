@@ -42,10 +42,6 @@ export class SearchDocumentTypesImplComponent extends SearchDocumentTypesCompone
         super();
     }
 
-    override beforeOnInit(form: SearchDocumentTypesVarsForm): SearchDocumentTypesVarsForm{     
-        return form;
-    }
-
     override doNgAfterViewInit(): void {
     this.documentTypesTable?.tablePaginator?.page?.subscribe({
       next: (paginator: MatPaginator) => {

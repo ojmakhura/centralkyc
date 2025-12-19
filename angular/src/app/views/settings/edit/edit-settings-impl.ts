@@ -17,6 +17,7 @@ import { DocumentApi } from '@app/services/bw/co/centralkyc/document/document-ap
 import { DocumentTypeDTO } from '@app/models/bw/co/centralkyc/document/type/document-type-dto';
 import { SettingsDTO } from '@app/models/bw/co/centralkyc/settings/settings-dto';
 import { TargetEntity } from '@app/models/bw/co/centralkyc/target-entity';
+import { ColumnModel } from '@app/models/column.model';
 
 @Component({
   selector: 'app-edit-settings',
@@ -54,6 +55,11 @@ export class EditSettingsImplComponent extends EditSettingsComponent {
   override success = linkedSignal(() => false);
 
   settings: SettingsDTO = new SettingsDTO();
+
+  documentsTableColumns: ColumnModel[] = [
+    new ColumnModel('code', 'code', false),
+    new ColumnModel('name', 'name', false),
+  ];
 
   constructor() {
     super();
@@ -145,6 +151,15 @@ export class EditSettingsImplComponent extends EditSettingsComponent {
       quotationTemplateType: settings.quotationTemplateType,
       quotationTemplate: settings.quotationTemplate,
       clientRequestFileType: settings.clientRequestFileType,
+      clientRequestFileTypeFilter: '',
+      invoiceDocumentTypeFilter: '',
+      invoiceTemplateTypeFilter: '',
+      quotationDocumentTypeFilter: '',
+      quotationTemplateTypeFilter: '',
+      selectedOrgDocumentFilter: '',
+      selectedKycOrgDocumentFilter: '',
+      selectedIndDocumentFilter: '',
+      selectedKycIndDocumentFilter: '',
     });
   }
 
@@ -190,23 +205,23 @@ export class EditSettingsImplComponent extends EditSettingsComponent {
   }
 
   override filterSelectedOrgDocument(): void {
-    // const search = this.selectedOrgDocumentFilterCtrl.value?.toLowerCase() || '';
-    // this.loading.set(true);
-    // this.loaderMessage.set(`Searching document types.`);
-    // this.documentTypeApi.search(search).subscribe(
-    //   (data) => {
-    //     this.selectedOrgDocumentFilteredList.set(data || []);
-    //     this.loading.set(false);
-    //   },
-    //   (error) => {
-    //     this.toaster.error(error.error?.message ? error.error.message : error.message);
-    //     this.loading.set(false);
-    //   }
-    // );
+    const search = this.editSettingsSignal().selectedOrgDocumentFilter?.toLowerCase() || '';
+    this.loading.set(true);
+    this.loaderMessage.set(`Searching document types.`);
+    this.documentTypeApi.search(search).subscribe(
+      (data) => {
+        this.selectedOrgDocumentFilteredList.set(data || []);
+        this.loading.set(false);
+      },
+      (error) => {
+        this.toaster.error(error.error?.message ? error.error.message : error.message);
+        this.loading.set(false);
+      }
+    );
   }
 
   override filterInvoiceDocumentType(): void {
-    const search = this.invoiceDocumentTypeFilterCtrl.value?.toLowerCase() || '';
+    const search = this.editSettingsSignal().invoiceDocumentTypeFilter?.toLowerCase() || '';
     this.loading.set(true);
     this.loaderMessage.set(`Searching document types.`);
     this.documentTypeApi.search(search).subscribe(
@@ -222,7 +237,7 @@ export class EditSettingsImplComponent extends EditSettingsComponent {
   }
 
   override filterClientRequestFileType(): void {
-    const search = this.clientRequestFileTypeFilterCtrl.value?.toLowerCase() || '';
+    const search = this.editSettingsSignal().clientRequestFileTypeFilter?.toLowerCase() || '';
     this.loading.set(true);
     this.loaderMessage.set(`Searching document types.`);
     this.documentTypeApi.search(search).subscribe(
@@ -238,7 +253,7 @@ export class EditSettingsImplComponent extends EditSettingsComponent {
   }
 
   override filterInvoiceTemplateType(): void {
-    const search = this.invoiceTemplateTypeFilterCtrl.value?.toLowerCase() || '';
+    const search = this.editSettingsSignal().invoiceTemplateTypeFilter?.toLowerCase() || '';
     this.loading.set(true);
     this.loaderMessage.set(`Searching document types.`);
     this.documentTypeApi.search(search).subscribe(
@@ -254,7 +269,7 @@ export class EditSettingsImplComponent extends EditSettingsComponent {
   }
 
   override filterQuotationDocumentType(): void {
-    const search = this.quotationDocumentTypeFilterCtrl.value?.toLowerCase() || '';
+    const search = this.editSettingsSignal().quotationDocumentTypeFilter?.toLowerCase() || '';
     this.loading.set(true);
     this.loaderMessage.set(`Searching document types.`);
     this.documentTypeApi.search(search).subscribe(
@@ -270,7 +285,7 @@ export class EditSettingsImplComponent extends EditSettingsComponent {
   }
 
   override filterQuotationTemplateType(): void {
-    const search = this.quotationTemplateTypeFilterCtrl.value?.toLowerCase() || '';
+    const search = this.editSettingsSignal().quotationTemplateTypeFilter?.toLowerCase() || '';
     this.loading.set(true);
     this.loaderMessage.set(`Searching document types.`);
     this.documentTypeApi.search(search).subscribe(
@@ -286,7 +301,7 @@ export class EditSettingsImplComponent extends EditSettingsComponent {
   }
 
   override filterSelectedKycOrgDocument(): void {
-    const search = this.selectedKycOrgDocumentFilterCtrl.value?.toLowerCase() || '';
+    const search = this.editSettingsSignal().selectedKycOrgDocumentFilter?.toLowerCase() || '';
     this.loading.set(true);
     this.loaderMessage.set(`Searching document types.`);
     this.documentTypeApi.search(search).subscribe(
@@ -302,7 +317,7 @@ export class EditSettingsImplComponent extends EditSettingsComponent {
   }
 
   override filterSelectedIndDocument(): void {
-    const search = this.selectedIndDocumentFilterCtrl.value?.toLowerCase() || '';
+    const search = this.editSettingsSignal().selectedIndDocumentFilter?.toLowerCase() || '';
     this.loading.set(true);
     this.loaderMessage.set(`Searching document types.`);
     this.documentTypeApi.search(search).subscribe(
@@ -318,7 +333,7 @@ export class EditSettingsImplComponent extends EditSettingsComponent {
   }
 
   override filterSelectedKycIndDocument(): void {
-    const search = this.selectedKycIndDocumentFilterCtrl.value?.toLowerCase() || '';
+    const search = this.editSettingsSignal().selectedKycIndDocumentFilter?.toLowerCase() || '';
     this.loading.set(true);
     this.loaderMessage.set(`Searching document types.`);
     this.documentTypeApi.search(search).subscribe(
@@ -334,90 +349,89 @@ export class EditSettingsImplComponent extends EditSettingsComponent {
   }
 
   override onAddToIndDocumentsClick() {
-    // console.log(this.selectedIndDocumentControl.value);
-    // let val: any = this.editSettingsSignal();
-    // let settings = this.getSettings(val);
-    // let found = settings.individualDocuments?.find(
-    //   (d) => d.id === this.selectedIndDocumentControl.value.id
-    // );
-    // if (!found) {
-    //   settings.individualDocuments?.push(this.selectedIndDocumentControl.value);
-    // }
-    // this.settingApi.save(settings).subscribe({
-    //   next: (settings: SettingsDTO) => {
-    //     this.updateSettingForm(settings);
-    //     this.loading.set(false);
-    //   },
-    //   error: (error) => {
-    //     this.toaster.error(error.error?.message ? error.error.message : error.message);
-    //     this.loading.set(false);
-    //   },
-    // });
+    let val: any = this.editSettingsSignal();
+    let settings = this.getSettings(val);
+    let found = settings.individualDocuments?.find(
+      (d) => d.id === this.editSettingsSignal().selectedIndDocument.id
+    );
+    if (!found) {
+      settings.individualDocuments?.push(this.editSettingsSignal().selectedIndDocument);
+    }
+    this.settingApi.save(settings).subscribe({
+      next: (settings: SettingsDTO) => {
+        this.updateSettingForm(settings);
+        this.loading.set(false);
+      },
+      error: (error) => {
+        this.toaster.error(error.error?.message ? error.error.message : error.message);
+        this.loading.set(false);
+      },
+    });
     // this.selectedIndDocumentControl.setValue(null);
   }
 
   override onAddToKycOrgDocumentsClick() {
-    // console.log(this.selectedKycOrgDocumentControl.value);
-    // let val: any = this.editSettingsSignal();
-    // let settings: SettingsDTO = this.getSettings(val);
-    // let found = settings.orgKycDocuments?.find(
-    //   (d) => d.id === this.selectedKycOrgDocumentControl.value.id
-    // );
-    // if (!found) {
-    //   settings.orgKycDocuments?.push(this.selectedKycOrgDocumentControl.value);
-    // }
-    // this.settingApi.save(settings).subscribe({
-    //   next: (settings: SettingsDTO) => {
-    //     this.updateSettingForm(settings);
-    //     this.loading.set(false);
-    //   },
-    //   error: (error) => {
-    //     this.toaster.error(error.error?.message ? error.error.message : error.message);
-    //     this.loading.set(false);
-    //   },
-    // });
+    
+    let val: any = this.editSettingsSignal();
+    let settings: SettingsDTO = this.getSettings(val);
+    let found = settings.orgKycDocuments?.find(
+      (d) => d.id === this.editSettingsSignal().selectedKycOrgDocument.id
+    );
+    if (!found) {
+      settings.orgKycDocuments?.push(this.editSettingsSignal().selectedKycOrgDocument);
+    }
+    this.settingApi.save(settings).subscribe({
+      next: (settings: SettingsDTO) => {
+        this.updateSettingForm(settings);
+        this.loading.set(false);
+      },
+      error: (error) => {
+        this.toaster.error(error.error?.message ? error.error.message : error.message);
+        this.loading.set(false);
+      },
+    });
     // this.selectedKycOrgDocumentControl.setValue(null);
   }
 
   override onAddToOrgDocumentsClick() {
-    // console.log(this.selectedOrgDocumentControl.value);
-    // let val: any = this.editSettingsSignal();
-    // let settings: SettingsDTO = this.getSettings(val);
-    // let found = settings.organisationDocuments?.find((d) => d.id === this.selectedOrgDocumentControl.value.id);
-    // if (!found) {
-    //   settings.organisationDocuments?.push(this.selectedOrgDocumentControl.value);
-    // }
-    // this.settingApi.save(settings).subscribe({
-    //   next: (settings: SettingsDTO) => {
-    //     this.updateSettingForm(settings);
-    //     this.loading.set(false);
-    //   },
-    //   error: (error) => {
-    //     this.toaster.error(error.error?.message ? error.error.message : error.message);
-    //     this.loading.set(false);
-    //   },
-    // });
+    
+    let val: any = this.editSettingsSignal();
+    let settings: SettingsDTO = this.getSettings(val);
+    let found = settings.organisationDocuments?.find((d) => d.id === this.editSettingsSignal().selectedOrgDocument.id);
+    if (!found) {
+      settings.organisationDocuments?.push(this.editSettingsSignal().selectedOrgDocument);
+    }
+    this.settingApi.save(settings).subscribe({
+      next: (settings: SettingsDTO) => {
+        this.updateSettingForm(settings);
+        this.loading.set(false);
+      },
+      error: (error) => {
+        this.toaster.error(error.error?.message ? error.error.message : error.message);
+        this.loading.set(false);
+      },
+    });
     // this.selectedOrgDocumentControl.setValue(null);
   }
 
   override onAddToKycIndDocumentsClick() {
-    // console.log(this.selectedKycIndDocumentControl.value);
-    // let val: any = this.editSettingsSignal();
-    // let settings: SettingsDTO = this.getSettings(val);
-    // let found = settings.indKycDocuments?.find((d) => d.id === this.selectedKycIndDocumentControl.value.id);
-    // if (!found) {
-    //   settings.indKycDocuments?.push(this.selectedKycIndDocumentControl.value);
-    // }
-    // this.settingApi.save(settings).subscribe({
-    //   next: (settings: SettingsDTO) => {
-    //     this.updateSettingForm(settings);
-    //     this.loading.set(false);
-    //   },
-    //   error: (error) => {
-    //     this.toaster.error(error.error?.message ? error.error.message : error.message);
-    //     this.loading.set(false);
-    //   },
-    // });
+    // console.log(this.editSettingsSignal().selectedKycIndDocument);
+    let val: any = this.editSettingsSignal();
+    let settings: SettingsDTO = this.getSettings(val);
+    let found = settings.indKycDocuments?.find((d) => d.id === this.editSettingsSignal().selectedKycIndDocument.id);
+    if (!found) {
+      settings.indKycDocuments?.push(this.editSettingsSignal().selectedKycIndDocument);
+    }
+    this.settingApi.save(settings).subscribe({
+      next: (settings: SettingsDTO) => {
+        this.updateSettingForm(settings);
+        this.loading.set(false);
+      },
+      error: (error) => {
+        this.toaster.error(error.error?.message ? error.error.message : error.message);
+        this.loading.set(false);
+      },
+    });
     // this.selectedKycIndDocumentControl.setValue(null);
   }
 
@@ -469,7 +483,7 @@ export class EditSettingsImplComponent extends EditSettingsComponent {
     // TODO: Implement quotation template upload logic
     console.log('Quotation template upload:', file.name);
 
-    this.settingApi.uploadTemplate( file, TargetEntity.QUOTATION).subscribe({
+    this.settingApi.uploadTemplate(file, TargetEntity.QUOTATION).subscribe({
       next: (settings: SettingsDTO) => {
         this.updateSettingForm(settings);
         this.loading.set(false);
