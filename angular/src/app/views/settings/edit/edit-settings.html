@@ -2,7 +2,7 @@
 <div class="edit-container">
 	<div class="breadcrumb-section">
 		<mat-icon class="breadcrumb-icon">home</mat-icon>
-		<span class="breadcrumb-text">{{ 'home' | translate }}</span>
+		<span class="breadcrumb-text">{{ 'home.title' | translate }}</span>
 		<mat-icon class="breadcrumb-separator">chevron_right</mat-icon>
 		<span class="breadcrumb-text">{{ 'settings' | translate }}</span>
 		<mat-icon class="breadcrumb-separator">chevron_right</mat-icon>
@@ -73,7 +73,7 @@
 									<button mat-flat-button color="primary"
 										(click)="filterClientRequestFileType()">Search</button>
 								</mat-option>
-								@for (item of clientRequestFileTypeFilteredList(); track item) {
+								@for (item of clientRequestFileTypeFilteredList(); track item.id) {
 								<mat-option [value]="item">{{ item?.name }}</mat-option>
 								}
 							</mat-select>
@@ -105,7 +105,7 @@
 									<button mat-flat-button color="primary"
 										(click)="filterInvoiceDocumentType()">Search</button>
 								</mat-option>
-								@for (item of invoiceDocumentTypeFilteredList(); track item) {
+								@for (item of invoiceDocumentTypeFilteredList(); track item.id) {
 								<mat-option [value]="item">{{ item?.name }}</mat-option>
 								}
 							</mat-select>
@@ -123,7 +123,7 @@
 									<button mat-flat-button color="primary"
 										(click)="filterInvoiceTemplateType()">Search</button>
 								</mat-option>
-								@for (item of invoiceTemplateTypeFilteredList(); track item) {
+								@for (item of invoiceTemplateTypeFilteredList(); track item.id) {
 								<mat-option [value]="item">{{ item?.name }}</mat-option>
 								}
 							</mat-select>
@@ -190,7 +190,7 @@
 									<button mat-flat-button color="primary"
 										(click)="filterQuotationDocumentType()">Search</button>
 								</mat-option>
-								@for (item of quotationDocumentTypeFilteredList(); track item) {
+								@for (item of quotationDocumentTypeFilteredList(); track item.id) {
 								<mat-option [value]="item">{{ item?.name }}</mat-option>
 								}
 							</mat-select>
@@ -208,7 +208,7 @@
 									<button mat-flat-button color="primary"
 										(click)="filterQuotationTemplateType()">Search</button>
 								</mat-option>
-								@for (item of quotationTemplateTypeFilteredList(); track item) {
+								@for (item of quotationTemplateTypeFilteredList(); track item.id) {
 								<mat-option [value]="item">{{ item?.name }}</mat-option>
 								}
 							</mat-select>
@@ -297,7 +297,7 @@
 											<button mat-flat-button color="primary"
 												(click)="filterSelectedOrgDocument()">Search</button>
 										</mat-option>
-										@for (item of selectedOrgDocumentFilteredList(); track item) {
+										@for (item of selectedOrgDocumentFilteredList(); track item.id) {
 										<mat-option [value]="item">{{ item.name
 											}}</mat-option>
 										}
@@ -316,7 +316,7 @@
 							<div class="table-container">
 								<app-table #organisationDocumentsTable [dataColumns]="documentsTableColumns"
 									[showActions]="showOrganisationDocumentsActions"
-									[paged]="organisationDocumentsTablePaged"
+									[paged]="false"
 									[actions]="organisationDocumentsTableColumnsActions"
 									(actionClicked)="organisationDocumentsTableActionClicked($event)"
 									[dataSignal]="organisationDocumentsTableSignal">
@@ -345,7 +345,7 @@
 											<button mat-flat-button color="primary"
 												(click)="filterSelectedKycOrgDocument()">Search</button>
 										</mat-option>
-										@for (item of selectedKycOrgDocumentFilteredList(); track item) {
+										@for (item of selectedKycOrgDocumentFilteredList(); track item.id) {
 										<mat-option [value]="item">{{ item.name
 											}}</mat-option>
 										}
@@ -363,7 +363,7 @@
 
 							<div class="table-container">
 								<app-table #orgKycDocumentsTable [dataColumns]="documentsTableColumns"
-									[showActions]="showOrgKycDocumentsActions" [paged]="orgKycDocumentsTablePaged"
+									[showActions]="showOrgKycDocumentsActions" [paged]="false"
 									[actions]="orgKycDocumentsTableColumnsActions"
 									(actionClicked)="orgKycDocumentsTableActionClicked($event)"
 									[dataSignal]="orgKycDocumentsTableSignal">
@@ -391,7 +391,7 @@
 											<button mat-flat-button color="primary"
 												(click)="filterSelectedIndDocument()">Search</button>
 										</mat-option>
-										@for (item of selectedIndDocumentFilteredList(); track item) {
+										@for (item of selectedIndDocumentFilteredList(); track item.id) {
 										<mat-option [value]="item">{{ item.name
 											}}</mat-option>
 										}
@@ -410,7 +410,7 @@
 							<div class="table-container">
 								<app-table #individualDocumentsTable [dataColumns]="documentsTableColumns"
 									[showActions]="showIndividualDocumentsActions"
-									[paged]="individualDocumentsTablePaged"
+									[paged]="false"
 									[actions]="individualDocumentsTableColumnsActions"
 									(actionClicked)="individualDocumentsTableActionClicked($event)"
 									[dataSignal]="individualDocumentsTableSignal">
@@ -439,7 +439,7 @@
 											<button mat-flat-button color="primary"
 												(click)="filterSelectedKycIndDocument()">Search</button>
 										</mat-option>
-										@for (item of selectedKycIndDocumentFilteredList(); track item) {
+										@for (item of selectedKycIndDocumentFilteredList(); track item.id) {
 										<mat-option [value]="item">{{ item.name
 											}}</mat-option>
 										}
@@ -457,7 +457,7 @@
 
 							<div class="table-container">
 								<app-table #indKycDocumentsTable [dataColumns]="documentsTableColumns"
-									[showActions]="showIndKycDocumentsActions" [paged]="indKycDocumentsTablePaged"
+									[showActions]="showIndKycDocumentsActions" [paged]="false"
 									[actions]="indKycDocumentsTableColumnsActions"
 									(actionClicked)="indKycDocumentsTableActionClicked($event)"
 									[dataSignal]="indKycDocumentsTableSignal">

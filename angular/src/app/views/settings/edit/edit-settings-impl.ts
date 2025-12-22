@@ -18,6 +18,7 @@ import { DocumentTypeDTO } from '@app/models/bw/co/centralkyc/document/type/docu
 import { SettingsDTO } from '@app/models/bw/co/centralkyc/settings/settings-dto';
 import { TargetEntity } from '@app/models/bw/co/centralkyc/target-entity';
 import { ColumnModel } from '@app/models/column.model';
+import { SettingsApiStore } from '@app/store/bw/co/centralkyc/settings/settings-api.store';
 
 @Component({
   selector: 'app-edit-settings',
@@ -36,17 +37,17 @@ import { ColumnModel } from '@app/models/column.model';
   ],
 })
 export class EditSettingsImplComponent extends EditSettingsComponent {
-  // settingApiStore = inject(SettingsApiStore);
+  settingApiStore = inject(SettingsApiStore);
   settingApi = inject(SettingsApi);
   // settingsSignal = linkedSignal(() => new SettingsDTO());
   // documentTypeApiStore = inject(DocumentTypeApiStore);
   documentTypeApi = inject(DocumentTypeApi);
   documentApi = inject(DocumentApi);
 
-  override organisationDocumentsTableSignal = computed<DocumentTypeDTO[]>(() => []);
-  override individualDocumentsTableSignal = computed<DocumentTypeDTO[]>(() => []);
-  override orgKycDocumentsTableSignal = computed<DocumentTypeDTO[]>(() => []);
-  override indKycDocumentsTableSignal = computed<DocumentTypeDTO[]>(() => []);
+  override organisationDocumentsTableSignal = computed<DocumentTypeDTO[]>(() => this.editSettingsSignal().organisationDocuments || []);
+  override individualDocumentsTableSignal = computed<DocumentTypeDTO[]>(() => this.editSettingsSignal().individualDocuments || []);
+  override orgKycDocumentsTableSignal = computed<DocumentTypeDTO[]>(() => this.editSettingsSignal().orgKycDocuments || []);
+  override indKycDocumentsTableSignal = computed<DocumentTypeDTO[]>(() => this.editSettingsSignal().indKycDocuments || []);
 
   override loading = linkedSignal(() => false);
   override loaderMessage = linkedSignal(() => 'Loading...');
@@ -91,8 +92,8 @@ export class EditSettingsImplComponent extends EditSettingsComponent {
   }
 
   override ngOnInit() {
-    // this.settingApiStore.reset();
-    // this.settingApiStore.getAll();
+    this.settingApiStore.reset();
+    this.settingApiStore.getAll();
 
     this.settingApi.getAll().subscribe({
       next: (settings: SettingsDTO[]) => {
@@ -144,7 +145,7 @@ export class EditSettingsImplComponent extends EditSettingsComponent {
       individualDocuments: settings.individualDocuments || [],
       selectedKycIndDocument: null,
       indKycDocuments: settings.indKycDocuments || [],
-      invoiceDocumentType: null,
+      invoiceDocumentType: settings.invoiceDocumentType,
       invoiceTemplateType: settings.invoiceTemplateType,
       invoiceTemplate: settings.invoiceTemplate,
       quotationDocumentType: settings.quotationDocumentType,
@@ -161,10 +162,11 @@ export class EditSettingsImplComponent extends EditSettingsComponent {
       selectedIndDocumentFilter: '',
       selectedKycIndDocumentFilter: '',
     });
+
   }
 
   private getSettings(value: any): SettingsDTO {
-    let settings: SettingsDTO = {};
+    let settings: SettingsDTO = new SettingsDTO();
     settings.createdAt = value.createdAt;
     settings.createdBy = value.createdBy;
     settings.modifiedAt = value.modifiedAt;
@@ -352,7 +354,7 @@ export class EditSettingsImplComponent extends EditSettingsComponent {
     let val: any = this.editSettingsSignal();
     let settings = this.getSettings(val);
     let found = settings.individualDocuments?.find(
-      (d) => d.id === this.editSettingsSignal().selectedIndDocument.id
+      (d: DocumentTypeDTO) => d.id === this.editSettingsSignal().selectedIndDocument.id
     );
     if (!found) {
       settings.individualDocuments?.push(this.editSettingsSignal().selectedIndDocument);
@@ -371,11 +373,11 @@ export class EditSettingsImplComponent extends EditSettingsComponent {
   }
 
   override onAddToKycOrgDocumentsClick() {
-    
+
     let val: any = this.editSettingsSignal();
     let settings: SettingsDTO = this.getSettings(val);
     let found = settings.orgKycDocuments?.find(
-      (d) => d.id === this.editSettingsSignal().selectedKycOrgDocument.id
+      (d: DocumentTypeDTO) => d.id === this.editSettingsSignal().selectedKycOrgDocument.id
     );
     if (!found) {
       settings.orgKycDocuments?.push(this.editSettingsSignal().selectedKycOrgDocument);
@@ -394,10 +396,10 @@ export class EditSettingsImplComponent extends EditSettingsComponent {
   }
 
   override onAddToOrgDocumentsClick() {
-    
+
     let val: any = this.editSettingsSignal();
     let settings: SettingsDTO = this.getSettings(val);
-    let found = settings.organisationDocuments?.find((d) => d.id === this.editSettingsSignal().selectedOrgDocument.id);
+    let found = settings.organisationDocuments?.find((d: DocumentTypeDTO) => d.id === this.editSettingsSignal().selectedOrgDocument.id);
     if (!found) {
       settings.organisationDocuments?.push(this.editSettingsSignal().selectedOrgDocument);
     }
@@ -418,7 +420,7 @@ export class EditSettingsImplComponent extends EditSettingsComponent {
     // console.log(this.editSettingsSignal().selectedKycIndDocument);
     let val: any = this.editSettingsSignal();
     let settings: SettingsDTO = this.getSettings(val);
-    let found = settings.indKycDocuments?.find((d) => d.id === this.editSettingsSignal().selectedKycIndDocument.id);
+    let found = settings.indKycDocuments?.find((d: DocumentTypeDTO) => d.id === this.editSettingsSignal().selectedKycIndDocument.id);
     if (!found) {
       settings.indKycDocuments?.push(this.editSettingsSignal().selectedKycIndDocument);
     }

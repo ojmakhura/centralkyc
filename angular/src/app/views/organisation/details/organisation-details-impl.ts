@@ -26,6 +26,8 @@ import { ActionTemplate } from '@app/models/action-template';
 import { KycSubscriptionDTO } from '@app/models/bw/co/centralkyc/subscription/kyc-subscription-dto';
 import { KycInvoiceDTO } from '@app/models/bw/co/centralkyc/invoice/kyc-invoice-dto';
 import { Field } from '@angular/forms/signals';
+import { PhoneNumber } from '@app/models/bw/co/centralkyc/phone-number';
+import { OrganisationDomain } from '@app/models/bw/co/centralkyc/organisation/organisation-domain';
 
 @Component({
   selector: 'app-organisation-details',
@@ -180,7 +182,7 @@ export class OrganisationDetailsImplComponent extends OrganisationDetailsCompone
     //     next: (page) => {
     //       this.clientRequestsTableSignal.set(page);
     //       this.loading.set(false);
-    //     }, 
+    //     },
     //     error: (error) => {
 
     //     }
@@ -510,5 +512,13 @@ export class OrganisationDetailsImplComponent extends OrganisationDetailsCompone
 
   override organisationDetailsEdit(): void {
     this.router.navigate(['/organisation/edit'], { queryParams: { id: this.organisation().id } });
+  }
+
+  override createNewPhoneNumbers(): PhoneNumber {
+    return new PhoneNumber();
+  }
+
+  override createNewDomains(): OrganisationDomain {
+    return new OrganisationDomain();
   }
 }

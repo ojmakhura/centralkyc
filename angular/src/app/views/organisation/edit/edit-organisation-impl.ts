@@ -8,6 +8,8 @@ import { TableComponent } from '@components/table/table';
 import { Loader } from "@shared/loader/loader";
 import { Field } from '@angular/forms/signals';
 import { RouterLink, RouterModule } from "@angular/router";
+import { PhoneNumber } from '@app/models/bw/co/centralkyc/phone-number';
+import { OrganisationDomain } from '@app/models/bw/co/centralkyc/organisation/organisation-domain';
 
 @Component({
   selector: 'app-edit-organisation',
@@ -37,7 +39,9 @@ export class EditOrganisationImplComponent extends EditOrganisationComponent {
 
     effect(() => {
       let organisation = this.editOrganisationSignal();
-      // this.editOrganisationForm.patchValue(organisation);
+      this.editOrganisationSignal.update((value) => ({
+        ...value
+      }))
     });
 
     // Handle form control disabled state based on loading
@@ -81,5 +85,13 @@ export class EditOrganisationImplComponent extends EditOrganisationComponent {
         this.loading.set(false);
       }
     });
+  }
+
+  override createNewPhoneNumbers(): PhoneNumber {
+    return new PhoneNumber();
+  }
+
+  override createNewDomains(): OrganisationDomain {
+    throw new OrganisationDomain();
   }
 }

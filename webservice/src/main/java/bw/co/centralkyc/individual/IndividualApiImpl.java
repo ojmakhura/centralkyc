@@ -252,7 +252,7 @@ public class IndividualApiImpl implements IndividualApi {
 
                 UserDTO existing = keycloakUserService.getUserByEmail(individual.getEmailAddress());
 
-                boolean createUser = isNewUser = existing == null;
+                boolean createUser = isNewUser = (existing == null) && (individual.getHasUser() != null && individual.getHasUser());
 
                 if (createUser) {
 
