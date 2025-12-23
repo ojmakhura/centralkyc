@@ -157,7 +157,11 @@ public class IndividualServiceImpl
 
         Specification<Individual> spec = createSpecification(criteria);
 
-        return individualDao.toIndividualListDTOCollection(individualRepository.findAll(spec));
+        return individualDao.toIndividualListDTOCollection(
+            spec == null ? 
+            individualRepository.findAll() :
+            individualRepository.findAll(spec)
+        );
     }
 
     /**
@@ -171,7 +175,7 @@ public class IndividualServiceImpl
         Specification<Individual> spec = createSpecification(criteria.getCriteria());
 
         PageRequest pageRequest = PageRequest.of(criteria.getPageNumber(), criteria.getPageSize());
-        Page<Individual> individuals = individualRepository.findAll(spec, pageRequest);
+        Page<Individual> individuals = spec == null ? individualRepository.findAll(pageRequest) : individualRepository.findAll(spec, pageRequest);
 
         return individuals.map(individual -> individualDao.toIndividualListDTO(individual));
     }

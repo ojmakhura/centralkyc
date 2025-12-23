@@ -21,6 +21,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 
 import bw.co.centralkyc.GeneralStatus;
+import bw.co.centralkyc.PhoneNumber;
 import bw.co.centralkyc.SearchObject;
 import bw.co.centralkyc.organisation.OrganisationDTO;
 import bw.co.centralkyc.organisation.OrganisationDomain;
@@ -30,12 +31,15 @@ import jakarta.ws.rs.WebApplicationException;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.Response.StatusType;
 import lombok.RequiredArgsConstructor;
+import tools.jackson.databind.json.JsonMapper;
 
 @Component
 @RequiredArgsConstructor
 public class KeycloakOrganisationService {
 
     private final KeycloakService keycloakService;
+    private final JsonMapper jsonMapper;
+    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss.SSSSSS");
 
     private OrganizationRepresentation fromOrganisationDTO(OrganisationDTO organisation) {
 
@@ -50,8 +54,6 @@ public class KeycloakOrganisationService {
         rep.setName(organisation.getName());
         rep.setAlias(organisation.getCode());
         rep.setDescription(organisation.getDescription());
-
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss.SSSSSS");
 
         Map<String, List<String>> attributes = new HashMap<>();
         attributes.put("registrationNo", List.of(organisation.getRegistrationNo()));
@@ -134,7 +136,6 @@ public class KeycloakOrganisationService {
         }
 
         OrganisationDTO org = new OrganisationDTO();
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ssssss");
 
         org.setId(rep.getId());
         org.setCode(rep.getAlias());
@@ -201,6 +202,16 @@ public class KeycloakOrganisationService {
             org.setModifiedAt(LocalDateTime.from(formatter.parse(time)));
         }
 
+        if(attributes.containsKey("phoneNumbers")) {
+
+
+            List<String> phoneStrs = attributes.get("phoneNumbers");
+
+            List<PhoneNumber> phoneNumbers = phoneStrs.stream()
+                    .map(p -> jsonMapper.readValue(p, PhoneNumber.class)).collect(Collectors.toList());
+            org.setPhoneNumbers(phoneNumbers);
+        }
+
         org.setDomains(
                 rep.getDomains().stream().map(r -> new OrganisationDomain(r.getName(), r.isVerified()))
                         .collect(Collectors.toSet()));
@@ -216,8 +227,6 @@ public class KeycloakOrganisationService {
         }
 
         OrganisationListDTO org = new OrganisationListDTO();
-        // DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy
-        // HH:mm:ssssss");
 
         org.setId(rep.getId());
         org.setCode(rep.getAlias());
@@ -283,9 +292,18 @@ public class KeycloakOrganisationService {
             organisation.setId(getCreatedId(res));
 
         } else {
-            throw new WebApplicationException("Cannot create an organisation with an id. Use update instead.");
-        }
+            OrganizationResource orgResource = orgsResource.get(organisation.getId());
+            Response res = orgResource.update(fromOrganisationDTO(organisation));
 
+            if (res.getStatus() != HttpStatus.NO_CONTENT.value()) {
+                StatusType statusInfo = res.getStatusInfo();
+                res.bufferEntity();
+                String body = res.readEntity(String.class);
+                throw new WebApplicationException("Update method returned status "
+                        + statusInfo.getReasonPhrase() + " (Code: " + statusInfo.getStatusCode()
+                        + "); expected status: NO_CONTENT (204). Response body: " + body, res);
+            }
+        }
         return organisation;
     }
 

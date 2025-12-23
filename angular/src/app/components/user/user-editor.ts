@@ -21,14 +21,16 @@ import {
   FormArray,
 } from "@angular/forms";
 import { SelectItem } from "@app/utils/select-item";
-import { 
+import {
     form,
     required,
     email,
     min,
-    minLength, 
+    minLength,
     max,
     maxLength,
+    SchemaPathTree,
+    PathKind,
 } from "@angular/forms/signals";
 import { TableComponent } from '@components/table/table';
 import { ColumnModel } from "@models/column.model";
@@ -57,12 +59,11 @@ export class UserEditorForm {
     firstName: string | any = null;
     lastName: string | any = null;
     enabled: boolean | any = null;
-    roles: Array<string> | any = null;
+    roles: Array<string> = [];
     organisation: OrganisationListDTO | any = null;
-    organisationFilter: OrganisationListDTO | any = null;
+    organisationFilter: OrganisationListDTO | null = null;
     branch: BranchDTO | any = null;
-    branchFilter: BranchDTO | any = null;
-
+    branchFilter: BranchDTO | null = null;
 }
 
 @Component({
@@ -72,27 +73,10 @@ export class UserEditorForm {
 export abstract class UserEditorComponent extends GenericComponent<UserEditorForm> implements OnInit, OnDestroy, AfterViewInit {
 
     separatorKeysCodes: number[] = [ENTER, COMMA];
-    @Input() userEditorForm: UserEditorForm = new UserEditorForm();
-    userEditorComponentSignal = signal(this.userEditorForm);
-    userEditorComponentSignalForm = form(this.userEditorComponentSignal, (path) => {
-      required(path.username)
-      required(path.email)
-      email(path.email)
-      required(path.password)
-      required(path.firstName)
-      required(path.lastName)
-      required(path.enabled)
-    });
+    userEditorComponentSignalForm = this.formObject;
 
 
-    rolesAdd() {
-
-    }
-
-    rolesRemove(i: number, selected: any) {
-
-    }
-    organisationFilterCtrl: FormControl = new FormControl();
+    abstract createNewRoles(): String;
 
     organisationCompare(o1: OrganisationListDTO | any, o2: OrganisationListDTO | any) {
         return false;
@@ -102,12 +86,10 @@ export abstract class UserEditorComponent extends GenericComponent<UserEditorFor
 
     organisationBackingList: OrganisationListDTO[] = [];
     organisationFilteredList = linkedSignal<OrganisationListDTO[]>(() => []);
-    organisationChipControl: FormControl = new FormControl([]);
 
     organisationDisplays: string[] = [
         'name',
     ];
-    branchFilterCtrl: FormControl = new FormControl();
 
     branchCompare(o1: BranchDTO | any, o2: BranchDTO | any) {
         return false;
@@ -117,7 +99,6 @@ export abstract class UserEditorComponent extends GenericComponent<UserEditorFor
 
     branchBackingList: BranchDTO[] = [];
     branchFilteredList = linkedSignal<BranchDTO[]>(() => []);
-    branchChipControl: FormControl = new FormControl([]);
 
     branchDisplays: string[] = [
         'name',
@@ -130,130 +111,32 @@ export abstract class UserEditorComponent extends GenericComponent<UserEditorFor
         super();
     }
 
-    ngOnInit() {
-        //if(!this.formGroupControl) {
-        //    this.initForm();
-        //}
+    override createNewFormObject(): UserEditorForm {
+      return new UserEditorForm();
+    }
 
-        // this.formObject = this.userEditorComponentSignalForm;
+    override createValidators(path: SchemaPathTree<UserEditorForm, PathKind.Root>): void {
+      required(path.username);
+      required(path.email);
+      email(path.email);
+      required(path.password);
+      required(path.firstName);
+      required(path.lastName);
+      required(path.enabled);
+    }
+
+    ngOnInit() {
+
     }
 
     ngOnDestroy() {}
 
     ngAfterViewInit() {
-
+      this.formSignal.update((form) => ({
+        ...this.formData
+      }));
     }
 
-    initForm() {
-//        this.formGroupControl = this.formBuilder.group({
-////            userId: [{value: this.userEditorForm.userId, disabled: false}],
-////            username: [{value: this.userEditorForm.username, disabled: false}, [Validators.required, ]],
-////            email: [{value: this.userEditorForm.email, disabled: false}, [Validators.required, Validators.email, ]],
-////            password: [{value: this.userEditorForm.password, disabled: false}, [Validators.required, ]],
-////            firstName: [{value: this.userEditorForm.firstName, disabled: false}, [Validators.required, ]],
-////            lastName: [{value: this.userEditorForm.lastName, disabled: false}, [Validators.required, ]],
-////            enabled: [{value: this.userEditorForm.enabled, disabled: false}, [Validators.required, ]],
-//////            roles: this.formBuilder.array(this.userEditorForm.roles ? this.userEditorForm.roles : []),
-//            roles: [{ value: this.userEditorForm.roles || [], disabled: false }],
-////            organisation: [{value: this.userEditorForm.organisation, disabled: false}],
-////            branch: [{value: this.userEditorForm.branch, disabled: false}],
-//        });
-    }
-
-
-
-    //createOrganisationListDTOGroup(value?: OrganisationListDTO): FormGroup { 
-    //    return this.formBuilder.group({
-    //        id: [value?.id],
-    //        code: [value?.code],
-    //        name: [value?.name],
-    //        registrationNo: [value?.registrationNo],
-    //        status: [value?.status],
-    //        contactEmailAddress: [value?.contactEmailAddress],
-    //    });
-    //}
-
-    //createOrganisationListDTOArray(values?: OrganisationListDTO[]): FormArray {
-    //    if(values) {
-    //        let formArray: FormArray = this.formBuilder.array([]);
-    //        values?.forEach(value => formArray.push(this.createOrganisationListDTOGroup(value)))
-
-    //        return formArray;
-    //    } else {
-    //        return new FormArray([] as any);
-    //    }
-    //}
-
-
-
-    //createBranchDTOGroup(value?: BranchDTO): FormGroup { 
-    //    return this.formBuilder.group({
-    //        id: [value?.id],
-    //        createdBy: [value?.createdBy],
-    //        createdAt: [value?.createdAt],
-    //        modifiedBy: [value?.modifiedBy],
-    //        modifiedAt: [value?.modifiedAt],
-    //        code: [value?.code],
-    //        name: [value?.name],
-    //        description: [value?.description],
-    //        physicalAddress: [value?.physicalAddress],
-    //        organisationId: [value?.organisationId],
-    //        organisation: [value?.organisation],
-    //    });
-    //}
-
-    //createBranchDTOArray(values?: BranchDTO[]): FormArray {
-    //    if(values) {
-    //        let formArray: FormArray = this.formBuilder.array([]);
-    //        values?.forEach(value => formArray.push(this.createBranchDTOGroup(value)))
-
-    //        return formArray;
-    //    } else {
-    //        return new FormArray([] as any);
-    //    }
-    //}
-
-
-    //get userIdControl(): FormControl {
-    //    return this.formGroupControl?.get('userId') as FormControl;
-   // }
-
-    //get usernameControl(): FormControl {
-    //    return this.formGroupControl?.get('username') as FormControl;
-   // }
-
-    //get emailControl(): FormControl {
-    //    return this.formGroupControl?.get('email') as FormControl;
-   // }
-
-    //get passwordControl(): FormControl {
-    //    return this.formGroupControl?.get('password') as FormControl;
-   // }
-
-    //get firstNameControl(): FormControl {
-    //    return this.formGroupControl?.get('firstName') as FormControl;
-   // }
-
-    //get lastNameControl(): FormControl {
-    //    return this.formGroupControl?.get('lastName') as FormControl;
-   // }
-
-    //get enabledControl(): FormControl {
-    //    return this.formGroupControl?.get('enabled') as FormControl;
-   // }
-
-    //get rolesControl(): FormControl {
-    //    return this.formGroupControl?.get('roles') as FormControl;
-   // }
-
-    //setRolesControl() {
-    //    let t: any[] = [];
-    //    this.userEditorForm.roles?.forEach((role: any) => {
-    //        t.push(role.value);
-    //    });
-    //    this.rolesControl.setValue(t);
-    // }
-   
     rolesSelected(event: MatAutocompleteSelectedEvent): void {
      //   let item: Array<string> = event.option.value;
 
@@ -266,21 +149,6 @@ export abstract class UserEditorComponent extends GenericComponent<UserEditorFor
     //    this.rolesFilteredList$ = of(this.rolesBackingList);
     }
 
-    private _rolesFilter(value: string): Array<string> {
-        // if (!value) {
-        //     return this.rolesBackingList;
-        // }
-        // const filterValue = value.toLowerCase();
-    
-        // return this.rolesBackingList.filter((item: any) => item.label.toLowerCase().includes(filterValue));
-
-        return [];
-    }
-
-    //get organisationControl(): FormControl {
-    //    return this.formGroupControl?.get('organisation') as FormControl;
-   // }
-
     organisationAddDialog(){}
 
     organisationClear(){}
@@ -290,10 +158,6 @@ export abstract class UserEditorComponent extends GenericComponent<UserEditorFor
     organisationSearch(){}
 
     addSelectedOrganisation(){}
-
-    //get branchControl(): FormControl {
-    //    return this.formGroupControl?.get('branch') as FormControl;
-   // }
 
     branchAddDialog(){}
 
@@ -305,4 +169,11 @@ export abstract class UserEditorComponent extends GenericComponent<UserEditorFor
 
     addSelectedBranch(){}
 
+    rolesAdd() {
+
+    }
+
+    rolesRemove(i: number, selected: String) {
+
+    }
 }

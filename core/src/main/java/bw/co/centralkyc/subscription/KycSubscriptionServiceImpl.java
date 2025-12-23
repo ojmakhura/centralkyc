@@ -187,7 +187,7 @@ public class KycSubscriptionServiceImpl
             throws Exception {
 
         Specification<KycSubscription> specification = (root, query, cb) -> cb.equal(
-                root.get("organisation").get("id"),
+                root.get("organisationId"),
                 organisationId);
 
         Collection<KycSubscription> subscriptions = this.kycSubscriptionRepository.findAll(specification);

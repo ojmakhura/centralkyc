@@ -10,6 +10,7 @@ import { Field } from '@angular/forms/signals';
 import { RouterLink, RouterModule } from "@angular/router";
 import { PhoneNumber } from '@app/models/bw/co/centralkyc/phone-number';
 import { OrganisationDomain } from '@app/models/bw/co/centralkyc/organisation/organisation-domain';
+import { OrganisationDTO } from '@app/models/bw/co/centralkyc/organisation/organisation-dto';
 
 @Component({
   selector: 'app-edit-organisation',
@@ -38,29 +39,23 @@ export class EditOrganisationImplComponent extends EditOrganisationComponent {
     super();
 
     effect(() => {
-      let organisation = this.editOrganisationSignal();
+      let organisation = this.organisationApiStore.data() || new OrganisationDTO();
+
+      console.log(organisation)
       this.editOrganisationSignal.update((value) => ({
-        ...value
+        ...organisation
       }))
-    });
-
-    // Handle form control disabled state based on loading
-    effect(() => {
-      const isLoading = this.loading();
-
     });
   }
 
   override ngOnInit() {
-    // this.organisationApiStore.reset();
+    this.organisationApiStore.reset();
 
     this.route.queryParams.subscribe(params => {
       const id = params['id'];
       if (id) {
         this.id = id;
-        this.organisationApi.findById(id).subscribe((organisationData) => {
-          this.editOrganisationSignal.set(organisationData);
-        });
+        this.organisationApiStore.findById({id: id});
       }
     });
 
@@ -69,22 +64,26 @@ export class EditOrganisationImplComponent extends EditOrganisationComponent {
   doNgOnDestroy(): void { }
 
   override beforeEditOrganisationSave(form: any): void {
+    let value = this.editOrganisationSignal();
+    let org = {
+      code: value.code,
+      description: value.description,
+      domains: value.domains,
+      phoneNumbers: value.phoneNumbers,
+      status: value.status,
+      postalAddress: value.postalAddress,
+      physicalAddress: value.physicalAddress,
+      contactEmailAddress: value.contactEmailAddress,
+      name: value.name,
+      registrationNo: value.registrationNo,
+      createdAt: value.createdAt,
+      createdBy: value.createdBy,
+      modifiedAt: value.modifiedAt,
+      modifiedBy: value.modifiedBy,
+      id: value.id
+    } as OrganisationDTO;
 
-    this.loading.set(true);
-    this.loaderMessage.set(`Saving organisation ${this.editOrganisationSignal().name}.`)
-
-    this.organisationApi.save(this.editOrganisationSignal()).subscribe({
-      next: (response) => {
-        this.editOrganisationSignal.set(response);
-        this.toaster.success('organisation.save.success');
-        this.loading.set(false);
-        this.router.navigate(['/organisations']);
-      },
-      error: (error) => {
-        this.toaster.error('organisation.save.error');
-        this.loading.set(false);
-      }
-    });
+    this.organisationApiStore.save({organisation: org});
   }
 
   override createNewPhoneNumbers(): PhoneNumber {

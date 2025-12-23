@@ -28,6 +28,11 @@ import { KycInvoiceDTO } from '@app/models/bw/co/centralkyc/invoice/kyc-invoice-
 import { Field } from '@angular/forms/signals';
 import { PhoneNumber } from '@app/models/bw/co/centralkyc/phone-number';
 import { OrganisationDomain } from '@app/models/bw/co/centralkyc/organisation/organisation-domain';
+import { BranchApiStore } from '@app/store/bw/co/centralkyc/organisation/branch/branch-api.store';
+import { KycInvoiceApiStore } from '@app/store/bw/co/centralkyc/invoice/kyc-invoice-api.store';
+import { KycSubscriptionApiStore } from '@app/store/bw/co/centralkyc/subscription/kyc-subscription-api.store';
+import { ClientRequestApiStore } from '@app/store/bw/co/centralkyc/organisation/client/client-request-api.store';
+import { BranchEditorForm } from '@app/components/organisation/branch/branch-editor';
 
 @Component({
   selector: 'app-organisation-details',
@@ -48,11 +53,11 @@ import { OrganisationDomain } from '@app/models/bw/co/centralkyc/organisation/or
 })
 export class OrganisationDetailsImplComponent extends OrganisationDetailsComponent {
   // organisationApiStore = inject(OrganisationApiStore);
-  // branchApiStore = inject(BranchApiStore);
+  branchApiStore = inject(BranchApiStore);
   branchApi = inject(BranchApi);
-  // kycInvoiceApiStore = inject(KycInvoiceApiStore);
-  // kycSubscriptionApiStore = inject(KycSubscriptionApiStore);
-  // clientRequestApiStore = inject(ClientRequestApiStore);
+  kycInvoiceApiStore = inject(KycInvoiceApiStore);
+  kycSubscriptionApiStore = inject(KycSubscriptionApiStore);
+  clientRequestApiStore = inject(ClientRequestApiStore);
   clientRequestApi = inject(ClientRequestApi);
   datePipe = inject(DatePipe);
   currencyPipe = inject(CurrencyPipe);
@@ -61,10 +66,10 @@ export class OrganisationDetailsImplComponent extends OrganisationDetailsCompone
   override loaderMessage = linkedSignal(() => 'Loading...');
   override messages = linkedSignal(() => false);
   override success = linkedSignal(() => false);
-  organisation = linkedSignal(() => new OrganisationDTO())
+  organisation = linkedSignal(() => this.organisationApiStore.data());
 
   // Branches related properties
-  branches = linkedSignal<BranchDTO[]>(() => []);
+  branches = linkedSignal<BranchDTO[]>(() => this.branchApiStore.dataList());
   branchesLoading = linkedSignal(() => false);
   currentPage = signal(0);
   pageSize = signal(10);
@@ -129,12 +134,12 @@ export class OrganisationDetailsImplComponent extends OrganisationDetailsCompone
     });
 
     // Effect to update total branches count
-    // effect(() => {
-    //   const branchList = this.branches();
-    //   if (branchList) {
-    //     this.totalBranches.set(branchList.length);
-    //   }
-    // });
+    effect(() => {
+      const branchList = this.branches();
+      if (branchList) {
+        this.totalBranches.set(branchList.length);
+      }
+    });
   }
 
   // showClientRequestsActions = false;
@@ -153,48 +158,39 @@ export class OrganisationDetailsImplComponent extends OrganisationDetailsCompone
 }
 
   override ngOnInit() {
-    // this.organisationApiStore.reset();
-    // this.branchApiStore.reset();
-    // this.kycInvoiceApiStore.reset();
-    // this.kycSubscriptionApiStore.reset();
-    // this.clientRequestApiStore.reset();
+    this.organisationApiStore.reset();
+    this.branchApiStore.reset();
+    this.kycInvoiceApiStore.reset();
+    this.kycSubscriptionApiStore.reset();
+    this.clientRequestApiStore.reset();
 
     this.route.queryParams.subscribe((params: any) => {
       if (params.id) {
-        // this.organisationApiStore.findById(params);
+        this.organisationApiStore.findById(params);
       }
     });
   }
 
-  // override doNgAfterViewInit(): void {
-  //   this.doSearchRequests();
-  // }
+  override doNgAfterViewInit(): void {
+    this.doSearchRequests();
+  }
 
   private doSearchRequests(pageNumber: number = 0, pageSize: number = 10): void {
     let org = this.organisation();
-    // if (org?.id) {
-    //   this.loading.set(true)
-    //   this.clientRequestApi.findByOrganisationPaged(
-    //     org.id,
-    //     pageNumber,
-    //     pageSize,
-    //   ).subscribe({
-    //     next: (page) => {
-    //       this.clientRequestsTableSignal.set(page);
-    //       this.loading.set(false);
-    //     },
-    //     error: (error) => {
-
-    //     }
-    //   });
-    // }
+    if (org?.id) {
+      this.clientRequestApiStore.findByOrganisationPaged({
+        organisationId: org.id,
+        pageNumber,
+        pageSize,
+      });
+    }
   }
 
   // Branches Management Methods
   loadBranches(): void {
     const org = this.organisation();
     if (org?.id) {
-      // this.branchApiStore.findByOrganisation({ organisationId: org.id });
+      this.branchApiStore.findByOrganisation({ organisationId: org.id });
     }
   }
 
@@ -206,7 +202,7 @@ export class OrganisationDetailsImplComponent extends OrganisationDetailsCompone
   loadInvoices(): void {
     const org = this.organisation();
     if (org?.id) {
-      // this.kycInvoiceApiStore.findByOrganisation({ organisationId: org.id });
+      this.kycInvoiceApiStore.findByOrganisation({ organisationId: org.id });
     }
   }
 
@@ -218,7 +214,7 @@ export class OrganisationDetailsImplComponent extends OrganisationDetailsCompone
   loadSubscriptions(): void {
     const org = this.organisation();
     if (org?.id) {
-      // this.kycSubscriptionApiStore.findByOrganisation({ organisationId: org.id });
+      this.kycSubscriptionApiStore.findByOrganisation({ organisationId: org.id });
     }
   }
 
@@ -227,45 +223,61 @@ export class OrganisationDetailsImplComponent extends OrganisationDetailsCompone
   }
 
   doEditBranch(branch: BranchDTO): void {
-    // const dialogRef = this.dialog.open(DialogComponent<BranchEditorImplComponent>, <MatDialogConfig>{
-    //   hasBackdrop: true,
-    //   closeOnNavigation: true,
-    //   disableClose: true,
-    //   width: '800px',
-    //   data: {
-    //     component: BranchEditorImplComponent,
-    //     title: 'Edit Section',
-    //     inputs: {
-    //       branchEditorForm: branch,
-    //     },
-    //     actions: [
-    //       {
-    //         id: 'save',
-    //         label: 'Save',
-    //         icon: 'save',
-    //         tooltip: 'Save Section',
-    //       },
-    //     ],
-    //   },
-    // });
 
-    // dialogRef.afterClosed().subscribe({
-    //   next: (data) => {
-    //     console.log('Dialog closed with data:', data);
-    //     if (data?.action === 'save') {
-    //       this.branchApi.save(data.value).subscribe({
-    //         next: (field) => {
-    //           // this.toastr.success('Field saved successfully');
-    //           this.loadBranches();
-    //         },
-    //         error: (err) => {
-    //           console.error('Error saving field:', err);
-    //           // this.toastr.error('Error saving field');
-    //         },
-    //       });
-    //     }
-    //   },
-    // });
+    console.log(branch);
+
+    let branchEditorForm = new BranchEditorForm();
+    branchEditorForm.id = branch.id;
+    branchEditorForm.organisationId = branch.organisationId;
+    branchEditorForm.organisation = branch.organisation;
+    branchEditorForm.code = branch.code;
+    branchEditorForm.name = branch.name;
+    branchEditorForm.description = branch.description;
+    branchEditorForm.physicalAddress = branch.physicalAddress;
+    branchEditorForm.createdBy = branch.createdBy;
+    branchEditorForm.createdAt = branch.createdAt;
+    branchEditorForm.modifiedBy = branch.modifiedBy;
+    branchEditorForm.modifiedAt = branch.modifiedAt;
+
+    const dialogRef = this.dialog.open(DialogComponent<BranchEditorForm, BranchEditorImplComponent>, <MatDialogConfig>{
+      hasBackdrop: true,
+      closeOnNavigation: true,
+      disableClose: true,
+      width: '800px',
+      data: {
+        component: BranchEditorImplComponent,
+        title: 'Edit Section',
+        inputs: {
+          formData: branchEditorForm,
+        },
+        actions: [
+          {
+            id: 'save',
+            label: 'Save',
+            icon: 'save',
+            tooltip: 'Save Section',
+          },
+        ],
+      },
+    });
+
+    dialogRef.afterClosed().subscribe({
+      next: (data) => {
+        console.log('Dialog closed with data:', data);
+        if (data?.action === 'save') {
+          this.branchApi.save(data.value).subscribe({
+            next: (field) => {
+              // this.toastr.success('Field saved successfully');
+              this.loadBranches();
+            },
+            error: (err) => {
+              console.error('Error saving field:', err);
+              // this.toastr.error('Error saving field');
+            },
+          });
+        }
+      },
+    });
   }
 
   addNewBranch(): void {
@@ -302,20 +314,20 @@ export class OrganisationDetailsImplComponent extends OrganisationDetailsCompone
   //   new ColumnModel('name', 'name', false),
   // ];
 
-  // branchesTableColumnsActions: ActionTemplate[] = [
-  //   {
-  //     id: 'branch-edit',
-  //     label: 'edit',
-  //     icon: 'edit',
-  //     tooltip: 'edit',
-  //   },
-  //   {
-  //     id: 'branch-delete',
-  //     label: 'delete',
-  //     icon: 'delete',
-  //     tooltip: 'delete',
-  //   },
-  // ];
+  override branchesTableColumnsActions: ActionTemplate[] = [
+    {
+      id: 'branch-edit',
+      label: 'edit',
+      icon: 'edit',
+      tooltip: 'edit',
+    },
+    {
+      id: 'branch-delete',
+      label: 'delete',
+      icon: 'delete',
+      tooltip: 'delete',
+    },
+  ];
 
   branchesTableActionClicked(event: any): void {
     console.log(event);
@@ -453,7 +465,7 @@ export class OrganisationDetailsImplComponent extends OrganisationDetailsCompone
       }, 300);
 
       // TODO: Implement actual file upload to server
-      // this.clientRequestApiStore.uploadRequests({ file: files[0], organisationId: this.organisation().id });
+      this.clientRequestApiStore.uploadRequests({ file: files[0], organisationId: this.organisation().id });
     }
   }
 

@@ -152,7 +152,7 @@ public class KycInvoiceServiceImpl
 
         if (StringUtils.isNotBlank(criteria.getOrganisatonId())) {
 
-            Specification<KycInvoice> orgIdSpec = (root, query, cb) -> cb.equal(root.get("organisation").get("id"),
+            Specification<KycInvoice> orgIdSpec = (root, query, cb) -> cb.equal(root.get("organisationId"),
                     criteria.getOrganisatonId());
             specification = specification == null ? orgIdSpec : specification.and(orgIdSpec);
         }
@@ -330,7 +330,7 @@ public class KycInvoiceServiceImpl
     protected Collection<KycInvoiceDTO> handleFindByOrganisation(String organisationId) throws Exception {
 
         Specification<KycInvoice> specification = (root, query, cb) -> cb.equal(
-                root.get("organisation").get("id"),
+                root.get("organisationId"),
                 organisationId);
 
         Collection<KycInvoice> invoices = this.kycInvoiceRepository.findAll(specification);

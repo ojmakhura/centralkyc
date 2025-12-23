@@ -90,7 +90,7 @@ export class SearchDocumentTypesImplComponent extends SearchDocumentTypesCompone
     });
   }
 
-  documentTypesTableActionClicked(event: any) {
+  override documentTypesTableActionClicked(event: any) {
     switch (event.action) {
 
       case 'search-document-types-edit':
