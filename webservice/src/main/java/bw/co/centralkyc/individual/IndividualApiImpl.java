@@ -96,24 +96,18 @@ public class IndividualApiImpl implements IndividualApi {
 
             if (data.getHasUser()) {
 
-                UserDTO user = keycloakUserService.getUserByIdentityNo(data.getIdentityNo());
+                if(data.getOrganisation() != null && StringUtils.isNotBlank(data.getOrganisation().getId())) {
 
-                if (user != null) {
+                    OrganisationDTO org = keycloakOrgService.findById(data.getOrganisation().getId());
+                    OrganisationListDTO o = new OrganisationListDTO();
+                    o.setId(org.getId());
+                    o.setCode(org.getCode());
+                    o.setContactEmailAddress(org.getContactEmailAddress());
+                    o.setName(org.getName());
+                    o.setRegistrationNo(org.getRegistrationNo());
+                    o.setStatus(org.getStatus());
 
-                    if (StringUtils.isNotBlank(user.getBranchId())) {
-
-                        BranchDTO branch = branchService.findById(user.getBranchId());
-                        data.setBranch(branch);
-                    }
-
-                    if (StringUtils.isNotBlank(user.getOrganisationId())) {
-
-                        OrganisationListDTO orgList = new OrganisationListDTO();
-                        orgList.setId(user.getOrganisationId());
-                        orgList.setName(user.getOrganisation());
-
-                        data.setOrganisation(orgList);
-                    }
+                    data.setOrganisation(o);
                 }
 
             }

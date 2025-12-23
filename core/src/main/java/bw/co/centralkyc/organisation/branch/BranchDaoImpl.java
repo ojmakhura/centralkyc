@@ -7,6 +7,7 @@
 package bw.co.centralkyc.organisation.branch;
 
 import bw.co.centralkyc.document.DocumentRepository;
+import bw.co.centralkyc.individual.IndividualRepository;
 import jakarta.persistence.EntityNotFoundException;
 
 import org.apache.commons.lang3.StringUtils;
@@ -21,8 +22,9 @@ public class BranchDaoImpl
 {
     
 
-    public BranchDaoImpl(DocumentRepository documentRepository, BranchRepository branchRepository) {
-        super(documentRepository, branchRepository);
+    public BranchDaoImpl(DocumentRepository documentRepository, IndividualRepository individualRepository,
+            BranchRepository branchRepository) {
+        super(documentRepository, individualRepository, branchRepository);
         //TODO Auto-generated constructor stub
     }
 

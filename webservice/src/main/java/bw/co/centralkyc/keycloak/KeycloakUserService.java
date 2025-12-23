@@ -14,6 +14,7 @@ import java.util.stream.Collectors;
 import jakarta.ws.rs.WebApplicationException;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.Response.StatusType;
+import liquibase.license.User;
 import lombok.RequiredArgsConstructor;
 
 import org.apache.commons.collections4.CollectionUtils;
@@ -41,7 +42,6 @@ import bw.co.centralkyc.organisation.branch.BranchDTO;
 import bw.co.centralkyc.organisation.branch.BranchService;
 import bw.co.centralkyc.user.UserDTO;
 
-
 @Component
 @RequiredArgsConstructor
 public class KeycloakUserService {
@@ -53,7 +53,7 @@ public class KeycloakUserService {
     // private final KeycloakOrganisationService orgService;
 
     // public KeycloakUserService(KeycloakService keycloakService) {
-    //     this.keycloakService = keycloakService;
+    // this.keycloakService = keycloakService;
     // }
 
     private CredentialRepresentation createCredential(String type, String value, Boolean temporary) {
@@ -133,43 +133,43 @@ public class KeycloakUserService {
         userRepresentation.setCredentials(Collections
                 .singletonList(createCredential(CredentialRepresentation.PASSWORD, user.getPassword(), true)));
 
-        if(StringUtils.isNotBlank(user.getUserId())) {
+        if (StringUtils.isNotBlank(user.getUserId())) {
             userRepresentation.setId(user.getUserId());
         }
 
         Map<String, List<String>> attributes = new HashMap<>();
 
-        if(StringUtils.isNotBlank(user.getBranchId())) {
+        if (StringUtils.isNotBlank(user.getBranchId())) {
 
             attributes.put("branchId", Arrays.asList(user.getBranchId()));
 
-            if(StringUtils.isBlank(user.getOrganisationId())) {
+            if (StringUtils.isBlank(user.getOrganisationId())) {
                 BranchDTO branch = branchService.findById(user.getBranchId());
                 user.setOrganisationId(branch.getOrganisationId());
             }
         }
 
-        if(StringUtils.isNotBlank(user.getBranch())) {
+        if (StringUtils.isNotBlank(user.getBranch())) {
 
             attributes.put("branch", Arrays.asList(user.getBranch()));
         }
 
-        if(StringUtils.isNotBlank(user.getOrganisationId())) {
+        if (StringUtils.isNotBlank(user.getOrganisationId())) {
 
             // attributes.put("organisationId", Arrays.asList(user.getOrganisationId()));
         }
 
-        if(StringUtils.isNotBlank(user.getOrganisation())) {
+        if (StringUtils.isNotBlank(user.getOrganisation())) {
 
             // attributes.put("organisation", Arrays.asList(user.getOrganisation()));
         }
 
-        if(StringUtils.isNotBlank(user.getIdentityNo())) {
+        if (StringUtils.isNotBlank(user.getIdentityNo())) {
 
             attributes.put("identityNo", Arrays.asList(user.getIdentityNo()));
         }
 
-        if(attributes.size() > 0) {
+        if (attributes.size() > 0) {
             userRepresentation.setAttributes(attributes);
         }
 
@@ -198,31 +198,31 @@ public class KeycloakUserService {
             List<String> branchIds = userRepresentation.getAttributes().get("branchId");
             List<String> branchNames = userRepresentation.getAttributes().get("branch");
 
-            if(CollectionUtils.isNotEmpty(branchNames)) {
+            if (CollectionUtils.isNotEmpty(branchNames)) {
                 user.setBranch(branchNames.get(0));
             }
 
-            if(CollectionUtils.isNotEmpty(branchIds)) {
+            if (CollectionUtils.isNotEmpty(branchIds)) {
                 user.setBranchId(branchIds.get(0));
             }
 
-            // List<String> orgIds = userRepresentation.getAttributes().get("organisationId");
-            // List<String> orgNames = userRepresentation.getAttributes().get("organisation");
-
+            // List<String> orgIds =
+            // userRepresentation.getAttributes().get("organisationId");
+            // List<String> orgNames =
+            // userRepresentation.getAttributes().get("organisation");
 
             // if(CollectionUtils.isNotEmpty(orgNames)) {
-            //     user.setOrganisation(orgNames.get(0));
+            // user.setOrganisation(orgNames.get(0));
             // }
-
 
             List<String> identityNos = userRepresentation.getAttributes().get("identityNo");
 
-            if(CollectionUtils.isNotEmpty(identityNos)) {
+            if (CollectionUtils.isNotEmpty(identityNos)) {
                 user.setIdentityNo(identityNos.get(0));
-            }   
+            }
 
             // if(CollectionUtils.isNotEmpty(orgIds)) {
-            //     user.setOrganisationId(orgIds.get(0));
+            // user.setOrganisationId(orgIds.get(0));
             // }
 
         } else {
@@ -230,9 +230,10 @@ public class KeycloakUserService {
             user.setOrganisation(null);
         }
 
-        List<OrganizationRepresentation> orgs = keycloakService.getOrganizationsResource().search("member=" + user.getUserId());
+        List<OrganizationRepresentation> orgs = keycloakService.getOrganizationsResource()
+                .search("member=" + user.getUserId());
 
-        if(CollectionUtils.isNotEmpty(orgs)) {
+        if (CollectionUtils.isNotEmpty(orgs)) {
 
             user.setOrganisationId(orgs.getFirst().getId());
             user.setOrganisation(orgs.getFirst().getName());
@@ -269,7 +270,7 @@ public class KeycloakUserService {
 
         return users;
     }
-    
+
     public Collection<UserDTO> getOrganisationUsers(String organisationId) {
 
         List<UserRepresentation> userRep = keycloakService.getUsersResource()
@@ -288,10 +289,18 @@ public class KeycloakUserService {
     public UserDTO getUserByIdentityNo(String identityNo) {
 
         UsersResource resource = keycloakService.getUsersResource();
+
         List<UserRepresentation> users = resource
                 .searchByAttributes("identityNo:" + identityNo);
 
-        return CollectionUtils.isEmpty(users) ? null : userRepresentationUserDTO(users.get(0));
+        UserRepresentation userRep = CollectionUtils.isEmpty(users) ? null : users.get(0);
+        UserDTO userDTO = null;
+
+        if (userRep != null) {
+            userDTO = this.findUserById(userRep.getId());
+        }
+
+        return userDTO;
     }
 
     public UserDTO getUserByEmail(String email) {
@@ -300,7 +309,14 @@ public class KeycloakUserService {
         List<UserRepresentation> users = resource
                 .searchByEmail(email, true);
 
-        return CollectionUtils.isEmpty(users) ? null : userRepresentationUserDTO(users.get(0));
+        UserRepresentation userRep = CollectionUtils.isEmpty(users) ? null : users.get(0);
+        UserDTO userDTO = null;
+
+        if (userRep != null) {
+            userDTO = this.findUserById(userRep.getId());
+        }
+
+        return userDTO;
     }
 
     public boolean updateUserPassword(String userId, String newPassword) {
@@ -373,20 +389,20 @@ public class KeycloakUserService {
             }
 
             userResource = usersResource.get(getCreatedId(res));
-            System.out.println("========================================> " + userResource.toRepresentation().getAttributes());
+            System.out.println(
+                    "========================================> " + userResource.toRepresentation().getAttributes());
             user.setUserId(getCreatedId(res));
 
-            
         } else {
             usersResource.get(user.getUserId()).update(userRepresentation);
             userResource = usersResource.get(user.getUserId());
         }
 
-        if(StringUtils.isNotBlank(user.getOrganisationId())) {
+        if (StringUtils.isNotBlank(user.getOrganisationId())) {
 
-                OrganizationResource org = keycloakService.getOrganizationsResource().get(user.getOrganisationId());
-                org.members().addMember(user.getUserId());
-            }
+            OrganizationResource org = keycloakService.getOrganizationsResource().get(user.getOrganisationId());
+            org.members().addMember(user.getUserId());
+        }
 
         if (userResource != null) {
 
@@ -423,11 +439,11 @@ public class KeycloakUserService {
 
         List<UserRepresentation> userRep = null;
 
-        if(hasBranch) {
-            userRep = usersResource.searchByAttributes("branchId:" + loggedInUser.getOrganisationId() );
+        if (hasBranch) {
+            userRep = usersResource.searchByAttributes("branchId:" + loggedInUser.getOrganisationId());
         } else if (hasOrganisation) {
             userRep = usersResource.searchByAttributes("organisationId:" + loggedInUser.getOrganisationId());
-            
+
         } else {
             userRep = usersResource.list();
         }
@@ -477,17 +493,17 @@ public class KeycloakUserService {
 
         List<UserRepresentation> usersRep = null;
 
-        if(hasBranch) {
+        if (hasBranch) {
             usersRep = keycloakService.getUsersResource()
                     .searchByAttributes("branchId:" + loggedInUser.getOrganisationId());
         } else if (hasOrganisation) {
 
             usersRep = keycloakService.getUsersResource()
                     .searchByAttributes("organisationId:" + loggedInUser.getOrganisationId());
-            
+
         } else {
 
-            if(StringUtils.isBlank(criteria)) {
+            if (StringUtils.isBlank(criteria)) {
                 usersRep = keycloakService.getUsersResource().list();
             } else {
                 usersRep = keycloakService.getUsersResource().search(criteria);
@@ -535,13 +551,21 @@ public class KeycloakUserService {
     }
 
     public UserDTO findUserById(String userId) {
+        UserDTO userDTO = null;
         UserRepresentation rep = keycloakService.getUsersResource().get(userId).toRepresentation();
 
         if (StringUtils.isNotBlank(rep.getId())) {
-            return userRepresentationUserDTO(rep);
+            userDTO = userRepresentationUserDTO(rep);
+
+            List<OrganizationRepresentation> organizations = keycloakService.getOrganizationsResource().members().getOrganizations(rep.getId());
+            if (CollectionUtils.isNotEmpty(organizations)) {
+
+                userDTO.setOrganisationId(organizations.getFirst().getId());
+                userDTO.setOrganisation(organizations.getFirst().getName());
+            }
         }
 
-        return null;
+        return userDTO;
     }
 
     public boolean updateUserRoles(String userId, String role, int action) {

@@ -2,7 +2,7 @@
 <div class="edit-container">
   <div class="breadcrumb-section">
     <mat-icon class="breadcrumb-icon">home</mat-icon>
-    <span class="breadcrumb-text">{{ 'home' | translate }}</span>
+    <span class="breadcrumb-text">{{ 'home.title' | translate }}</span>
     <mat-icon class="breadcrumb-separator">chevron_right</mat-icon>
     <span class="breadcrumb-text">{{ 'individual' | translate }}</span>
     <mat-icon class="breadcrumb-separator">chevron_right</mat-icon>
@@ -26,7 +26,7 @@
         <mat-icon>save</mat-icon>
         <span>{{ 'save' | translate }}</span>
       </button> -->
-      <button mat-stroked-button color="primary" (click)="editIndividualSearch()">
+      <button mat-stroked-button color="primary" [routerLink]="['/individual']" routerLinkActive="router-link-active" ]>
         <mat-icon>search</mat-icon>
         <span>{{ 'search' | translate }}</span>
       </button>
@@ -181,9 +181,17 @@
               <div class="mb-3">
                 @for(item of editIndividualSignalForm.phoneNumbers; track i; let i = $index){
                 <div class="field-row">
-                  <mat-form-field class="col-md-4">
-                    <mat-label for="type" class="col-sm-2 col-form-label" translate>type</mat-label>
-                    <input matInput type="text" id="type" [field]="item.type" />
+                  <mat-form-field appearance="outline" class="col-md-4">
+                    <mat-label>{{ 'type' | translate }}</mat-label>
+                    <mat-select id="type" [field]="item.type">
+                      <mat-option value="">{{ 'select.type' | translate }}</mat-option>
+                      @for (key of PhoneTypeOptions; track key) {
+                      <mat-option [value]="key">
+                        {{ PhoneTypeT[key] }}
+                      </mat-option>
+                      }
+                    </mat-select>
+                    <mat-icon matSuffix>expand_more</mat-icon>
                   </mat-form-field>
                   <mat-form-field class="col-md-4">
                     <mat-label for="phoneNumber" class="col-sm-2 col-form-label" translate>phone.number</mat-label>
@@ -243,8 +251,8 @@
             </mat-checkbox>
           </div>
 
-          @if (editIndividualSignal().hasUser) {
           <div class="field-row">
+            @if (editIndividualSignal().hasUser) {
             <mat-form-field class="field-half">
               <mat-label id="organisation_label" for="organisation">
                 <span translate>organisation</span>
@@ -261,11 +269,9 @@
                 }
               </mat-select>
             </mat-form-field>
-          </div>
-          }
+            }
 
-          @if (editIndividualSignal().organisation?.id) {
-          <div class="field-row">
+            @if (editIndividualSignal().organisation?.id) {
             <mat-form-field class="field-half">
               <mat-label id="branch_label" for="branch">
                 <span translate>branch</span>
@@ -280,8 +286,8 @@
                 }
               </mat-select>
             </mat-form-field>
+            }
           </div>
-          }
         </mat-card-content>
       </mat-card>
 
