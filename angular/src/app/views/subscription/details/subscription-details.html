@@ -22,7 +22,7 @@
         </div>
 
         <div class="action-buttons">
-          <button mat-raised-button color="primary" (click)="subscriptionDetailsEdit()" class="action-button">
+          <button mat-raised-button color="primary" [routerLink]="['/subscription', 'edit']" [queryParams]="{ id: subscriptionDetailsSignal().id }" routerLinkActive="router-link-active" class="action-button">
             <mat-icon>edit</mat-icon>
             {{ 'edit' | translate }}
           </button>

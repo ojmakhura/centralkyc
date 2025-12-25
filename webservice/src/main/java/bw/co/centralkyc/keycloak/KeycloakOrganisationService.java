@@ -202,8 +202,7 @@ public class KeycloakOrganisationService {
             org.setModifiedAt(LocalDateTime.from(formatter.parse(time)));
         }
 
-        if(attributes.containsKey("phoneNumbers")) {
-
+        if (attributes.containsKey("phoneNumbers")) {
 
             List<String> phoneStrs = attributes.get("phoneNumbers");
 
@@ -320,7 +319,6 @@ public class KeycloakOrganisationService {
 
     public OrganisationDTO findById(String id) {
 
-
         return toOrganisationDTO(getOrganisationRepresentationById(id));
     }
 
@@ -414,5 +412,34 @@ public class KeycloakOrganisationService {
         Response res = orgResource.delete();
 
         return res.getStatus() == HttpStatus.OK.value();
+    }
+
+    public OrganisationDTO findByRegistrationNo(String registrationNo) {
+
+        if (StringUtils.isNotBlank(registrationNo)) {
+
+            throw new IllegalArgumentException("Registration number must be provided.");
+        }
+
+        OrganizationsResource orgsResource = keycloakService.getOrganizationsResource();
+        List<OrganizationRepresentation> orgs = orgsResource.searchByAttribute("registrationNo:" + registrationNo);
+
+        OrganisationDTO org = orgs.stream().filter(rep -> {
+
+            Map<String, List<String>> attributes = rep.getAttributes();
+
+            if (attributes != null && attributes.containsKey("registrationNo")) {
+
+                String regNo = attributes.get("registrationNo").listIterator().hasNext()
+                        ? attributes.get("registrationNo").get(0)
+                        : null;
+
+                return registrationNo.equals(regNo);
+            }
+
+            return false;
+        }).findFirst().map(rep -> toOrganisationDTO(rep)).orElse(null);
+
+        return org;
     }
 }

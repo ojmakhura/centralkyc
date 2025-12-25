@@ -56,38 +56,20 @@ organisationApiStore = inject(OrganisationApiStore);
     effect(() => {
       let subscription = this.kycSubscriptionApiStore.data();
       if (subscription) {
-        // this.editSubscriptionForm.patchValue({
-        //   id: subscription.id,
-        //   createdBy: subscription.createdBy,
-        //   createdAt: subscription.createdAt ? new Date(subscription.createdAt) : null,
-        //   modifiedBy: subscription.modifiedBy,
-        //   modifiedAt: subscription.modifiedAt ? new Date(subscription.modifiedAt) : null,
-        //   amount: subscription.amount,
-        //   ref: subscription.ref,
-        //   organisation: subscription.organisationId
-        //     ? this.organisationApiStore.dataList().find((org) => org.id === subscription.organisationId)
-        //     : null,
-        //   status: subscription.status,
-        //   startDate: subscription.startDate ? new Date(subscription.startDate) : null,
-        //   endDate: subscription.endDate ? new Date(subscription.endDate) : null,
-        //   period: subscription.period,
-        // });
 
-        // this.organisationFilteredList.set([{
-        //   id: subscription.organisationId,
-        //   name: subscription.organisationName,
-        //   code: subscription.organisationCode,
-        //   registrationNo: subscription.organisationRegistrationNo,
-        // }]);
+        this.editSubscriptionSignal.update((form) => ({
+          ...form,
+          ...subscription
+        }));
 
-        // this.organisationControl.setValue(
-        //   {
-        //     id: subscription.organisationId,
-        //     name: subscription.organisationName,
-        //     code: subscription.organisationCode,
-        //     registrationNo: subscription.organisationRegistrationNo,
-        //   }
-        // );
+        this.organisationFilteredList.set([{
+          id: subscription.organisationId,
+          name: subscription.organisationName,
+          code: subscription.organisationCode,
+          registrationNo: subscription.organisationRegistrationNo,
+          status: '',
+          contactEmailAddress: ''
+        }]);
 
       }
     });

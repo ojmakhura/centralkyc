@@ -293,7 +293,19 @@ public class KeycloakUserService {
         List<UserRepresentation> users = resource
                 .searchByAttributes("identityNo:" + identityNo);
 
-        UserRepresentation userRep = CollectionUtils.isEmpty(users) ? null : users.get(0);
+        UserRepresentation userRep = users.stream().filter(rep -> {
+            Map<String, List<String>> attributes = rep.getAttributes();
+
+            if (attributes != null && attributes.containsKey("identityNo")) {
+                List<String> identityNos = attributes.get("identityNo");
+
+                if (CollectionUtils.isNotEmpty(identityNos)) {
+                    return identityNos.get(0).equalsIgnoreCase(identityNo);
+                }
+            }
+
+            return false;
+        }).findFirst().orElse(null);
         UserDTO userDTO = null;
 
         if (userRep != null) {

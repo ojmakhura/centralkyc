@@ -137,7 +137,7 @@ public class KycSubscriptionServiceImpl
             String likeCriteria = "%" + criteria.toLowerCase() + "%";
             return builder.or(
                     builder.like(builder.lower(root.get("ref")), likeCriteria),
-                    builder.like(builder.lower(root.get("organisation").get("name")), likeCriteria));
+                    builder.like(builder.lower(root.get("organisationId")), likeCriteria));
         };
     }
 

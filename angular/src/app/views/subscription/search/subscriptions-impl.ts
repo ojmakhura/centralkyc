@@ -70,13 +70,13 @@ override error = linkedSignal(() => this.kycSubscriptionApiStore.error());
   }
 
   private doSearch(pageNumber: number = 0, pageSize: number = 10): void {
-    // let value = this.criteriaControl.value || '';
+    let value = this.subscriptionsSignal().criteria || '';
 
-    // this.kycSubscriptionApiStore.pagedSearch({
-    //   criteria: value,
-    //   pageNumber: pageNumber,
-    //   pageSize: pageSize,
-    // });
+    this.kycSubscriptionApiStore.pagedSearch({
+      criteria: value,
+      pageNumber: pageNumber,
+      pageSize: pageSize,
+    });
   }
 
   override beforeSubscriptionsSearch(form: any): void {

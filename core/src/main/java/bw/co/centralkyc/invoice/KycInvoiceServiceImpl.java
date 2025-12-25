@@ -288,7 +288,7 @@ public class KycInvoiceServiceImpl
 
         KycInvoice invoice = KycInvoice.Factory.newInstance();
         invoice.setKycSubscription(subscription);
-        // invoice.setOrganisation(subscription.getOrganisation());
+        invoice.setOrganisationId(subscription.getOrganisationId());
         invoice.setAmount(subscription.getAmount());
         invoice.setPaid(false);
 
