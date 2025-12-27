@@ -8,6 +8,7 @@ package bw.co.centralkyc.document;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
@@ -188,42 +189,40 @@ public class DocumentApiImpl implements DocumentApi {
 
         try {
 
-            // Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-            // System.out.println(authentication);
-            // Jwt jwt = (Jwt) authentication.getPrincipal();
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            System.out.println(authentication);
+            Jwt jwt = (Jwt) authentication.getPrincipal();
 
-            // System.out.println(jwt.getClaims());
+            System.out.println(jwt.getClaims());
 
-            // String username = jwt.getClaimAsString("preferred_username");
+            String username = jwt.getClaimAsString("preferred_username");
 
-            // DocumentDTO document = new DocumentDTO();
-            // document.setCreatedAt(LocalDateTime.now());
-            // document.setCreatedBy(username);
-            // document.setTarget(target);
-            // document.setTargetId(targetId);
-            // document.setFileName(file.getOriginalFilename());
+            DocumentDTO document = new DocumentDTO();
+            document.setCreatedAt(LocalDateTime.now());
+            document.setCreatedBy(username);
+            document.setTarget(target);
+            document.setTargetId(targetId);
+            document.setFileName(file.getOriginalFilename());
 
-            // Map<String, Object> metadata = new HashMap<>();
-            // metadata.put("fileSize", file.getSize());
-            // metadata.put("fileType", file.getContentType());
-            // metadata.put("contentType", file.getContentType());
+            Map<String, Object> metadata = new HashMap<>();
+            metadata.put("fileSize", file.getSize());
+            metadata.put("fileType", file.getContentType());
+            metadata.put("contentType", file.getContentType());
 
-            // document.setMetadata(metadata);
+            document.setMetadata(metadata);
 
-            // String filePath = constructFilePath(target, targetId, file.getOriginalFilename());
-            // try {
-            //     document.setUrl(uploadToMinio(file, filePath));
-            // } catch (Exception e) {
-            //     // TODO Auto-generated catch block
-            //     e.printStackTrace();
-            //     throw new DocumentServiceException("Error uploading file: " + file.getOriginalFilename());
-            // }
+            String filePath = constructFilePath(target, targetId, file.getOriginalFilename());
+            try {
+                document.setUrl(uploadToMinio(file, filePath));
+            } catch (Exception e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+                throw new DocumentServiceException("Error uploading file: " + file.getOriginalFilename());
+            }
 
-            // document.setDocumentTypeId(documentTypeId);
+            document.setDocumentTypeId(documentTypeId);
 
-            // return ResponseEntity.ok(documentService.save(document)); 
-
-            return ResponseEntity.ok(documentService.save(null)); 
+            return ResponseEntity.ok(documentService.save(document)); 
 
         } catch (Exception e) {
 

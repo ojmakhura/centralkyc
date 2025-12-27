@@ -76,48 +76,20 @@ export class OrganisationDetailsImplComponent extends OrganisationDetailsCompone
   totalBranches = signal(0);
 
   // Invoices related properties
-  invoices = linkedSignal<KycInvoiceDTO[]>(() => []);
+  invoices = this.kycInvoiceApiStore.dataList;
   invoicesLoading = linkedSignal(() => false);
 
   // Subscriptions related properties
-  subscriptions = linkedSignal<KycSubscriptionDTO[]>(() => []);
+  subscriptions = linkedSignal<KycSubscriptionDTO[]>(() => this.kycSubscriptionApiStore.dataList());
   subscriptionsLoading = linkedSignal(() => false);
 
   // Client Requests related properties
-  clientRequests = linkedSignal(() => new Page<ClientRequestDTO>());
+  clientRequests = this.clientRequestApiStore.dataPage;
   clientsTablePaged = signal(true);
   clientRequestsLoading = linkedSignal(() => false);
   uploadedClientRequestFiles = signal<any[]>([]);
   isUploadingClientRequestFile = signal(false);
   clientRequestFileUploadProgress = signal(0);
-
-  // clientRequestsTable!: TableComponent<ClientRequestDTO>;
-
-
-  // Client Requests Table Configuration
-  // clientRequestsTablePaged: WritableSignal<boolean> = linkedSignal(() => true);
-  // clientRequestsTableColumns: ColumnModel[] = [
-  //   new ColumnModel('name', 'name', false),
-  //   new ColumnModel('identityType', 'identity.type', false),
-  //   new ColumnModel('identityNo', 'identity.no', false),
-  //   new ColumnModel('status', 'status', false),
-  // ];
-
-  // clientRequestsTableColumnsActions: ActionTemplate[] = [
-  //   {
-  //     id: 'client-request-view',
-  //     label: 'view',
-  //     icon: 'visibility',
-  //     tooltip: 'view',
-  //   },
-  //   {
-  //     id: 'client-request-edit',
-  //     label: 'edit',
-  //     icon: 'edit',
-  //     tooltip: 'edit',
-  //   },
-  // ];
-
 
   constructor() {
     super();
@@ -146,7 +118,6 @@ export class OrganisationDetailsImplComponent extends OrganisationDetailsCompone
 
   @ViewChild('clientRequestsTable') set clientRequestsTableComp(clientRequestsTable: TableComponent<ClientRequestDTO> | undefined) {
   if (clientRequestsTable) {
-    // this.clientRequestsTable = clientRequestsTable;
     // Do something when child is created
     this.clientRequestsTable?.tablePaginator?.page?.subscribe({
       next: (paginator: MatPaginator) => {

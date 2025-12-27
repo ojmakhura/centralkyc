@@ -177,7 +177,8 @@ public class ClientRequestServiceImpl
     protected Page<ClientRequestDTO> handleFindByOrganisation(String organisationId, Integer pageNumber,
             Integer pageSize)
             throws Exception {
-        return null; //clientRequestRepository.findByOrganisationId(organisationId, PageRequest.of(pageNumber, pageSize));
+
+        return clientRequestRepository.findByOrgId(organisationId, PageRequest.of(pageNumber, pageSize));
     }
 
     /**
@@ -231,8 +232,8 @@ public class ClientRequestServiceImpl
 
         clientRequests = clientRequestRepository.saveAll(clientRequests);
 
-        return null; // clientRequestRepository.findByOrganisationId(organisationId, 
-                //PageRequest.of(0, 10));
+        return clientRequestRepository.findByOrgId(organisationId, 
+                PageRequest.of(0, 10));
     }
 
     /**
@@ -263,7 +264,7 @@ public class ClientRequestServiceImpl
 
         // Set organisation
         // Organisation organisation = organisationRepository.getReferenceById(organisationId);
-        // clientRequest.setOrganisation(organisation);
+        clientRequest.setOrganisationId(organisationId);
 
         // Set status and audit fields
         clientRequest.setStatus(ClientRequestStatus.PENDING);

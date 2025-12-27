@@ -5,6 +5,7 @@ import { SettingsDTO } from '@models/bw/co/centralkyc/settings/settings-dto';
 import { HttpClient } from '@angular/common/http';
 import { Page } from '@models/page.model';
 import { TargetEntity } from '@models/bw/co/centralkyc/target-entity';
+import { DocumentTypePurpose } from '@app/models/bw/co/centralkyc/settings/document-type-purpose';
 
 @Injectable({
   providedIn: 'root'
@@ -56,5 +57,15 @@ export class SettingsApi {
         formData.append('template', template);
 
         return this.http.post<SettingsDTO>(`${this.path}/upload?target=${target}`, formData);
+    }
+
+    public attachDocumentType(documentTypeId: string, purpose: DocumentTypePurpose): Observable<SettingsDTO> {
+
+        return this.http.get<SettingsDTO>(`${this.path}/attach-document-type/${documentTypeId}?purpose=${purpose}`);
+    }
+
+    public detachDocumentType(documentTypeId: string, purpose: DocumentTypePurpose): Observable<SettingsDTO> {
+
+        return this.http.delete<SettingsDTO>(`${this.path}/detach-document-type/${documentTypeId}?purpose=${purpose}`);
     }
 }

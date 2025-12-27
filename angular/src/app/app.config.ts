@@ -1,4 +1,4 @@
-import { ApplicationConfig, importProvidersFrom } from '@angular/core';
+import { ApplicationConfig, importProvidersFrom, provideZoneChangeDetection } from '@angular/core';
 import { provideRouter, RouteReuseStrategy } from '@angular/router';
 
 import { routes } from './app.routes';
@@ -10,7 +10,6 @@ import {
   withInterceptorsFromDi,
   HttpClient,
 } from '@angular/common/http';
-import { CUSTOM_DATE_FORMATS } from './@shared/custom-date-formats';
 import { MAT_DATE_FORMATS, MAT_DATE_LOCALE, MatDateFormats } from '@angular/material/core';
 import { RouteReusableStrategy } from './@core/route-reusable-strategy';
 import { MAT_FORM_FIELD_DEFAULT_OPTIONS } from '@angular/material/form-field';
@@ -71,6 +70,7 @@ export const provideKeycloakAndInterceptor = (env: any) => {
       initOptions: {
         onLoad: 'check-sso',
         checkLoginIframe: true,
+        silentCheckSsoRedirectUri: window.location.origin + '/silent-check-sso.html'
       },
       features: [
         withAutoRefreshToken({
@@ -107,6 +107,7 @@ export const appConfig = (env: any) => {
     providers: [
       provideRouter(routes),
       provideKeycloakAndInterceptor(env),
+      provideZoneChangeDetection({ eventCoalescing: true }),
       provideAnimations(),
       provideHttpClient(
         withFetch(),

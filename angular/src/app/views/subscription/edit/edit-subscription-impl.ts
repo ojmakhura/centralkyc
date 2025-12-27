@@ -20,8 +20,6 @@ import { KycSubscriptionDTO } from '@app/models/bw/co/centralkyc/subscription/ky
   standalone: true,
   imports: [
     CommonModule,
-    FormsModule,
-    ReactiveFormsModule,
     TranslateModule,
     MaterialModule,
     Loader,
@@ -29,7 +27,7 @@ import { KycSubscriptionDTO } from '@app/models/bw/co/centralkyc/subscription/ky
   ],
 })
 export class EditSubscriptionImplComponent extends EditSubscriptionComponent {
-organisationApiStore = inject(OrganisationApiStore);
+  organisationApiStore = inject(OrganisationApiStore);
 
   @Input() id: string | any;
 
@@ -58,80 +56,107 @@ organisationApiStore = inject(OrganisationApiStore);
       if (subscription) {
 
         this.editSubscriptionSignal.update((form) => ({
-          ...form,
-          ...subscription
+            id: subscription.id,
+            createdAt: subscription.createdAt,
+            createdBy: subscription.createdBy,
+            modifiedAt: subscription.modifiedAt,
+            modifiedBy: subscription.modifiedBy,
+            organisation: subscription.organisationId ? {
+              id: subscription.organisationId,
+              name: subscription.organisationName,
+              code: subscription.organisationCode,
+              registrationNo: subscription.organisationRegistrationNo,
+              status: '',
+              contactEmailAddress: ''
+            } : null,
+            ref: subscription.ref,
+            startDate: subscription.startDate,
+            endDate: subscription.endDate,
+            amount: subscription.amount,
+            status: subscription.status,
+            period: subscription.period,
+            organisationFilter: ''
         }));
 
-        this.organisationFilteredList.set([{
-          id: subscription.organisationId,
-          name: subscription.organisationName,
-          code: subscription.organisationCode,
-          registrationNo: subscription.organisationRegistrationNo,
-          status: '',
-          contactEmailAddress: ''
-        }]);
+    this.organisationFilteredList.set([{
+      id: subscription.organisationId,
+      name: subscription.organisationName,
+      code: subscription.organisationCode,
+      registrationNo: subscription.organisationRegistrationNo,
+      status: '',
+      contactEmailAddress: ''
+    }]);
 
-      }
-    });
+    // this.organisationControl.setValue(
+    //   {
+    //     id: subscription.organisationId,
+    //     name: subscription.organisationName,
+    //     code: subscription.organisationCode,
+    //     registrationNo: subscription.organisationRegistrationNo,
+    //   }
+    // );
+
+  }
+});
   }
 
   override ngOnInit() {
 
-    this.route.queryParams.subscribe((params) => {
-      const id = params['id'];
-      if (id) {
-        this.kycSubscriptionApiStore.findById({ id: id });
-        let search = new SearchObject<OrganisationSearchCriteria>();
-        search.criteria = {
-          id: id,
-        };
+  this.route.queryParams.subscribe((params) => {
+    const id = params['id'];
+    if (id) {
+      this.kycSubscriptionApiStore.findById({ id: id });
+      let search = new SearchObject<OrganisationSearchCriteria>();
+      search.criteria = {
+        id: id,
+      };
 
-        this.organisationApiStore.search({
-          criteria: search,
-        });
-      }
-    });
+      this.organisationApiStore.search({
+        criteria: search,
+      });
+    }
+  });
 
-  }
+}
 
-  doNgOnDestroy(): void { }
+doNgOnDestroy(): void {}
 
   override beforeEditSubscriptionSave(form: any): void {
-    let formValue = this.editSubscriptionSignal();
+  let formValue = this.editSubscriptionSignal();
 
-    let subscription = new KycSubscriptionDTO();
-    subscription.id = formValue.id;
-    subscription.ref = formValue.ref;
-    subscription.organisationName = formValue.organisation?.name;
-    subscription.organisationId = formValue.organisation?.id;
-    subscription.organisationCode = formValue.organisation?.code;
-    subscription.organisationRegistrationNo = formValue.organisation?.registrationNo;
-    subscription.status = formValue.status;
-    subscription.startDate = formValue.startDate;
-    subscription.endDate = formValue.endDate;
-    subscription.amount = formValue.amount;
-    subscription.period = formValue.period;
-    subscription.createdBy = formValue.createdBy;
-    subscription.createdAt = formValue.createdAt;
-    subscription.modifiedBy = formValue.modifiedBy;
-    subscription.modifiedAt = formValue.modifiedAt;
+  let subscription = new KycSubscriptionDTO();
+  subscription.id = formValue.id;
+  subscription.ref = formValue.ref;
+  subscription.organisationName = formValue.organisation?.name;
+  subscription.organisationId = formValue.organisation?.id;
+  subscription.organisationCode = formValue.organisation?.code;
+  subscription.organisationRegistrationNo = formValue.organisation?.registrationNo;
+  subscription.status = formValue.status;
+  subscription.startDate = formValue.startDate;
+  subscription.endDate = formValue.endDate;
+  subscription.amount = formValue.amount;
+  subscription.period = formValue.period;
+  subscription.createdBy = formValue.createdBy;
+  subscription.createdAt = formValue.createdAt;
+  subscription.modifiedBy = formValue.modifiedBy;
+  subscription.modifiedAt = formValue.modifiedAt;
 
-    this.kycSubscriptionApiStore.save({ subscription });
-  }
+  this.kycSubscriptionApiStore.save({ subscription });
+}
 
   override organisationCompare(o1: OrganisationListDTO | any, o2: OrganisationListDTO | any) {
-    return o1 && o2 ? o1.id === o2.id : o1 === o2;
-  }
+  return o1 && o2 ? o1.id === o2.id : o1 === o2;
+}
 
   override filterOrganisation() {
-    const filterValue = this.editSubscriptionSignal().organisationFilter || '';
-    let search = new SearchObject<OrganisationSearchCriteria>();
-    search.criteria = {
-      name: filterValue,
-    };
+  const filterValue = this.editSubscriptionSignal().organisationFilter || '';
+  let search = new SearchObject<OrganisationSearchCriteria>();
+  search.criteria = {
+    name: filterValue,
+  };
 
-    this.organisationApiStore.search({
-      criteria: search,
-    });
-  }
+  this.organisationApiStore.search({
+    criteria: search,
+  });
+}
 }

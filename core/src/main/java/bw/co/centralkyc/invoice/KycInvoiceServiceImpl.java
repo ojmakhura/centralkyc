@@ -177,8 +177,9 @@ public class KycInvoiceServiceImpl
 
         Specification<KycInvoice> specification = createSearchSpecification(criteria);
 
-        Collection<KycInvoice> invoices = this.kycInvoiceRepository.findAll(specification,
-                SortOrderFactory.createSortOrder(sortOrders));
+        Collection<KycInvoice> invoices = specification == null ?
+                this.kycInvoiceRepository.findAll(SortOrderFactory.createSortOrder(sortOrders)) :
+                this.kycInvoiceRepository.findAll(specification, SortOrderFactory.createSortOrder(sortOrders));
         return this.kycInvoiceDao.toKycInvoiceDTOCollection(invoices);
     }
 
@@ -226,7 +227,9 @@ public class KycInvoiceServiceImpl
 
         Specification<KycInvoice> specification = createSearchSpecification(criteria.getCriteria());
 
-        Page<KycInvoice> invoicePage = this.kycInvoiceRepository.findAll(specification, page);
+        Page<KycInvoice> invoicePage = specification == null ?
+                this.kycInvoiceRepository.findAll(page) : 
+                this.kycInvoiceRepository.findAll(specification, page);
 
         return invoicePage.map(kycInvoice -> this.kycInvoiceDao.toKycInvoiceDTO(kycInvoice));
 

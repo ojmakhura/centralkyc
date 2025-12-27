@@ -73,6 +73,8 @@ public class ClientRequestDaoImpl
 
             target.setName(nameBuilder.toString());
 
+            target.setEmailAddress(source.getIndividual().getEmailAddress());
+
         }
 
         if(source.getDocument() != null) {
@@ -155,11 +157,9 @@ public class ClientRequestDaoImpl
             );
         }
 
-
-
         if(StringUtils.isNotBlank(source.getOrganisationId())) {
 
-            // target.setOrganisation(organisationRepository.getReferenceById(source.getOrganisationId()));
+            target.setOrganisationId(source.getOrganisationId());
         }
     }
 }

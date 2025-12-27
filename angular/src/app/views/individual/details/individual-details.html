@@ -3,11 +3,12 @@
 <div class="details-container">
   <div class="breadcrumb-section">
     <mat-icon class="breadcrumb-icon">home</mat-icon>
-    <span class="breadcrumb-text">{{ 'home' | translate }}</span>
+    <span class="breadcrumb-text">{{ 'home.title' | translate }}</span>
     <mat-icon class="breadcrumb-separator">chevron_right</mat-icon>
     <span class="breadcrumb-text">{{ 'individual' | translate }}</span>
     <mat-icon class="breadcrumb-separator">chevron_right</mat-icon>
-    <span class="breadcrumb-text active">{{ individual().firstName }} {{ individual().middleName }} {{ individual().surname }} </span>
+    <span class="breadcrumb-text active">{{ individual().firstName }} {{ individual().middleName }} {{
+      individual().surname }} </span>
   </div>
   <!-- Header Section -->
   <mat-card class="header-card" appearance="outlined">
@@ -124,17 +125,17 @@
               <mat-icon class="field-icon">phone</mat-icon>
               <span>{{ 'phone.numbers' | translate }}</span>
             </div>
+            @if (individual().phoneNumbers && (individual().phoneNumbers || []).length > 0) {
+            @for (phone of individual().phoneNumbers; track $index) {
             <div class="display-value">
-              @if (individual().phoneNumbers && (individual().phoneNumbers || []).length > 0) {
               <div class="phone-numbers">
-                @for (phone of individual().phoneNumbers; track $index) {
-                <span class="phone-chip">{{ phone }}</span>
-                }
+                {{ phone.type }}: {{ phone.phoneNumber || 'N/A' }}
               </div>
-              } @else {
-              N/A
-              }
             </div>
+            }
+            } @else {
+            N/A
+            }
           </div>
 
           <div class="display-item full-width">
@@ -315,7 +316,8 @@
                               individual()?.identityNo }}</p>
                           </div>
                           <div class="record-status">
-                            <span class="status-badge" [class.approved]="kycRecord.kycStatus === KycComplianceStatusT.APPROVED"
+                            <span class="status-badge"
+                              [class.approved]="kycRecord.kycStatus === KycComplianceStatusT.APPROVED"
                               [class.pending]="kycRecord.kycStatus === KycComplianceStatusT.PENDING"
                               [class.rejected]="kycRecord.kycStatus === KycComplianceStatusT.REJECTED">
                               @if (kycRecord.kycStatus === KycComplianceStatusT.APPROVED) {

@@ -11,11 +11,15 @@ import bw.co.centralkyc.SearchObject;
 import bw.co.centralkyc.TargetEntity;
 import bw.co.centralkyc.document.DocumentApi;
 import bw.co.centralkyc.document.DocumentDTO;
+import bw.co.centralkyc.invoice.KycInvoiceDTO;
+import bw.co.centralkyc.keycloak.KeycloakOrganisationService;
+import bw.co.centralkyc.organisation.OrganisationDTO;
 import bw.co.centralkyc.settings.SettingsDTO;
 import bw.co.centralkyc.settings.SettingsService;
 
 import java.io.InputStream;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -37,21 +41,33 @@ public class ClientRequestApiImpl implements ClientRequestApi {
     private final SettingsService settingsService;
     private final DocumentApi documentApi;
     private final ClientRequestService clientRequestService;
+    private final KeycloakOrganisationService keycloakOrganisationService;
 
     public ClientRequestApiImpl(
         ClientRequestService clientRequestService,
         SettingsService settingsService,
-        DocumentApi documentApi) {
+        DocumentApi documentApi,
+        KeycloakOrganisationService keycloakOrganisationService) {
         
         this.settingsService = settingsService;
         this.documentApi = documentApi;
         this.clientRequestService = clientRequestService;
+        this.keycloakOrganisationService = keycloakOrganisationService;
     }
 
     @Override
     public ResponseEntity<ClientRequestDTO> findById(String id) throws Exception {
         try {
-            return ResponseEntity.ok(clientRequestService.findById(id));
+
+            ClientRequestDTO request = clientRequestService.findById(id);
+
+            OrganisationDTO org = keycloakOrganisationService.findById(request.getOrganisationId());
+            if(org != null) {
+                request.setOrganisation(org.getName());
+                request.setOrganisationRegistrationNo(org.getRegistrationNo());
+                request.setOrganisationId(org.getId());
+            }
+            return ResponseEntity.ok(request);
         } catch (Exception e) {
 
             e.printStackTrace();
@@ -59,10 +75,25 @@ public class ClientRequestApiImpl implements ClientRequestApi {
         } 
     }
 
+    private void updateOrganisationsDetails(Collection<ClientRequestDTO> requests) throws Exception {
+        for (ClientRequestDTO request : requests) {
+            
+            OrganisationDTO org = keycloakOrganisationService.findById(request.getOrganisationId());
+            if(org != null) {
+                request.setOrganisation(org.getName());
+                request.setOrganisationRegistrationNo(org.getRegistrationNo());
+                request.setOrganisationId(org.getId());
+            }
+
+        }
+    }   
+
     @Override
     public ResponseEntity<Collection<ClientRequestDTO>> findByIndividual(String individualId) throws Exception {
         try {
-            return ResponseEntity.ok(clientRequestService.findByIndividual(individualId));
+            Collection<ClientRequestDTO> requests = clientRequestService.findByIndividual(individualId);
+            updateOrganisationsDetails(requests);
+            return ResponseEntity.ok(requests);
         } catch (Exception e) {
 
             e.printStackTrace();
@@ -73,7 +104,9 @@ public class ClientRequestApiImpl implements ClientRequestApi {
     @Override
     public ResponseEntity<Page<ClientRequestDTO>> findByIndividualPaged(String individualId, Integer pageNumber, Integer pageSize) throws Exception {
         try {
-            return ResponseEntity.ok(clientRequestService.findByIndividual(individualId, pageNumber, pageSize));
+            Page<ClientRequestDTO> requests = clientRequestService.findByIndividual(individualId, pageNumber, pageSize);
+            updateOrganisationsDetails(requests.getContent());
+            return ResponseEntity.ok(requests);
         } catch (Exception e) {
 
             e.printStackTrace();
@@ -84,7 +117,9 @@ public class ClientRequestApiImpl implements ClientRequestApi {
     @Override
     public ResponseEntity<Collection<ClientRequestDTO>> findByOrganisation(String organisationId) throws Exception {
         try {
-            return ResponseEntity.ok(clientRequestService.findByOrganisation(organisationId));
+            Collection<ClientRequestDTO> requests = clientRequestService.findByOrganisation(organisationId);
+            updateOrganisationsDetails(requests);
+            return ResponseEntity.ok(requests);
         } catch (Exception e) {
 
             e.printStackTrace();
@@ -95,7 +130,13 @@ public class ClientRequestApiImpl implements ClientRequestApi {
     @Override
     public ResponseEntity<Page<ClientRequestDTO>> findByOrganisationPaged(String organisationId, Integer pageNumber, Integer pageSize) throws Exception {
         try {
-            return ResponseEntity.ok(clientRequestService.findByOrganisation(organisationId, pageNumber, pageSize));
+            Page<ClientRequestDTO> requests = clientRequestService.findByOrganisation(organisationId, pageNumber, pageSize);
+
+            if(requests != null) {
+                updateOrganisationsDetails(requests.getContent());
+            }
+            
+            return ResponseEntity.ok(requests);
         } catch (Exception e) {
 
             e.printStackTrace();
@@ -106,7 +147,10 @@ public class ClientRequestApiImpl implements ClientRequestApi {
     @Override
     public ResponseEntity<Collection<ClientRequestDTO>> findByStatus(ClientRequestStatus status) throws Exception {
         try {
-            return ResponseEntity.ok(clientRequestService.findByStatus(status));
+            Collection<ClientRequestDTO> requests = clientRequestService.findByStatus(status);
+            updateOrganisationsDetails(requests);
+            
+            return ResponseEntity.ok(requests);
         } catch (Exception e) {
 
             e.printStackTrace();
@@ -117,7 +161,9 @@ public class ClientRequestApiImpl implements ClientRequestApi {
     @Override
     public ResponseEntity<Collection<ClientRequestDTO>> getAll() throws Exception {
         try {
-            return ResponseEntity.ok(clientRequestService.getAll());
+            Collection<ClientRequestDTO> requests = clientRequestService.getAll();
+            updateOrganisationsDetails(requests);
+            return ResponseEntity.ok(requests);
         } catch (Exception e) {
 
             e.printStackTrace();
@@ -128,7 +174,9 @@ public class ClientRequestApiImpl implements ClientRequestApi {
     @Override
     public ResponseEntity<Page<ClientRequestDTO>> getAllPaged(Integer pageNumber, Integer pageSize) throws Exception {
         try {
-            return ResponseEntity.ok(clientRequestService.getAll(pageNumber, pageSize));
+            Page<ClientRequestDTO> requests = clientRequestService.getAll(pageNumber, pageSize);
+            updateOrganisationsDetails(requests.getContent());
+            return ResponseEntity.ok(requests);
         } catch (Exception e) {
 
             e.printStackTrace();
@@ -139,7 +187,9 @@ public class ClientRequestApiImpl implements ClientRequestApi {
     @Override
     public ResponseEntity<Page<ClientRequestDTO>> pagedSearch(SearchObject<ClientRequestSearchCriteria> criteria) throws Exception {
         try {
-            return ResponseEntity.ok(clientRequestService.search(criteria));
+            Page<ClientRequestDTO> requests = clientRequestService.search(criteria);
+            updateOrganisationsDetails(requests.getContent());
+            return ResponseEntity.ok(requests);
         } catch (Exception e) {
 
             e.printStackTrace();
@@ -150,6 +200,7 @@ public class ClientRequestApiImpl implements ClientRequestApi {
     @Override
     public ResponseEntity<Boolean> remove(String id) throws Exception {
         try {
+
             return ResponseEntity.ok(clientRequestService.remove(id));
         } catch (Exception e) {
 
@@ -163,7 +214,10 @@ public class ClientRequestApiImpl implements ClientRequestApi {
         try {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             AuditTracker.auditTrail(clientRequest, authentication);
-            return ResponseEntity.ok(clientRequestService.save(clientRequest));
+            ClientRequestDTO savedRequest = clientRequestService.save(clientRequest);
+            updateOrganisationsDetails(Collections.singletonList(savedRequest));
+
+            return ResponseEntity.ok(savedRequest);
         } catch (Exception e) {
 
             e.printStackTrace();
@@ -179,8 +233,11 @@ public class ClientRequestApiImpl implements ClientRequestApi {
 
                 sorting.addAll(criteria.getSortings());
             }
+            
+            Collection<ClientRequestDTO> requests = clientRequestService.search(criteria.getCriteria(), sorting);
+            updateOrganisationsDetails(requests);
 
-            return ResponseEntity.ok(clientRequestService.search(criteria.getCriteria(), sorting));
+            return ResponseEntity.ok(requests);
         } catch (Exception e) {
 
             e.printStackTrace();
@@ -192,7 +249,9 @@ public class ClientRequestApiImpl implements ClientRequestApi {
     public ResponseEntity<Collection<ClientRequestDTO>> findByDocument(String documentId) throws Exception {
         
         try {
-            return ResponseEntity.ok(clientRequestService.findByDocument(documentId));
+            Collection<ClientRequestDTO> requests = clientRequestService.findByDocument(documentId);
+            updateOrganisationsDetails(requests);
+            return ResponseEntity.ok(requests);
         } catch (Exception e) {
 
             e.printStackTrace();
@@ -205,7 +264,9 @@ public class ClientRequestApiImpl implements ClientRequestApi {
             Integer pageSize) throws Exception {
         
         try {
-            return ResponseEntity.ok(clientRequestService.findByDocument(documentId, pageNumber, pageSize));
+            Page<ClientRequestDTO> requests = clientRequestService.findByDocument(documentId, pageNumber, pageSize);
+            updateOrganisationsDetails(requests.getContent());
+            return ResponseEntity.ok(requests);
         } catch (Exception e) {
             e.printStackTrace();
             throw e;
@@ -217,7 +278,9 @@ public class ClientRequestApiImpl implements ClientRequestApi {
             Integer pageNumber, Integer pageSize) throws Exception {
         
         try {
-            return ResponseEntity.ok(clientRequestService.findByStatus(status, pageNumber, pageSize));
+            Page<ClientRequestDTO> requests = clientRequestService.findByStatus(status, pageNumber, pageSize);
+            updateOrganisationsDetails(requests.getContent());
+            return ResponseEntity.ok(requests);
         } catch (Exception e) {
             e.printStackTrace();
             throw e;
@@ -240,7 +303,10 @@ public class ClientRequestApiImpl implements ClientRequestApi {
                             file)
                     .getBody();
 
-            return ResponseEntity.ok(clientRequestService.uploadRequests(inputStream, doc.getCreatedBy(), organisationId, doc));
+            Page<ClientRequestDTO> requests = clientRequestService.findByOrganisation(organisationId, 0, 10);
+            updateOrganisationsDetails(requests.getContent());
+
+            return ResponseEntity.ok(requests);
         } catch (Exception e) {
             e.printStackTrace();
             throw e;

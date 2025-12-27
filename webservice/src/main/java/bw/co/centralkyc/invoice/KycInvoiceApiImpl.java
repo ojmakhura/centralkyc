@@ -9,6 +9,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -19,21 +20,48 @@ import org.springframework.web.multipart.MultipartFile;
 import bw.co.centralkyc.AuditTracker;
 import bw.co.centralkyc.PropertySearchOrder;
 import bw.co.centralkyc.SearchObject;
+import bw.co.centralkyc.keycloak.KeycloakOrganisationService;
+import bw.co.centralkyc.organisation.OrganisationDTO;
+import bw.co.centralkyc.subscription.KycSubscriptionDTO;
+import bw.co.centralkyc.subscription.KycSubscriptionServiceException;
 
 @RestController
 public class KycInvoiceApiImpl implements KycInvoiceApi {
 
     private final KycInvoiceService kycInvoiceService;
+    private final KeycloakOrganisationService keycloakOrganisationService;
     
-    public KycInvoiceApiImpl(KycInvoiceService kycInvoiceService) {
+    public KycInvoiceApiImpl(KycInvoiceService kycInvoiceService, KeycloakOrganisationService keycloakOrganisationService) {
         
         this.kycInvoiceService = kycInvoiceService;
+        this.keycloakOrganisationService = keycloakOrganisationService;
     }
+
+
+    private void updateOrganisationsDetails(Collection<KycInvoiceDTO> invoices) throws Exception {
+        for (KycInvoiceDTO invoice : invoices) {
+            
+            OrganisationDTO org = keycloakOrganisationService.findById(invoice.getOrganisationId());
+            if(org != null) {
+                invoice.setOrganisationName(org.getName());
+                invoice.setOrganisationCode(org.getCode());
+                invoice.setOrganisationRegistrationNo(org.getRegistrationNo());
+            }
+
+        }
+    }   
 
     @Override
     public ResponseEntity<KycInvoiceDTO> findById(String id) throws Exception {
         try {
-            return ResponseEntity.ok(kycInvoiceService.findById(id));
+            KycInvoiceDTO invoice = kycInvoiceService.findById(id);
+            OrganisationDTO org = keycloakOrganisationService.findById(invoice.getOrganisationId());
+            if(org != null) {
+                invoice.setOrganisationName(org.getName());
+                invoice.setOrganisationCode(org.getCode());
+                invoice.setOrganisationRegistrationNo(org.getRegistrationNo());
+            }
+            return ResponseEntity.ok(invoice);
         } catch (Exception e) {
 
             e.printStackTrace();
@@ -44,7 +72,9 @@ public class KycInvoiceApiImpl implements KycInvoiceApi {
     @Override
     public ResponseEntity<Collection<KycInvoiceDTO>> getAll() throws Exception {
         try {
-            return ResponseEntity.ok(kycInvoiceService.getAll());
+            Collection<KycInvoiceDTO> invoices = kycInvoiceService.getAll();
+            updateOrganisationsDetails(invoices);
+            return ResponseEntity.ok(invoices);
         } catch (Exception e) {
 
             e.printStackTrace();
@@ -55,7 +85,9 @@ public class KycInvoiceApiImpl implements KycInvoiceApi {
     @Override
     public ResponseEntity<Page<KycInvoiceDTO>> getAllPaged(Integer pageNumber, Integer pageSize) throws Exception {
         try {
-            return ResponseEntity.ok(kycInvoiceService.getAll(pageNumber, pageSize));
+            Page<KycInvoiceDTO> invoices = kycInvoiceService.getAll(pageNumber, pageSize);
+            updateOrganisationsDetails(invoices.getContent());
+            return ResponseEntity.ok(invoices);
         } catch (Exception e) {
 
             e.printStackTrace();
@@ -66,7 +98,9 @@ public class KycInvoiceApiImpl implements KycInvoiceApi {
     @Override
     public ResponseEntity<Page<KycInvoiceDTO>> pagedSearch(SearchObject<InvoiceSearchCriteria> criteria) throws Exception {
         try {
-            return ResponseEntity.ok(kycInvoiceService.search(criteria));
+            Page<KycInvoiceDTO> invoices = kycInvoiceService.search(criteria);
+            updateOrganisationsDetails(invoices.getContent());
+            return ResponseEntity.ok(invoices);
         } catch (Exception e) {
 
             e.printStackTrace();
@@ -90,6 +124,34 @@ public class KycInvoiceApiImpl implements KycInvoiceApi {
         try {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             AuditTracker.auditTrail(invoice, authentication);
+
+            if(StringUtils.isNotBlank(invoice.getOrganisationId()) || StringUtils.isNotBlank(invoice.getOrganisationRegistrationNo())) {
+
+                OrganisationDTO org = null;
+
+                if(StringUtils.isNotBlank(invoice.getOrganisationId())) {
+                    org = keycloakOrganisationService.findById(invoice.getOrganisationId());
+                } else if(StringUtils.isNotBlank(invoice.getOrganisationRegistrationNo())) {
+                    org = keycloakOrganisationService.findByRegistrationNo(invoice.getOrganisationRegistrationNo());
+                }
+
+                if(org == null) {
+
+                    throw new KycSubscriptionServiceException("Provided organisation details do no match an existing organisation.");
+                } else {
+
+                    invoice.setOrganisationId(org.getId());
+                    invoice.setOrganisationCode(org.getCode());
+                    invoice.setOrganisationName(org.getName());
+                    invoice.setOrganisationRegistrationNo(org.getRegistrationNo());
+                }
+                
+
+            } else {
+
+                throw new KycSubscriptionServiceException("Invoice must have an organisation.");
+            }
+
             return ResponseEntity.ok(kycInvoiceService.save(invoice));
         } catch (Exception e) {
 
@@ -133,7 +195,10 @@ public class KycInvoiceApiImpl implements KycInvoiceApi {
                 username = authentication.getName();
             }
 
-            return ResponseEntity.ok(kycInvoiceService.generateInvoice(subscriptionId, username));
+            Collection<KycInvoiceDTO> invoices = kycInvoiceService.generateInvoice(subscriptionId, username);
+            this.updateOrganisationsDetails(invoices);
+            return ResponseEntity.ok(invoices);
+
         } catch (Exception e) {
 
             e.printStackTrace();
@@ -146,7 +211,10 @@ public class KycInvoiceApiImpl implements KycInvoiceApi {
         
         try {
 
-            return ResponseEntity.ok(kycInvoiceService.findByOrganisation(organisationId));
+
+            Collection<KycInvoiceDTO> invoices = kycInvoiceService.findByOrganisation(organisationId);
+            this.updateOrganisationsDetails(invoices);
+            return ResponseEntity.ok(invoices);
         } catch (Exception e) {
 
             e.printStackTrace();
@@ -159,7 +227,9 @@ public class KycInvoiceApiImpl implements KycInvoiceApi {
         
         try {
 
-            return ResponseEntity.ok(kycInvoiceService.findBySubscription(subscriptionId));
+            Collection<KycInvoiceDTO> invoices = kycInvoiceService.findBySubscription(subscriptionId);
+            this.updateOrganisationsDetails(invoices);
+            return ResponseEntity.ok(invoices);
         } catch (Exception e) {
 
             e.printStackTrace();
@@ -174,7 +244,10 @@ public class KycInvoiceApiImpl implements KycInvoiceApi {
         
         try {
 
-            return ResponseEntity.ok(kycInvoiceService.findByOrganisation(organisationId, pageNumber, pageSize));
+            Page<KycInvoiceDTO> invoices = kycInvoiceService.findByOrganisation(organisationId, pageNumber, pageSize);
+            this.updateOrganisationsDetails(invoices.getContent());
+
+            return ResponseEntity.ok(invoices);
         } catch (Exception e) {
 
             e.printStackTrace();
@@ -188,7 +261,10 @@ public class KycInvoiceApiImpl implements KycInvoiceApi {
         
         try {
 
-            return ResponseEntity.ok(kycInvoiceService.findBySubscription(subscriptionId, pageNumber, pageSize));
+            Page<KycInvoiceDTO> invoices = kycInvoiceService.findBySubscription(subscriptionId, pageNumber, pageSize);
+            this.updateOrganisationsDetails(invoices.getContent());
+
+            return ResponseEntity.ok(invoices);
         } catch (Exception e) {
 
             e.printStackTrace();

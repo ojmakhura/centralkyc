@@ -77,6 +77,7 @@ public class BranchApiImpl implements BranchApi {
         
         try {
             OrganisationDTO org = orgService.findById(organisationId);
+            
 
             return ResponseEntity.ok(branchService.findByOrganisation(organisationId, pageNumber, pageSize));
             
@@ -85,8 +86,6 @@ public class BranchApiImpl implements BranchApi {
             e.printStackTrace();
             throw e;
         }
-
-
     }
 
     @Override

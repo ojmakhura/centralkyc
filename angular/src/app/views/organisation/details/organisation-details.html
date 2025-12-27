@@ -241,7 +241,7 @@
                   [message]="'Loading invoices...' | translate"></app-loader>
               </div>
               } @else if (invoices() && invoices().length > 0) {
-              <app-table #invoicesTable [dataColumns]="invoicesTableColumns" [showActions]="true" [paged]="true"
+              <app-table #invoicesTable [dataColumns]="invoicesTableColumns" [showActions]="true" [paged]="false"
                 [actions]="invoicesTableColumnsActions" (actionClicked)="invoicesTableActionClicked($event)"
                 [dataSignal]="invoices">
               </app-table>
@@ -279,7 +279,7 @@
               </div>
               } @else if (subscriptions() && subscriptions().length > 0) {
               <app-table #subscriptionsTable [dataColumns]="subscriptionsTableColumns" [showActions]="true"
-                [paged]="true" [actions]="subscriptionsTableColumnsActions"
+                [paged]="false" [actions]="subscriptionsTableColumnsActions"
                 (actionClicked)="subscriptionsTableActionClicked($event)" [dataSignal]="subscriptions">
               </app-table>
               } @else {

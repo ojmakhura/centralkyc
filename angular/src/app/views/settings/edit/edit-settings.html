@@ -2,7 +2,7 @@
 <div class="edit-container">
 	<div class="breadcrumb-section">
 		<mat-icon class="breadcrumb-icon">home</mat-icon>
-		<span class="breadcrumb-text">{{ 'home' | translate }}</span>
+		<span class="breadcrumb-text">{{ 'home.title' | translate }}</span>
 		<mat-icon class="breadcrumb-separator">chevron_right</mat-icon>
 		<span class="breadcrumb-text">{{ 'settings' | translate }}</span>
 		<mat-icon class="breadcrumb-separator">chevron_right</mat-icon>
@@ -64,11 +64,11 @@
 					<div class="field-row">
 						<mat-form-field appearance="outline" class="field-half">
 							<mat-label>{{ 'client.request.file.type' | translate }}</mat-label>
-							<mat-select id="clientRequestFileType" field]="editSettingsSignalForm.clientRequestFileType"
+							<mat-select id="clientRequestFileType" [field]="editSettingsSignalForm.clientRequestFileType"
 								[compareWith]="clientRequestFileTypeCompare">
 								<mat-option>
 									<ngx-mat-select-search [placeholderLabel]="'Search'"
-										field]="editSettingsSignalForm.clientRequestFileTypeFilter"
+										[field]="editSettingsSignalForm.clientRequestFileTypeFilter"
 										[noEntriesFoundLabel]="'No Entries Found'"></ngx-mat-select-search>
 									<button mat-flat-button color="primary"
 										(click)="filterClientRequestFileType()">Search</button>
@@ -96,11 +96,11 @@
 					<div class="field-row">
 						<mat-form-field appearance="outline" class="field-half">
 							<mat-label>{{ 'invoice.document.type' | translate }}</mat-label>
-							<mat-select id="invoiceDocumentType" field]="editSettingsSignalForm.invoiceDocumentType"
+							<mat-select id="invoiceDocumentType" [field]="editSettingsSignalForm.invoiceDocumentType"
 								[compareWith]="invoiceDocumentTypeCompare">
 								<mat-option>
 									<ngx-mat-select-search [placeholderLabel]="'Search'"
-										field]="editSettingsSignalForm.invoiceDocumentTypeFilter"
+										[field]="editSettingsSignalForm.invoiceDocumentTypeFilter"
 										[noEntriesFoundLabel]="'No Entries Found'"></ngx-mat-select-search>
 									<button mat-flat-button color="primary"
 										(click)="filterInvoiceDocumentType()">Search</button>
@@ -114,11 +114,11 @@
 
 						<mat-form-field appearance="outline" class="field-half">
 							<mat-label>{{ 'invoice.template.type' | translate }}</mat-label>
-							<mat-select id="invoiceTemplateType" field]="editSettingsSignalForm.invoiceTemplateType"
+							<mat-select id="invoiceTemplateType" [field]="editSettingsSignalForm.invoiceTemplateType"
 								[compareWith]="invoiceTemplateTypeCompare">
 								<mat-option>
 									<ngx-mat-select-search [placeholderLabel]="'Search'"
-										field]="editSettingsSignalForm.invoiceTemplateTypeFilter"
+										[field]="editSettingsSignalForm.invoiceTemplateTypeFilter"
 										[noEntriesFoundLabel]="'No Entries Found'"></ngx-mat-select-search>
 									<button mat-flat-button color="primary"
 										(click)="filterInvoiceTemplateType()">Search</button>
@@ -181,11 +181,11 @@
 					<div class="field-row">
 						<mat-form-field appearance="outline" class="field-half">
 							<mat-label>{{ 'quotation.document.type' | translate }}</mat-label>
-							<mat-select id="quotationDocumentType" field]="editSettingsSignalForm.quotationDocumentType"
+							<mat-select id="quotationDocumentType" [field]="editSettingsSignalForm.quotationDocumentType"
 								[compareWith]="quotationDocumentTypeCompare">
 								<mat-option>
 									<ngx-mat-select-search [placeholderLabel]="'Search'"
-										field]="editSettingsSignalForm.quotationDocumentTypeFilter"
+										[field]="editSettingsSignalForm.quotationDocumentTypeFilter"
 										[noEntriesFoundLabel]="'No Entries Found'"></ngx-mat-select-search>
 									<button mat-flat-button color="primary"
 										(click)="filterQuotationDocumentType()">Search</button>
@@ -199,11 +199,11 @@
 
 						<mat-form-field appearance="outline" class="field-half">
 							<mat-label>{{ 'quotation.template.type' | translate }}</mat-label>
-							<mat-select id="quotationTemplateType" field]="editSettingsSignalForm.quotationTemplateType"
+							<mat-select id="quotationTemplateType" [field]="editSettingsSignalForm.quotationTemplateType"
 								[compareWith]="quotationTemplateTypeCompare">
 								<mat-option>
 									<ngx-mat-select-search [placeholderLabel]="'Search'"
-										field]="editSettingsSignalForm.quotationTemplateTypeFilter"
+										[field]="editSettingsSignalForm.quotationTemplateTypeFilter"
 										[noEntriesFoundLabel]="'No Entries Found'"></ngx-mat-select-search>
 									<button mat-flat-button color="primary"
 										(click)="filterQuotationTemplateType()">Search</button>
@@ -385,7 +385,7 @@
 										[field]="editSettingsSignalForm.selectedIndDocument">
 										<mat-option>
 											<ngx-mat-select-search [placeholderLabel]="'Search'"
-												field]="editSettingsSignalForm.selectedIndDocumentFilter"
+												[field]="editSettingsSignalForm.selectedIndDocumentFilter"
 												(keyup.enter)="filterSelectedIndDocument()"
 												[noEntriesFoundLabel]="'No Entries Found'"></ngx-mat-select-search>
 											<button mat-flat-button color="primary"
@@ -433,7 +433,7 @@
 										[field]="editSettingsSignalForm.selectedKycIndDocument">
 										<mat-option>
 											<ngx-mat-select-search [placeholderLabel]="'Search'"
-												field]="editSettingsSignalForm.selectedKycIndDocumentFilter"
+												[field]="editSettingsSignalForm.selectedKycIndDocumentFilter"
 												(keyup.enter)="filterSelectedKycIndDocument()"
 												[noEntriesFoundLabel]="'No Entries Found'"></ngx-mat-select-search>
 											<button mat-flat-button color="primary"

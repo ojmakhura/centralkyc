@@ -19,6 +19,8 @@ import { SettingsDTO } from '@app/models/bw/co/centralkyc/settings/settings-dto'
 import { TargetEntity } from '@app/models/bw/co/centralkyc/target-entity';
 import { ColumnModel } from '@app/models/column.model';
 import { SettingsApiStore } from '@app/store/bw/co/centralkyc/settings/settings-api.store';
+import { DocumentTypePurpose } from '@app/models/bw/co/centralkyc/settings/document-type-purpose';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-edit-settings',
@@ -27,8 +29,6 @@ import { SettingsApiStore } from '@app/store/bw/co/centralkyc/settings/settings-
   standalone: true,
   imports: [
     CommonModule,
-    FormsModule,
-    ReactiveFormsModule,
     TranslateModule,
     MaterialModule,
     TableComponent,
@@ -190,6 +190,7 @@ export class EditSettingsImplComponent extends EditSettingsComponent {
 
   override beforeEditSettingsSave(form: any): void {
     let val: any = this.editSettingsSignal();
+    console.log(val)
     let settings = this.getSettings(val);
     this.loading.set(true);
     this.loaderMessage.set(`Saving settings`);
@@ -359,82 +360,35 @@ export class EditSettingsImplComponent extends EditSettingsComponent {
     if (!found) {
       settings.individualDocuments?.push(this.editSettingsSignal().selectedIndDocument);
     }
-    this.settingApi.save(settings).subscribe({
-      next: (settings: SettingsDTO) => {
-        this.updateSettingForm(settings);
-        this.loading.set(false);
-      },
-      error: (error) => {
-        this.toaster.error(error.error?.message ? error.error.message : error.message);
-        this.loading.set(false);
-      },
+    this.settingApiStore.attachDocumentType({
+      documentTypeId: this.editSettingsSignal().selectedIndDocument.id,
+      purpose: DocumentTypePurpose.INDIVIDUAL,
     });
-    // this.selectedIndDocumentControl.setValue(null);
   }
 
   override onAddToKycOrgDocumentsClick() {
 
-    let val: any = this.editSettingsSignal();
-    let settings: SettingsDTO = this.getSettings(val);
-    let found = settings.orgKycDocuments?.find(
-      (d: DocumentTypeDTO) => d.id === this.editSettingsSignal().selectedKycOrgDocument.id
-    );
-    if (!found) {
-      settings.orgKycDocuments?.push(this.editSettingsSignal().selectedKycOrgDocument);
-    }
-    this.settingApi.save(settings).subscribe({
-      next: (settings: SettingsDTO) => {
-        this.updateSettingForm(settings);
-        this.loading.set(false);
-      },
-      error: (error) => {
-        this.toaster.error(error.error?.message ? error.error.message : error.message);
-        this.loading.set(false);
-      },
+    this.settingApiStore.attachDocumentType({
+      documentTypeId: this.editSettingsSignal().selectedKycOrgDocument.id,
+      purpose: DocumentTypePurpose.ORGANISATION_KYC,
     });
-    // this.selectedKycOrgDocumentControl.setValue(null);
+
   }
 
   override onAddToOrgDocumentsClick() {
 
-    let val: any = this.editSettingsSignal();
-    let settings: SettingsDTO = this.getSettings(val);
-    let found = settings.organisationDocuments?.find((d: DocumentTypeDTO) => d.id === this.editSettingsSignal().selectedOrgDocument.id);
-    if (!found) {
-      settings.organisationDocuments?.push(this.editSettingsSignal().selectedOrgDocument);
-    }
-    this.settingApi.save(settings).subscribe({
-      next: (settings: SettingsDTO) => {
-        this.updateSettingForm(settings);
-        this.loading.set(false);
-      },
-      error: (error) => {
-        this.toaster.error(error.error?.message ? error.error.message : error.message);
-        this.loading.set(false);
-      },
+    this.settingApiStore.attachDocumentType({
+      documentTypeId: this.editSettingsSignal().selectedOrgDocument.id,
+      purpose: DocumentTypePurpose.ORGANISATION,
     });
-    // this.selectedOrgDocumentControl.setValue(null);
   }
 
   override onAddToKycIndDocumentsClick() {
     // console.log(this.editSettingsSignal().selectedKycIndDocument);
-    let val: any = this.editSettingsSignal();
-    let settings: SettingsDTO = this.getSettings(val);
-    let found = settings.indKycDocuments?.find((d: DocumentTypeDTO) => d.id === this.editSettingsSignal().selectedKycIndDocument.id);
-    if (!found) {
-      settings.indKycDocuments?.push(this.editSettingsSignal().selectedKycIndDocument);
-    }
-    this.settingApi.save(settings).subscribe({
-      next: (settings: SettingsDTO) => {
-        this.updateSettingForm(settings);
-        this.loading.set(false);
-      },
-      error: (error) => {
-        this.toaster.error(error.error?.message ? error.error.message : error.message);
-        this.loading.set(false);
-      },
+    this.settingApiStore.attachDocumentType({
+      documentTypeId: this.editSettingsSignal().selectedKycIndDocument.id,
+      purpose: DocumentTypePurpose.INDIVIDUAL_KYC,
     });
-    // this.selectedKycIndDocumentControl.setValue(null);
   }
 
   attachInvoiceTemplate(): void {
@@ -467,34 +421,14 @@ export class EditSettingsImplComponent extends EditSettingsComponent {
 
   private handleInvoiceTemplateUpload(file: File): void {
     // TODO: Implement invoice template upload logic
-    console.log('Invoice template upload:', file.name);
-
-    this.settingApi.uploadTemplate(file, TargetEntity.INVOICE).subscribe({
-      next: (settings: SettingsDTO) => {
-        this.updateSettingForm(settings);
-        this.loading.set(false);
-      },
-      error: (error) => {
-        this.toaster.error(error.error?.message ? error.error.message : error.message);
-        this.loading.set(false);
-      },
-    });
+    this.settingApiStore.uploadTemplate({ template: file, target: TargetEntity.INVOICE });
   }
 
   private handleQuotationTemplateUpload(file: File): void {
     // TODO: Implement quotation template upload logic
     console.log('Quotation template upload:', file.name);
 
-    this.settingApi.uploadTemplate(file, TargetEntity.QUOTATION).subscribe({
-      next: (settings: SettingsDTO) => {
-        this.updateSettingForm(settings);
-        this.loading.set(false);
-      },
-      error: (error) => {
-        this.toaster.error(error.error?.message ? error.error.message : error.message);
-        this.loading.set(false);
-      },
-    });
+    this.settingApiStore.uploadTemplate({ template: file, target: TargetEntity.QUOTATION });
   }
 
   downloadTemplate(target: TargetEntity): void {
@@ -537,4 +471,114 @@ export class EditSettingsImplComponent extends EditSettingsComponent {
       },
     });
   }
+
+  override organisationDocumentsTableActionClicked(event: any): void {
+
+    console.log(event)
+
+    switch (event.action) {
+      case 'settings-detach-org-documents':
+        Swal.fire({
+          title: 'Are you sure?',
+          text: 'You are about to detach this document type from organisation documents. This action cannot be undone.',
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonText: 'Yes',
+          cancelButtonText: 'No',
+        }).then((result) => {
+          if (result.isConfirmed) {
+            this.settingApiStore.detachDocumentType({
+              documentTypeId: event.row.id,
+              purpose: DocumentTypePurpose.ORGANISATION,
+            });
+            Swal.fire('Detached!', 'The document type has been detached from organisation documents.', 'success');
+          }
+        });
+
+        break;
+    }
+  }
+
+  override individualDocumentsTableActionClicked(event: any): void {
+    switch (event.action) {
+      case 'settings-detach-individual-documents':
+        // TODO: Implement the action
+
+        Swal.fire({
+          title: 'Are you sure?',
+          text: 'You are about to detach this document type from individual documents. This action cannot be undone.',
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonText: 'Yes',
+          cancelButtonText: 'No',
+        }).then((result) => {
+          if (result.isConfirmed) {
+
+            this.settingApiStore.detachDocumentType({
+              documentTypeId: event.row.id,
+              purpose: DocumentTypePurpose.INDIVIDUAL,
+            });
+            Swal.fire('Detached!', 'The document type has been detached from individual documents.', 'success');
+          }
+        });
+
+        break;
+    }
+  }
+
+  override orgKycDocumentsTableActionClicked(event: any): void {
+    switch (event.action) {
+      case 'settings-detach-org-kyc-documents':
+        // TODO: Implement the action
+        Swal.fire({
+          title: 'Are you sure?',
+          text: 'You are about to detach this document type from organisation KYC documents. This action cannot be undone.',
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonText: 'Yes',
+          cancelButtonText: 'No',
+        }).then((result) => {
+          if (result.isConfirmed) {
+
+            this.settingApiStore.detachDocumentType({
+              documentTypeId: event.row.id,
+              purpose: DocumentTypePurpose.ORGANISATION_KYC,
+            });
+            Swal.fire('Detached!', 'The document type has been detached from organisation KYC documents.', 'success');
+          }
+        });
+        break;
+    }
+  }
+
+  override indKycDocumentsTableActionClicked(event: any): void {
+      let form: any = {};
+      let queryParams: any = {};
+      let params: any = {};
+
+      switch (event.action) {
+        case 'settings-detach-ind-kyc-documents':
+          // TODO: Implement the action
+
+          Swal.fire({
+            title: 'Are you sure?',
+            text: 'You are about to detach this document type from individual KYC documents. This action cannot be undone.',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Yes',
+            cancelButtonText: 'No',
+          }).then((result) => {
+            if (result.isConfirmed) {
+
+              this.settingApiStore.detachDocumentType({
+                documentTypeId: event.row.id,
+                purpose: DocumentTypePurpose.INDIVIDUAL_KYC,
+              });
+              Swal.fire('Detached!', 'The document type has been detached from individual KYC documents.', 'success');
+            }
+          });
+
+          break;
+      }
+    }
 }
