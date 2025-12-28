@@ -338,9 +338,9 @@
                 <mat-progress-spinner mode="indeterminate" diameter="50"></mat-progress-spinner>
                 <p>{{ 'loading.client.requests' | translate }}</p>
               </div>
-              } @else if (clientRequests() && clientRequests().numberOfElements) {
+              } @else if (clientRequests() && (clientRequests()?.page?.totalElements || clientRequests().numberOfElements || 0) > 0) {
               <app-table #clientRequestsTable [dataColumns]="clientRequestsTableColumns"
-                [showActions]="showClientRequestsActions" [paged]="clientRequestsTablePaged"
+                [showActions]="showClientRequestsActions" [paged]="true"
                 [actions]="clientRequestsTableColumnsActions" [dataSignal]="clientRequests">
               </app-table>
 

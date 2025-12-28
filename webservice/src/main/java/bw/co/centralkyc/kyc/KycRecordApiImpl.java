@@ -10,6 +10,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 import bw.co.centralkyc.AuditTracker;
+import bw.co.centralkyc.keycloak.KeycloakOrganisationService;
+import bw.co.centralkyc.organisation.OrganisationDTO;
 
 import java.util.Collection;
 
@@ -19,10 +21,12 @@ import org.springframework.data.domain.Page;
 public class KycRecordApiImpl implements KycRecordApi {
 
     private final KycRecordService kycRecordService;
+    private final KeycloakOrganisationService keycloakOrganisationService;
 
-    public KycRecordApiImpl(KycRecordService kycRecordService) {
+    public KycRecordApiImpl(KycRecordService kycRecordService, KeycloakOrganisationService keycloakOrganisationService) {
 
         this.kycRecordService = kycRecordService;
+        this.keycloakOrganisationService = keycloakOrganisationService;
     }
 
     @Override
@@ -136,6 +140,78 @@ public class KycRecordApiImpl implements KycRecordApi {
             
             return ResponseEntity.ok(kycRecordService.search(criteria));
 
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw e;
+        }
+    }
+
+    @Override
+    public ResponseEntity<Page<KycRecordDTO>> findByIdentityNoPaged(String identityNo, Integer pageNumber,
+            Integer pageSize) throws Exception {
+        
+        try {
+            return ResponseEntity.ok(kycRecordService.findByIdentityNo(identityNo, pageNumber, pageSize));
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw e;    
+        }
+    }
+
+    @Override
+    public ResponseEntity<Page<KycRecordDTO>> findByIndividualPaged(String individualId, Integer pageNumber,
+            Integer pageSize) throws Exception {
+        
+        try {
+            return ResponseEntity.ok(kycRecordService.findByIndividual(individualId, pageNumber, pageSize));
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw e;
+        }
+    }
+
+    @Override
+    public ResponseEntity<Collection<KycRecordDTO>> findByOrganisation(String organisationId) throws Exception {
+        
+        try {
+            return ResponseEntity.ok(kycRecordService.findByOrganisation(organisationId));
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw e;
+        }
+    }
+
+    @Override
+    public ResponseEntity<Collection<KycRecordDTO>> findByOrganisationRegistration(String registrationNo)
+            throws Exception {
+
+        
+        try {
+            OrganisationDTO org = keycloakOrganisationService.findByRegistrationNo(registrationNo);
+
+            if(org == null) {
+                throw new Exception("Organisation not found for registration no: " + registrationNo);
+            }
+
+            return ResponseEntity.ok(kycRecordService.findByOrganisation(org.getId()));
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw e;
+        }
+    }
+
+    @Override
+    public ResponseEntity<Page<KycRecordDTO>> findByOrganisationRegistrationPaged(String registrationNo,
+            Integer pageNumber, Integer pageSize) throws Exception {
+        
+        try {
+            OrganisationDTO org = keycloakOrganisationService.findByRegistrationNo(registrationNo);
+
+            if(org == null) {
+                throw new Exception("Organisation not found for registration no: " + registrationNo);
+            }
+
+            return ResponseEntity.ok(kycRecordService.findByOrganisation(org.getId(), pageNumber, pageSize));
         } catch (Exception e) {
             e.printStackTrace();
             throw e;

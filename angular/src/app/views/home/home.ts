@@ -1,64 +1,136 @@
 import { AfterViewInit, Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
 import { MaterialModule } from '@app/material.module';
+import { Router } from '@angular/router';
+import { CommonModule } from '@angular/common';
+
+interface StatCard {
+  title: string;
+  value: string;
+  icon: string;
+  color: string;
+  trend?: string;
+}
+
+interface QuickAction {
+  title: string;
+  description: string;
+  icon: string;
+  route: string;
+  color: string;
+}
+
+interface Feature {
+  title: string;
+  description: string;
+  icon: string;
+}
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [TranslateModule, MaterialModule],
+  imports: [TranslateModule, MaterialModule, CommonModule],
   templateUrl: './home.html',
   styleUrl: './home.scss'
 })
 export class Home implements OnInit, AfterViewInit, OnDestroy  {
-  isLoading = false;
+  private router = inject(Router);
 
-  statistics = [
-    { value: '100K+', label: 'Active Users', icon: 'people' },
-    { value: '50+', label: 'Countries', icon: 'public' },
-    { value: '99.9%', label: 'Uptime', icon: 'trending_up' },
-    { value: '24/7', label: 'Support', icon: 'support_agent' }
-  ];
-
-  features = [
+  statCards: StatCard[] = [
     {
-      icon: 'dashboard',
-      titleKey: 'home.feature1.title',
-      descKey: 'home.feature1.description'
+      title: 'Total Individuals',
+      value: '1,234',
+      icon: 'people',
+      color: '#3f51b5',
+      trend: '+12%'
     },
     {
-      icon: 'speed',
-      titleKey: 'home.feature2.title',
-      descKey: 'home.feature2.description'
+      title: 'Pending Verifications',
+      value: '45',
+      icon: 'pending_actions',
+      color: '#ff9800',
+      trend: '-5%'
     },
     {
-      icon: 'security',
-      titleKey: 'home.feature3.title',
-      descKey: 'home.feature3.description'
+      title: 'Organizations',
+      value: '89',
+      icon: 'business',
+      color: '#4caf50',
+      trend: '+8%'
     },
     {
-      icon: 'cloud',
-      titleKey: 'home.feature4.title',
-      descKey: 'home.feature4.description'
-    },
-    {
-      icon: 'integration_instructions',
-      titleKey: 'home.feature5.title',
-      descKey: 'home.feature5.description'
-    },
-    {
-      icon: 'analytics',
-      titleKey: 'home.feature6.title',
-      descKey: 'home.feature6.description'
+      title: 'Documents Processed',
+      value: '3,567',
+      icon: 'description',
+      color: '#9c27b0',
+      trend: '+23%'
     }
   ];
 
-  benefits = [
-    { icon: 'check_circle', textKey: 'home.benefit1' },
-    { icon: 'check_circle', textKey: 'home.benefit2' },
-    { icon: 'check_circle', textKey: 'home.benefit3' },
-    { icon: 'check_circle', textKey: 'home.benefit4' }
+  quickActions: QuickAction[] = [
+    {
+      title: 'New Individual',
+      description: 'Register a new individual for KYC verification',
+      icon: 'person_add',
+      route: '/individual/edit',
+      color: '#3f51b5'
+    },
+    {
+      title: 'New Organisation',
+      description: 'Add a new organisation to the system',
+      icon: 'add_business',
+      route: '/organisation/edit',
+      color: '#4caf50'
+    },
+    {
+      title: 'Upload Document',
+      description: 'Upload and verify identity documents',
+      icon: 'upload_file',
+      route: '/document/upload',
+      color: '#ff9800'
+    },
+    {
+      title: 'View Reports',
+      description: 'Access compliance and verification reports',
+      icon: 'assessment',
+      route: '/reports',
+      color: '#9c27b0'
+    }
   ];
-  
+
+  features: Feature[] = [
+    {
+      title: 'Automated Verification',
+      description: 'AI-powered document verification and validation for faster processing',
+      icon: 'verified_user'
+    },
+    {
+      title: 'Compliance Management',
+      description: 'Stay compliant with global KYC/AML regulations and standards',
+      icon: 'gavel'
+    },
+    {
+      title: 'Secure Storage',
+      description: 'Bank-level encryption for all sensitive customer data and documents',
+      icon: 'lock'
+    },
+    {
+      title: 'Real-time Monitoring',
+      description: 'Track verification status and get instant notifications',
+      icon: 'notifications_active'
+    },
+    {
+      title: 'Multi-tenant Support',
+      description: 'Manage multiple organizations with role-based access control',
+      icon: 'corporate_fare'
+    },
+    {
+      title: 'API Integration',
+      description: 'Seamless integration with your existing systems and workflows',
+      icon: 'integration_instructions'
+    }
+  ];
+
   ngOnInit(): void {
   }
 
@@ -68,7 +140,17 @@ export class Home implements OnInit, AfterViewInit, OnDestroy  {
   ngOnDestroy(): void {
   }
 
-  toggleSpinner(): void {
-    this.isLoading = !this.isLoading;
+  navigateTo(route: string): void {
+    this.router.navigate([route]);
+  }
+
+  getTrendIcon(trend?: string): string {
+    if (!trend) return '';
+    return trend.startsWith('+') ? 'trending_up' : 'trending_down';
+  }
+
+  getTrendClass(trend?: string): string {
+    if (!trend) return '';
+    return trend.startsWith('+') ? 'trend-up' : 'trend-down';
   }
 }

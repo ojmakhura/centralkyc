@@ -1,131 +1,147 @@
-<mat-drawer-container class="shell-container">
-  <mat-drawer
-    #sidenav
-    [mode]="isMobile ? 'over' : 'side'"
-    [opened]="!isMobile"
-    class="shell-drawer"
-  >
-    <!-- Sidebar Header -->
-    <div class="drawer-header">
-      <mat-icon class="brand-icon">layers</mat-icon>
-      <span class="brand-text">{{ 'application.name' | translate }}</span>
+<div class="app-shell">
+  <!-- Top Navigation Bar -->
+  <header class="top-navbar">
+    <div class="navbar-left">
+      <button mat-icon-button class="sidebar-toggle" (click)="sidenav.toggle()">
+        <mat-icon>{{ sidenav.opened ? 'menu_open' : 'menu' }}</mat-icon>
+      </button>
+
+      <div class="brand-section">
+        <div class="brand-logo">
+          <mat-icon>shield</mat-icon>
+        </div>
+        <div class="brand-name">
+          <span class="title">CentralKYC</span>
+          <span class="tagline">Verification Platform</span>
+        </div>
+      </div>
+
+      <div class="page-title">
+        <mat-icon class="title-icon">fiber_manual_record</mat-icon>
+        <span>{{ title }}</span>
+      </div>
     </div>
 
-    <!-- Navigation -->
-    <mat-nav-list class="drawer-nav">
-      <a
-        mat-list-item
-        routerLink="/"
-        routerLinkActive="active"
-        [routerLinkActiveOptions]="{ exact: true }"
-        (click)="isMobile && sidenav.close()"
-        class="nav-item"
-      >
-        <mat-icon matListItemIcon>home</mat-icon>
-        <span matListItemTitle>{{ 'home' | translate }}</span>
-      </a>
-
-      @for (item of menus; track item.routerLink) {
-        <a
-          mat-list-item
-          [routerLink]="item.routerLink"
-          routerLinkActive="active"
-          (click)="isMobile && sidenav.close()"
-          class="nav-item"
-        >
-          <mat-icon matListItemIcon>{{ item.icon }}</mat-icon>
-          <span matListItemTitle>{{ item.titleKey | translate }}</span>
-        </a>
-      }
-      <a
-        mat-list-item
-        routerLink="/about"
-        routerLinkActive="active"
-        [routerLinkActiveOptions]="{ exact: true }"
-        (click)="isMobile && sidenav.close()"
-        class="nav-item"
-      >
-        <mat-icon matListItemIcon>info</mat-icon>
-        <span matListItemTitle>{{ 'about' | translate }}</span>
-      </a>
-    </mat-nav-list>
-
-  </mat-drawer>
-
-  <!-- Main Content -->
-  <mat-drawer-content class="shell-content">
-    <!-- Toolbar -->
-    <mat-toolbar class="shell-toolbar">
-      <button
-        mat-icon-button
-        (click)="sidenav.toggle()"
-        class="menu-toggle"
-      >
-        <mat-icon>menu</mat-icon>
+    <div class="navbar-right">
+      <!-- Search -->
+      <button mat-icon-button class="nav-action" matTooltip="Search">
+        <mat-icon>search</mat-icon>
       </button>
 
-      <span class="toolbar-title">{{ title }}</span>
-
-      <span class="spacer"></span>
-
-      <!-- Language Selector -->
-      <button mat-icon-button [matMenuTriggerFor]="langMenu" class="toolbar-action">
-        <mat-icon>language</mat-icon>
+      <!-- Language -->
+      <button mat-icon-button class="nav-action" [matMenuTriggerFor]="langMenu" matTooltip="Language">
+        <mat-icon>translate</mat-icon>
       </button>
-      <mat-menu #langMenu="matMenu">
+      <mat-menu #langMenu="matMenu" class="modern-menu">
+        <div class="menu-title">Select Language</div>
         @for (lang of availableLanguages; track lang.code) {
-          <button
-            mat-menu-item
-            (click)="changeLanguage(lang.code)"
-            [class.active-lang]="currentLanguage === lang.code"
-          >
-            @if (currentLanguage === lang.code) {
-              <mat-icon>check</mat-icon>
-            } @else {
-              <mat-icon></mat-icon>
-            }
+          <button mat-menu-item (click)="changeLanguage(lang.code)" [class.selected]="currentLanguage === lang.code">
+            <mat-icon>{{ currentLanguage === lang.code ? 'check_circle' : 'radio_button_unchecked' }}</mat-icon>
             <span>{{ lang.name }}</span>
           </button>
         }
       </mat-menu>
 
       <!-- Notifications -->
-      <button mat-icon-button class="toolbar-action">
-        <mat-icon [matBadge]="3" matBadgeColor="warn" matBadgeSize="small">notifications</mat-icon>
+      <button mat-icon-button class="nav-action" matTooltip="Notifications">
+        <mat-icon [matBadge]="3" matBadgeColor="warn" matBadgeSize="small">notifications_none</mat-icon>
       </button>
 
-      <!-- User Profile -->
-      <button mat-icon-button [matMenuTriggerFor]="toolbarUserMenu" class="toolbar-action">
-        <mat-icon>account_circle</mat-icon>
-      </button>
-      <mat-menu #toolbarUserMenu="matMenu">
-        <div class="user-menu-header">
+      <!-- User Menu -->
+      <button mat-button class="user-menu-btn" [matMenuTriggerFor]="userMenu">
+        <div class="user-avatar">
           <mat-icon>account_circle</mat-icon>
-          <div class="user-details">
-            <div class="user-name">{{ username }}</div>
-            <div class="user-email">{{ userEmail }}</div>
+        </div>
+        <div class="user-info">
+          <span class="user-name">{{ username }}</span>
+          <mat-icon class="dropdown">expand_more</mat-icon>
+        </div>
+      </button>
+      <mat-menu #userMenu="matMenu" class="modern-menu user-dropdown">
+        <div class="user-profile-header">
+          <div class="profile-avatar">
+            <mat-icon>account_circle</mat-icon>
+          </div>
+          <div class="profile-info">
+            <div class="profile-name">{{ username }}</div>
+            <div class="profile-email">{{ userEmail }}</div>
           </div>
         </div>
         <mat-divider></mat-divider>
         <button mat-menu-item>
-          <mat-icon>person</mat-icon>
+          <mat-icon>person_outline</mat-icon>
           <span>{{ 'user.profile' | translate }}</span>
         </button>
         <button mat-menu-item>
-          <mat-icon>settings</mat-icon>
+          <mat-icon>settings_outlined</mat-icon>
           <span>{{ 'user.settings' | translate }}</span>
         </button>
         <mat-divider></mat-divider>
-        <button mat-menu-item (click)="logout()">
+        <button mat-menu-item (click)="logout()" class="logout-item">
           <mat-icon>logout</mat-icon>
           <span>{{ 'user.logout' | translate }}</span>
         </button>
       </mat-menu>
-    </mat-toolbar>
-
-    <!-- Page Content -->
-    <div class="page-content">
-      <router-outlet></router-outlet>
     </div>
-  </mat-drawer-content>
-</mat-drawer-container>
+  </header>
+
+  <!-- Main Layout -->
+  <div class="app-layout">
+    <!-- Sidebar -->
+    <mat-drawer-container class="drawer-container" autosize>
+      <mat-drawer #sidenav class="app-sidebar" [mode]="isMobile ? 'over' : 'side'" [opened]="!isMobile">
+        <nav class="sidebar-nav">
+          <!-- Main Section -->
+          <div class="nav-group">
+            <div class="group-label">MAIN</div>
+            <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }"
+               class="nav-link" (click)="isMobile && sidenav.close()">
+              <mat-icon>home_outlined</mat-icon>
+              <span>{{ 'home' | translate }}</span>
+              <div class="active-indicator"></div>
+            </a>
+          </div>
+
+          <!-- Management Section -->
+          <div class="nav-group">
+            <div class="group-label">MANAGEMENT</div>
+            @for (item of menus; track item.routerLink) {
+              <a [routerLink]="item.routerLink" routerLinkActive="active"
+                 class="nav-link" (click)="isMobile && sidenav.close()">
+                <mat-icon>{{ item.icon }}</mat-icon>
+                <span>{{ item.titleKey | translate }}</span>
+                <div class="active-indicator"></div>
+              </a>
+            }
+          </div>
+
+          <!-- System Section -->
+          <div class="nav-group">
+            <div class="group-label">SYSTEM</div>
+            <a routerLink="/about" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }"
+               class="nav-link" (click)="isMobile && sidenav.close()">
+              <mat-icon>info_outlined</mat-icon>
+              <span>{{ 'about' | translate }}</span>
+              <div class="active-indicator"></div>
+            </a>
+          </div>
+        </nav>
+
+        <!-- Sidebar Footer -->
+        <div class="sidebar-footer">
+          <div class="footer-content">
+            <mat-icon>copyright</mat-icon>
+            <span>{{ currentYear }} CentralKYC</span>
+          </div>
+        </div>
+      </mat-drawer>
+
+      <!-- Main Content Area -->
+      <mat-drawer-content class="main-content">
+        <div class="content-wrapper">
+          <router-outlet></router-outlet>
+        </div>
+      </mat-drawer-content>
+    </mat-drawer-container>
+  </div>
+</div>

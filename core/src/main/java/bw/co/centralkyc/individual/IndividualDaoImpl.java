@@ -34,14 +34,12 @@ public class IndividualDaoImpl
 
     private final JsonMapper jsonMapper;
 
-    public IndividualDaoImpl(DocumentRepository documentRepository, KycRecordRepository kycRecordRepository,
+    public IndividualDaoImpl(DocumentRepository documentRepository, JsonMapper jsonMapper,
             EmploymentRecordRepository employmentRecordRepository, ClientRequestRepository clientRequestRepository,
-            BranchRepository branchRepository, IndividualRepository individualRepository, JsonMapper jsonMapper) {
-        super(documentRepository, kycRecordRepository, employmentRecordRepository, clientRequestRepository,
-                branchRepository,
+            BranchRepository branchRepository, IndividualRepository individualRepository) {
+        super(documentRepository, employmentRecordRepository, clientRequestRepository, branchRepository,
                 individualRepository);
-        // TODO Auto-generated constructor stub
-
+        
         this.jsonMapper = jsonMapper;
     }
 
@@ -70,10 +68,11 @@ public class IndividualDaoImpl
             target.getOrganisation().setId(source.getOrganisationId());
         }
 
-        if(!CollectionUtils.isEmpty(source.getPhoneNumbers())) {
+        if (!CollectionUtils.isEmpty(source.getPhoneNumbers())) {
 
-            target.setPhoneNumbers(jsonMapper.convertValue(source.getPhoneNumbers(), new TypeReference<List<PhoneNumber>>() {
-            }));
+            target.setPhoneNumbers(
+                    jsonMapper.convertValue(source.getPhoneNumbers(), new TypeReference<List<PhoneNumber>>() {
+                    }));
         }
     }
 
@@ -136,10 +135,10 @@ public class IndividualDaoImpl
             target.setOrganisationId(source.getOrganisation().getId());
         }
 
-        if(!CollectionUtils.isEmpty(source.getPhoneNumbers())) {
+        if (!CollectionUtils.isEmpty(source.getPhoneNumbers())) {
 
             target.setPhoneNumbers(jsonMapper.convertValue(source.getPhoneNumbers(), new TypeReference<List<Map>>() {
-                
+
             }));
         }
     }

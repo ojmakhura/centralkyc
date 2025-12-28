@@ -5,8 +5,8 @@ import { rxMethod } from '@ngrx/signals/rxjs-interop';
 import { switchMap } from 'rxjs';
 import { tapResponse } from '@ngrx/operators';
 import { AppState } from '@app/store/app-state';
-import { SearchObject } from '@app/models/search-object';
-import { Page } from '@app/models/page.model';
+import { SearchObject } from '@models/search-object';
+import { Page } from '@models/page.model';
 import { KycRecordDTO } from '@app/models/bw/co/centralkyc/kyc/kyc-record-dto';
 import { KycRecordApi } from '@app/services/bw/co/centralkyc/kyc/kyc-record-api';
 
@@ -97,6 +97,38 @@ export const KycRecordApiStore = signalStore(
           );
         }),
       ),
+      findByIdentityNoPaged: rxMethod<{identityNo: string | any , pageNumber: number | any , pageSize: number | any }>(
+        switchMap((data: any) => {
+          patchState(store, { loading: true, loaderMessage: 'Loading ...' });
+          return kycRecordApi.findByIdentityNoPaged(data.identityNo, data.pageNumber, data.pageSize, ).pipe(
+            tapResponse({
+              next: (response: Page<KycRecordDTO> | any) => {
+                patchState(
+                  store, 
+                  {
+                    dataPage: response,
+                    loading: false, 
+                    success: true, 
+                    messages: ['Success!!'],
+                    error: false,
+                  }
+                );
+              },
+              error: (error: any) => {
+                patchState(
+                  store, { 
+                    status: (error?.status || 0), 
+                    loading: false, 
+                    success: false,
+                    error: true,
+                    messages: [error.message || 'An error occurred'], 
+                  }
+                );
+              },
+            }),
+          );
+        }),
+      ),
       findByIndividual: rxMethod<{individualId: string | any }>(
         switchMap((data: any) => {
           patchState(store, { loading: true, loaderMessage: 'Loading ...' });
@@ -107,6 +139,134 @@ export const KycRecordApiStore = signalStore(
                   store, 
                   {
                     dataList: response, 
+                    loading: false, 
+                    success: true, 
+                    messages: ['Success!!'],
+                    error: false,
+                  }
+                );
+              },
+              error: (error: any) => {
+                patchState(
+                  store, { 
+                    status: (error?.status || 0), 
+                    loading: false, 
+                    success: false,
+                    error: true,
+                    messages: [error.message || 'An error occurred'], 
+                  }
+                );
+              },
+            }),
+          );
+        }),
+      ),
+      findByIndividualPaged: rxMethod<{individualId: string | any , pageNumber: number | any , pageSize: number | any }>(
+        switchMap((data: any) => {
+          patchState(store, { loading: true, loaderMessage: 'Loading ...' });
+          return kycRecordApi.findByIndividualPaged(data.individualId, data.pageNumber, data.pageSize, ).pipe(
+            tapResponse({
+              next: (response: Page<KycRecordDTO> | any) => {
+                patchState(
+                  store, 
+                  {
+                    dataPage: response,
+                    loading: false, 
+                    success: true, 
+                    messages: ['Success!!'],
+                    error: false,
+                  }
+                );
+              },
+              error: (error: any) => {
+                patchState(
+                  store, { 
+                    status: (error?.status || 0), 
+                    loading: false, 
+                    success: false,
+                    error: true,
+                    messages: [error.message || 'An error occurred'], 
+                  }
+                );
+              },
+            }),
+          );
+        }),
+      ),
+      findByOrganisation: rxMethod<{organisationId: string | any }>(
+        switchMap((data: any) => {
+          patchState(store, { loading: true, loaderMessage: 'Loading ...' });
+          return kycRecordApi.findByOrganisation(data.organisationId, ).pipe(
+            tapResponse({
+              next: (response: KycRecordDTO[] | any[]) => {
+                patchState(
+                  store, 
+                  {
+                    dataList: response, 
+                    loading: false, 
+                    success: true, 
+                    messages: ['Success!!'],
+                    error: false,
+                  }
+                );
+              },
+              error: (error: any) => {
+                patchState(
+                  store, { 
+                    status: (error?.status || 0), 
+                    loading: false, 
+                    success: false,
+                    error: true,
+                    messages: [error.message || 'An error occurred'], 
+                  }
+                );
+              },
+            }),
+          );
+        }),
+      ),
+      findByOrganisationRegistration: rxMethod<{registrationNo: string | any }>(
+        switchMap((data: any) => {
+          patchState(store, { loading: true, loaderMessage: 'Loading ...' });
+          return kycRecordApi.findByOrganisationRegistration(data.registrationNo, ).pipe(
+            tapResponse({
+              next: (response: KycRecordDTO[] | any[]) => {
+                patchState(
+                  store, 
+                  {
+                    dataList: response, 
+                    loading: false, 
+                    success: true, 
+                    messages: ['Success!!'],
+                    error: false,
+                  }
+                );
+              },
+              error: (error: any) => {
+                patchState(
+                  store, { 
+                    status: (error?.status || 0), 
+                    loading: false, 
+                    success: false,
+                    error: true,
+                    messages: [error.message || 'An error occurred'], 
+                  }
+                );
+              },
+            }),
+          );
+        }),
+      ),
+      findByOrganisationRegistrationPaged: rxMethod<{registrationNo: string | any , pageNumber: number | any , pageSize: number | any }>(
+        switchMap((data: any) => {
+          patchState(store, { loading: true, loaderMessage: 'Loading ...' });
+          return kycRecordApi.findByOrganisationRegistrationPaged(data.registrationNo, data.pageNumber, data.pageSize, ).pipe(
+            tapResponse({
+              next: (response: Page<KycRecordDTO> | any) => {
+                patchState(
+                  store, 
+                  {
+                    dataPage: response,
                     loading: false, 
                     success: true, 
                     messages: ['Success!!'],

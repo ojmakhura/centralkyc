@@ -12,10 +12,14 @@ import java.time.LocalDate;
 import java.util.Collection;
 import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+
+import bw.co.centralkyc.individual.Individual;
+import bw.co.centralkyc.individual.IndividualRepository;
 
 /**
  * @see bw.co.centralkyc.kyc.KycRecordService
@@ -25,10 +29,12 @@ import org.springframework.transaction.annotation.Transactional;
 public class KycRecordServiceImpl
     extends KycRecordServiceBase
 {
+    private final IndividualRepository individualRepository;
     public KycRecordServiceImpl(
         KycRecordDao kycRecordDao,
         KycRecordRepository kycRecordRepository,
-        MessageSource messageSource
+        MessageSource messageSource,
+        IndividualRepository individualRepository
     ) {
         
         super(
@@ -36,6 +42,8 @@ public class KycRecordServiceImpl
             kycRecordRepository,
             messageSource
         );
+
+        this.individualRepository = individualRepository;
     }
 
     /**
@@ -126,8 +134,15 @@ public class KycRecordServiceImpl
     protected Page<KycRecordDTO> handleGetAll(Integer pageNumber, Integer pageSize)
         throws Exception
     {
-        // TODO implement protected  Page<KycRecordDTO> handleGetAll(Integer pageNumber, Integer pageSize)
-        throw new UnsupportedOperationException("bw.co.centralkyc.individual.kyc.KycRecordService.handleGetAll(Integer pageNumber, Integer pageSize) Not implemented!");
+
+        Page<KycRecord> kycRecords = this.kycRecordRepository.findAll(PageRequest.of(pageNumber, pageSize));
+        return kycRecords.map(kycRecord -> {
+            try {
+                return this.kycRecordDao.toKycRecordDTO(kycRecord);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        });
     }
 
     /**
@@ -149,8 +164,8 @@ public class KycRecordServiceImpl
         throws Exception
     {
 
-        Specification<KycRecord> specification = (root, query, criteriaBuilder) -> 
-            criteriaBuilder.equal(root.get("individual").get("id"), individualId);
+        Specification<KycRecord> specification = (root, query, cb) -> 
+            cb.and(cb.equal(root.get("target"), "INDIVIDUAL"), cb.equal(root.get("targetId"), individualId));
 
         Collection<KycRecord> kycRecords = this.kycRecordRepository.findAll(specification);
         return this.kycRecordDao.toKycRecordDTOCollection(kycRecords);
@@ -164,11 +179,62 @@ public class KycRecordServiceImpl
         throws Exception
     {
 
-        Specification<KycRecord> specification = (root, query, criteriaBuilder) -> 
-            criteriaBuilder.equal(root.get("identityNo"), identityNo);
+        Individual individual = this.individualRepository.findByIdentityNo(identityNo);
+
+        return this.findByIndividual(individual.getId());
+    }
+
+    @Override
+    protected Collection<KycRecordDTO> handleFindByOrganisation(String organisationId) throws Exception {
+        
+        Specification<KycRecord> specification = (root, query, cb) -> 
+            cb.and(cb.equal(root.get("target"), "ORGANISATION"), cb.equal(root.get("targetId"), organisationId));
 
         Collection<KycRecord> kycRecords = this.kycRecordRepository.findAll(specification);
         return this.kycRecordDao.toKycRecordDTOCollection(kycRecords);
+    }
+
+    @Override
+    protected Page<KycRecordDTO> handleFindByIndividual(String individualId, Integer pageNumber, Integer pageSize)
+            throws Exception {
+        
+        Specification<KycRecord> specification = (root, query, cb) -> 
+            cb.and(cb.equal(root.get("target"), "INDIVIDUAL"), cb.equal(root.get("targetId"), individualId));   
+
+        Page<KycRecord> kycRecords = this.kycRecordRepository.findAll(specification, PageRequest.of(pageNumber, pageSize));
+        return kycRecords.map(kycRecord -> {
+            try {
+                return this.kycRecordDao.toKycRecordDTO(kycRecord);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        });
+    }
+
+    @Override
+    protected Page<KycRecordDTO> handleFindByIdentityNo(String identityNo, Integer pageNumber, Integer pageSize)
+            throws Exception {
+
+        Individual individual = this.individualRepository.findByIdentityNo(identityNo);
+
+        return this.handleFindByIndividual(individual.getId(), pageNumber, pageSize);
+    }
+
+    @Override
+    protected Page<KycRecordDTO> handleFindByOrganisation(String organisationId, Integer pageNumber,
+            Integer pageSize) throws Exception {
+        
+        Specification<KycRecord> specification = (root, query, cb) -> 
+            cb.and(cb.equal(root.get("target"), "ORGANISATION"), cb.equal(root.get("targetId"), organisationId));
+
+        Page<KycRecord> kycRecords = this.kycRecordRepository.findAll(specification, PageRequest.of(pageNumber, pageSize));
+        return kycRecords.map(kycRecord -> {
+            try {
+                return this.kycRecordDao.toKycRecordDTO(kycRecord);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        });
     }
 
 }

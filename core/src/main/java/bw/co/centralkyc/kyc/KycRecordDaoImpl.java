@@ -25,19 +25,11 @@ public class KycRecordDaoImpl
     extends KycRecordDaoBase
 {
     
-    public KycRecordDaoImpl(
-        DocumentRepository documentRepository,
-        IndividualRepository individualRepository,
-        EmploymentRecordRepository employmentRecordRepository,
-        KycRecordRepository kycRecordRepository
-    ) {
 
-        super(
-            documentRepository,
-            individualRepository,
-            employmentRecordRepository,
-            kycRecordRepository
-        );
+    public KycRecordDaoImpl(DocumentRepository documentRepository,
+            EmploymentRecordRepository employmentRecordRepository, KycRecordRepository kycRecordRepository) {
+        super(documentRepository, employmentRecordRepository, kycRecordRepository);
+        //TODO Auto-generated constructor stub
     }
 
     /**
@@ -59,9 +51,9 @@ public class KycRecordDaoImpl
             }
         }
 
-        target.setIndividualId(source.getIndividual().getId());
-        target.setIdentityNo(source.getIndividual().getIdentityNo());
-        target.setName(source.getIndividual().getFirstName() + " " + source.getIndividual().getSurname());
+        // target.setIndividualId(source.getIndividual().getId());
+        // target.setIdentityNo(source.getIndividual().getIdentityNo());
+        // target.setName(source.getIndividual().getFirstName() + " " + source.getIndividual().getSurname());
     }
 
     /**
@@ -122,14 +114,14 @@ public class KycRecordDaoImpl
             }
         }
 
-        if(StringUtils.isNotBlank(source.getIndividualId())) {
+        // if(StringUtils.isNotBlank(source.getIndividualId())) {
 
-            target.setIndividual(
-                this.individualRepository.findById(source.getIndividualId())
-                    .orElseThrow(() -> new KycRecordServiceException("Individual not found for id: " + source.getIndividualId()))
-            );
-        } else if (copyIfNull) {
-            target.setIndividual(null);
-        }
+        //     target.setIndividual(
+        //         this.individualRepository.findById(source.getIndividualId())
+        //             .orElseThrow(() -> new KycRecordServiceException("Individual not found for id: " + source.getIndividualId()))
+        //     );
+        // } else if (copyIfNull) {
+        //     target.setIndividual(null);
+        // }
     }
 }

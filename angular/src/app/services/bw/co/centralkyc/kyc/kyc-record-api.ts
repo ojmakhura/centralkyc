@@ -25,9 +25,34 @@ export class KycRecordApi {
         return this.http.get<KycRecordDTO[] | any[]>(`${this.path}/by-identity/${identityNo}`);
     }
 
+    public findByIdentityNoPaged(identityNo: string | any , pageNumber: number | any , pageSize: number | any ): Observable<Page<KycRecordDTO> | any> {
+
+        return this.http.get<Page<KycRecordDTO> | any>(`${this.path}/by-identity/${identityNo}/paged?pageNumber=${pageNumber}&pageSize=${pageSize}`);
+    }
+
     public findByIndividual(individualId: string | any ): Observable<KycRecordDTO[] | any[]> {
 
         return this.http.get<KycRecordDTO[] | any[]>(`${this.path}/by-individual/${individualId}`);
+    }
+
+    public findByIndividualPaged(individualId: string | any , pageNumber: number | any , pageSize: number | any ): Observable<Page<KycRecordDTO> | any> {
+
+        return this.http.get<Page<KycRecordDTO> | any>(`${this.path}/by-individual/${individualId}/paged?pageNumber=${pageNumber}&pageSize=${pageSize}`);
+    }
+
+    public findByOrganisation(organisationId: string | any ): Observable<KycRecordDTO[] | any[]> {
+
+        return this.http.get<KycRecordDTO[] | any[]>(`${this.path}/by-organisation/${organisationId}`);
+    }
+
+    public findByOrganisationRegistration(registrationNo: string | any ): Observable<KycRecordDTO[] | any[]> {
+
+        return this.http.get<KycRecordDTO[] | any[]>(`${this.path}/by-organisation-registration/${registrationNo}`);
+    }
+
+    public findByOrganisationRegistrationPaged(registrationNo: string | any , pageNumber: number | any , pageSize: number | any ): Observable<Page<KycRecordDTO> | any> {
+
+        return this.http.get<Page<KycRecordDTO> | any>(`${this.path}/by-organisation_registration/${registrationNo}/paged?pageNumber=${pageNumber}&pageSize=${pageSize}`);
     }
 
     public getAll(): Observable<KycRecordDTO[] | any[]> {
