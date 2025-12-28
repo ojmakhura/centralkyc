@@ -35,12 +35,12 @@ public class IndividualDaoImpl
     private final JsonMapper jsonMapper;
 
     public IndividualDaoImpl(DocumentRepository documentRepository, JsonMapper jsonMapper,
-            EmploymentRecordRepository employmentRecordRepository, ClientRequestRepository clientRequestRepository,
-            BranchRepository branchRepository, IndividualRepository individualRepository) {
-        super(documentRepository, employmentRecordRepository, clientRequestRepository, branchRepository,
-                individualRepository);
+            EmploymentRecordRepository employmentRecordRepository, BranchRepository branchRepository,
+            IndividualRepository individualRepository) {
+        super(documentRepository, employmentRecordRepository, branchRepository, individualRepository);
         
         this.jsonMapper = jsonMapper;
+
     }
 
     /**

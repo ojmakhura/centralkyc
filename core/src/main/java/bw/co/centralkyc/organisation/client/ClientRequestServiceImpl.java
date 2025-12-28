@@ -10,6 +10,7 @@ package bw.co.centralkyc.organisation.client;
 
 import bw.co.centralkyc.PropertySearchOrder;
 import bw.co.centralkyc.SearchObject;
+import bw.co.centralkyc.TargetEntity;
 import bw.co.centralkyc.document.Document;
 import bw.co.centralkyc.document.DocumentDTO;
 import bw.co.centralkyc.document.DocumentDao;
@@ -20,6 +21,7 @@ import bw.co.centralkyc.individual.IndividualIdentityType;
 import bw.co.centralkyc.individual.IndividualRepository;
 import bw.co.centralkyc.individual.Sex;
 import bw.co.centralkyc.kyc.KycComplianceStatus;
+import io.micrometer.common.util.StringUtils;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -37,6 +39,7 @@ import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
@@ -50,6 +53,7 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -159,6 +163,38 @@ public class ClientRequestServiceImpl
                 "bw.co.centralkyc.organisation.client.ClientRequestService.handleSearch(SearchObject<ClientRequestSearchCriteria> criteria) Not implemented!");
     }
 
+    Specification<ClientRequest> buildSpecificationFromCriteria(ClientRequestSearchCriteria criteria) {
+
+        Specification<ClientRequest> spec = Specification.unrestricted();
+
+        if(StringUtils.isNotBlank(criteria.getOrganisationId())) {
+
+            spec = spec.and((root, query, cb) -> 
+                cb.equal(root.get("organisationId"), criteria.getOrganisationId()));
+        }
+
+        if(criteria.getTarget() != null) {
+
+            spec = spec.and((root, query, cb) -> 
+                cb.equal(root.get("target"), criteria.getTarget()));
+        }
+
+        if(StringUtils.isNotBlank(criteria.getTargetId())) {
+
+            spec = spec.and((root, query, cb) -> 
+                cb.equal(root.get("targetId"), criteria.getTargetId()));
+        }
+
+        if(CollectionUtils.isNotEmpty(criteria.getStatuses())) {
+
+            spec = spec.and((root, query, cb) -> 
+                root.get("status").in(criteria.getStatuses()));
+
+        }
+
+        return spec;
+    }
+
     /**
      * @see bw.co.centralkyc.organisation.client.ClientRequestService#findByOrganisation(String)
      */
@@ -166,7 +202,14 @@ public class ClientRequestServiceImpl
     protected Collection<ClientRequestDTO> handleFindByOrganisation(String organisationId)
             throws Exception {
 
-        return clientRequestRepository.findByOrgId(organisationId);
+        ClientRequestSearchCriteria criteria = new ClientRequestSearchCriteria();
+        criteria.setOrganisationId(organisationId);
+        // criteria.setStatus(ClientRequestStatus.);
+
+        Specification<ClientRequest> spec = this.buildSpecificationFromCriteria(criteria);
+        Collection<ClientRequest> requests = clientRequestRepository.findAll(spec);
+
+        return clientRequestDao.toClientRequestDTOCollection(requests);
     }
 
     /**
@@ -178,7 +221,13 @@ public class ClientRequestServiceImpl
             Integer pageSize)
             throws Exception {
 
-        return clientRequestRepository.findByOrgId(organisationId, PageRequest.of(pageNumber, pageSize));
+        ClientRequestSearchCriteria criteria = new ClientRequestSearchCriteria();
+        criteria.setOrganisationId(organisationId);
+
+        Specification<ClientRequest> spec = this.buildSpecificationFromCriteria(criteria);
+        Page<ClientRequest> requests = clientRequestRepository.findAll(spec, PageRequest.of(pageNumber, pageSize));
+
+        return requests.map(clientRequestDao::toClientRequestDTO);
     }
 
     /**
@@ -188,7 +237,12 @@ public class ClientRequestServiceImpl
     protected Collection<ClientRequestDTO> handleFindByStatus(ClientRequestStatus status)
             throws Exception {
 
-        return clientRequestRepository.findByStatuses(Set.of(status));
+        Specification<ClientRequest> spec = (root, query, cb) -> 
+            cb.equal(root.get("status"), status);
+
+        Collection<ClientRequest> requests = clientRequestRepository.findAll(spec);
+
+        return clientRequestDao.toClientRequestDTOCollection(requests);
     }
 
     /**
@@ -232,8 +286,8 @@ public class ClientRequestServiceImpl
 
         clientRequests = clientRequestRepository.saveAll(clientRequests);
 
-        return clientRequestRepository.findByOrgId(organisationId, 
-                PageRequest.of(0, 10));
+        return null;// clientRequestRepository.findByOrgId(organisationId, 
+                //PageRequest.of(0, 10));
     }
 
     /**
@@ -260,7 +314,7 @@ public class ClientRequestServiceImpl
 
         // Create client request
         ClientRequest clientRequest = new ClientRequest();
-        clientRequest.setIndividual(savedIndividual);
+        // clientRequest.setIndividual(savedIndividual);
 
         // Set organisation
         // Organisation organisation = organisationRepository.getReferenceById(organisationId);
@@ -583,7 +637,14 @@ public class ClientRequestServiceImpl
     protected Collection<ClientRequestDTO> handleFindByIndividual(String individualId)
             throws Exception {
 
-        return clientRequestRepository.findByIndividualId(individualId);
+        ClientRequestSearchCriteria criteria = new ClientRequestSearchCriteria();   
+        criteria.setTargetId(individualId);
+        criteria.setTarget(TargetEntity.INDIVIDUAL);
+
+        Specification<ClientRequest> spec = this.buildSpecificationFromCriteria(criteria);
+        Collection<ClientRequest> requests = clientRequestRepository.findAll(spec);
+
+        return requests.stream().map(clientRequestDao::toClientRequestDTO).collect(Collectors.toList());
     }
 
     /**
@@ -593,25 +654,65 @@ public class ClientRequestServiceImpl
     @Override
     protected Page<ClientRequestDTO> handleFindByIndividual(String individualId, Integer pageNumber, Integer pageSize)
             throws Exception {
-        return clientRequestRepository.findByIndividualId(individualId, PageRequest.of(pageNumber, pageSize));
+
+        ClientRequestSearchCriteria criteria = new ClientRequestSearchCriteria();   
+        criteria.setTargetId(individualId);
+        criteria.setTarget(TargetEntity.INDIVIDUAL);
+
+        Specification<ClientRequest> spec = this.buildSpecificationFromCriteria(criteria);
+        Page<ClientRequest> requests = clientRequestRepository.findAll(spec, PageRequest.of(pageNumber, pageSize));
+        
+        return requests.map(clientRequestDao::toClientRequestDTO);
     }
 
     @Override
     protected Collection<ClientRequestDTO> handleFindByDocument(String documentId) throws Exception {
 
-        return clientRequestRepository.findByDocumentId(documentId);
+        return null; // clientRequestRepository.findByDocumentId(documentId);
     }
 
     @Override
     protected Page<ClientRequestDTO> handleFindByDocument(String documentId, Integer pageNumber, Integer pageSize)
             throws Exception {
-        return clientRequestRepository.findByDocumentId(documentId, PageRequest.of(pageNumber, pageSize));
+        return null; // clientRequestRepository.findByDocumentId(documentId, PageRequest.of(pageNumber, pageSize));
     }
 
     @Override
     protected Page<ClientRequestDTO> handleFindByStatus(ClientRequestStatus status, Integer pageNumber,
             Integer pageSize) throws Exception {
-        return clientRequestRepository.findByStatuses(Set.of(status), PageRequest.of(pageNumber, pageSize));
+
+        Specification<ClientRequest> spec = (root, query, cb) -> 
+            cb.equal(root.get("status"), status);
+
+        Page<ClientRequest> requests = clientRequestRepository.findAll(spec, PageRequest.of(pageNumber, pageSize));
+        return requests.map(clientRequestDao::toClientRequestDTO);
+    }
+
+    @Override
+    protected Collection<ClientRequestDTO> handleFindByTarget(TargetEntity target, String targetId) throws Exception {
+        
+        Specification<ClientRequest> spec = (root, query, cb) -> cb.and(
+            cb.equal(root.get("target"), target),
+            cb.equal(root.get("targetId"), targetId)
+        );
+
+        Collection<ClientRequest> requests = clientRequestRepository.findAll(spec);
+
+        return clientRequestDao.toClientRequestDTOCollection(requests);
+    }
+
+    @Override
+    protected Page<ClientRequestDTO> handleFindByTarget(TargetEntity target, String targetId, Integer pageNumber,
+            Integer pageSize) throws Exception {
+            
+        Specification<ClientRequest> spec = (root, query, cb) -> cb.and(
+            cb.equal(root.get("target"), target),
+            cb.equal(root.get("targetId"), targetId)
+        );
+
+        Page<ClientRequest> requests = clientRequestRepository.findAll(spec, PageRequest.of(pageNumber, pageSize));
+        
+        return requests.map(clientRequestDao::toClientRequestDTO);
     }
 
 }

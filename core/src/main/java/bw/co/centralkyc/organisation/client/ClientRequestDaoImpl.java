@@ -21,17 +21,11 @@ public class ClientRequestDaoImpl
     extends ClientRequestDaoBase
 {
     
-    public ClientRequestDaoImpl(
-        IndividualRepository individualRepository,
-        DocumentRepository documentRepository,
-        ClientRequestRepository clientRequestRepository
-    ) {
 
-        super(
-            individualRepository,
-            documentRepository,
-            clientRequestRepository
-        );
+    public ClientRequestDaoImpl(DocumentRepository documentRepository,
+            ClientRequestRepository clientRequestRepository) {
+        super(documentRepository, clientRequestRepository);
+        //TODO Auto-generated constructor stub
     }
 
     /**
@@ -53,29 +47,29 @@ public class ClientRequestDaoImpl
         //     target.setOrganisationRegistrationNo(source.getOrganisation().getRegistrationNo());
         // }
 
-        if(source.getIndividual() != null) {
+        // if(source.getIndividual() != null) {
 
-            target.setIdentityNo(source.getIndividual().getIdentityNo());
-            target.setIdentityType(source.getIndividual().getIdentityType());
+        //     target.setIdentityNo(source.getIndividual().getIdentityNo());
+        //     target.setIdentityType(source.getIndividual().getIdentityType());
 
-            StringBuilder nameBuilder = new StringBuilder();
-            nameBuilder.append(source.getIndividual().getFirstName());
+        //     StringBuilder nameBuilder = new StringBuilder();
+        //     nameBuilder.append(source.getIndividual().getFirstName());
 
-            if(source.getIndividual().getMiddleName() != null) {
-                nameBuilder.append(" ");
-                nameBuilder.append(source.getIndividual().getMiddleName());
-            }
+        //     if(source.getIndividual().getMiddleName() != null) {
+        //         nameBuilder.append(" ");
+        //         nameBuilder.append(source.getIndividual().getMiddleName());
+        //     }
 
-            if(source.getIndividual().getSurname() != null) {
-                nameBuilder.append(" ");
-                nameBuilder.append(source.getIndividual().getSurname());
-            }
+        //     if(source.getIndividual().getSurname() != null) {
+        //         nameBuilder.append(" ");
+        //         nameBuilder.append(source.getIndividual().getSurname());
+        //     }
 
-            target.setName(nameBuilder.toString());
+        //     target.setName(nameBuilder.toString());
 
-            target.setEmailAddress(source.getIndividual().getEmailAddress());
+        //     target.setEmailAddress(source.getIndividual().getEmailAddress());
 
-        }
+        // }
 
         if(source.getDocument() != null) {
 
@@ -143,19 +137,19 @@ public class ClientRequestDaoImpl
             target.setDocument(documentRepository.getReferenceById(source.getDocumentId()));
         }
 
-        if(StringUtils.isNotBlank(source.getIndividualId())) {
+        // if(StringUtils.isNotBlank(source.getIndividualId())) {
             
-            target.setIndividual(individualRepository.getReferenceById(source.getIndividualId()));
+        //     target.setIndividual(individualRepository.getReferenceById(source.getIndividualId()));
 
-        } else if(StringUtils.isNotBlank(source.getIdentityNo()) && source.getIdentityType() != null) {
+        // } else if(StringUtils.isNotBlank(source.getIdentityNo()) && source.getIdentityType() != null) {
 
-            target.setIndividual(
-                individualRepository.findByIdentityNoAndIdentityType(
-                    source.getIdentityNo(),
-                    source.getIdentityType()
-                )
-            );
-        }
+        //     target.setIndividual(
+        //         individualRepository.findByIdentityNoAndIdentityType(
+        //             source.getIdentityNo(),
+        //             source.getIdentityType()
+        //         )
+        //     );
+        // }
 
         if(StringUtils.isNotBlank(source.getOrganisationId())) {
 

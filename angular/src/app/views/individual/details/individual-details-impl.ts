@@ -380,7 +380,8 @@ export class IndividualDetailsImplComponent extends IndividualDetailsComponent {
         const individual: IndividualDTO = this.individual();
 
         let kycRecord: KycRecordDTO = new KycRecordDTO();
-        kycRecord.individualId = individual?.id;
+        kycRecord.targetId = individual?.id;
+        kycRecord.target = TargetEntity.INDIVIDUAL;
         kycRecord.identityNo = individual?.identityNo || '';
         kycRecord.kycStatus = KycComplianceStatus.CURRENT;
         kycRecord.name = individual.firstName + ' ' + (individual.surname || '');

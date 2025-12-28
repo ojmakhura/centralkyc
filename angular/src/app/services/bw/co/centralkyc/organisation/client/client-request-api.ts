@@ -5,102 +5,101 @@ import { ClientRequestDTO } from '@models/bw/co/centralkyc/organisation/client/c
 import { HttpClient } from '@angular/common/http';
 import { Page } from '@models/page.model';
 import { SearchObject } from '@models/search-object';
-import { ClientRequestStatus } from '@models/bw/co/centralkyc/organisation/client/client-request-status';
-import { ClientRequestSearchCriteria } from '@models/bw/co/centralkyc/organisation/client/client-request-search-criteria';
+import { ClientRequestSearchCriteria } from '@app/models/bw/co/centralkyc/organisation/client/client-request-search-criteria';
+import { TargetEntity } from '@app/models/bw/co/centralkyc/target-entity';
+import { ClientRequestStatus } from '@app/models/bw/co/centralkyc/organisation/client/client-request-status';
 
 @Injectable({
-  providedIn: 'root',
+  providedIn: 'root'
 })
 export class ClientRequestApi {
+
   protected path = '/client-request';
 
   private http = inject(HttpClient);
 
   public findByDocument(documentId: string | any): Observable<ClientRequestDTO[] | any[]> {
+
     return this.http.get<ClientRequestDTO[] | any[]>(`${this.path}/by-document/${documentId}`);
   }
 
-  public findByDocumentPaged(
-    documentId: string | any,
-    pageNumber: number | any,
-    pageSize: number | any,
-  ): Observable<Page<ClientRequestDTO> | any> {
-    return this.http.get<Page<ClientRequestDTO> | any>(
-      `${this.path}/by-document/${documentId}/paged?pageNumber=${pageNumber}&pageSize=${pageSize}`,
-    );
+  public findByDocumentPaged(documentId: string | any, pageNumber: number | any, pageSize: number | any): Observable<Page<ClientRequestDTO> | any> {
+
+    return this.http.get<Page<ClientRequestDTO> | any>(`${this.path}/by-document/${documentId}/paged?pageNumber=${pageNumber}&pageSize=${pageSize}`);
   }
 
   public findById(id: string | any): Observable<ClientRequestDTO | any> {
+
     return this.http.get<ClientRequestDTO | any>(`${this.path}/${id}`);
   }
 
-  public findByIndividual(organisationId: string | any): Observable<ClientRequestDTO[] | any[]> {
-    return this.http.get<ClientRequestDTO[] | any[]>(`${this.path}/by-individual/${organisationId}`);
+  public findByIndividual(individualId: string | any): Observable<ClientRequestDTO[] | any[]> {
+
+    return this.http.get<ClientRequestDTO[] | any[]>(`${this.path}/by-individual/${individualId}`);
   }
 
-  public findByIndividualPaged(
-    organisationId: string | any,
-    pageNumber: number | any,
-    pageSize: number | any,
-  ): Observable<Page<ClientRequestDTO> | any> {
-    return this.http.get<Page<ClientRequestDTO> | any>(
-      `${this.path}/by-individual/${organisationId}/paged?pageNumber=${pageNumber}&pageSize=${pageSize}`,
-    );
+  public findByIndividualPaged(individualId: string | any, pageNumber: number | any, pageSize: number | any): Observable<Page<ClientRequestDTO> | any> {
+
+    return this.http.get<Page<ClientRequestDTO> | any>(`${this.path}/by-individual/${individualId}/paged?pageNumber=${pageNumber}&pageSize=${pageSize}`);
   }
 
   public findByOrganisation(organisationId: string | any): Observable<ClientRequestDTO[] | any[]> {
+
     return this.http.get<ClientRequestDTO[] | any[]>(`${this.path}/by-org/${organisationId}`);
   }
 
-  public findByOrganisationPaged(
-    organisationId: string | any,
-    pageNumber: number | any,
-    pageSize: number | any,
-  ): Observable<Page<ClientRequestDTO> | any> {
-    return this.http.get<Page<ClientRequestDTO> | any>(
-      `${this.path}/by-org/${organisationId}/paged?pageNumber=${pageNumber}&pageSize=${pageSize}`,
-    );
+  public findByOrganisationPaged(organisationId: string | any, pageNumber: number | any, pageSize: number | any): Observable<Page<ClientRequestDTO> | any> {
+
+    return this.http.get<Page<ClientRequestDTO> | any>(`${this.path}/by-org/${organisationId}/paged?pageNumber=${pageNumber}&pageSize=${pageSize}`);
   }
 
   public findByStatus(status: ClientRequestStatus | any): Observable<ClientRequestDTO[] | any[]> {
+
     return this.http.get<ClientRequestDTO[] | any[]>(`${this.path}/status?status=${status}`);
   }
 
-  public findByStatusPaged(
-    status: ClientRequestStatus | any,
-    pageNumber: number | any,
-    pageSize: number | any,
-  ): Observable<Page<ClientRequestDTO> | any> {
-    return this.http.get<Page<ClientRequestDTO> | any>(
-      `${this.path}/status/paged?status=${status}&pageNumber=${pageNumber}&pageSize=${pageSize}`,
-    );
+  public findByStatusPaged(status: ClientRequestStatus | any, pageNumber: number | any, pageSize: number | any): Observable<Page<ClientRequestDTO> | any> {
+
+    return this.http.get<Page<ClientRequestDTO> | any>(`${this.path}/status/paged?status=${status}&pageNumber=${pageNumber}&pageSize=${pageSize}`);
+  }
+
+  public findByTarget(target: TargetEntity | any, targetId: string | any): Observable<ClientRequestDTO[] | any[]> {
+
+    return this.http.get<ClientRequestDTO[] | any[]>(`${this.path}/target/${target}/${targetId}`);
+  }
+
+  public findByTargetPaged(target: TargetEntity | any, targetId: string | any, pageNumber: number | any, pageSize: number | any): Observable<Page<ClientRequestDTO>[] | any[]> {
+
+    return this.http.get<Page<ClientRequestDTO>[] | any[]>(`${this.path}/target/${target}/${targetId}/paged?pageNumber=${pageNumber}&pageSize=${pageSize}`);
   }
 
   public getAll(): Observable<ClientRequestDTO[] | any[]> {
+
     return this.http.get<ClientRequestDTO[] | any[]>(`${this.path}/all`);
   }
 
   public getAllPaged(pageNumber: number | any, pageSize: number | any): Observable<Page<ClientRequestDTO> | any> {
-    return this.http.get<Page<ClientRequestDTO> | any>(
-      `${this.path}/paged?pageNumber=${pageNumber}&pageSize=${pageSize}`,
-    );
+
+    return this.http.get<Page<ClientRequestDTO> | any>(`${this.path}/paged?pageNumber=${pageNumber}&pageSize=${pageSize}`);
   }
 
-  public pagedSearch(
-    criteria: SearchObject<ClientRequestSearchCriteria> | any,
-  ): Observable<Page<ClientRequestDTO> | any> {
+  public pagedSearch(criteria: SearchObject<ClientRequestSearchCriteria> | any): Observable<Page<ClientRequestDTO> | any> {
+
     return this.http.post<Page<ClientRequestDTO> | any>(`${this.path}/search/paged`, criteria);
   }
 
   public remove(id: string | any): Observable<boolean | any> {
+
     return this.http.delete<boolean | any>(`${this.path}/${id}`);
   }
 
   public save(clientRequest: ClientRequestDTO | any): Observable<ClientRequestDTO | any> {
+
     return this.http.post<ClientRequestDTO | any>(`${this.path}`, clientRequest);
   }
 
   public search(criteria: SearchObject<ClientRequestSearchCriteria> | any): Observable<ClientRequestDTO[] | any[]> {
+
     return this.http.post<ClientRequestDTO[] | any[]>(`${this.path}/search`, criteria);
   }
 
@@ -117,4 +116,5 @@ export class ClientRequestApi {
   downloadRequestTemplate(): Observable<Blob | any> {
     return this.http.get(`${this.path}/download-template`, { responseType: 'blob' });
   }
+
 }

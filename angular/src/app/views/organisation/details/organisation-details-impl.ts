@@ -390,7 +390,8 @@ export class OrganisationDetailsImplComponent extends OrganisationDetailsCompone
       queryParams: { organisationId: this.organisation().id },
     });
   }
-  clientRequestsTableActionClicked(event: any): void {
+
+  override clientRequestsTableActionClicked(event: any): void {
     console.log(event);
 
     switch (event.action) {

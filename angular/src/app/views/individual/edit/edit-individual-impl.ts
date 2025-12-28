@@ -14,6 +14,7 @@ import { OrganisationSearchCriteria } from '@app/models/bw/co/centralkyc/organis
 import { OrganisationListDTO } from '@app/models/bw/co/centralkyc/organisation/organisation-list-dto';
 import { BranchDTO } from '@app/models/bw/co/centralkyc/organisation/branch/branch-dto';
 import { PhoneNumber } from '@app/models/bw/co/centralkyc/phone-number';
+import { RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-edit-individual',
@@ -22,12 +23,11 @@ import { PhoneNumber } from '@app/models/bw/co/centralkyc/phone-number';
   standalone: true,
   imports: [
     CommonModule,
-    FormsModule,
-    ReactiveFormsModule,
     TranslateModule,
     MaterialModule,
     Loader,
     Field,
+    RouterModule
   ],
 })
 export class EditIndividualImplComponent extends EditIndividualComponent {

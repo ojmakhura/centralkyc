@@ -50,13 +50,6 @@ export const routes: Routes = [
       ]
     },
     {
-      path: 'kyc', 
-      loadChildren: () => import('@views/individual/kyc/kyc-record.routes').then((m) => m.routes),
-      providers: [
-        UseCaseScope
-      ]
-    },
-    {
       path: 'user', 
       loadChildren: () => import('@views/user/user.routes').then((m) => m.routes),
       providers: [
@@ -73,6 +66,20 @@ export const routes: Routes = [
     {
       path: 'invoice', 
       loadChildren: () => import('@views/invoice/invoice.routes').then((m) => m.routes),
+      providers: [
+        UseCaseScope
+      ]
+    },
+    {
+      path: 'kyc', 
+      loadChildren: () => import('@views/kyc/kyc-record.routes').then((m) => m.routes),
+      providers: [
+        UseCaseScope
+      ]
+    },
+    {
+      path: 'client-request', 
+      loadChildren: () => import('@views/client/client-request.routes').then((m) => m.routes),
       providers: [
         UseCaseScope
       ]

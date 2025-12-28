@@ -1,14 +1,16 @@
+
 import { inject } from '@angular/core';
 import { patchState, signalStore, withMethods, withState } from '@ngrx/signals';
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
 import { switchMap } from 'rxjs';
 import { tapResponse } from '@ngrx/operators';
 import { AppState } from '@app/store/app-state';
-import { SearchObject } from '@app/models/search-object';
-import { Page } from '@app/models/page.model';
+import { SearchObject } from '@models/search-object';
+import { Page } from '@models/page.model';
 import { ClientRequestDTO } from '@app/models/bw/co/centralkyc/organisation/client/client-request-dto';
 import { ClientRequestApi } from '@app/services/bw/co/centralkyc/organisation/client/client-request-api';
 import { ClientRequestStatus } from '@app/models/bw/co/centralkyc/organisation/client/client-request-status';
+import { TargetEntity } from '@app/models/bw/co/centralkyc/target-entity';
 import { ClientRequestSearchCriteria } from '@app/models/bw/co/centralkyc/organisation/client/client-request-search-criteria';
 
 export type ClientRequestApiState = AppState<any, any> & {};
@@ -36,7 +38,7 @@ export const ClientRequestApiStore = signalStore(
       },
       downloadRequestTemplate: rxMethod<void>(
         switchMap(() => {
-          patchState(store, { loading: true, loaderMessage: 'Downloading template ...' });
+          patchState(store, { loading: true, loaderMessage: 'Loading ...' });
           return clientRequestApi.downloadRequestTemplate().pipe(
             tapResponse({
               next: (response: any) => {
@@ -332,6 +334,70 @@ export const ClientRequestApiStore = signalStore(
                   store,
                   {
                     dataPage: response,
+                    loading: false,
+                    success: true,
+                    messages: ['Success!!'],
+                    error: false,
+                  }
+                );
+              },
+              error: (error: any) => {
+                patchState(
+                  store, {
+                    status: (error?.status || 0),
+                    loading: false,
+                    success: false,
+                    error: true,
+                    messages: [error.message || 'An error occurred'],
+                  }
+                );
+              },
+            }),
+          );
+        }),
+      ),
+      findByTarget: rxMethod<{target: TargetEntity | any , targetId: string | any }>(
+        switchMap((data: any) => {
+          patchState(store, { loading: true, loaderMessage: 'Loading ...' });
+          return clientRequestApi.findByTarget(data.target, data.targetId, ).pipe(
+            tapResponse({
+              next: (response: ClientRequestDTO[] | any[]) => {
+                patchState(
+                  store,
+                  {
+                    dataList: response,
+                    loading: false,
+                    success: true,
+                    messages: ['Success!!'],
+                    error: false,
+                  }
+                );
+              },
+              error: (error: any) => {
+                patchState(
+                  store, {
+                    status: (error?.status || 0),
+                    loading: false,
+                    success: false,
+                    error: true,
+                    messages: [error.message || 'An error occurred'],
+                  }
+                );
+              },
+            }),
+          );
+        }),
+      ),
+      findByTargetPaged: rxMethod<{target: TargetEntity | any , targetId: string | any , pageNumber: number | any , pageSize: number | any }>(
+        switchMap((data: any) => {
+          patchState(store, { loading: true, loaderMessage: 'Loading ...' });
+          return clientRequestApi.findByTargetPaged(data.target, data.targetId, data.pageNumber, data.pageSize, ).pipe(
+            tapResponse({
+              next: (response: Page<ClientRequestDTO>[] | any[]) => {
+                patchState(
+                  store,
+                  {
+                    dataList: response,
                     loading: false,
                     success: true,
                     messages: ['Success!!'],
