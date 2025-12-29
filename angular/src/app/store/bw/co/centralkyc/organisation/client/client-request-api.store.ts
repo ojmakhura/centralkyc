@@ -9,16 +9,26 @@ import { SearchObject } from '@models/search-object';
 import { Page } from '@models/page.model';
 import { ClientRequestDTO } from '@app/models/bw/co/centralkyc/organisation/client/client-request-dto';
 import { ClientRequestApi } from '@app/services/bw/co/centralkyc/organisation/client/client-request-api';
-import { ClientRequestStatus } from '@app/models/bw/co/centralkyc/organisation/client/client-request-status';
-import { TargetEntity } from '@app/models/bw/co/centralkyc/target-entity';
 import { ClientRequestSearchCriteria } from '@app/models/bw/co/centralkyc/organisation/client/client-request-search-criteria';
+import { TargetEntity } from '@app/models/bw/co/centralkyc/target-entity';
+import { ClientRequestStatus } from '@app/models/bw/co/centralkyc/organisation/client/client-request-status';
 
-export type ClientRequestApiState = AppState<any, any> & {};
+export type ClientRequestApiState = AppState<ClientRequestDTO, ClientRequestDTO> & {
+  individualsRequests: ClientRequestDTO[];
+  individualsRequestsPage: Page<ClientRequestDTO>;
+  organisationsRequests: ClientRequestDTO[];
+  organisationsRequestsPage: Page<ClientRequestDTO>;
+
+};
 
 const initialState: ClientRequestApiState = {
-  data: null,
+  data: new ClientRequestDTO(),
   dataList: [],
-  dataPage: new Page<any>(),
+  dataPage: new Page<ClientRequestDTO>(),
+  individualsRequests: [],
+  individualsRequestsPage: new Page<ClientRequestDTO>(),
+  organisationsRequests: [],
+  organisationsRequestsPage: new Page<ClientRequestDTO>(),
   searchCriteria: new SearchObject<any>(),
   loading: false,
   success: false,
@@ -36,38 +46,38 @@ export const ClientRequestApiStore = signalStore(
       reset: () => {
         patchState(store, initialState);
       },
-      downloadRequestTemplate: rxMethod<void>(
-        switchMap(() => {
-          patchState(store, { loading: true, loaderMessage: 'Loading ...' });
-          return clientRequestApi.downloadRequestTemplate().pipe(
-            tapResponse({
-              next: (response: any) => {
-                patchState(
-                  store,
-                  {
-                    data: response,
-                    loading: false,
-                    success: true,
-                    messages: ['Success!!'],
-                    error: false,
-                  }
-                );
-              },
-              error: (error: any) => {
-                patchState(
-                  store, {
-                    status: (error?.status || 0),
-                    loading: false,
-                    success: false,
-                    error: true,
-                    messages: [error.message || 'An error occurred'],
-                  }
-                );
-              },
-            }),
-          );
-        }),
-      ),
+      // downloadRequestTemplate: rxMethod<void>(
+      //   switchMap(() => {
+      //     patchState(store, { loading: true, loaderMessage: 'Loading ...' });
+      //     return clientRequestApi.downloadRequestTemplate().pipe(
+      //       tapResponse({
+      //         next: (response: any) => {
+      //           patchState(
+      //             store,
+      //             {
+      //               data: response,
+      //               loading: false,
+      //               success: true,
+      //               messages: ['Success!!'],
+      //               error: false,
+      //             }
+      //           );
+      //         },
+      //         error: (error: any) => {
+      //           patchState(
+      //             store, {
+      //               status: (error?.status || 0),
+      //               loading: false,
+      //               success: false,
+      //               error: true,
+      //               messages: [error.message || 'An error occurred'],
+      //             }
+      //           );
+      //         },
+      //       }),
+      //     );
+      //   }),
+      // ),
       findByDocument: rxMethod<{documentId: string | any }>(
         switchMap((data: any) => {
           patchState(store, { loading: true, loaderMessage: 'Loading ...' });
@@ -228,10 +238,10 @@ export const ClientRequestApiStore = signalStore(
           );
         }),
       ),
-      findByOrganisation: rxMethod<{organisationId: string | any }>(
+      findByOrganisation: rxMethod<{organisationId: string | any , target?: TargetEntity | any }>(
         switchMap((data: any) => {
           patchState(store, { loading: true, loaderMessage: 'Loading ...' });
-          return clientRequestApi.findByOrganisation(data.organisationId, ).pipe(
+          return clientRequestApi.findByOrganisation(data.organisationId, data.target, ).pipe(
             tapResponse({
               next: (response: ClientRequestDTO[] | any[]) => {
                 patchState(
@@ -260,10 +270,10 @@ export const ClientRequestApiStore = signalStore(
           );
         }),
       ),
-      findByOrganisationPaged: rxMethod<{organisationId: string | any , pageNumber: number | any , pageSize: number | any }>(
+      findByOrganisationPaged: rxMethod<{organisationId: string | any , pageNumber: number | any , pageSize: number | any , target?: TargetEntity | any }>(
         switchMap((data: any) => {
           patchState(store, { loading: true, loaderMessage: 'Loading ...' });
-          return clientRequestApi.findByOrganisationPaged(data.organisationId, data.pageNumber, data.pageSize, ).pipe(
+          return clientRequestApi.findByOrganisationPaged(data.organisationId, data.pageNumber, data.pageSize, data.target, ).pipe(
             tapResponse({
               next: (response: Page<ClientRequestDTO> | any) => {
                 patchState(
@@ -398,6 +408,134 @@ export const ClientRequestApiStore = signalStore(
                   store,
                   {
                     dataList: response,
+                    loading: false,
+                    success: true,
+                    messages: ['Success!!'],
+                    error: false,
+                  }
+                );
+              },
+              error: (error: any) => {
+                patchState(
+                  store, {
+                    status: (error?.status || 0),
+                    loading: false,
+                    success: false,
+                    error: true,
+                    messages: [error.message || 'An error occurred'],
+                  }
+                );
+              },
+            }),
+          );
+        }),
+      ),
+      findIndividualsByOrganisation: rxMethod<{organisationId: string | any }>(
+        switchMap((data: any) => {
+          patchState(store, { loading: true, loaderMessage: 'Loading ...' });
+          return clientRequestApi.findIndividualsByOrganisation(data.organisationId, ).pipe(
+            tapResponse({
+              next: (response: ClientRequestDTO[] | any[]) => {
+                patchState(
+                  store,
+                  {
+                    individualsRequests: response,
+                    loading: false,
+                    success: true,
+                    messages: ['Success!!'],
+                    error: false,
+                  }
+                );
+              },
+              error: (error: any) => {
+                patchState(
+                  store, {
+                    status: (error?.status || 0),
+                    loading: false,
+                    success: false,
+                    error: true,
+                    messages: [error.message || 'An error occurred'],
+                  }
+                );
+              },
+            }),
+          );
+        }),
+      ),
+      findIndividualsByOrganisationPaged: rxMethod<{organisationId: string | any , pageNumber: number | any , pageSize: number | any }>(
+        switchMap((data: any) => {
+          patchState(store, { loading: true, loaderMessage: 'Loading ...' });
+          return clientRequestApi.findIndividualsByOrganisationPaged(data.organisationId, data.pageNumber, data.pageSize, ).pipe(
+            tapResponse({
+              next: (response: Page<ClientRequestDTO> | any) => {
+                patchState(
+                  store,
+                  {
+                    individualsRequestsPage: response,
+                    loading: false,
+                    success: true,
+                    messages: ['Success!!'],
+                    error: false,
+                  }
+                );
+              },
+              error: (error: any) => {
+                patchState(
+                  store, {
+                    status: (error?.status || 0),
+                    loading: false,
+                    success: false,
+                    error: true,
+                    messages: [error.message || 'An error occurred'],
+                  }
+                );
+              },
+            }),
+          );
+        }),
+      ),
+      findOrganisationsByOrganisation: rxMethod<{organisationId: string | any }>(
+        switchMap((data: any) => {
+          patchState(store, { loading: true, loaderMessage: 'Loading ...' });
+          return clientRequestApi.findOrganisationsByOrganisation(data.organisationId, ).pipe(
+            tapResponse({
+              next: (response: ClientRequestDTO[] | any[]) => {
+                patchState(
+                  store,
+                  {
+                    organisationsRequests: response,
+                    loading: false,
+                    success: true,
+                    messages: ['Success!!'],
+                    error: false,
+                  }
+                );
+              },
+              error: (error: any) => {
+                patchState(
+                  store, {
+                    status: (error?.status || 0),
+                    loading: false,
+                    success: false,
+                    error: true,
+                    messages: [error.message || 'An error occurred'],
+                  }
+                );
+              },
+            }),
+          );
+        }),
+      ),
+      findOrganisationsByOrganisationPaged: rxMethod<{organisationId: string | any , pageNumber: number | any , pageSize: number | any }>(
+        switchMap((data: any) => {
+          patchState(store, { loading: true, loaderMessage: 'Loading ...' });
+          return clientRequestApi.findOrganisationsByOrganisationPaged(data.organisationId, data.pageNumber, data.pageSize, ).pipe(
+            tapResponse({
+              next: (response: Page<ClientRequestDTO> | any) => {
+                patchState(
+                  store,
+                  {
+                    organisationsRequestsPage: response,
                     loading: false,
                     success: true,
                     messages: ['Success!!'],
@@ -612,10 +750,10 @@ export const ClientRequestApiStore = signalStore(
           );
         }),
       ),
-      uploadRequests: rxMethod<{file: File | any , organisationId: string | any }>(
+      uploadRequests: rxMethod<{file: File , organisationId: string | any , target: TargetEntity | any }>(
         switchMap((data: any) => {
           patchState(store, { loading: true, loaderMessage: 'Loading ...' });
-          return clientRequestApi.uploadRequests(data.file, data.organisationId, ).pipe(
+          return clientRequestApi.uploadRequests(data.file, data.organisationId, data.target, ).pipe(
             tapResponse({
               next: (response: Page<ClientRequestDTO> | any) => {
                 patchState(

@@ -6,9 +6,14 @@
  */
 package bw.co.centralkyc.organisation.client;
 
+import bw.co.centralkyc.TargetEntity;
 import bw.co.centralkyc.document.DocumentRepository;
+import bw.co.centralkyc.individual.Individual;
 import bw.co.centralkyc.individual.IndividualRepository;
 import jakarta.persistence.EntityNotFoundException;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Repository;
@@ -18,14 +23,14 @@ import org.springframework.stereotype.Repository;
  */
 @Repository("clientRequestDao")
 public class ClientRequestDaoImpl
-    extends ClientRequestDaoBase
-{
-    
+        extends ClientRequestDaoBase {
+
+    private final IndividualRepository individualRepository;
 
     public ClientRequestDaoImpl(DocumentRepository documentRepository,
-            ClientRequestRepository clientRequestRepository) {
+            ClientRequestRepository clientRequestRepository, IndividualRepository individualRepository) {
         super(documentRepository, clientRequestRepository);
-        //TODO Auto-generated constructor stub
+        this.individualRepository = individualRepository;
     }
 
     /**
@@ -33,45 +38,57 @@ public class ClientRequestDaoImpl
      */
     @Override
     public void toClientRequestDTO(
-        ClientRequest source,
-        ClientRequestDTO target)
-    {
+            ClientRequest source,
+            ClientRequestDTO target) {
+        Map<String, Individual> individualCache = new HashMap<>();
+
         // TODO verify behavior of toClientRequestDTO
         super.toClientRequestDTO(source, target);
-        // WARNING! No conversion for target.organisation (can't convert source.getOrganisation():bw.co.centralkyc.organisation.Organisation to java.lang.String
+        // WARNING! No conversion for target.organisation (can't convert
+        // source.getOrganisation():bw.co.centralkyc.organisation.Organisation to
+        // java.lang.String
 
         // if(source.getOrganisation() != null) {
 
-        //     target.setOrganisationId(source.getOrganisation().getId());
-        //     target.setOrganisation(source.getOrganisation().getName());
-        //     target.setOrganisationRegistrationNo(source.getOrganisation().getRegistrationNo());
+        // target.setOrganisationId(source.getOrganisation().getId());
+        // target.setOrganisation(source.getOrganisation().getName());
+        // target.setOrganisationRegistrationNo(source.getOrganisation().getRegistrationNo());
         // }
 
-        // if(source.getIndividual() != null) {
+        if (source.getTarget() == TargetEntity.INDIVIDUAL) {
 
-        //     target.setIdentityNo(source.getIndividual().getIdentityNo());
-        //     target.setIdentityType(source.getIndividual().getIdentityType());
+            Individual individual = individualCache.get(source.getTargetId());
 
-        //     StringBuilder nameBuilder = new StringBuilder();
-        //     nameBuilder.append(source.getIndividual().getFirstName());
+            if (individual == null) {
 
-        //     if(source.getIndividual().getMiddleName() != null) {
-        //         nameBuilder.append(" ");
-        //         nameBuilder.append(source.getIndividual().getMiddleName());
-        //     }
+                individual = individualRepository.getReferenceById(source.getTargetId());
+                individualCache.put(source.getTargetId(), individual);
+            }
 
-        //     if(source.getIndividual().getSurname() != null) {
-        //         nameBuilder.append(" ");
-        //         nameBuilder.append(source.getIndividual().getSurname());
-        //     }
+            // target.setIdentityNo(individual.getIdentityNo());
+            target.setRegistration(individual.getIdentityNo());
+            target.setIdentityType(individual.getIdentityType());
 
-        //     target.setName(nameBuilder.toString());
+            StringBuilder nameBuilder = new StringBuilder();
+            nameBuilder.append(individual.getFirstName());
 
-        //     target.setEmailAddress(source.getIndividual().getEmailAddress());
+            if (individual.getMiddleName() != null) {
+                nameBuilder.append(" ");
+                nameBuilder.append(individual.getMiddleName());
+            }
 
-        // }
+            if (individual.getSurname() != null) {
+                nameBuilder.append(" ");
+                nameBuilder.append(individual.getSurname());
+            }
 
-        if(source.getDocument() != null) {
+            target.setName(nameBuilder.toString());
+
+            target.setEmailAddress(individual.getEmailAddress());
+
+        }
+
+        if (source.getDocument() != null) {
 
             target.setDocumentId(source.getDocument().getId());
             target.setDocumentType(source.getDocument().getDocumentType().getName());
@@ -85,35 +102,31 @@ public class ClientRequestDaoImpl
      * {@inheritDoc}
      */
     @Override
-    public ClientRequestDTO toClientRequestDTO(final ClientRequest entity)
-    {
+    public ClientRequestDTO toClientRequestDTO(final ClientRequest entity) {
         // TODO verify behavior of toClientRequestDTO
         return super.toClientRequestDTO(entity);
     }
 
     /**
-     * Retrieves the entity object that is associated with the specified value object
+     * Retrieves the entity object that is associated with the specified value
+     * object
      * from the object store. If no such entity object exists in the object store,
      * a new, blank entity is created
      */
-    private ClientRequest loadClientRequestFromClientRequestDTO(ClientRequestDTO clientRequestDTO)
-    {
-        if (clientRequestDTO.getId() == null)
-        {
-            return  ClientRequest.Factory.newInstance();
-        }
-        else
-        {
+    private ClientRequest loadClientRequestFromClientRequestDTO(ClientRequestDTO clientRequestDTO) {
+        if (clientRequestDTO.getId() == null) {
+            return ClientRequest.Factory.newInstance();
+        } else {
             return this.clientRequestRepository.findById(clientRequestDTO.getId())
-                .orElseThrow(() -> new EntityNotFoundException("Entity not found for id: " + clientRequestDTO.getId()));
+                    .orElseThrow(
+                            () -> new EntityNotFoundException("Entity not found for id: " + clientRequestDTO.getId()));
         }
     }
 
     /**
      * {@inheritDoc}
      */
-    public ClientRequest clientRequestDTOToEntity(ClientRequestDTO clientRequestDTO)
-    {
+    public ClientRequest clientRequestDTOToEntity(ClientRequestDTO clientRequestDTO) {
         // TODO verify behavior of clientRequestDTOToEntity
         ClientRequest entity = this.loadClientRequestFromClientRequestDTO(clientRequestDTO);
         this.clientRequestDTOToEntity(clientRequestDTO, entity, true);
@@ -125,33 +138,48 @@ public class ClientRequestDaoImpl
      */
     @Override
     public void clientRequestDTOToEntity(
-        ClientRequestDTO source,
-        ClientRequest target,
-        boolean copyIfNull)
-    {
+            ClientRequestDTO source,
+            ClientRequest target,
+            boolean copyIfNull) {
         // TODO verify behavior of clientRequestDTOToEntity
         super.clientRequestDTOToEntity(source, target, copyIfNull);
 
-        if(StringUtils.isNotBlank(source.getDocumentId())) {
+        Map<String, Individual> individualCache = new HashMap<>();
+
+        if (StringUtils.isNotBlank(source.getDocumentId())) {
 
             target.setDocument(documentRepository.getReferenceById(source.getDocumentId()));
         }
 
         // if(StringUtils.isNotBlank(source.getIndividualId())) {
-            
-        //     target.setIndividual(individualRepository.getReferenceById(source.getIndividualId()));
 
-        // } else if(StringUtils.isNotBlank(source.getIdentityNo()) && source.getIdentityType() != null) {
+        // target.setIndividual(individualRepository.getReferenceById(source.getIndividualId()));
 
-        //     target.setIndividual(
-        //         individualRepository.findByIdentityNoAndIdentityType(
-        //             source.getIdentityNo(),
-        //             source.getIdentityType()
-        //         )
-        //     );
+        // } else if(StringUtils.isNotBlank(source.getIdentityNo()) &&
+        // source.getIdentityType() != null) {
+
+        // target.setIndividual(
+        // individualRepository.findByIdentityNoAndIdentityType(
+        // source.getIdentityNo(),
+        // source.getIdentityType()
+        // )
+        // );
         // }
 
-        if(StringUtils.isNotBlank(source.getOrganisationId())) {
+        if(source.getTarget() == TargetEntity.INDIVIDUAL && StringUtils.isNotBlank(source.getTargetId())) {
+
+            Individual individual = individualCache.get(source.getTargetId());
+
+            if(individualRepository.existsById(source.getTargetId())) {
+
+                target.setTargetId(individual.getId());
+            } else {
+
+                throw new EntityNotFoundException("Individual not found for id: " + source.getTargetId());
+            }
+        }
+
+        if (StringUtils.isNotBlank(source.getOrganisationId())) {
 
             target.setOrganisationId(source.getOrganisationId());
         }

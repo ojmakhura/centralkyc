@@ -40,11 +40,11 @@ export const EmploymentRecordApiStore = signalStore(
             tapResponse({
               next: (response: EmploymentRecordDTO | any) => {
                 patchState(
-                  store, 
+                  store,
                   {
                     data: response,
-                    loading: false, 
-                    success: true, 
+                    loading: false,
+                    success: true,
                     messages: ['Success!!'],
                     error: false,
                   }
@@ -52,12 +52,12 @@ export const EmploymentRecordApiStore = signalStore(
               },
               error: (error: any) => {
                 patchState(
-                  store, { 
-                    status: (error?.status || 0), 
-                    loading: false, 
+                  store, {
+                    status: (error?.status || 0),
+                    loading: false,
                     success: false,
                     error: true,
-                    messages: [error.message || 'An error occurred'], 
+                    messages: [error?.error?.message || 'An error occurred'],
                   }
                 );
               },
@@ -72,11 +72,11 @@ export const EmploymentRecordApiStore = signalStore(
             tapResponse({
               next: (response: EmploymentRecordDTO[] | any[]) => {
                 patchState(
-                  store, 
+                  store,
                   {
-                    dataList: response, 
-                    loading: false, 
-                    success: true, 
+                    dataList: response,
+                    loading: false,
+                    success: true,
                     messages: ['Success!!'],
                     error: false,
                   }
@@ -84,12 +84,12 @@ export const EmploymentRecordApiStore = signalStore(
               },
               error: (error: any) => {
                 patchState(
-                  store, { 
-                    status: (error?.status || 0), 
-                    loading: false, 
+                  store, {
+                    status: (error?.status || 0),
+                    loading: false,
                     success: false,
                     error: true,
-                    messages: [error.message || 'An error occurred'], 
+                    messages: [error?.error?.message || 'An error occurred'],
                   }
                 );
               },
@@ -104,11 +104,11 @@ export const EmploymentRecordApiStore = signalStore(
             tapResponse({
               next: (response: EmploymentRecordDTO[] | any[]) => {
                 patchState(
-                  store, 
+                  store,
                   {
-                    dataList: response, 
-                    loading: false, 
-                    success: true, 
+                    dataList: response,
+                    loading: false,
+                    success: true,
                     messages: ['Success!!'],
                     error: false,
                   }
@@ -116,12 +116,12 @@ export const EmploymentRecordApiStore = signalStore(
               },
               error: (error: any) => {
                 patchState(
-                  store, { 
-                    status: (error?.status || 0), 
-                    loading: false, 
+                  store, {
+                    status: (error?.status || 0),
+                    loading: false,
                     success: false,
                     error: true,
-                    messages: [error.message || 'An error occurred'], 
+                    messages: [error?.error?.message || 'An error occurred'],
                   }
                 );
               },
@@ -136,11 +136,11 @@ export const EmploymentRecordApiStore = signalStore(
             tapResponse({
               next: (response: Page<EmploymentRecordDTO> | any) => {
                 patchState(
-                  store, 
+                  store,
                   {
                     dataPage: response,
-                    loading: false, 
-                    success: true, 
+                    loading: false,
+                    success: true,
                     messages: ['Success!!'],
                     error: false,
                   }
@@ -148,12 +148,12 @@ export const EmploymentRecordApiStore = signalStore(
               },
               error: (error: any) => {
                 patchState(
-                  store, { 
-                    status: (error?.status || 0), 
-                    loading: false, 
+                  store, {
+                    status: (error?.status || 0),
+                    loading: false,
                     success: false,
                     error: true,
-                    messages: [error.message || 'An error occurred'], 
+                    messages: [error?.error?.message || 'An error occurred'],
                   }
                 );
               },
@@ -168,11 +168,11 @@ export const EmploymentRecordApiStore = signalStore(
             tapResponse({
               next: (response: Page<EmploymentRecordDTO> | any) => {
                 patchState(
-                  store, 
+                  store,
                   {
                     dataPage: response,
-                    loading: false, 
-                    success: true, 
+                    loading: false,
+                    success: true,
                     messages: ['Success!!'],
                     error: false,
                   }
@@ -180,12 +180,12 @@ export const EmploymentRecordApiStore = signalStore(
               },
               error: (error: any) => {
                 patchState(
-                  store, { 
-                    status: (error?.status || 0), 
-                    loading: false, 
+                  store, {
+                    status: (error?.status || 0),
+                    loading: false,
                     success: false,
                     error: true,
-                    messages: [error.message || 'An error occurred'], 
+                    messages: [error?.error?.message || 'An error occurred'],
                   }
                 );
               },
@@ -200,11 +200,11 @@ export const EmploymentRecordApiStore = signalStore(
             tapResponse({
               next: (response: boolean | any) => {
                 patchState(
-                  store, 
+                  store,
                   {
                     data: response,
-                    loading: false, 
-                    success: true, 
+                    loading: false,
+                    success: true,
                     messages: ['Success!!'],
                     error: false,
                   }
@@ -212,12 +212,12 @@ export const EmploymentRecordApiStore = signalStore(
               },
               error: (error: any) => {
                 patchState(
-                  store, { 
-                    status: (error?.status || 0), 
-                    loading: false, 
+                  store, {
+                    status: (error?.status || 0),
+                    loading: false,
                     success: false,
                     error: true,
-                    messages: [error.message || 'An error occurred'], 
+                    messages: [error?.error?.message || 'An error occurred'],
                   }
                 );
               },
@@ -232,11 +232,11 @@ export const EmploymentRecordApiStore = signalStore(
             tapResponse({
               next: (response: EmploymentRecordDTO | any) => {
                 patchState(
-                  store, 
+                  store,
                   {
                     data: response,
-                    loading: false, 
-                    success: true, 
+                    loading: false,
+                    success: true,
                     messages: ['Success!!'],
                     error: false,
                   }
@@ -244,12 +244,12 @@ export const EmploymentRecordApiStore = signalStore(
               },
               error: (error: any) => {
                 patchState(
-                  store, { 
-                    status: (error?.status || 0), 
-                    loading: false, 
+                  store, {
+                    status: (error?.status || 0),
+                    loading: false,
                     success: false,
                     error: true,
-                    messages: [error.message || 'An error occurred'], 
+                    messages: [error?.error?.message || 'An error occurred'],
                   }
                 );
               },
@@ -264,11 +264,11 @@ export const EmploymentRecordApiStore = signalStore(
             tapResponse({
               next: (response: EmploymentRecordDTO[] | any[]) => {
                 patchState(
-                  store, 
+                  store,
                   {
-                    dataList: response, 
-                    loading: false, 
-                    success: true, 
+                    dataList: response,
+                    loading: false,
+                    success: true,
                     messages: ['Success!!'],
                     error: false,
                   }
@@ -276,12 +276,12 @@ export const EmploymentRecordApiStore = signalStore(
               },
               error: (error: any) => {
                 patchState(
-                  store, { 
-                    status: (error?.status || 0), 
-                    loading: false, 
+                  store, {
+                    status: (error?.status || 0),
+                    loading: false,
                     success: false,
                     error: true,
-                    messages: [error.message || 'An error occurred'], 
+                    messages: [error?.error?.message || 'An error occurred'],
                   }
                 );
               },

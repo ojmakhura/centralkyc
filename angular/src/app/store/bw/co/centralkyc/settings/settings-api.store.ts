@@ -59,7 +59,7 @@ export const SettingsApiStore = signalStore(
                     loading: false,
                     success: false,
                     error: true,
-                    messages: [error.message || 'An error occurred'],
+                    messages: [error?.error?.message || 'An error occurred'],
                   }
                 );
               },
@@ -91,7 +91,7 @@ export const SettingsApiStore = signalStore(
                     loading: false,
                     success: false,
                     error: true,
-                    messages: [error.message || 'An error occurred'],
+                    messages: [error?.error?.message || 'An error occurred'],
                   }
                 );
               },
@@ -123,7 +123,7 @@ export const SettingsApiStore = signalStore(
                     loading: false,
                     success: false,
                     error: true,
-                    messages: [error.message || 'An error occurred'],
+                    messages: [error?.error?.message || 'An error occurred'],
                   }
                 );
               },
@@ -155,7 +155,7 @@ export const SettingsApiStore = signalStore(
                     loading: false,
                     success: false,
                     error: true,
-                    messages: [error.message || 'An error occurred'],
+                    messages: [error?.error?.message || 'An error occurred'],
                   }
                 );
               },
@@ -187,7 +187,7 @@ export const SettingsApiStore = signalStore(
                     loading: false,
                     success: false,
                     error: true,
-                    messages: [error.message || 'An error occurred'],
+                    messages: [error?.error?.message || 'An error occurred'],
                   }
                 );
               },
@@ -219,7 +219,7 @@ export const SettingsApiStore = signalStore(
                     loading: false,
                     success: false,
                     error: true,
-                    messages: [error.message || 'An error occurred'],
+                    messages: [error?.error?.message || 'An error occurred'],
                   }
                 );
               },
@@ -251,7 +251,7 @@ export const SettingsApiStore = signalStore(
                     loading: false,
                     success: false,
                     error: true,
-                    messages: [error.message || 'An error occurred'],
+                    messages: [error?.error?.message || 'An error occurred'],
                   }
                 );
               },
@@ -283,7 +283,7 @@ export const SettingsApiStore = signalStore(
                     loading: false,
                     success: false,
                     error: true,
-                    messages: [error.message || 'An error occurred'],
+                    messages: [error?.error?.message || 'An error occurred'],
                   }
                 );
               },
@@ -310,7 +310,7 @@ export const SettingsApiStore = signalStore(
                   loading: false,
                   success: false,
                   error: true,
-                  messages: [error.message || 'An error occurred while attaching document type'],
+                  messages: [error?.error?.message || 'An error occurred while attaching document type'],
                 });
               },
             }),
@@ -336,7 +336,7 @@ export const SettingsApiStore = signalStore(
                   loading: false,
                   success: false,
                   error: true,
-                  messages: [error.message || 'An error occurred while detaching document type'],
+                  messages: [error?.error?.message || 'An error occurred while detaching document type'],
                 });
               },
             }),

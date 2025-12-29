@@ -10,6 +10,7 @@ package bw.co.centralkyc.organisation.client;
 
 import bw.co.centralkyc.PropertySearchOrder;
 import bw.co.centralkyc.SearchObject;
+import bw.co.centralkyc.SortOrderFactory;
 import bw.co.centralkyc.TargetEntity;
 import bw.co.centralkyc.document.Document;
 import bw.co.centralkyc.document.DocumentDTO;
@@ -53,6 +54,7 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -118,9 +120,8 @@ public class ClientRequestServiceImpl
     @Override
     protected Collection<ClientRequestDTO> handleGetAll()
             throws Exception {
-        // TODO implement protected Collection<ClientRequestDTO> handleGetAll()
-        throw new UnsupportedOperationException(
-                "bw.co.centralkyc.organisation.client.ClientRequestService.handleGetAll() Not implemented!");
+       
+        return clientRequestDao.toClientRequestDTOCollection(clientRequestRepository.findAll());
     }
 
     /**
@@ -131,11 +132,17 @@ public class ClientRequestServiceImpl
     protected Collection<ClientRequestDTO> handleSearch(ClientRequestSearchCriteria criteria,
             Set<PropertySearchOrder> sortProperties)
             throws Exception {
-        // TODO implement protected Collection<ClientRequestDTO>
-        // handleSearch(ClientRequestSearchCriteria criteria, Set<PropertySearchOrder>
-        // sortProperties)
-        throw new UnsupportedOperationException(
-                "bw.co.centralkyc.organisation.client.ClientRequestService.handleSearch(ClientRequestSearchCriteria criteria, Set<PropertySearchOrder> sortProperties) Not implemented!");
+
+        Specification<ClientRequest> spec = this.buildSpecificationFromCriteria(criteria);
+
+        Sort sort = SortOrderFactory.createSortOrder(sortProperties);
+
+        Collection<ClientRequest> requests = (sort != null)
+                ? clientRequestRepository.findAll(spec, sort)
+                : clientRequestRepository.findAll(spec);
+
+        return clientRequestDao.toClientRequestDTOCollection(requests);
+        
     }
 
     /**
@@ -145,10 +152,11 @@ public class ClientRequestServiceImpl
     @Override
     protected Page<ClientRequestDTO> handleGetAll(Integer pageNumber, Integer pageSize)
             throws Exception {
-        // TODO implement protected Page<ClientRequestDTO> handleGetAll(Integer
-        // pageNumber, Integer pageSize)
-        throw new UnsupportedOperationException(
-                "bw.co.centralkyc.organisation.client.ClientRequestService.handleGetAll(Integer pageNumber, Integer pageSize) Not implemented!");
+
+        PageRequest pageRequest = PageRequest.of(pageNumber, pageSize);
+        Page<ClientRequest> requests = clientRequestRepository.findAll(pageRequest);
+
+        return requests.map(clientRequestDao::toClientRequestDTO);
     }
 
     /**
@@ -157,15 +165,28 @@ public class ClientRequestServiceImpl
     @Override
     protected Page<ClientRequestDTO> handleSearch(SearchObject<ClientRequestSearchCriteria> criteria)
             throws Exception {
-        // TODO implement protected Page<ClientRequestDTO>
-        // handleSearch(SearchObject<ClientRequestSearchCriteria> criteria)
-        throw new UnsupportedOperationException(
-                "bw.co.centralkyc.organisation.client.ClientRequestService.handleSearch(SearchObject<ClientRequestSearchCriteria> criteria) Not implemented!");
+
+        Specification<ClientRequest> spec = this.buildSpecificationFromCriteria(criteria.getCriteria());
+        Sort sort = SortOrderFactory.createSortOrder(criteria.getSortings());
+
+        Integer pageNumber = criteria.getPageNumber() != null ? criteria.getPageNumber() : 0;
+        Integer pageSize = criteria.getPageSize() != null ? criteria.getPageSize() : 10;
+
+        PageRequest pageRequest = (sort != null)
+                ? PageRequest.of(pageNumber, pageSize, sort)
+                : PageRequest.of(pageNumber, pageSize);
+        Page<ClientRequest> requests = clientRequestRepository.findAll(spec, pageRequest);
+
+        return requests.map(clientRequestDao::toClientRequestDTO);
     }
 
-    Specification<ClientRequest> buildSpecificationFromCriteria(ClientRequestSearchCriteria criteria) {
+    private Specification<ClientRequest> buildSpecificationFromCriteria(ClientRequestSearchCriteria criteria) {
 
         Specification<ClientRequest> spec = Specification.unrestricted();
+
+        if(criteria == null) {
+            return spec;
+        }
 
         if(StringUtils.isNotBlank(criteria.getOrganisationId())) {
 
@@ -250,8 +271,14 @@ public class ClientRequestServiceImpl
      */
     @Override
     protected Page<ClientRequestDTO> handleUploadRequests(InputStream inputStream, String user,
-            String organisationId, DocumentDTO document)
+            String organisationId, DocumentDTO document, TargetEntity target)
             throws Exception {
+
+        if(target != null && target != TargetEntity.INDIVIDUAL && target != TargetEntity.ORGANISATION) {
+
+            throw new ClientRequestServiceException("Only 'null', 'ORGANISATION' and 'INDIVIDUAL' are allowed.");
+        }
+
         List<ClientRequest> clientRequests = new ArrayList<>();
 
         try {
@@ -263,21 +290,20 @@ public class ClientRequestServiceImpl
             try {
                 // Try reading as Excel (.xlsx)
                 Workbook workbook = new XSSFWorkbook(inputStream);
-                clientRequests = processExcelFile(workbook, user, organisationId, d);
+                clientRequests = processIndividualExcelFile(workbook, user, organisationId, d, target);
 
-                // clientRequests = clientRequestRepository.saveAll(clientRequests);
                 workbook.close();
             } catch (Exception excelException) {
                 // Reset the stream and try as .xls
                 try {
                     inputStream.reset();
                     Workbook workbook = new HSSFWorkbook(inputStream);
-                    clientRequests = processExcelFile(workbook, user, organisationId, d);
+                    clientRequests = processIndividualExcelFile(workbook, user, organisationId, d, target);
                     workbook.close();
                 } catch (Exception xlsException) {
                     // Reset and try as CSV
                     inputStream.reset();
-                    clientRequests = processCsvFile(inputStream, user, organisationId, d);
+                    clientRequests = processIndividualCsvFile(inputStream, user, organisationId, d, target);
                 }
             }
         } catch (IOException e) {
@@ -286,14 +312,19 @@ public class ClientRequestServiceImpl
 
         clientRequests = clientRequestRepository.saveAll(clientRequests);
 
-        return null;// clientRequestRepository.findByOrgId(organisationId, 
-                //PageRequest.of(0, 10));
+        if(target == TargetEntity.INDIVIDUAL) {
+
+        } else if(target == TargetEntity.ORGANISATION) {
+
+        }
+
+        return findByTargetAndOrganisation(target, null, organisationId, 0, 10);
     }
 
     /**
      * Save individual entity and create client request
      */
-    private ClientRequest saveIndividualAndRequest(Individual individual, String user, String organisationId, Document document) {
+    private ClientRequest saveIndividualAndRequest(Individual individual, String user, String organisationId, Document document, TargetEntity target) {
         // Save individual entity
 
         Individual savedIndividual = individualRepository.findByIdentityNoAndIdentityType(
@@ -310,14 +341,14 @@ public class ClientRequestServiceImpl
             savedIndividual.setModifiedBy(user);
         }
 
-        // Individual savedIndividual = individualRepository.save(individual);
+        savedIndividual = individualRepository.save(savedIndividual);
 
         // Create client request
         ClientRequest clientRequest = new ClientRequest();
-        // clientRequest.setIndividual(savedIndividual);
+        clientRequest.setTarget(target);
+        clientRequest.setTargetId(savedIndividual.getId());
 
         // Set organisation
-        // Organisation organisation = organisationRepository.getReferenceById(organisationId);
         clientRequest.setOrganisationId(organisationId);
 
         // Set status and audit fields
@@ -326,10 +357,6 @@ public class ClientRequestServiceImpl
         clientRequest.setCreatedAt(java.time.LocalDateTime.now());
         clientRequest.setDocument(document);
 
-        // Save client request
-        // ClientRequest savedRequest = clientRequestRepository.save(clientRequest);
-
-        // Convert to DTO
         return clientRequest;
     }
 
@@ -339,7 +366,7 @@ public class ClientRequestServiceImpl
      * No,
      * Email Address, Phone Numbers, Physical Address, Postal Address
      */
-    private List<ClientRequest> processExcelFile(Workbook workbook, String user, String organisationId, Document document) {
+    private List<ClientRequest> processIndividualExcelFile(Workbook workbook, String user, String organisationId, Document document, TargetEntity target) {
         List<ClientRequest> clientRequests = new ArrayList<>();
         Sheet sheet = workbook.getSheetAt(0); // Read first sheet
         Iterator<Row> rowIterator = sheet.iterator();
@@ -353,7 +380,7 @@ public class ClientRequestServiceImpl
             Row row = rowIterator.next();
             Individual individual = extractIndividualFromRow(row);
             if (individual != null) {
-                ClientRequest request = saveIndividualAndRequest(individual, user, organisationId, document);
+                ClientRequest request = saveIndividualAndRequest(individual, user, organisationId, document, target);
                 clientRequests.add(request);
             }
         }
@@ -367,7 +394,7 @@ public class ClientRequestServiceImpl
      * No,
      * Email Address, Phone Numbers, Physical Address, Postal Address
      */
-    private List<ClientRequest> processCsvFile(InputStream inputStream, String user, String organisationId, Document document)
+    private List<ClientRequest> processIndividualCsvFile(InputStream inputStream, String user, String organisationId, Document document, TargetEntity target)
             throws IOException {
         List<ClientRequest> clientRequests = new ArrayList<>();
 
@@ -382,7 +409,7 @@ public class ClientRequestServiceImpl
             for (CSVRecord csvRecord : csvParser) {
                 Individual individual = extractIndividualFromCsvRecord(csvRecord);
                 if (individual != null) {
-                    ClientRequest request = saveIndividualAndRequest(individual, user, organisationId, document);
+                    ClientRequest request = saveIndividualAndRequest(individual, user, organisationId, document, target);
                     
                     clientRequests.add(request);
                 }
@@ -710,6 +737,36 @@ public class ClientRequestServiceImpl
             cb.equal(root.get("targetId"), targetId)
         );
 
+        Page<ClientRequest> requests = clientRequestRepository.findAll(spec, PageRequest.of(pageNumber, pageSize));
+        
+        return requests.map(clientRequestDao::toClientRequestDTO);
+    }
+
+    @Override
+    protected Collection<ClientRequestDTO> handleFindByTargetAndOrganisation(TargetEntity target, String targetId,
+            String organisationId) throws Exception {
+
+        ClientRequestSearchCriteria criteria = new ClientRequestSearchCriteria();
+        criteria.setTarget(target);
+        criteria.setTargetId(targetId);
+        criteria.setOrganisationId(organisationId);
+
+        Specification<ClientRequest> spec = this.buildSpecificationFromCriteria(criteria);
+        Collection<ClientRequest> requests = clientRequestRepository.findAll(spec);
+
+        return clientRequestDao.toClientRequestDTOCollection(requests);
+    }
+
+    @Override
+    protected Page<ClientRequestDTO> handleFindByTargetAndOrganisation(TargetEntity target, String targetId,
+            String organisationId, Integer pageNumber, Integer pageSize) throws Exception {
+        
+        ClientRequestSearchCriteria criteria = new ClientRequestSearchCriteria();
+        criteria.setTarget(target);
+        criteria.setTargetId(targetId);
+        criteria.setOrganisationId(organisationId);
+
+        Specification<ClientRequest> spec = this.buildSpecificationFromCriteria(criteria);
         Page<ClientRequest> requests = clientRequestRepository.findAll(spec, PageRequest.of(pageNumber, pageSize));
         
         return requests.map(clientRequestDao::toClientRequestDTO);

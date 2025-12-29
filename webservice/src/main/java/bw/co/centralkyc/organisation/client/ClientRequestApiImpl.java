@@ -115,7 +115,7 @@ public class ClientRequestApiImpl implements ClientRequestApi {
     }
 
     @Override
-    public ResponseEntity<Collection<ClientRequestDTO>> findByOrganisation(String organisationId) throws Exception {
+    public ResponseEntity<Collection<ClientRequestDTO>> findByOrganisation(String organisationId, TargetEntity target) throws Exception {
         try {
             Collection<ClientRequestDTO> requests = clientRequestService.findByOrganisation(organisationId);
             updateOrganisationsDetails(requests);
@@ -128,7 +128,7 @@ public class ClientRequestApiImpl implements ClientRequestApi {
     }
 
     @Override
-    public ResponseEntity<Page<ClientRequestDTO>> findByOrganisationPaged(String organisationId, Integer pageNumber, Integer pageSize) throws Exception {
+    public ResponseEntity<Page<ClientRequestDTO>> findByOrganisationPaged(String organisationId, Integer pageNumber, Integer pageSize, TargetEntity target) throws Exception {
         try {
             Page<ClientRequestDTO> requests = clientRequestService.findByOrganisation(organisationId, pageNumber, pageSize);
 
@@ -288,7 +288,7 @@ public class ClientRequestApiImpl implements ClientRequestApi {
     }
 
     @Override
-    public ResponseEntity<Page<ClientRequestDTO>> uploadRequests(MultipartFile file, String organisationId) throws Exception {
+    public ResponseEntity<Page<ClientRequestDTO>> uploadRequests(MultipartFile file, String organisationId, TargetEntity target) throws Exception {
 
         try(InputStream inputStream = file.getInputStream()) {
 
@@ -303,7 +303,7 @@ public class ClientRequestApiImpl implements ClientRequestApi {
                             file)
                     .getBody();
 
-            Page<ClientRequestDTO> requests = clientRequestService.findByOrganisation(organisationId, 0, 10);
+            Page<ClientRequestDTO> requests = clientRequestService.uploadRequests(inputStream, organisationId, organisationId, doc, target);
             updateOrganisationsDetails(requests.getContent());
 
             return ResponseEntity.ok(requests);
@@ -313,7 +313,7 @@ public class ClientRequestApiImpl implements ClientRequestApi {
         }
     }
 
-        @Override
+    @Override
     public ResponseEntity<InputStreamResource> downloadRequestTemplate() throws Exception {
         
         try {
@@ -387,6 +387,63 @@ public class ClientRequestApiImpl implements ClientRequestApi {
                 
                 Collection<Page<ClientRequestDTO>> response = Collections.singletonList(requests);
                 return ResponseEntity.ok(response);
+            } catch (Exception e) {
+
+                e.printStackTrace();
+                throw e;
+            }
+        }
+
+        @Override
+        public ResponseEntity<Collection<ClientRequestDTO>> findIndividualsByOrganisation(String organisationId)
+                throws Exception {
+
+            try {
+                Collection<ClientRequestDTO> requests = clientRequestService.findByTargetAndOrganisation(TargetEntity.INDIVIDUAL, null, organisationId);
+                return ResponseEntity.ok(requests);
+            } catch (Exception e) {
+
+                e.printStackTrace();
+                throw e;
+            }
+        }
+
+        @Override
+        public ResponseEntity<Page<ClientRequestDTO>> findIndividualsByOrganisationPaged(String organisationId,
+                Integer pageNumber, Integer pageSize) throws Exception {
+
+            try {
+                Page<ClientRequestDTO> requests = clientRequestService.findByTargetAndOrganisation(TargetEntity.INDIVIDUAL, null, organisationId, pageNumber, pageSize);
+                return ResponseEntity.ok(requests);
+            } catch (Exception e) {
+
+                e.printStackTrace();
+                throw e;
+            }
+        }
+
+        @Override
+        public ResponseEntity<Collection<ClientRequestDTO>> findOrganisationsByOrganisation(String organisationId)
+                throws Exception {
+            try {
+                Collection<ClientRequestDTO> requests = clientRequestService.findByTargetAndOrganisation(TargetEntity.ORGANISATION, null, organisationId);
+                updateOrganisationsDetails(requests);
+                return ResponseEntity.ok(requests);
+            } catch (Exception e) {
+
+                e.printStackTrace();
+                throw e;
+            }
+        }
+
+        @Override
+        public ResponseEntity<Page<ClientRequestDTO>> findOrganisationsByOrganisationPaged(String organisationId,
+                Integer pageNumber, Integer pageSize) throws Exception {
+            
+            try {
+                Page<ClientRequestDTO> requests = clientRequestService.findByTargetAndOrganisation(TargetEntity.ORGANISATION, null, organisationId, pageNumber, pageSize);
+                updateOrganisationsDetails(requests.getContent());
+                return ResponseEntity.ok(requests);
             } catch (Exception e) {
 
                 e.printStackTrace();

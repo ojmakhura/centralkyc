@@ -294,62 +294,124 @@
             </div>
           </mat-tab>
 
-          <!-- Client Requests Tab -->
+          <!-- Individual Client Requests Tab -->
           <mat-tab>
             <ng-template mat-tab-label>
-              <mat-icon class="tab-icon">assignment</mat-icon>
-              {{ 'client.requests' | translate }}
+              <mat-icon class="tab-icon">person</mat-icon>
+              {{ 'individual.client.requests' | translate }}
             </ng-template>
             <div class="tab-content">
               <div class="tab-header">
                 <div class="actions-group">
                   <div class="primary-actions">
-                    <button mat-raised-button color="accent" (click)="addNewClientRequest()">
+                    <button mat-raised-button color="accent" (click)="addNewClientRequest(TargetEntityT.INDIVIDUAL)">
                       <mat-icon>add</mat-icon>
-                      <span>{{ 'add.client.request' | translate }}</span>
+                      <span>{{ 'add.individual.request' | translate }}</span>
                     </button>
-                    <button mat-stroked-button color="primary" (click)="downloadRequestTemplate()">
+                    <button mat-stroked-button color="primary" (click)="downloadIndividualRequestTemplate()">
                       <mat-icon>download</mat-icon>
                       <span>{{ 'download.template' | translate }}</span>
                     </button>
-                    <input type="file" #clientRequestFileInput (change)="onClientRequestFileSelected($event)"
+                    <input type="file" #individualClientRequestFileInput (change)="onIndividualClientRequestFileSelected($event)"
                       accept=".csv,.xlsx,.xls" style="display: none" />
-                    <button mat-raised-button color="primary" (click)="clientRequestFileInput.click()">
+                    <button mat-raised-button color="primary" (click)="individualClientRequestFileInput.click()">
                       <mat-icon>upload_file</mat-icon>
                       <span>{{ 'upload.bulk.requests' | translate }}</span>
                     </button>
                   </div>
                   <div class="secondary-actions">
-                    <button mat-icon-button matTooltip="{{ 'refresh' | translate }}" (click)="refreshClientRequests()">
+                    <button mat-icon-button matTooltip="{{ 'refresh' | translate }}" (click)="refreshIndividualClientRequests()">
                       <mat-icon>refresh</mat-icon>
                     </button>
                   </div>
                 </div>
               </div>
 
-              @if (isUploadingClientRequestFile()) {
+              @if (isUploadingIndividualClientRequestFile()) {
               <div class="field-row">
-                <mat-progress-bar mode="determinate" [value]="clientRequestFileUploadProgress()"></mat-progress-bar>
+                <mat-progress-bar mode="determinate" [value]="individualClientRequestFileUploadProgress()"></mat-progress-bar>
               </div>
               }
 
-              @if (clientRequestsLoading()) {
+              @if (individualClientRequestsLoading()) {
               <div class="loading-state">
                 <mat-progress-spinner mode="indeterminate" diameter="50"></mat-progress-spinner>
-                <p>{{ 'loading.client.requests' | translate }}</p>
+                <p>{{ 'loading.individual.client.requests' | translate }}</p>
               </div>
-              } @else if (clientRequests() && (clientRequests()?.page?.totalElements || clientRequests().numberOfElements || 0) > 0) {
-              <app-table #clientRequestsTable [dataColumns]="clientRequestsTableColumns"
+              } @else if (individualClientRequests() && (individualClientRequests().page.totalElements || individualClientRequests().numberOfElements || 0) > 0) {
+              <app-table #individualClientRequestsTable [dataColumns]="individualClientRequestsTableColumns"
                 [showActions]="showClientRequestsActions" [paged]="true"
-                [actions]="clientRequestsTableColumnsActions" [dataSignal]="clientRequests">
+                [actions]="clientRequestsTableColumnsActions" [dataSignal]="individualClientRequests">
               </app-table>
 
               } @else {
               <div class="empty-state">
                 <div class="empty-state-content">
-                  <mat-icon class="empty-icon">assignment</mat-icon>
-                  <h3>{{ 'no.client.requests.found' | translate }}</h3>
-                  <p>{{ 'no.client.requests.message' | translate }}</p>
+                  <mat-icon class="empty-icon">person</mat-icon>
+                  <h3>{{ 'no.individual.client.requests.found' | translate }}</h3>
+                  <p>{{ 'no.individual.client.requests.message' | translate }}</p>
+                </div>
+              </div>
+              }
+            </div>
+          </mat-tab>
+
+          <!-- Organisation Client Requests Tab -->
+          <mat-tab>
+            <ng-template mat-tab-label>
+              <mat-icon class="tab-icon">business</mat-icon>
+              {{ 'organisation.client.requests' | translate }}
+            </ng-template>
+            <div class="tab-content">
+              <div class="tab-header">
+                <div class="actions-group">
+                  <div class="primary-actions">
+                    <button mat-raised-button color="accent" (click)="addNewClientRequest(TargetEntityT.ORGANISATION)">
+                      <mat-icon>add</mat-icon>
+                      <span>{{ 'add.organisation.request' | translate }}</span>
+                    </button>
+                    <button mat-stroked-button color="primary" (click)="downloadOrganisationRequestTemplate()">
+                      <mat-icon>download</mat-icon>
+                      <span>{{ 'download.template' | translate }}</span>
+                    </button>
+                    <input type="file" #organisationClientRequestFileInput (change)="onOrganisationClientRequestFileSelected($event)"
+                      accept=".csv,.xlsx,.xls" style="display: none" />
+                    <button mat-raised-button color="primary" (click)="organisationClientRequestFileInput.click()">
+                      <mat-icon>upload_file</mat-icon>
+                      <span>{{ 'upload.bulk.requests' | translate }}</span>
+                    </button>
+                  </div>
+                  <div class="secondary-actions">
+                    <button mat-icon-button matTooltip="{{ 'refresh' | translate }}" (click)="refreshOrganisationClientRequests()">
+                      <mat-icon>refresh</mat-icon>
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              @if (isUploadingOrganisationClientRequestFile()) {
+              <div class="field-row">
+                <mat-progress-bar mode="determinate" [value]="organisationClientRequestFileUploadProgress()"></mat-progress-bar>
+              </div>
+              }
+
+              @if (organisationClientRequestsLoading()) {
+              <div class="loading-state">
+                <mat-progress-spinner mode="indeterminate" diameter="50"></mat-progress-spinner>
+                <p>{{ 'loading.organisation.client.requests' | translate }}</p>
+              </div>
+              } @else if (organisationClientRequests() && (organisationClientRequests()?.page?.totalElements || organisationClientRequests()?.numberOfElements || 0) > 0) {
+              <app-table #organisationClientRequestsTable [dataColumns]="clientRequestsTableColumns"
+                [showActions]="showClientRequestsActions" [paged]="true"
+                [actions]="clientRequestsTableColumnsActions" [dataSignal]="organisationClientRequests">
+              </app-table>
+
+              } @else {
+              <div class="empty-state">
+                <div class="empty-state-content">
+                  <mat-icon class="empty-icon">business</mat-icon>
+                  <h3>{{ 'no.organisation.client.requests.found' | translate }}</h3>
+                  <p>{{ 'no.organisation.client.requests.message' | translate }}</p>
                 </div>
               </div>
               }

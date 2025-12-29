@@ -18,6 +18,11 @@ export class ClientRequestApi {
 
   private http = inject(HttpClient);
 
+  public downloadRequestTemplate(): Observable<Blob | any> {
+
+    return this.http.get<Blob | any>(`${this.path}/download-template`);
+  }
+
   public findByDocument(documentId: string | any): Observable<ClientRequestDTO[] | any[]> {
 
     return this.http.get<ClientRequestDTO[] | any[]>(`${this.path}/by-document/${documentId}`);
@@ -43,14 +48,29 @@ export class ClientRequestApi {
     return this.http.get<Page<ClientRequestDTO> | any>(`${this.path}/by-individual/${individualId}/paged?pageNumber=${pageNumber}&pageSize=${pageSize}`);
   }
 
-  public findByOrganisation(organisationId: string | any): Observable<ClientRequestDTO[] | any[]> {
+  public findByOrganisation(organisationId: string | any, target: TargetEntity | any): Observable<ClientRequestDTO[] | any[]> {
 
-    return this.http.get<ClientRequestDTO[] | any[]>(`${this.path}/by-org/${organisationId}`);
+    let url = `${this.path}/by-org/${organisationId}`;
+
+    if(target) {
+
+      url = `${url}&target=${target}`
+    }
+
+    return this.http.get<ClientRequestDTO[] | any[]>(`${url}`);
   }
 
-  public findByOrganisationPaged(organisationId: string | any, pageNumber: number | any, pageSize: number | any): Observable<Page<ClientRequestDTO> | any> {
+  public findByOrganisationPaged(organisationId: string | any, pageNumber: number | any, pageSize: number | any, target: TargetEntity | any): Observable<Page<ClientRequestDTO> | any> {
 
-    return this.http.get<Page<ClientRequestDTO> | any>(`${this.path}/by-org/${organisationId}/paged?pageNumber=${pageNumber}&pageSize=${pageSize}`);
+    let url = `${this.path}/by-org/${organisationId}/paged?pageNumber=${pageNumber}&pageSize=${pageSize}`;
+
+    if(target) {
+
+      url = `${url}&target=${target}`
+    }
+
+
+    return this.http.get<Page<ClientRequestDTO> | any>(`${url}`);
   }
 
   public findByStatus(status: ClientRequestStatus | any): Observable<ClientRequestDTO[] | any[]> {
@@ -73,9 +93,29 @@ export class ClientRequestApi {
     return this.http.get<Page<ClientRequestDTO>[] | any[]>(`${this.path}/target/${target}/${targetId}/paged?pageNumber=${pageNumber}&pageSize=${pageSize}`);
   }
 
+  public findIndividualsByOrganisation(organisationId: string | any): Observable<ClientRequestDTO[] | any[]> {
+
+    return this.http.get<ClientRequestDTO[] | any[]>(`${this.path}/by-org/${organisationId}/individuals`);
+  }
+
+  public findIndividualsByOrganisationPaged(organisationId: string | any, pageNumber: number | any, pageSize: number | any): Observable<Page<ClientRequestDTO> | any> {
+
+    return this.http.get<Page<ClientRequestDTO> | any>(`${this.path}/by-org/${organisationId}/individuals/paged?pageNumber=${pageNumber}&pageSize=${pageSize}`);
+  }
+
+  public findOrganisationsByOrganisation(organisationId: string | any): Observable<ClientRequestDTO[] | any[]> {
+
+    return this.http.get<ClientRequestDTO[] | any[]>(`${this.path}/by-org/${organisationId}/organisations`);
+  }
+
+  public findOrganisationsByOrganisationPaged(organisationId: string | any, pageNumber: number | any, pageSize: number | any): Observable<Page<ClientRequestDTO> | any> {
+
+    return this.http.get<Page<ClientRequestDTO> | any>(`${this.path}/by-org/${organisationId}/organisations/paged?pageNumber=${pageNumber}&pageSize=${pageSize}`);
+  }
+
   public getAll(): Observable<ClientRequestDTO[] | any[]> {
 
-    return this.http.get<ClientRequestDTO[] | any[]>(`${this.path}/all`);
+    return this.http.get<ClientRequestDTO[] | any[]>(`${this.path}`);
   }
 
   public getAllPaged(pageNumber: number | any, pageSize: number | any): Observable<Page<ClientRequestDTO> | any> {
@@ -103,18 +143,13 @@ export class ClientRequestApi {
     return this.http.post<ClientRequestDTO[] | any[]>(`${this.path}/search`, criteria);
   }
 
-  public uploadRequests(file: File | any, organisationId: string): Observable<Page<ClientRequestDTO> | any> {
+  public uploadRequests(file: File | any, organisationId: string | any, target: TargetEntity | any): Observable<Page<ClientRequestDTO> | any> {
     const formData: FormData = new FormData();
     formData.append('file', file);
 
     return this.http.post<Page<ClientRequestDTO> | any>(
-      `${this.path}/upload?organisationId=${organisationId}`,
+      `${this.path}/${organisationId}/upload?target=${target}`,
       formData,
     );
   }
-
-  downloadRequestTemplate(): Observable<Blob | any> {
-    return this.http.get(`${this.path}/download-template`, { responseType: 'blob' });
-  }
-
 }

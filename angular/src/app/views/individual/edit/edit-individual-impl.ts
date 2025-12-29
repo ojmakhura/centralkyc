@@ -62,7 +62,11 @@ export class EditIndividualImplComponent extends EditIndividualComponent {
       }
 
       this.editIndividualSignal.update((value) => ({
-        ...individual
+        ...individual,
+        organisationFilter: '',
+        branchFilter: '',
+        identityTypeFilter: '',
+        kycStatusFilter: '',
       }));
 
       if (individual.hasUser) {

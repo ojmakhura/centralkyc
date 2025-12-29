@@ -32,7 +32,7 @@ export class BranchApi {
 
     public getAll(): Observable<BranchDTO[] | any[]> {
 
-        return this.http.get<BranchDTO[] | any[]>(`${this.path}/all`);
+        return this.http.get<BranchDTO[] | any[]>(`${this.path}`);
     }
 
     public getAllPaged(pageNumber: number | any , pageSize: number | any ): Observable<Page<BranchDTO> | any> {

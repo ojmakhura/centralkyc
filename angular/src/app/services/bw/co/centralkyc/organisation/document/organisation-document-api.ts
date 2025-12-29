@@ -12,7 +12,7 @@ import { OrganisationDocumentSearchCriteria } from '@app/models/bw/co/centralkyc
   providedIn: 'root'
 })
 export class OrganisationDocumentApi {
-    
+
     protected path = '/organisation/document/type';
 
     private http = inject(HttpClient);
@@ -44,7 +44,7 @@ export class OrganisationDocumentApi {
 
     public getAll(): Observable<OrganisationDocumentDTO[] | any[]> {
 
-        return this.http.get<OrganisationDocumentDTO[] | any[]>(`${this.path}/all`);
+        return this.http.get<OrganisationDocumentDTO[] | any[]>(`${this.path}`);
     }
 
     public getAllPaged(pageNumber: number | any , pageSize: number | any ): Observable<Page<OrganisationDocumentDTO> | any> {

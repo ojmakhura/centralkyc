@@ -317,8 +317,15 @@ public class IndividualApiImpl implements IndividualApi {
 
         try {
 
+            Set<PropertySearchOrder> sortings = new java.util.HashSet<>();
+
+            if(criteria.getSortings() != null) {
+
+                sortings.addAll(criteria.getSortings());
+            }
+
             return ResponseEntity
-                    .ok(individualService.search(criteria.getCriteria(), (PropertySearchOrder) criteria.getSortings()));
+                    .ok(individualService.search(criteria.getCriteria(), sortings));
 
         } catch (Exception e) {
             throw e;

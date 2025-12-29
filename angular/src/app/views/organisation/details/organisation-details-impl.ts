@@ -33,6 +33,7 @@ import { KycInvoiceApiStore } from '@app/store/bw/co/centralkyc/invoice/kyc-invo
 import { KycSubscriptionApiStore } from '@app/store/bw/co/centralkyc/subscription/kyc-subscription-api.store';
 import { ClientRequestApiStore } from '@app/store/bw/co/centralkyc/organisation/client/client-request-api.store';
 import { BranchEditorForm } from '@app/components/organisation/branch/branch-editor';
+import { TargetEntity } from '@app/models/bw/co/centralkyc/target-entity';
 
 @Component({
   selector: 'app-organisation-details',
@@ -83,13 +84,21 @@ export class OrganisationDetailsImplComponent extends OrganisationDetailsCompone
   subscriptions = linkedSignal<KycSubscriptionDTO[]>(() => this.kycSubscriptionApiStore.dataList());
   subscriptionsLoading = linkedSignal(() => false);
 
-  // Client Requests related properties
-  clientRequests = this.clientRequestApiStore.dataPage;
-  clientsTablePaged = signal(true);
-  clientRequestsLoading = linkedSignal(() => false);
-  uploadedClientRequestFiles = signal<any[]>([]);
-  isUploadingClientRequestFile = signal(false);
-  clientRequestFileUploadProgress = signal(0);
+  // Individual Client Requests related properties
+  individualClientRequests = linkedSignal(() => this.clientRequestApiStore.individualsRequestsPage());
+  @ViewChild('individualClientRequestsTable') individualClientRequestsTable!: TableComponent<ClientRequestDTO>;
+  individualClientRequestsLoading = linkedSignal(() => false);
+  uploadedIndividualClientRequestFiles = signal<any[]>([]);
+  isUploadingIndividualClientRequestFile = signal(false);
+  individualClientRequestFileUploadProgress = signal(0);
+
+  // Organisation Client Requests related properties
+  organisationClientRequests = this.clientRequestApiStore.organisationsRequestsPage;
+  @ViewChild('organisationClientRequestsTable') organisationClientRequestsTable!: TableComponent<ClientRequestDTO>;
+  organisationClientRequestsLoading = linkedSignal(() => false);
+  uploadedOrganisationClientRequestFiles = signal<any[]>([]);
+  isUploadingOrganisationClientRequestFile = signal(false);
+  organisationClientRequestFileUploadProgress = signal(0);
 
   constructor() {
     super();
@@ -101,7 +110,8 @@ export class OrganisationDetailsImplComponent extends OrganisationDetailsCompone
         this.loadBranches();
         this.loadInvoices();
         this.loadSubscriptions();
-        this.loadClientRequests();
+        this.loadIndividualClientRequests();
+        this.loadOrganisationClientRequests();
       }
     });
 
@@ -112,21 +122,58 @@ export class OrganisationDetailsImplComponent extends OrganisationDetailsCompone
         this.totalBranches.set(branchList.length);
       }
     });
+
   }
 
-  // showClientRequestsActions = false;
+  individualClientRequestsTableColumns: ColumnModel[] = [
+    new ColumnModel(
+      'registration',
+      'identity.no',
+      false,
+    ),
+    new ColumnModel(
+      'name',
+      'name',
+      false,
+    ),
+    new ColumnModel(
+      'status',
+      'status',
+      false,
+    ),
+  ];
 
-  @ViewChild('clientRequestsTable') set clientRequestsTableComp(clientRequestsTable: TableComponent<ClientRequestDTO> | undefined) {
-  if (clientRequestsTable) {
-    // Do something when child is created
-    this.clientRequestsTable?.tablePaginator?.page?.subscribe({
-      next: (paginator: MatPaginator) => {
-        console.log('Paginator event:', paginator);
-        this.doSearchRequests(paginator.pageIndex, paginator.pageSize);
-      },
-    });
+  @ViewChild('individualClientRequestsTable') set individualClientRequestsTableComp(individualClientRequestsTable: TableComponent<ClientRequestDTO> | undefined) {
+    if (individualClientRequestsTable) {
+      // Do something when child is created
+      this.individualClientRequestsTable?.tablePaginator?.page?.subscribe({
+        next: (paginator: MatPaginator) => {
+          console.log('Paginator event:', paginator);
+          this.clientRequestApiStore.findIndividualsByOrganisationPaged({
+            organisationId: this.organisation().id,
+            pageNumber: paginator.pageIndex,
+            pageSize: paginator.pageSize
+          });
+        },
+      });
+    }
   }
-}
+
+  @ViewChild('organisationClientRequestsTable') set organisationClientRequestsTableComp(organisationClientRequestsTable: TableComponent<ClientRequestDTO> | undefined) {
+    if (organisationClientRequestsTable) {
+      // Do something when child is created
+      this.organisationClientRequestsTable?.tablePaginator?.page?.subscribe({
+        next: (paginator: MatPaginator) => {
+          console.log('Paginator event:', paginator);
+          this.clientRequestApiStore.findOrganisationsByOrganisationPaged({
+            organisationId: this.organisation().id,
+            pageNumber: paginator.pageIndex,
+            pageSize: paginator.pageSize
+          });
+        },
+      });
+    }
+  }
 
   override ngOnInit() {
     this.organisationApiStore.reset();
@@ -144,15 +191,17 @@ export class OrganisationDetailsImplComponent extends OrganisationDetailsCompone
 
   override doNgAfterViewInit(): void {
     this.doSearchRequests();
+
   }
 
-  private doSearchRequests(pageNumber: number = 0, pageSize: number = 10): void {
+  private doSearchRequests(pageNumber: number = 0, pageSize: number = 10, target?: TargetEntity): void {
     let org = this.organisation();
     if (org?.id) {
       this.clientRequestApiStore.findByOrganisationPaged({
         organisationId: org.id,
         pageNumber,
         pageSize,
+        target,
       });
     }
   }
@@ -277,13 +326,9 @@ export class OrganisationDetailsImplComponent extends OrganisationDetailsCompone
     // For now, we'll just update the pagination state
   }
 
-  doNgOnDestroy(): void {}
+  doNgOnDestroy(): void { }
 
   branchTablePaged = signal(false);
-  // branchesTableColumns: ColumnModel[] = [
-  //   new ColumnModel('code', 'code', false),
-  //   new ColumnModel('name', 'name', false),
-  // ];
 
   override branchesTableColumnsActions: ActionTemplate[] = [
     {
@@ -374,21 +419,146 @@ export class OrganisationDetailsImplComponent extends OrganisationDetailsCompone
   }
 
   // Client Requests Management Methods
-  loadClientRequests(): void {
+  loadIndividualClientRequests(pageNumber: number = 0, pageSize: number = 10): void {
+
     const org = this.organisation();
     if (org?.id) {
-      this.doSearchRequests(0, 10);
+      this.clientRequestApiStore.findIndividualsByOrganisationPaged({
+        organisationId: org.id,
+        pageNumber,
+        pageSize
+      });
+    }
+  }
+
+  loadOrganisationClientRequests(pageNumber: number = 0, pageSize: number = 10): void {
+    const org = this.organisation();
+    if (org?.id) {
+      this.clientRequestApiStore.findOrganisationsByOrganisationPaged({
+        organisationId: org.id,
+        pageNumber,
+        pageSize
+      });
     }
   }
 
   refreshClientRequests(): void {
-    this.loadClientRequests();
+    this.loadIndividualClientRequests();
+    this.loadOrganisationClientRequests();
   }
 
-  addNewClientRequest(): void {
+  addNewClientRequest(target: TargetEntity): void {
     this.router.navigate(['/client-request/edit'], {
-      queryParams: { organisationId: this.organisation().id },
+      queryParams: { organisationId: this.organisation().id, target: target },
     });
+  }
+
+  // Individual Client Requests Management Methods
+  refreshIndividualClientRequests(): void {
+    this.loadIndividualClientRequests();
+
+  }
+
+  // addNewIndividualClientRequest(): void {
+  //   this.router.navigate(['/client-request/edit'], {
+  //     queryParams: {
+  //       organisationId: this.organisation().id,
+  //       target: TargetEntity.INDIVIDUAL
+  //     },
+  //   });
+  // }
+
+  onIndividualClientRequestFileSelected(event: any): void {
+    const files: FileList = event.target.files;
+    if (files && files.length > 0) {
+      this.isUploadingIndividualClientRequestFile.set(true);
+      this.individualClientRequestFileUploadProgress.set(0);
+
+      // Simulate file upload progress
+      const interval = setInterval(() => {
+        const currentProgress = this.individualClientRequestFileUploadProgress();
+        if (currentProgress < 100) {
+          this.individualClientRequestFileUploadProgress.set(currentProgress + 10);
+        } else {
+          clearInterval(interval);
+
+          const newFiles = Array.from(files).map((file, index) => ({
+            id: `file-${Date.now()}-${index}`,
+            fileName: file.name,
+            fileSize: file.size,
+            file: file,
+          }));
+
+          this.uploadedIndividualClientRequestFiles.set([...this.uploadedIndividualClientRequestFiles(), ...newFiles]);
+          this.isUploadingIndividualClientRequestFile.set(false);
+          this.individualClientRequestFileUploadProgress.set(0);
+          event.target.value = '';
+        }
+      }, 300);
+
+      // TODO: Implement actual file upload with targetEntity=INDIVIDUAL
+      this.clientRequestApiStore.uploadRequests({
+        file: files[0],
+        organisationId: this.organisation().id,
+        target: TargetEntity.INDIVIDUAL
+      });
+    }
+  }
+
+  // Organisation Client Requests Management Methods
+  refreshOrganisationClientRequests(): void {
+    this.loadOrganisationClientRequests();
+  }
+
+  // addNewOrganisationClientRequest(): void {
+  //   this.router.navigate(['/client-request/edit'], {
+  //     queryParams: {
+  //       organisationId: this.organisation().id,
+  //       target: TargetEntity.ORGANISATION
+  //     },
+  //   });
+  // }
+
+  downloadOrganisationRequestTemplate(): void {
+    // TODO: Implement download template for organisation requests
+    console.log('Download organisation request template');
+  }
+
+  onOrganisationClientRequestFileSelected(event: any): void {
+    const files: FileList = event.target.files;
+    if (files && files.length > 0) {
+      this.isUploadingOrganisationClientRequestFile.set(true);
+      this.organisationClientRequestFileUploadProgress.set(0);
+
+      // Simulate file upload progress
+      const interval = setInterval(() => {
+        const currentProgress = this.organisationClientRequestFileUploadProgress();
+        if (currentProgress < 100) {
+          this.organisationClientRequestFileUploadProgress.set(currentProgress + 10);
+        } else {
+          clearInterval(interval);
+
+          const newFiles = Array.from(files).map((file, index) => ({
+            id: `file-${Date.now()}-${index}`,
+            fileName: file.name,
+            fileSize: file.size,
+            file: file,
+          }));
+
+          this.uploadedOrganisationClientRequestFiles.set([...this.uploadedOrganisationClientRequestFiles(), ...newFiles]);
+          this.isUploadingOrganisationClientRequestFile.set(false);
+          this.organisationClientRequestFileUploadProgress.set(0);
+          event.target.value = '';
+        }
+      }, 300);
+
+      // TODO: Implement actual file upload with targetEntity=ORGANISATION
+      this.clientRequestApiStore.uploadRequests({
+        file: files[0],
+        organisationId: this.organisation().id,
+        target: TargetEntity.ORGANISATION
+      });
+    }
   }
 
   override clientRequestsTableActionClicked(event: any): void {
@@ -405,84 +575,84 @@ export class OrganisationDetailsImplComponent extends OrganisationDetailsCompone
   }
 
   // Client Request File Upload Methods
-  onClientRequestFileSelected(event: any): void {
-    const files: FileList = event.target.files;
-    if (files && files.length > 0) {
-      this.isUploadingClientRequestFile.set(true);
-      this.clientRequestFileUploadProgress.set(0);
+  // onClientRequestFileSelected(event: any, target: TargetEntity): void {
+  //   const files: FileList = event.target.files;
+  //   if (files && files.length > 0) {
+  //     this.isUploadingClientRequestFile.set(true);
+  //     this.clientRequestFileUploadProgress.set(0);
 
-      // Simulate file upload progress
-      const interval = setInterval(() => {
-        const currentProgress = this.clientRequestFileUploadProgress();
-        if (currentProgress < 100) {
-          this.clientRequestFileUploadProgress.set(currentProgress + 10);
-        } else {
-          clearInterval(interval);
+  //     // Simulate file upload progress
+  //     const interval = setInterval(() => {
+  //       const currentProgress = this.clientRequestFileUploadProgress();
+  //       if (currentProgress < 100) {
+  //         this.clientRequestFileUploadProgress.set(currentProgress + 10);
+  //       } else {
+  //         clearInterval(interval);
 
-          // Add files to the uploaded list
-          const newFiles = Array.from(files).map((file, index) => ({
-            id: `file-${Date.now()}-${index}`,
-            fileName: file.name,
-            fileSize: file.size,
-            file: file,
-          }));
+  //         // Add files to the uploaded list
+  //         const newFiles = Array.from(files).map((file, index) => ({
+  //           id: `file-${Date.now()}-${index}`,
+  //           fileName: file.name,
+  //           fileSize: file.size,
+  //           file: file,
+  //         }));
 
-          this.uploadedClientRequestFiles.set([...this.uploadedClientRequestFiles(), ...newFiles]);
-          this.isUploadingClientRequestFile.set(false);
-          this.clientRequestFileUploadProgress.set(0);
+  //         this.uploadedClientRequestFiles.set([...this.uploadedClientRequestFiles(), ...newFiles]);
+  //         this.isUploadingClientRequestFile.set(false);
+  //         this.clientRequestFileUploadProgress.set(0);
 
-          // Reset the file input
-          event.target.value = '';
-        }
-      }, 300);
+  //         // Reset the file input
+  //         event.target.value = '';
+  //       }
+  //     }, 300);
 
-      // TODO: Implement actual file upload to server
-      this.clientRequestApiStore.uploadRequests({ file: files[0], organisationId: this.organisation().id });
-    }
-  }
+  //     // TODO: Implement actual file upload to server
+  //     this.clientRequestApiStore.uploadRequests({ file: files[0], organisationId: this.organisation().id, target });
+  //   }
+  // }
 
-  formatFileSize(bytes: number): string {
-    if (bytes === 0) return '0 Bytes';
-    const k = 1024;
-    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
-    const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return Math.round((bytes / Math.pow(k, i)) * 100) / 100 + ' ' + sizes[i];
-  }
+  // formatFileSize(bytes: number): string {
+  //   if (bytes === 0) return '0 Bytes';
+  //   const k = 1024;
+  //   const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+  //   const i = Math.floor(Math.log(bytes) / Math.log(k));
+  //   return Math.round((bytes / Math.pow(k, i)) * 100) / 100 + ' ' + sizes[i];
+  // }
 
-  downloadClientRequestFile(file: any): void {
-    // Create a blob URL and trigger download
-    const url = window.URL.createObjectURL(file.file);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = file.fileName;
-    document.body.appendChild(a);
-    a.click();
-    window.URL.revokeObjectURL(url);
-    document.body.removeChild(a);
+  // downloadClientRequestFile(file: any): void {
+  //   // Create a blob URL and trigger download
+  //   const url = window.URL.createObjectURL(file.file);
+  //   const a = document.createElement('a');
+  //   a.href = url;
+  //   a.download = file.fileName;
+  //   document.body.appendChild(a);
+  //   a.click();
+  //   window.URL.revokeObjectURL(url);
+  //   document.body.removeChild(a);
 
-    // TODO: Implement actual file download from server
-    // this.clientRequestApiStore.downloadFile({ fileId: file.id });
-  }
+  //   // TODO: Implement actual file download from server
+  //   // this.clientRequestApiStore.downloadFile({ fileId: file.id });
+  // }
 
-  deleteClientRequestFile(fileId: string): void {
-    if (confirm('Are you sure you want to delete this file?')) {
-      const currentFiles = this.uploadedClientRequestFiles();
-      const updatedFiles = currentFiles.filter((f) => f.id !== fileId);
-      this.uploadedClientRequestFiles.set(updatedFiles);
+  // deleteClientRequestFile(fileId: string): void {
+  //   if (confirm('Are you sure you want to delete this file?')) {
+  //     const currentFiles = this.uploadedClientRequestFiles();
+  //     const updatedFiles = currentFiles.filter((f) => f.id !== fileId);
+  //     this.uploadedClientRequestFiles.set(updatedFiles);
 
-      // TODO: Implement actual file deletion from server
-      // this.clientRequestApiStore.deleteFile({ fileId });
-    }
-  }
+  //     // TODO: Implement actual file deletion from server
+  //     // this.clientRequestApiStore.deleteFile({ fileId });
+  //   }
+  // }
 
-  downloadRequestTemplate(): void {
+  downloadIndividualRequestTemplate(): void {
     // TODO: Optionally fetch template from server if backend provides a specific format
     this.clientRequestApi.downloadRequestTemplate().subscribe({
       next: (blob: Blob) => {
         const url = window.URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
-        a.download = 'client_requests_template.xlsx';
+        a.download = 'individual_client_requests_template.xlsx';
         document.body.appendChild(a);
         a.click();
         window.URL.revokeObjectURL(url);

@@ -9,11 +9,13 @@
 package bw.co.centralkyc.individual;
 
 import java.util.Collection;
+import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -21,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import bw.co.centralkyc.PropertySearchOrder;
 import bw.co.centralkyc.SearchObject;
+import bw.co.centralkyc.SortOrderFactory;
 
 /**
  * @see bw.co.centralkyc.individual.IndividualService
@@ -152,15 +155,15 @@ public class IndividualServiceImpl
      * @see bw.co.centralkyc.individual.IndividualService#search(String)
      */
     @Override
-    protected Collection<IndividualListDTO> handleSearch(IndividualSearchCriteria criteria, PropertySearchOrder orderings)
+    protected Collection<IndividualListDTO> handleSearch(IndividualSearchCriteria criteria, Set<PropertySearchOrder> orderings)
             throws Exception {
 
         Specification<Individual> spec = createSpecification(criteria);
 
         return individualDao.toIndividualListDTOCollection(
             spec == null ? 
-            individualRepository.findAll() :
-            individualRepository.findAll(spec)
+            individualRepository.findAll(Sort.by(Sort.Direction.ASC, "surname")) :
+            individualRepository.findAll(spec, Sort.by(Sort.Direction.ASC, "surname"))
         );
     }
 

@@ -58,7 +58,7 @@ export const DocumentApiStore = signalStore(
                     loading: false,
                     success: false,
                     error: true,
-                    messages: [error.message || 'An error occurred'],
+                    messages: [error?.error?.message || 'An error occurred'],
                   }
                 );
               },
@@ -90,7 +90,7 @@ export const DocumentApiStore = signalStore(
                     loading: false,
                     success: false,
                     error: true,
-                    messages: [error.message || 'An error occurred'],
+                    messages: [error?.error?.message || 'An error occurred'],
                   }
                 );
               },
@@ -122,7 +122,7 @@ export const DocumentApiStore = signalStore(
                     loading: false,
                     success: false,
                     error: true,
-                    messages: [error.message || 'An error occurred'],
+                    messages: [error?.error?.message || 'An error occurred'],
                   }
                 );
               },
@@ -154,7 +154,7 @@ export const DocumentApiStore = signalStore(
                     loading: false,
                     success: false,
                     error: true,
-                    messages: [error.message || 'An error occurred'],
+                    messages: [error?.error?.message || 'An error occurred'],
                   }
                 );
               },
@@ -186,7 +186,7 @@ export const DocumentApiStore = signalStore(
                     loading: false,
                     success: false,
                     error: true,
-                    messages: [error.message || 'An error occurred'],
+                    messages: [error?.error?.message || 'An error occurred'],
                   }
                 );
               },
@@ -218,7 +218,7 @@ export const DocumentApiStore = signalStore(
                     loading: false,
                     success: false,
                     error: true,
-                    messages: [error.message || 'An error occurred'],
+                    messages: [error?.error?.message || 'An error occurred'],
                   }
                 );
               },
@@ -249,7 +249,7 @@ export const DocumentApiStore = signalStore(
                     loading: false,
                     success: false,
                     error: true,
-                    messages: [error.message || 'An error occurred'],
+                    messages: [error?.error?.message || 'An error occurred'],
                   }
                 );
               },
@@ -281,7 +281,7 @@ export const DocumentApiStore = signalStore(
                     loading: false,
                     success: false,
                     error: true,
-                    messages: [error.message || 'An error occurred'],
+                    messages: [error?.error?.message || 'An error occurred'],
                   }
                 );
               },
@@ -313,7 +313,7 @@ export const DocumentApiStore = signalStore(
                     loading: false,
                     success: false,
                     error: true,
-                    messages: [error.message || 'An error occurred'],
+                    messages: [error?.error?.message || 'An error occurred'],
                   }
                 );
               },
@@ -345,7 +345,7 @@ export const DocumentApiStore = signalStore(
                     loading: false,
                     success: false,
                     error: true,
-                    messages: [error.message || 'An error occurred'],
+                    messages: [error?.error?.message || 'An error occurred'],
                   }
                 );
               },
@@ -377,7 +377,7 @@ export const DocumentApiStore = signalStore(
                     loading: false,
                     success: false,
                     error: true,
-                    messages: [error.message || 'An error occurred'],
+                    messages: [error?.error?.message || 'An error occurred'],
                   }
                 );
               },
