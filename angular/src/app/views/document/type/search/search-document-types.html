@@ -1,12 +1,12 @@
-<!-- Modern Search Organisations Component -->
+<!-- Modern Search Document Types Component -->
 <div class="search-container">
   <div class="breadcrumb-section">
     <mat-icon class="breadcrumb-icon">home</mat-icon>
     <span class="breadcrumb-text">{{ 'home' | translate }}</span>
     <mat-icon class="breadcrumb-separator">chevron_right</mat-icon>
-    <span class="breadcrumb-text">{{ 'organisation.title' | translate }}</span>
+    <span class="breadcrumb-text">{{ 'document.type.title' | translate }}</span>
     <mat-icon class="breadcrumb-separator">chevron_right</mat-icon>
-    <span class="breadcrumb-text active">{{ 'search.organisations.title' | translate }}</span>
+    <span class="breadcrumb-text active">{{ 'search.document.types.title' | translate }}</span>
   </div>
 
   <!-- Hero Header Section -->
@@ -14,15 +14,15 @@
     <div class="hero-content">
       <div class="header-info">
         <div class="header-icon">
-          <mat-icon class="main-icon">business</mat-icon>
+          <mat-icon class="main-icon">description</mat-icon>
         </div>
         <div class="header-text">
-          <h1 class="page-title">{{ 'search.organisations.title' | translate }}</h1>
-          <p class="page-subtitle">{{ 'search.organisations.description' | translate }}</p>
+          <h1 class="page-title">{{ 'search.document.types.title' | translate }}</h1>
+          <p class="page-subtitle">{{ 'search.document.types.description' | translate }}</p>
         </div>
       </div>
       <div class="header-actions">
-        <button mat-fab matTooltip="{{ 'add.new' | translate }}" color="primary" (click)="searchOrganisationsAddNew()"
+        <button mat-fab matTooltip="{{ 'add.new' | translate }}" color="primary" (click)="searchDocumentTypesAddNew()"
           class="fab-button">
           <mat-icon fontIcon="add" aria-hidden="false" aria-label="add"></mat-icon>
         </button>
@@ -54,7 +54,7 @@
             <div class="search-field">
               <mat-form-field appearance="outline" class="full-width">
                 <mat-label>{{ 'criteria' | translate }}</mat-label>
-                <input matInput type="text" id="criteria" [field]="searchOrganisationsSignalForm.criteria"
+                <input matInput type="text" id="criteria" [field]="searchDocumentTypesSignalForm.criteria"
                   placeholder="{{ 'enter.search.criteria' | translate }}">
                 <mat-icon matSuffix>search</mat-icon>
               </mat-form-field>
@@ -62,12 +62,12 @@
           </div>
 
           <div class="search-actions">
-            <button mat-raised-button color="primary" type="button" (click)="searchOrganisationsSearch()"
+            <button mat-raised-button color="primary" type="button" (click)="searchDocumentTypesSearch()"
               class="action-button search-button">
               <mat-icon>search</mat-icon>
               {{ 'search' | translate }}
             </button>
-            <button mat-stroked-button type="button" (click)="searchOrganisationsFormReset()"
+            <button mat-stroked-button type="button" (click)="searchDocumentTypesFormReset()"
               class="action-button reset-button">
               <mat-icon>refresh</mat-icon>
               {{ 'reset' | translate }}
@@ -81,19 +81,19 @@
       <mat-card-header class="modern-header">
         <div class="section-header">
           <div class="section-icon">
-            <mat-icon>domain</mat-icon>
+            <mat-icon>folder_open</mat-icon>
           </div>
           <div class="section-title">
             <h3>{{ 'search.results' | translate }}</h3>
-            <p class="section-subtitle">{{ 'organisations.found' | translate }}</p>
+            <p class="section-subtitle">{{ 'document.types.found' | translate }}</p>
           </div>
         </div>
       </mat-card-header>
       <mat-card-content class="modern-content results-content">
         <div class="table-container">
-          <app-table #organisationsTable [dataColumns]="organisationsTableColumns" [showActions]="showOrganisationsActions"
-            [paged]="organisationsTablePaged" [actions]="organisationsTableColumnsActions"
-            (actionClicked)="organisationsTableActionClicked($event)" [dataSignal]="organisationsTableSignal">
+          <app-table #documentTypesTable [dataColumns]="documentTypesTableColumns" [showActions]="showDocumentTypesActions"
+            [paged]="documentTypesTablePaged" [actions]="documentTypesTableColumnsActions"
+            (actionClicked)="documentTypesTableActionClicked($event)" [dataSignal]="documentTypesTableSignal">
           </app-table>
         </div>
       </mat-card-content>
