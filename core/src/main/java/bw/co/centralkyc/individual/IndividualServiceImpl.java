@@ -111,7 +111,7 @@ public class IndividualServiceImpl
         if(StringUtils.isNotBlank(criteria.getEmailAddress())) {
 
             Specification<Individual>  tmp = ((root, query, builder) ->
-                    builder.equal(builder.lower(root.get("email")), criteria.getEmailAddress().toLowerCase()));
+                    builder.like(builder.lower(root.get("email")), "%" + criteria.getEmailAddress().toLowerCase() + "%"));
             spec = spec == null ? tmp : spec.and(tmp);
 
         }
@@ -119,7 +119,7 @@ public class IndividualServiceImpl
         if(StringUtils.isNotBlank(criteria.getFirstName())) {
 
             Specification<Individual>  tmp = ((root, query, builder) ->
-                    builder.equal(builder.lower(root.get("firstName")), criteria.getFirstName().toLowerCase()));
+                    builder.like(builder.lower(root.get("firstName")), "%" + criteria.getFirstName().toLowerCase() + "%"));
             spec = spec == null ? tmp : spec.and(tmp);
 
         }
@@ -127,7 +127,7 @@ public class IndividualServiceImpl
         if(StringUtils.isNotBlank(criteria.getSurname())) {
 
             Specification<Individual>  tmp = ((root, query, builder) ->
-                    builder.equal(builder.lower(root.get("surname")), criteria.getSurname().toLowerCase()));
+                    builder.like(builder.lower(root.get("surname")), "%" + criteria.getSurname().toLowerCase() + "%"));
             spec = spec == null ? tmp : spec.and(tmp);
 
         }
@@ -135,7 +135,7 @@ public class IndividualServiceImpl
         if(StringUtils.isNotBlank(criteria.getMiddleName())) {
 
             Specification<Individual>  tmp = ((root, query, builder) ->
-                    builder.equal(builder.lower(root.get("middleName")), criteria.getMiddleName().toLowerCase()));
+                    builder.like(builder.lower(root.get("middleName")), "%" + criteria.getMiddleName().toLowerCase() + "%"));
             spec = spec == null ? tmp : spec.and(tmp);
 
         }

@@ -37,9 +37,6 @@ export class SearchIndividualsImplComponent extends SearchIndividualsComponent {
   constructor() {
     super();
 
-    effect(() => {
-      console.log('SearchIndividualsImplComponent initialized', this.individualsTableSignal());
-    });
   }
   doNgOnDestroy(): void {
   }

@@ -642,6 +642,133 @@
               </div>
             </div>
           </mat-tab>
+
+          <!-- Client Requests Tab -->
+          <mat-tab>
+            <ng-template mat-tab-label>
+              <mat-icon class="tab-icon">assignment</mat-icon>
+              {{ 'client.requests' | translate }}
+            </ng-template>
+            <div class="tab-content">
+              <div class="client-requests-section-wrapper">
+                <mat-card class="client-requests-section modern-card">
+                  <mat-card-header class="modern-header">
+                    <div class="section-header">
+                      <div class="section-actions">
+                        <button mat-mini-fab color="primary" matTooltip="{{ 'refresh' | translate }}" (click)="loadClientRequests(individual().id)">
+                          <mat-icon>refresh</mat-icon>
+                        </button>
+                      </div>
+                    </div>
+                  </mat-card-header>
+                  <mat-card-content class="modern-content">
+                    @if (clientRequests() && clientRequests().length > 0) {
+                    <div class="client-requests-table">
+                      <table mat-table [dataSource]="clientRequests()" class="modern-table">
+                        <!-- Name Column -->
+                        <ng-container matColumnDef="name">
+                          <th mat-header-cell *matHeaderCellDef>{{ 'name' | translate }}</th>
+                          <td mat-cell *matCellDef="let request">{{ request.name || 'N/A' }}</td>
+                        </ng-container>
+
+                        <!-- Registration Column -->
+                        <ng-container matColumnDef="registration">
+                          <th mat-header-cell *matHeaderCellDef>{{ 'registration' | translate }}</th>
+                          <td mat-cell *matCellDef="let request">{{ request.registration || 'N/A' }}</td>
+                        </ng-container>
+
+                        <!-- Email Column -->
+                        <ng-container matColumnDef="email">
+                          <th mat-header-cell *matHeaderCellDef>{{ 'email.address' | translate }}</th>
+                          <td mat-cell *matCellDef="let request">{{ request.emailAddress || 'N/A' }}</td>
+                        </ng-container>
+
+                        <!-- Organisation Column -->
+                        <ng-container matColumnDef="organisation">
+                          <th mat-header-cell *matHeaderCellDef>{{ 'organisation' | translate }}</th>
+                          <td mat-cell *matCellDef="let request">{{ request.organisation || 'N/A' }}</td>
+                        </ng-container>
+
+                        <!-- Status Column -->
+                        <ng-container matColumnDef="status">
+                          <th mat-header-cell *matHeaderCellDef>{{ 'status' | translate }}</th>
+                          <td mat-cell *matCellDef="let request">
+                            <mat-form-field appearance="outline" class="status-select">
+                              <mat-select [value]="request.status" (selectionChange)="onClientRequestStatusChange(request, $event.value)">
+                                @for (status of clientRequestStatuses; track status) {
+                                <mat-option [value]="status">
+                                  <span [class]="'status-badge ' + status.toLowerCase()">
+                                    {{ status | translate }}
+                                  </span>
+                                </mat-option>
+                                }
+                              </mat-select>
+                            </mat-form-field>
+                          </td>
+                        </ng-container>
+
+                        <!-- Created Date Column -->
+                        <ng-container matColumnDef="createdAt">
+                          <th mat-header-cell *matHeaderCellDef>{{ 'created' | translate }}</th>
+                          <td mat-cell *matCellDef="let request">
+                            @if (request.createdAt) {
+                            {{ request.createdAt | date:'dd-MM-yyyy' }}
+                            } @else {
+                            -
+                            }
+                          </td>
+                        </ng-container>
+
+                        <!-- Actions Column -->
+                        <ng-container matColumnDef="actions">
+                          <th mat-header-cell *matHeaderCellDef>{{ 'actions' | translate }}</th>
+                          <td mat-cell *matCellDef="let request">
+                            <button mat-icon-button [matMenuTriggerFor]="menu" color="primary">
+                              <mat-icon>more_vert</mat-icon>
+                            </button>
+                            <mat-menu #menu="matMenu">
+                              <button mat-menu-item>
+                                <mat-icon>visibility</mat-icon>
+                                <span>{{ 'view' | translate }}</span>
+                              </button>
+                              <button mat-menu-item>
+                                <mat-icon>edit</mat-icon>
+                                <span>{{ 'edit' | translate }}</span>
+                              </button>
+                              <button mat-menu-item>
+                                <mat-icon>delete</mat-icon>
+                                <span>{{ 'delete' | translate }}</span>
+                              </button>
+                            </mat-menu>
+                          </td>
+                        </ng-container>
+
+                        <tr mat-header-row *matHeaderRowDef="['createdAt', 'organisation', 'status', 'actions']"></tr>
+                        <tr mat-row *matRowDef="let row; columns: ['createdAt', 'organisation', 'status', 'actions'];"></tr>
+                      </table>
+                      <mat-paginator
+                        [length]="clientRequestsTotalElements()"
+                        [pageSize]="clientRequestsPageSize()"
+                        [pageIndex]="clientRequestsPageIndex()"
+                        [pageSizeOptions]="[5, 10, 25, 50, 100]"
+                        (page)="onClientRequestsPageChange($event)"
+                        showFirstLastButtons>
+                      </mat-paginator>
+                    </div>
+                    } @else {
+                    <div class="no-client-requests modern-no-records">
+                      <div class="empty-state">
+                        <mat-icon class="empty-icon">assignment</mat-icon>
+                        <h4>{{ 'no.client.requests' | translate }}</h4>
+                        <p>{{ 'no.client.requests.description' | translate }}</p>
+                      </div>
+                    </div>
+                    }
+                  </mat-card-content>
+                </mat-card>
+              </div>
+            </div>
+          </mat-tab>
         </mat-tab-group>
       </mat-card-content>
     </mat-card>

@@ -65,7 +65,7 @@
 						<mat-form-field appearance="outline" class="field-half">
 							<mat-label>{{ 'client.request.file.type' | translate }}</mat-label>
 							<mat-select id="clientRequestFileType" [field]="editSettingsSignalForm.clientRequestFileType"
-								[compareWith]="clientRequestFileTypeCompare">
+								[compareWith]="documentCompare">
 								<mat-option>
 									<ngx-mat-select-search [placeholderLabel]="'Search'"
 										[field]="editSettingsSignalForm.clientRequestFileTypeFilter"
@@ -97,7 +97,7 @@
 						<mat-form-field appearance="outline" class="field-half">
 							<mat-label>{{ 'invoice.document.type' | translate }}</mat-label>
 							<mat-select id="invoiceDocumentType" [field]="editSettingsSignalForm.invoiceDocumentType"
-								[compareWith]="invoiceDocumentTypeCompare">
+								[compareWith]="documentCompare">
 								<mat-option>
 									<ngx-mat-select-search [placeholderLabel]="'Search'"
 										[field]="editSettingsSignalForm.invoiceDocumentTypeFilter"
@@ -115,7 +115,7 @@
 						<mat-form-field appearance="outline" class="field-half">
 							<mat-label>{{ 'invoice.template.type' | translate }}</mat-label>
 							<mat-select id="invoiceTemplateType" [field]="editSettingsSignalForm.invoiceTemplateType"
-								[compareWith]="invoiceTemplateTypeCompare">
+								[compareWith]="documentCompare">
 								<mat-option>
 									<ngx-mat-select-search [placeholderLabel]="'Search'"
 										[field]="editSettingsSignalForm.invoiceTemplateTypeFilter"
@@ -182,7 +182,7 @@
 						<mat-form-field appearance="outline" class="field-half">
 							<mat-label>{{ 'quotation.document.type' | translate }}</mat-label>
 							<mat-select id="quotationDocumentType" [field]="editSettingsSignalForm.quotationDocumentType"
-								[compareWith]="quotationDocumentTypeCompare">
+								[compareWith]="documentCompare">
 								<mat-option>
 									<ngx-mat-select-search [placeholderLabel]="'Search'"
 										[field]="editSettingsSignalForm.quotationDocumentTypeFilter"
@@ -288,7 +288,7 @@
 							<div class="field-row">
 								<mat-form-field appearance="outline" class="field-full-width">
 									<mat-label>{{ 'selected.org.document' | translate }}</mat-label>
-									<mat-select id="selectedOrgDocument" [compareWith]="selectedOrgDocumentCompare"
+									<mat-select id="selectedOrgDocument" [compareWith]="documentCompare"
 										[field]="editSettingsSignalForm.selectedOrgDocument">
 										<mat-option>
 											<ngx-mat-select-search [placeholderLabel]="'Search'"
@@ -335,7 +335,7 @@
 								<mat-form-field appearance="outline" class="field-full-width">
 									<mat-label>{{ 'selected.kyc.org.document' | translate }}</mat-label>
 									<mat-select id="selectedKycOrgDocument"
-										[compareWith]="selectedKycOrgDocumentCompare"
+										[compareWith]="documentCompare"
 										[field]="editSettingsSignalForm.selectedKycOrgDocument">
 										<mat-option>
 											<ngx-mat-select-search [placeholderLabel]="'Search'"
@@ -381,7 +381,7 @@
 							<div class="field-row">
 								<mat-form-field appearance="outline" class="field-full-width">
 									<mat-label>{{ 'selected.ind.document' | translate }}</mat-label>
-									<mat-select id="selectedIndDocument" [compareWith]="selectedIndDocumentCompare"
+									<mat-select id="selectedIndDocument" [compareWith]="documentCompare"
 										[field]="editSettingsSignalForm.selectedIndDocument">
 										<mat-option>
 											<ngx-mat-select-search [placeholderLabel]="'Search'"
@@ -429,7 +429,7 @@
 								<mat-form-field appearance="outline" class="field-full-width">
 									<mat-label>{{ 'selected.kyc.ind.document' | translate }}</mat-label>
 									<mat-select id="selectedKycIndDocument"
-										[compareWith]="selectedKycIndDocumentCompare"
+										[compareWith]="documentCompare"
 										[field]="editSettingsSignalForm.selectedKycIndDocument">
 										<mat-option>
 											<ngx-mat-select-search [placeholderLabel]="'Search'"

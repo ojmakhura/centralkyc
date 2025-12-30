@@ -12,10 +12,10 @@ import { SettingsApi } from '@app/services/bw/co/centralkyc/settings/settings-ap
 import { TargetEntity } from '@app/models/bw/co/centralkyc/target-entity';
 import { DocumentTypePurpose } from '@app/models/bw/co/centralkyc/settings/document-type-purpose';
 
-export type SettingsApiState = AppState<any, any> & {};
+export type SettingsApiState = AppState<SettingsDTO, SettingsDTO> & {};
 
 const initialState: SettingsApiState = {
-  data: null,
+  data: new SettingsDTO(),
   dataList: [],
   dataPage: new Page<any>(),
   searchCriteria: new SearchObject<any>(),
@@ -35,12 +35,12 @@ export const SettingsApiStore = signalStore(
       reset: () => {
         patchState(store, initialState);
       },
-      findById: rxMethod<{id: string | any }>(
+      findById: rxMethod<{id: string }>(
         switchMap((data: any) => {
           patchState(store, { loading: true, loaderMessage: 'Loading ...' });
           return settingsApi.findById(data.id, ).pipe(
             tapResponse({
-              next: (response: SettingsDTO | any) => {
+              next: (response: SettingsDTO) => {
                 patchState(
                   store,
                   {
@@ -72,7 +72,15 @@ export const SettingsApiStore = signalStore(
           patchState(store, { loading: true, loaderMessage: 'Loading ...' });
           return settingsApi.getAll().pipe(
             tapResponse({
-              next: (response: SettingsDTO[] | any[]) => {
+              next: (response: SettingsDTO[]) => {
+                if(response.length > 0) {
+                  patchState(
+                    store,
+                    {
+                      data: response[0],
+                    }
+                  );
+                }
                 patchState(
                   store,
                   {
@@ -99,12 +107,12 @@ export const SettingsApiStore = signalStore(
           );
         }),
       ),
-      getAllPaged: rxMethod<{pageNumber: number | any , pageSize: number | any }>(
+      getAllPaged: rxMethod<{pageNumber: number , pageSize: number }>(
         switchMap((data: any) => {
           patchState(store, { loading: true, loaderMessage: 'Loading ...' });
           return settingsApi.getAllPaged(data.pageNumber, data.pageSize, ).pipe(
             tapResponse({
-              next: (response: Page<SettingsDTO> | any) => {
+              next: (response: Page<SettingsDTO>) => {
                 patchState(
                   store,
                   {
@@ -131,12 +139,12 @@ export const SettingsApiStore = signalStore(
           );
         }),
       ),
-      pagedSearch: rxMethod<{criteria: string | any , pageNumber: number | any , pageSize: number | any }>(
+      pagedSearch: rxMethod<{criteria: string , pageNumber: number , pageSize: number }>(
         switchMap((data: any) => {
           patchState(store, { loading: true, loaderMessage: 'Loading ...' });
           return settingsApi.pagedSearch(data.criteria, data.pageNumber, data.pageSize, ).pipe(
             tapResponse({
-              next: (response: Page<SettingsDTO> | any) => {
+              next: (response: Page<SettingsDTO>) => {
                 patchState(
                   store,
                   {
@@ -163,12 +171,12 @@ export const SettingsApiStore = signalStore(
           );
         }),
       ),
-      remove: rxMethod<{id: string | any }>(
+      remove: rxMethod<{id: string }>(
         switchMap((data: any) => {
           patchState(store, { loading: true, loaderMessage: 'Loading ...' });
           return settingsApi.remove(data.id, ).pipe(
             tapResponse({
-              next: (response: boolean | any) => {
+              next: (response: boolean) => {
                 patchState(
                   store,
                   {
@@ -195,12 +203,12 @@ export const SettingsApiStore = signalStore(
           );
         }),
       ),
-      save: rxMethod<{setttings: SettingsDTO | any }>(
+      save: rxMethod<{setttings: SettingsDTO }>(
         switchMap((data: any) => {
           patchState(store, { loading: true, loaderMessage: 'Loading ...' });
           return settingsApi.save(data.setttings, ).pipe(
             tapResponse({
-              next: (response: SettingsDTO | any) => {
+              next: (response: SettingsDTO) => {
                 patchState(
                   store,
                   {
@@ -227,12 +235,12 @@ export const SettingsApiStore = signalStore(
           );
         }),
       ),
-      search: rxMethod<{criteria: string | any }>(
+      search: rxMethod<{criteria: string }>(
         switchMap((data: any) => {
           patchState(store, { loading: true, loaderMessage: 'Loading ...' });
           return settingsApi.search(data.criteria, ).pipe(
             tapResponse({
-              next: (response: SettingsDTO[] | any[]) => {
+              next: (response: SettingsDTO[]) => {
                 patchState(
                   store,
                   {
@@ -259,12 +267,12 @@ export const SettingsApiStore = signalStore(
           );
         }),
       ),
-      uploadTemplate: rxMethod<{template: File | any , target: TargetEntity | any }>(
+      uploadTemplate: rxMethod<{template: File , target: TargetEntity }>(
         switchMap((data: any) => {
           patchState(store, { loading: true, loaderMessage: 'Loading ...' });
           return settingsApi.uploadTemplate(data.template, data.target, ).pipe(
             tapResponse({
-              next: (response: SettingsDTO | any) => {
+              next: (response: SettingsDTO) => {
                 patchState(
                   store,
                   {

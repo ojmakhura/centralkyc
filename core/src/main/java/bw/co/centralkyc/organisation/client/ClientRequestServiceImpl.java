@@ -772,4 +772,15 @@ public class ClientRequestServiceImpl
         return requests.map(clientRequestDao::toClientRequestDTO);
     }
 
+    @Override
+    protected ClientRequestDTO handleUpdateStatus(String id, ClientRequestStatus status) throws Exception {
+        
+        ClientRequest clientRequest = clientRequestRepository.findById(id).orElseThrow(() -> new ClientRequestServiceException("ClientRequest not found"));
+
+        clientRequest.setStatus(status);
+        clientRequest = clientRequestRepository.save(clientRequest);
+
+        return clientRequestDao.toClientRequestDTO(clientRequest);
+    }
+
 }

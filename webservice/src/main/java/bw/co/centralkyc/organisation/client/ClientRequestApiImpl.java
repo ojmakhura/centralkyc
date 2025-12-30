@@ -214,6 +214,16 @@ public class ClientRequestApiImpl implements ClientRequestApi {
         try {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             AuditTracker.auditTrail(clientRequest, authentication);
+
+            OrganisationDTO org = keycloakOrganisationService.findById(clientRequest.getOrganisationId());
+            if(org != null) {
+                clientRequest.setOrganisation(org.getName());
+                clientRequest.setOrganisationRegistrationNo(org.getRegistrationNo());
+            } else {
+
+                throw new Exception("Organisation not found for id: " + clientRequest.getOrganisationId());
+            }
+
             ClientRequestDTO savedRequest = clientRequestService.save(clientRequest);
             updateOrganisationsDetails(Collections.singletonList(savedRequest));
 

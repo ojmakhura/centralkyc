@@ -58,7 +58,8 @@
             <!-- Target Entity -->
             <mat-form-field appearance="outline">
               <mat-label>{{ 'target.entity' | translate }}</mat-label>
-              <mat-select [field]="editClientRequestForm.target" (selectionChange)="targetEntitySelectionChange($event)">
+              <mat-select [field]="editClientRequestForm.target"
+                (selectionChange)="targetEntitySelectionChange($event)">
                 @for (option of TargetEntityOptions; track option) {
                 <mat-option [value]="option">
                   {{ ('target.entity.' + option) | translate }}
@@ -67,19 +68,8 @@
               </mat-select>
             </mat-form-field>
           </div>
-        </mat-card-content>
-      </mat-card>
-
-      <!-- Select Record Section -->
-      @if (editClientRequestSignal().target === TargetEntityT.INDIVIDUAL) {
-      <mat-card class="form-section">
-        <mat-card-header>
-          <mat-icon mat-card-avatar>person_search</mat-icon>
-          <mat-card-title>{{ 'select.individual' | translate }}</mat-card-title>
-        </mat-card-header>
-        <mat-card-content>
           <div class="grid-2">
-            <!-- Target Individual -->
+            @if (editClientRequestSignal().target === TargetEntityT.INDIVIDUAL) {
             <mat-form-field appearance="outline">
               <mat-label>{{ 'individual' | translate }}</mat-label>
               <mat-select [field]="editClientRequestForm.targetObject" [compareWith]="individualCompare">
@@ -96,32 +86,8 @@
                 }
               </mat-select>
             </mat-form-field>
-
-            <!-- Status -->
-            <mat-form-field appearance="outline">
-              <mat-label>{{ 'request.status' | translate }}</mat-label>
-              <mat-select [field]="editClientRequestForm.status">
-                @for (option of ClientRequestStatusOptions; track option) {
-                <mat-option [value]="ClientRequestStatusT[option]">
-                  {{ ('client.request.status.' + ClientRequestStatusT[option]) | translate }}
-                </mat-option>
-                }
-              </mat-select>
-            </mat-form-field>
-          </div>
-        </mat-card-content>
-      </mat-card>
-      }
-
-      @if (editClientRequestSignal().target === TargetEntityT.ORGANISATION) {
-      <mat-card class="form-section">
-        <mat-card-header>
-          <mat-icon mat-card-avatar>business_search</mat-icon>
-          <mat-card-title>{{ 'select.organisation' | translate }}</mat-card-title>
-        </mat-card-header>
-        <mat-card-content>
-          <div class="grid-2">
-            <!-- Target Organisation -->
+            }
+            @if (editClientRequestSignal().target === TargetEntityT.ORGANISATION) {
             <mat-form-field appearance="outline">
               <mat-label>{{ 'organisation' | translate }}</mat-label>
               <mat-select [field]="editClientRequestForm.targetObject" [compareWith]="organisationCompare">
@@ -138,8 +104,8 @@
                 }
               </mat-select>
             </mat-form-field>
+            }
 
-            <!-- Status -->
             <mat-form-field appearance="outline">
               <mat-label>{{ 'request.status' | translate }}</mat-label>
               <mat-select [field]="editClientRequestForm.status">
@@ -153,7 +119,6 @@
           </div>
         </mat-card-content>
       </mat-card>
-      }
 
       <!-- Requesting Organisation Section -->
       <mat-card class="form-section">

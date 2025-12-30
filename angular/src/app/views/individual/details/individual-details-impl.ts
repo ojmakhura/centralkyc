@@ -13,12 +13,15 @@ import { EmploymentRecordApi } from '@app/services/bw/co/centralkyc/individual/e
 import { KycRecordApi } from '@app/services/bw/co/centralkyc/kyc/kyc-record-api';
 import { SettingsApi } from '@app/services/bw/co/centralkyc/settings/settings-api';
 import { DocumentApi } from '@app/services/bw/co/centralkyc/document/document-api';
+import { ClientRequestApi } from '@app/services/bw/co/centralkyc/organisation/client/client-request-api';
 import { SettingsDTO } from '@app/models/bw/co/centralkyc/settings/settings-dto';
 import { DocumentDTO } from '@app/models/bw/co/centralkyc/document/document-dto';
 import { KycRecordDTO } from '@app/models/bw/co/centralkyc/kyc/kyc-record-dto';
 import { EmploymentRecordDTO } from '@app/models/bw/co/centralkyc/individual/employment/employment-record-dto';
 import { DocumentTypeDTO } from '@app/models/bw/co/centralkyc/document/type/document-type-dto';
 import { TargetEntity } from '@app/models/bw/co/centralkyc/target-entity';
+import { ClientRequestDTO } from '@app/models/bw/co/centralkyc/organisation/client/client-request-dto';
+import { ClientRequestStatus } from '@app/models/bw/co/centralkyc/organisation/client/client-request-status';
 import Swal from 'sweetalert2';
 import { KycComplianceStatus } from '@app/models/bw/co/centralkyc/kyc/kyc-compliance-status';
 import { PhoneNumber } from '@app/models/bw/co/centralkyc/phone-number';
@@ -60,6 +63,13 @@ export class IndividualDetailsImplComponent extends IndividualDetailsComponent {
 
   kycRecordApi = inject(KycRecordApi);
   kycRecords = linkedSignal<KycRecordDTO[]>(() => []);
+
+  clientRequestApi = inject(ClientRequestApi);
+  clientRequests = linkedSignal<ClientRequestDTO[]>(() => []);
+  clientRequestStatuses = Object.values(ClientRequestStatus);
+  clientRequestsPageSize = signal<number>(10);
+  clientRequestsPageIndex = signal<number>(0);
+  clientRequestsTotalElements = signal<number>(0);
 
   // Settings and document types
   settingsApi = inject(SettingsApi);
@@ -131,6 +141,7 @@ export class IndividualDetailsImplComponent extends IndividualDetailsComponent {
             this.loadIndividualDocuments(res.id);
             this.loadKycRecords(res.id);
             this.loadEmploymentRecords(res.id);
+            this.loadClientRequests(res.id);
           },
           error: (err) => {
             console.error('Failed to load individual:', err);
@@ -159,6 +170,78 @@ export class IndividualDetailsImplComponent extends IndividualDetailsComponent {
       },
       error: (err) => {
         console.error('Failed to load employment records:', err);
+      },
+    });
+  }
+
+  loadClientRequests(individualId: string): void {
+    const pageNumber = this.clientRequestsPageIndex();
+    const pageSize = this.clientRequestsPageSize();
+
+    this.clientRequestApi.findByIndividualPaged(individualId, pageNumber, pageSize).subscribe({
+      next: (res) => {
+        this.clientRequests.set(res.content || []);
+        this.clientRequestsTotalElements.set(res.page.totalElements || 0);
+      },
+      error: (err) => {
+        console.error('Failed to load client requests:', err);
+      },
+    });
+  }
+
+  onClientRequestsPageChange(event: any): void {
+    this.clientRequestsPageIndex.set(event.pageIndex);
+    this.clientRequestsPageSize.set(event.pageSize);
+    const individual = this.individual();
+    if (individual?.id) {
+      this.loadClientRequests(individual.id);
+    }
+  }
+
+  createNewClientRequest(): void {
+    const individual = this.individual();
+    if (!individual?.id) {
+      this.toaster.error('No individual selected');
+      return;
+    }
+
+    Swal.fire({
+      title: 'Create Client Request',
+      text: 'Are you sure you want to create a new client request for this individual?',
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonText: 'Yes, create it!',
+      cancelButtonText: 'No, cancel',
+    }).then((result) => {
+      if (result.isConfirmed) {
+        const newRequest = new ClientRequestDTO();
+        newRequest.name = `${individual.firstName} ${individual.surname}`;
+        newRequest.registration = individual.identityNo;
+        newRequest.identityType = individual.identityType;
+        newRequest.emailAddress = individual.emailAddress;
+        newRequest.status = ClientRequestStatus.PENDING;
+        newRequest.target = TargetEntity.INDIVIDUAL;
+        newRequest.targetId = individual.id;
+
+        this.router.navigate(['/client-request/edit'], { queryParams: { individualId: individual.id } });
+      }
+    });
+  }
+
+  onClientRequestStatusChange(clientRequest: ClientRequestDTO, newStatus: ClientRequestStatus): void {
+    const updatedRequest = { ...clientRequest, status: newStatus };
+    this.clientRequestApi.save(updatedRequest).subscribe({
+      next: (res) => {
+        this.toaster.success('Client request status updated successfully');
+        // Reload client requests to reflect changes
+        const individual = this.individual();
+        if (individual?.id) {
+          this.loadClientRequests(individual.id);
+        }
+      },
+      error: (err) => {
+        console.error('Failed to update client request status:', err);
+        this.toaster.error(`Failed to update status: ${err.message || 'Update failed'}`);
       },
     });
   }

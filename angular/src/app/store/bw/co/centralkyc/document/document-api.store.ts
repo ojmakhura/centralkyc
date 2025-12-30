@@ -11,12 +11,12 @@ import { DocumentDTO } from '@app/models/bw/co/centralkyc/document/document-dto'
 import { DocumentApi } from '@app/services/bw/co/centralkyc/document/document-api';
 import { TargetEntity } from '@app/models/bw/co/centralkyc/target-entity';
 
-export type DocumentApiState = AppState<any, any> & {};
+export type DocumentApiState = AppState<DocumentDTO, DocumentDTO> & {};
 
 const initialState: DocumentApiState = {
-  data: null,
+  data: new DocumentDTO(),
   dataList: [],
-  dataPage: new Page<any>(),
+  dataPage: new Page<DocumentDTO>(),
   searchCriteria: new SearchObject<any>(),
   loading: false,
   success: false,

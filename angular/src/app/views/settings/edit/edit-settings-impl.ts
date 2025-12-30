@@ -39,8 +39,6 @@ import Swal from 'sweetalert2';
 export class EditSettingsImplComponent extends EditSettingsComponent {
   settingApiStore = inject(SettingsApiStore);
   settingApi = inject(SettingsApi);
-  // settingsSignal = linkedSignal(() => new SettingsDTO());
-  // documentTypeApiStore = inject(DocumentTypeApiStore);
   documentTypeApi = inject(DocumentTypeApi);
   documentApi = inject(DocumentApi);
 
@@ -66,8 +64,9 @@ export class EditSettingsImplComponent extends EditSettingsComponent {
     super();
 
     effect(() => {
-      this.settings = this.editSettingsSignal();
+      this.settings = this.settingApiStore.data();
       // this.editSettingsForm.patchValue(this.settings);
+      this.updateSettingForm(this.settings);
 
       if (this.settings.invoiceDocumentType && this.settings.invoiceDocumentType.id) {
         this.invoiceDocumentTypeFilteredList.set([this.settings.invoiceDocumentType || null]);
@@ -95,19 +94,6 @@ export class EditSettingsImplComponent extends EditSettingsComponent {
     this.settingApiStore.reset();
     this.settingApiStore.getAll();
 
-    this.settingApi.getAll().subscribe({
-      next: (settings: SettingsDTO[]) => {
-        if ((settings || []).length > 0) {
-          this.updateSettingForm(settings[0]);
-        }
-      },
-    });
-
-    // this.organisationDocumentsTablePaged.set(false);
-    // this.individualDocumentsTablePaged.set(false);
-    // this.orgKycDocumentsTablePaged.set(false);
-    // this.indKycDocumentsTablePaged.set(false);
-
     this.route.queryParams.subscribe((params: any) => {
       if (params.id) {
         this.loading.set(true);
@@ -127,9 +113,12 @@ export class EditSettingsImplComponent extends EditSettingsComponent {
     });
   }
 
-  doNgOnDestroy(): void {}
+  doNgOnDestroy(): void { }
 
   updateSettingForm(settings: SettingsDTO) {
+
+    console.log(settings)
+
     this.editSettingsSignal.set({
       id: settings.id,
       createdAt: settings.createdAt,
@@ -552,33 +541,37 @@ export class EditSettingsImplComponent extends EditSettingsComponent {
   }
 
   override indKycDocumentsTableActionClicked(event: any): void {
-      let form: any = {};
-      let queryParams: any = {};
-      let params: any = {};
+    let form: any = {};
+    let queryParams: any = {};
+    let params: any = {};
 
-      switch (event.action) {
-        case 'settings-detach-ind-kyc-documents':
-          // TODO: Implement the action
+    switch (event.action) {
+      case 'settings-detach-ind-kyc-documents':
+        // TODO: Implement the action
 
-          Swal.fire({
-            title: 'Are you sure?',
-            text: 'You are about to detach this document type from individual KYC documents. This action cannot be undone.',
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonText: 'Yes',
-            cancelButtonText: 'No',
-          }).then((result) => {
-            if (result.isConfirmed) {
+        Swal.fire({
+          title: 'Are you sure?',
+          text: 'You are about to detach this document type from individual KYC documents. This action cannot be undone.',
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonText: 'Yes',
+          cancelButtonText: 'No',
+        }).then((result) => {
+          if (result.isConfirmed) {
 
-              this.settingApiStore.detachDocumentType({
-                documentTypeId: event.row.id,
-                purpose: DocumentTypePurpose.INDIVIDUAL_KYC,
-              });
-              Swal.fire('Detached!', 'The document type has been detached from individual KYC documents.', 'success');
-            }
-          });
+            this.settingApiStore.detachDocumentType({
+              documentTypeId: event.row.id,
+              purpose: DocumentTypePurpose.INDIVIDUAL_KYC,
+            });
+            Swal.fire('Detached!', 'The document type has been detached from individual KYC documents.', 'success');
+          }
+        });
 
-          break;
-      }
+        break;
     }
+  }
+
+  documentCompare(o1: DocumentTypeDTO | any, o2: DocumentTypeDTO | any) {
+    return o1 && o2 ? o1.id === o2.id : o1 === o2;
+  }
 }

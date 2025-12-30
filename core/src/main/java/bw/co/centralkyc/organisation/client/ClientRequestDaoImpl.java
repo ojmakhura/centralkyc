@@ -114,7 +114,9 @@ public class ClientRequestDaoImpl
      * a new, blank entity is created
      */
     private ClientRequest loadClientRequestFromClientRequestDTO(ClientRequestDTO clientRequestDTO) {
-        if (clientRequestDTO.getId() == null) {
+
+        System.out.println(clientRequestDTO);
+        if (StringUtils.isEmpty(clientRequestDTO.getId())) {
             return ClientRequest.Factory.newInstance();
         } else {
             return this.clientRequestRepository.findById(clientRequestDTO.getId())
@@ -144,8 +146,6 @@ public class ClientRequestDaoImpl
         // TODO verify behavior of clientRequestDTOToEntity
         super.clientRequestDTOToEntity(source, target, copyIfNull);
 
-        Map<String, Individual> individualCache = new HashMap<>();
-
         if (StringUtils.isNotBlank(source.getDocumentId())) {
 
             target.setDocument(documentRepository.getReferenceById(source.getDocumentId()));
@@ -168,11 +168,9 @@ public class ClientRequestDaoImpl
 
         if(source.getTarget() == TargetEntity.INDIVIDUAL && StringUtils.isNotBlank(source.getTargetId())) {
 
-            Individual individual = individualCache.get(source.getTargetId());
-
             if(individualRepository.existsById(source.getTargetId())) {
 
-                target.setTargetId(individual.getId());
+                target.setTargetId(source.getTargetId());
             } else {
 
                 throw new EntityNotFoundException("Individual not found for id: " + source.getTargetId());

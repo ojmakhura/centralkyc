@@ -99,69 +99,7 @@ export class EditClientRequestComponent implements OnInit, AfterViewInit, OnDest
     effect(() => {
       let clientRequest = this.clientRequestApiStore.data();
 
-      if (!clientRequest) {
-        return;
-      }
-
-      let org: OrganisationListDTO = new OrganisationListDTO();
-      org.id = clientRequest.organisationId;
-      org.name = clientRequest.organisation;
-      org.registrationNo = clientRequest.organisationRegistrationNo || '';
-      org.contactEmailAddress = '';
-      org.status = '';
-
-      let target: OrganisationListDTO | IndividualListDTO;
-
-      if(clientRequest.target === TargetEntity.ORGANISATION) {
-
-        target = new OrganisationListDTO();
-        (target as OrganisationListDTO).id = clientRequest.targetId || '';
-        (target as OrganisationListDTO).name = clientRequest.name || '';
-        (target as OrganisationListDTO).registrationNo = clientRequest.registration || '';
-        (target as OrganisationListDTO).contactEmailAddress = '';
-        (target as OrganisationListDTO).status = '';
-
-        this.targetOrganisationList.set([{
-          ...(target as OrganisationListDTO)
-        }]);
-
-      } else {
-
-        target = new IndividualListDTO();
-        (target as IndividualListDTO).id = clientRequest.targetId || '';
-        (target as IndividualListDTO).name = clientRequest.name || '';
-        (target as IndividualListDTO).identityType = clientRequest.identityType || null;
-        (target as IndividualListDTO).identityNo = clientRequest.registration || '';
-        (target as IndividualListDTO).emailAddress = '';
-
-        this.targetIndividualList.set([{
-          ...(target as IndividualListDTO)
-        }]);
-      }
-
-      this.editClientRequestSignal.update((value) => ({
-        ...value,
-        id: clientRequest.id || '',
-        status: clientRequest.status || ClientRequestStatus.PENDING,
-        organisationId: clientRequest.organisationId || '',
-        organisation: clientRequest.organisationId ? org : null,
-        documentId: clientRequest.documentId || '',
-        fileName: clientRequest.fileName || '',
-        fileUrl: clientRequest.fileUrl || '',
-        target: clientRequest.target || null,
-        targetObject: target || null,
-        organisationFilter: '',
-        targetOrganisationFilter: '',
-        targetIndividualFilter: ''
-      }));
-
-      console.log('Loaded client request:', clientRequest);
-
-      if (clientRequest.organisationId) {
-        this.organisationList.set([{
-          ...org
-        }]);
-      }
+      this.handleClientRequestUpdate(clientRequest!);
     });
 
     effect(() => {
@@ -175,13 +113,134 @@ export class EditClientRequestComponent implements OnInit, AfterViewInit, OnDest
         this.toaster.error(messages[0]);
       }
     })
+
+    effect(() => {
+
+      let individual = this.individualApiStore.data();
+
+      if (!individual) {
+        return;
+      }
+
+      let target: IndividualListDTO = {
+        id: individual.id,
+        name: individual.firstName + ' ' + individual.surname,
+        identityType: individual.identityType,
+        identityNo: individual.identityNo,
+        emailAddress: individual.emailAddress,
+        kycStatus: individual.kycStatus
+      }
+
+      this.targetIndividualList.set([{
+        ...target
+      }]);
+
+      this.editClientRequestSignal.update((value) => ({
+        ...value,
+        targetObject: target
+      }));
+    });
+
+    effect(() => {
+
+      let organisation = this.organisationApiStore.data();
+
+      if (!organisation) {
+        return;
+      }
+
+      let target: OrganisationListDTO = {
+        id: organisation.id,
+        code: organisation.code,
+        name: organisation.name,
+        registrationNo: organisation.registrationNo,
+        contactEmailAddress: organisation.contactEmailAddress,
+        status: organisation.status
+      }
+
+      this.targetOrganisationList.set([{
+        ...target
+      }]);
+
+      this.editClientRequestSignal.update((value) => ({
+        ...value,
+        targetObject: target
+      }));
+    });
+
   }
 
   ngOnInit(): void {
     this.clientRequestApiStore.reset();
+  }
+
+  handleClientRequestUpdate(clientRequest: ClientRequestDTO) {
+    if (!clientRequest) {
+        return;
+      }
+
+      let org: OrganisationListDTO = new OrganisationListDTO();
+      org.id = clientRequest.organisationId;
+      org.name = clientRequest.organisation;
+      org.registrationNo = clientRequest.organisationRegistrationNo;
+      org.contactEmailAddress = '';
+      org.status = '';
+
+      let target: OrganisationListDTO | IndividualListDTO;
+
+      if(clientRequest.target === TargetEntity.ORGANISATION) {
+
+        target = new OrganisationListDTO();
+        (target as OrganisationListDTO).id = clientRequest.targetId;
+        (target as OrganisationListDTO).name = clientRequest.name;
+        (target as OrganisationListDTO).registrationNo = clientRequest.registration;
+        (target as OrganisationListDTO).contactEmailAddress = '';
+        (target as OrganisationListDTO).status = '';
+
+        this.targetOrganisationList.set([{
+          ...(target as OrganisationListDTO)
+        }]);
+
+      } else {
+
+        target = new IndividualListDTO();
+        (target as IndividualListDTO).id = clientRequest.targetId;
+        (target as IndividualListDTO).name = clientRequest.name;
+        (target as IndividualListDTO).identityType = clientRequest.identityType || null;
+        (target as IndividualListDTO).identityNo = clientRequest.registration;
+        (target as IndividualListDTO).emailAddress = '';
+
+        this.targetIndividualList.set([{
+          ...(target as IndividualListDTO)
+        }]);
+      }
+
+      this.editClientRequestSignal.update((value) => ({
+        ...value,
+        id: clientRequest.id,
+        status: clientRequest.status || ClientRequestStatus.PENDING,
+        organisationId: clientRequest.organisationId,
+        organisation: clientRequest.organisationId ? org : null,
+        documentId: clientRequest.documentId,
+        fileName: clientRequest.fileName,
+        fileUrl: clientRequest.fileUrl,
+        target: clientRequest.target || null,
+        targetObject: target || null,
+        organisationFilter: '',
+        targetOrganisationFilter: '',
+        targetIndividualFilter: ''
+      }));
+
+      if (clientRequest.organisationId) {
+        this.organisationList.set([{
+          ...org
+        }]);
+      }
+  }
+
+  ngAfterViewInit(): void {
 
     console.log('EditClientRequestComponent initialized with id:', this.id);
-
     this.route.queryParams.subscribe((params: any) => {
       if (params.id) {
         this.clientRequestApiStore.findById(params);
@@ -189,15 +248,39 @@ export class EditClientRequestComponent implements OnInit, AfterViewInit, OnDest
         // Pre-fill organisation if coming from organisation details
         this.editClientRequestSignal.update((value) => ({
           ...value,
-          organisationId: params.organisationId
+          organisationId: params.organisationId,
+
         }));
       }
 
-      if (params.target) {
+      if( params.targetIndividual) {
+        // Pre-fill organisation if coming from individual details
+
+        this.individualApiStore.findById({ id: params.targetIndividual });
+
+        let targetObject = new IndividualListDTO();
+        targetObject.id = params.targetIndividual;
         this.editClientRequestSignal.update((value) => ({
           ...value,
-          target: params.target as TargetEntity
+          target: TargetEntity.INDIVIDUAL,
+          targetObject: targetObject
         }));
+
+      }
+
+      if( params.targetOrganisation) {
+        // Pre-fill organisation if coming from individual details
+
+        this.organisationApiStore.findById({ id: params.targetOrganisation });
+
+        let targetObject = new OrganisationListDTO();
+        targetObject.id = params.targetOrganisation;
+        this.editClientRequestSignal.update((value) => ({
+          ...value,
+          target: TargetEntity.ORGANISATION,
+          targetObject: targetObject
+        }));
+
       }
     });
 
@@ -208,11 +291,6 @@ export class EditClientRequestComponent implements OnInit, AfterViewInit, OnDest
     });
   }
 
-  ngAfterViewInit(): void {
-
-    console.log('EditClientRequestComponent initialized with id:', this.id);
-  }
-
   ngOnDestroy(): void {
   }
 
@@ -220,8 +298,8 @@ export class EditClientRequestComponent implements OnInit, AfterViewInit, OnDest
   filterOrganisation(): void {
     let criteria = new SearchObject<OrganisationSearchCriteria>();
     criteria.criteria = {
-      registrationNo: this.editClientRequestSignal().organisationFilter || '',
-      name: this.editClientRequestSignal().organisationFilter || ''
+      registrationNo: this.editClientRequestSignal().organisationFilter,
+      name: this.editClientRequestSignal().organisationFilter
     }
     this.organisationApiStore.search({ criteria: criteria });
   }
@@ -234,8 +312,8 @@ export class EditClientRequestComponent implements OnInit, AfterViewInit, OnDest
   filterTargetOrganisation(): void {
     let criteria = new SearchObject<OrganisationSearchCriteria>();
     criteria.criteria = {
-      registrationNo: this.editClientRequestSignal().targetObjectFilter || '',
-      name: this.editClientRequestSignal().targetObjectFilter || ''
+      registrationNo: this.editClientRequestSignal().targetObjectFilter,
+      name: this.editClientRequestSignal().targetObjectFilter
     }
     this.organisationApiStore.search({ criteria: criteria });
   }
@@ -248,9 +326,9 @@ export class EditClientRequestComponent implements OnInit, AfterViewInit, OnDest
   filterTargetIndividual(): void {
     let criteria = new SearchObject<IndividualSearchCriteria>();
     criteria.criteria = {
-      identityNo: this.editClientRequestSignal().targetObjectFilter || '',
-      firstName: this.editClientRequestSignal().targetObjectFilter || '',
-      surname: this.editClientRequestSignal().targetObjectFilter || ''
+      identityNo: this.editClientRequestSignal().targetObjectFilter,
+      firstName: this.editClientRequestSignal().targetObjectFilter,
+      surname: this.editClientRequestSignal().targetObjectFilter
     }
     this.individualApiStore.search({ criteria: criteria });
   }
@@ -276,6 +354,8 @@ export class EditClientRequestComponent implements OnInit, AfterViewInit, OnDest
     clientRequest.id = formData.id;
     clientRequest.status = formData.status;
     clientRequest.organisationId = formData.organisation?.id;
+    clientRequest.organisation = formData.organisation ? formData.organisation.name : '';
+    clientRequest.organisationRegistrationNo = formData.organisation ? formData.organisation.registrationNo : '';
     clientRequest.target = formData.target;
     clientRequest.targetId = formData.targetObject?.id;
     clientRequest.documentId = formData.documentId;
@@ -284,13 +364,13 @@ export class EditClientRequestComponent implements OnInit, AfterViewInit, OnDest
 
     if (formData.target === TargetEntity.ORGANISATION) {
 
-      clientRequest.name = (formData.targetObject as OrganisationListDTO)?.name || '';
-      clientRequest.registration = (formData.targetObject as OrganisationListDTO)?.registrationNo || '';
+      clientRequest.name = (formData.targetObject as OrganisationListDTO)?.name;
+      clientRequest.registration = (formData.targetObject as OrganisationListDTO)?.registrationNo;
 
     } else if (formData.target === TargetEntity.INDIVIDUAL) {
 
-      clientRequest.name = ((formData.targetObject as IndividualListDTO)?.name || '') ;
-      clientRequest.registration = (formData.targetObject as IndividualListDTO)?.identityNo || '';
+      clientRequest.name = ((formData.targetObject as IndividualListDTO)?.name) ;
+      clientRequest.registration = (formData.targetObject as IndividualListDTO)?.identityNo;
       clientRequest.identityType = (formData.targetObject as IndividualListDTO)?.identityType || null;
 
     }
