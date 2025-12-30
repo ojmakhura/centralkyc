@@ -5,6 +5,7 @@ import { KycRecordDTO } from '@models/bw/co/centralkyc/kyc/kyc-record-dto';
 import { HttpClient } from '@angular/common/http';
 import { Page } from '@models/page.model';
 import { SearchObject } from '@models/search-object';
+import { KycRecordSearchCriteria } from '@app/models/bw/co/centralkyc/kyc/kyc-record-search-criteria';
 
 @Injectable({
   providedIn: 'root'
@@ -71,9 +72,9 @@ export class KycRecordApi {
         return this.http.get<Page<KycRecordDTO>>(`${this.path}/paged?pageNumber=${pageNumber}&pageSize=${pageSize}`);
     }
 
-    public pagedSearch(criteria: string , pageNumber: number , pageSize: number ): Observable<Page<KycRecordDTO>> {
+    public pagedSearch(criteria: SearchObject<KycRecordSearchCriteria> ): Observable<Page<KycRecordDTO>> {
 
-        return this.http.get<Page<KycRecordDTO>>(`${this.path}/search/paged?criteria=${criteria}&pageNumber=${pageNumber}&pageSize=${pageSize}`);
+        return this.http.post<Page<KycRecordDTO>>(`${this.path}/search/paged`, criteria);
     }
 
     public remove(id: string ): Observable<boolean> {
@@ -86,9 +87,9 @@ export class KycRecordApi {
         return this.http.post<KycRecordDTO>(`${this.path}`, kycRecord);
     }
 
-    public search(criteria: string ): Observable<KycRecordDTO[]> {
+    public search(criteria: KycRecordSearchCriteria ): Observable<KycRecordDTO[]> {
 
-        return this.http.get<KycRecordDTO[]>(`${this.path}/search?criteria=${criteria}`);
+        return this.http.post<KycRecordDTO[]>(`${this.path}/search`, criteria);
     }
 
 }

@@ -11,14 +11,19 @@ package bw.co.centralkyc.kyc;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Collection;
+
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import bw.co.centralkyc.SearchObject;
 import bw.co.centralkyc.TargetEntity;
 import bw.co.centralkyc.individual.Individual;
 import bw.co.centralkyc.individual.IndividualRepository;
@@ -123,15 +128,42 @@ public class KycRecordServiceImpl
         return this.kycRecordDao.toKycRecordDTOCollection(kycRecords);
     }
 
+    private Specification<KycRecord> createSpecification(KycRecordSearchCriteria criteria) {
+
+        Specification<KycRecord> spec = null;
+
+        if(criteria.getTarget() != null) {
+
+            spec = (root, query, cb) -> 
+                cb.equal(root.get("target"), criteria.getTarget());
+        }
+
+        if(criteria.getTargetId() != null) {
+
+            Specification<KycRecord> targetIdSpec = (root, query, cb) -> 
+                cb.equal(root.get("targetId"), criteria.getTargetId());
+
+            spec = spec == null ? targetIdSpec : spec.and(targetIdSpec);
+        }
+
+        return spec;
+    }
+
     /**
      * @see bw.co.centralkyc.individual.kyc.KycRecordService#search(String)
      */
     @Override
-    protected Collection<KycRecordDTO> handleSearch(String criteria)
+    protected Collection<KycRecordDTO> handleSearch(KycRecordSearchCriteria criteria)
         throws Exception
     {
-        // TODO implement protected  Collection<KycRecordDTO> handleSearch(String criteria)
-        throw new UnsupportedOperationException("bw.co.centralkyc.individual.kyc.KycRecordService.handleSearch(String criteria) Not implemented!");
+        Specification<KycRecord> spec = this.createSpecification(criteria);
+
+        Sort sort = Sort.by(Direction.DESC, "createdAt");
+
+        Collection<KycRecord> kycRecords = spec == null ? 
+            this.kycRecordRepository.findAll(sort) :
+            this.kycRecordRepository.findAll(spec, sort);
+        return this.kycRecordDao.toKycRecordDTOCollection(kycRecords);
     }
 
     /**
@@ -156,11 +188,24 @@ public class KycRecordServiceImpl
      * @see bw.co.centralkyc.individual.kyc.KycRecordService#search(String, Integer, Integer)
      */
     @Override
-    protected Page<KycRecordDTO> handleSearch(String criteria, Integer pageNumber, Integer pageSize)
+    protected Page<KycRecordDTO> handleSearch(SearchObject<KycRecordSearchCriteria> criteria)
         throws Exception
     {
-        // TODO implement protected  Page<KycRecordDTO> handleSearch(String criteria, Integer pageNumber, Integer pageSize)
-        throw new UnsupportedOperationException("bw.co.centralkyc.individual.kyc.KycRecordService.handleSearch(String criteria, Integer pageNumber, Integer pageSize) Not implemented!");
+        Sort sort = Sort.by(Direction.DESC, "createdAt");
+
+        PageRequest pageRequest = PageRequest.of(
+            criteria.getPageNumber(),
+            criteria.getPageSize(),
+            sort
+        );
+
+        Specification<KycRecord> specification = this.createSpecification(criteria.getCriteria());
+
+        Page<KycRecord> kycRecords = specification == null ? 
+            this.kycRecordRepository.findAll(pageRequest) :
+            this.kycRecordRepository.findAll(specification, pageRequest);
+
+        return kycRecords.map(kycRecordDao::toKycRecordDTO);
     }
 
     /**

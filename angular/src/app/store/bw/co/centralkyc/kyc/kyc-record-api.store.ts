@@ -9,14 +9,15 @@ import { SearchObject } from '@models/search-object';
 import { Page } from '@models/page.model';
 import { KycRecordDTO } from '@app/models/bw/co/centralkyc/kyc/kyc-record-dto';
 import { KycRecordApi } from '@app/services/bw/co/centralkyc/kyc/kyc-record-api';
+import { KycRecordSearchCriteria } from '@app/models/bw/co/centralkyc/kyc/kyc-record-search-criteria';
 
-export type KycRecordApiState = AppState<any, any> & {};
+export type KycRecordApiState = AppState<KycRecordDTO, KycRecordDTO> & {};
 
 const initialState: KycRecordApiState = {
-  data: null,
+  data: new KycRecordDTO(),
   dataList: [],
-  dataPage: new Page<any>(),
-  searchCriteria: new SearchObject<any>(),
+  dataPage: new Page<KycRecordDTO>(),
+  searchCriteria: new SearchObject<KycRecordSearchCriteria>(),
   loading: false,
   success: false,
   messages: [],
@@ -417,10 +418,10 @@ export const KycRecordApiStore = signalStore(
           );
         }),
       ),
-      pagedSearch: rxMethod<{criteria: string , pageNumber: number , pageSize: number }>(
+      pagedSearch: rxMethod<{criteria: SearchObject<KycRecordSearchCriteria> }>(
         switchMap((data: any) => {
           patchState(store, { loading: true, loaderMessage: 'Loading ...' });
-          return kycRecordApi.pagedSearch(data.criteria, data.pageNumber, data.pageSize, ).pipe(
+          return kycRecordApi.pagedSearch(data.criteria).pipe(
             tapResponse({
               next: (response: Page<KycRecordDTO>) => {
                 patchState(
@@ -513,7 +514,7 @@ export const KycRecordApiStore = signalStore(
           );
         }),
       ),
-      search: rxMethod<{criteria: string }>(
+      search: rxMethod<{criteria: KycRecordSearchCriteria }>(
         switchMap((data: any) => {
           patchState(store, { loading: true, loaderMessage: 'Loading ...' });
           return kycRecordApi.search(data.criteria, ).pipe(

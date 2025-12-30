@@ -10,6 +10,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 import bw.co.centralkyc.AuditTracker;
+import bw.co.centralkyc.SearchObject;
 import bw.co.centralkyc.TargetEntity;
 import bw.co.centralkyc.keycloak.KeycloakOrganisationService;
 import bw.co.centralkyc.organisation.OrganisationDTO;
@@ -98,11 +99,10 @@ public class KycRecordApiImpl implements KycRecordApi {
     }
 
     @Override
-    public ResponseEntity<Page<KycRecordDTO>> pagedSearch(String criteria, Integer pageNumber,
-            Integer pageSize) throws Exception {
+    public ResponseEntity<Page<KycRecordDTO>> pagedSearch(SearchObject<KycRecordSearchCriteria> criteria) throws Exception {
 
         try {
-            return ResponseEntity.ok(kycRecordService.search(criteria, pageNumber, pageSize));
+            return ResponseEntity.ok(kycRecordService.search(criteria));
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -137,7 +137,7 @@ public class KycRecordApiImpl implements KycRecordApi {
     }
 
     @Override
-    public ResponseEntity<Collection<KycRecordDTO>> search(String criteria) throws Exception {
+    public ResponseEntity<Collection<KycRecordDTO>> search(KycRecordSearchCriteria criteria) throws Exception {
         try {
 
             return ResponseEntity.ok(kycRecordService.search(criteria));
