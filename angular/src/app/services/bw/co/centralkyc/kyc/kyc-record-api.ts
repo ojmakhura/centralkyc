@@ -10,79 +10,85 @@ import { SearchObject } from '@models/search-object';
   providedIn: 'root'
 })
 export class KycRecordApi {
-    
+
     protected path = '/kyc';
 
     private http = inject(HttpClient);
 
-    public findById(id: string | any ): Observable<KycRecordDTO | any> {
+    public createIndividualRecord(individualId: string ): Observable<KycRecordDTO> {
 
-        return this.http.get<KycRecordDTO | any>(`${this.path}/${id}`);
+        return this.http.get<KycRecordDTO>(`${this.path}/individual/${individualId}`);
     }
 
-    public findByIdentityNo(identityNo: string | any ): Observable<KycRecordDTO[] | any[]> {
+    public createOrganisationRecord(organisationId: string ): Observable<KycRecordDTO> {
 
-        return this.http.get<KycRecordDTO[] | any[]>(`${this.path}/by-identity/${identityNo}`);
+        return this.http.get<KycRecordDTO>(`${this.path}/organisation/${organisationId}`);
     }
 
-    public findByIdentityNoPaged(identityNo: string | any , pageNumber: number | any , pageSize: number | any ): Observable<Page<KycRecordDTO> | any> {
+    public findById(id: string ): Observable<KycRecordDTO> {
 
-        return this.http.get<Page<KycRecordDTO> | any>(`${this.path}/by-identity/${identityNo}/paged?pageNumber=${pageNumber}&pageSize=${pageSize}`);
+        return this.http.get<KycRecordDTO>(`${this.path}/${id}`);
     }
 
-    public findByIndividual(individualId: string | any ): Observable<KycRecordDTO[] | any[]> {
+    public findByIdentityNo(identityNo: string ): Observable<KycRecordDTO[]> {
 
-        return this.http.get<KycRecordDTO[] | any[]>(`${this.path}/by-individual/${individualId}`);
+        return this.http.get<KycRecordDTO[]>(`${this.path}/by-identity/${identityNo}`);
     }
 
-    public findByIndividualPaged(individualId: string | any , pageNumber: number | any , pageSize: number | any ): Observable<Page<KycRecordDTO> | any> {
+    public findByIdentityNoPaged(identityNo: string , pageNumber: number , pageSize: number ): Observable<Page<KycRecordDTO>> {
 
-        return this.http.get<Page<KycRecordDTO> | any>(`${this.path}/by-individual/${individualId}/paged?pageNumber=${pageNumber}&pageSize=${pageSize}`);
+
+        return this.http.get<Page<KycRecordDTO>>(`${this.path}/by-identity/${identityNo}/paged?pageNumber=${pageNumber}&pageSize=${pageSize}`);
     }
 
-    public findByOrganisation(organisationId: string | any ): Observable<KycRecordDTO[] | any[]> {
-
-        return this.http.get<KycRecordDTO[] | any[]>(`${this.path}/by-organisation/${organisationId}`);
+    public findByIndividual(individualId: string ): Observable<KycRecordDTO[]> {
+        return this.http.get<KycRecordDTO[]>(`${this.path}/by-individual/${individualId}`);
     }
 
-    public findByOrganisationRegistration(registrationNo: string | any ): Observable<KycRecordDTO[] | any[]> {
-
-        return this.http.get<KycRecordDTO[] | any[]>(`${this.path}/by-organisation-registration/${registrationNo}`);
+    public findByIndividualPaged(individualId: string , pageNumber: number , pageSize: number ): Observable<Page<KycRecordDTO>> {
+        return this.http.get<Page<KycRecordDTO>>(`${this.path}/by-individual/${individualId}/paged?pageNumber=${pageNumber}&pageSize=${pageSize}`);
     }
 
-    public findByOrganisationRegistrationPaged(registrationNo: string | any , pageNumber: number | any , pageSize: number | any ): Observable<Page<KycRecordDTO> | any> {
-
-        return this.http.get<Page<KycRecordDTO> | any>(`${this.path}/by-organisation_registration/${registrationNo}/paged?pageNumber=${pageNumber}&pageSize=${pageSize}`);
+    public findByOrganisation(organisationId: string ): Observable<KycRecordDTO[]> {
+        return this.http.get<KycRecordDTO[]>(`${this.path}/by-organisation/${organisationId}`);
     }
 
-    public getAll(): Observable<KycRecordDTO[] | any[]> {
-
-        return this.http.get<KycRecordDTO[] | any[]>(`${this.path}`);
+    public findByOrganisationRegistration(registrationNo: string ): Observable<KycRecordDTO[]> {
+        return this.http.get<KycRecordDTO[]>(`${this.path}/by-organisation-registration/${registrationNo}`);
     }
 
-    public getAllPaged(pageNumber: number | any , pageSize: number | any ): Observable<Page<KycRecordDTO> | any> {
-
-        return this.http.get<Page<KycRecordDTO> | any>(`${this.path}/paged?pageNumber=${pageNumber}&pageSize=${pageSize}`);
+    public findByOrganisationRegistrationPaged(registrationNo: string , pageNumber: number , pageSize: number ): Observable<Page<KycRecordDTO>> {
+        return this.http.get<Page<KycRecordDTO>>(`${this.path}/by-organisation_registration/${registrationNo}/paged?pageNumber=${pageNumber}&pageSize=${pageSize}`);
     }
 
-    public pagedSearch(criteria: string | any , pageNumber: number | any , pageSize: number | any ): Observable<Page<KycRecordDTO> | any> {
+    public getAll(): Observable<KycRecordDTO[]> {
 
-        return this.http.get<Page<KycRecordDTO> | any>(`${this.path}/search/paged?criteria=${criteria}&pageNumber=${pageNumber}&pageSize=${pageSize}`);
+        return this.http.get<KycRecordDTO[]>(`${this.path}`);
     }
 
-    public remove(id: string | any ): Observable<boolean | any> {
+    public getAllPaged(pageNumber: number , pageSize: number ): Observable<Page<KycRecordDTO>> {
 
-        return this.http.delete<boolean | any>(`${this.path}/${id}`);
+        return this.http.get<Page<KycRecordDTO>>(`${this.path}/paged?pageNumber=${pageNumber}&pageSize=${pageSize}`);
     }
 
-    public save(kycRecord: KycRecordDTO | any ): Observable<KycRecordDTO | any> {
+    public pagedSearch(criteria: string , pageNumber: number , pageSize: number ): Observable<Page<KycRecordDTO>> {
 
-        return this.http.post<KycRecordDTO | any>(`${this.path}`, kycRecord);
+        return this.http.get<Page<KycRecordDTO>>(`${this.path}/search/paged?criteria=${criteria}&pageNumber=${pageNumber}&pageSize=${pageSize}`);
     }
 
-    public search(criteria: string | any ): Observable<KycRecordDTO[] | any[]> {
+    public remove(id: string ): Observable<boolean> {
 
-        return this.http.get<KycRecordDTO[] | any[]>(`${this.path}/search?criteria=${criteria}`);
+        return this.http.delete<boolean>(`${this.path}/${id}`);
+    }
+
+    public save(kycRecord: KycRecordDTO ): Observable<KycRecordDTO> {
+
+        return this.http.post<KycRecordDTO>(`${this.path}`, kycRecord);
+    }
+
+    public search(criteria: string ): Observable<KycRecordDTO[]> {
+
+        return this.http.get<KycRecordDTO[]>(`${this.path}/search?criteria=${criteria}`);
     }
 
 }

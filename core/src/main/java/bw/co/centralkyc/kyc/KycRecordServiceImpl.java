@@ -9,6 +9,7 @@
 package bw.co.centralkyc.kyc;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Collection;
 import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Page;
@@ -18,8 +19,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import bw.co.centralkyc.TargetEntity;
 import bw.co.centralkyc.individual.Individual;
 import bw.co.centralkyc.individual.IndividualRepository;
+import bw.co.centralkyc.settings.Settings;
+import bw.co.centralkyc.settings.SettingsRepository;
 
 /**
  * @see bw.co.centralkyc.kyc.KycRecordService
@@ -30,10 +34,12 @@ public class KycRecordServiceImpl
     extends KycRecordServiceBase
 {
     private final IndividualRepository individualRepository;
+    private final SettingsRepository settingsRepository;
     public KycRecordServiceImpl(
         KycRecordDao kycRecordDao,
         KycRecordRepository kycRecordRepository,
         MessageSource messageSource,
+        SettingsRepository settingsRepository,
         IndividualRepository individualRepository
     ) {
         
@@ -44,6 +50,7 @@ public class KycRecordServiceImpl
         );
 
         this.individualRepository = individualRepository;
+        this.settingsRepository = settingsRepository;
     }
 
     /**
@@ -235,6 +242,27 @@ public class KycRecordServiceImpl
                 throw new RuntimeException(e);
             }
         });
+    }
+
+    @Override
+    protected KycRecordDTO handleCreateTargetRecord(String targetId, TargetEntity target, String user)
+            throws Exception {
+
+        Settings settings = this.settingsRepository.findAll().stream().findFirst()
+            .orElseThrow(() -> new Exception("Settings not found"));
+
+        KycRecord record = KycRecord.Factory.newInstance();
+        record.setTarget(target);
+        record.setTargetId(targetId);
+        record.setCreatedAt(LocalDateTime.now());
+        record.setCreatedBy(user);
+        record.setUploadDate(LocalDate.now());
+        record.setKycStatus(KycComplianceStatus.INCOMPLETE);
+        record.setExpiryDate(record.getUploadDate().plusDays(settings.getKycDuration()));
+
+        record = this.kycRecordRepository.save(record);
+
+        return this.kycRecordDao.toKycRecordDTO(record);
     }
 
 }

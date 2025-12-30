@@ -151,21 +151,6 @@ public class ClientRequestDaoImpl
             target.setDocument(documentRepository.getReferenceById(source.getDocumentId()));
         }
 
-        // if(StringUtils.isNotBlank(source.getIndividualId())) {
-
-        // target.setIndividual(individualRepository.getReferenceById(source.getIndividualId()));
-
-        // } else if(StringUtils.isNotBlank(source.getIdentityNo()) &&
-        // source.getIdentityType() != null) {
-
-        // target.setIndividual(
-        // individualRepository.findByIdentityNoAndIdentityType(
-        // source.getIdentityNo(),
-        // source.getIdentityType()
-        // )
-        // );
-        // }
-
         if(source.getTarget() == TargetEntity.INDIVIDUAL && StringUtils.isNotBlank(source.getTargetId())) {
 
             if(individualRepository.existsById(source.getTargetId())) {

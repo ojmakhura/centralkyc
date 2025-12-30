@@ -34,6 +34,7 @@ import { KycSubscriptionApiStore } from '@app/store/bw/co/centralkyc/subscriptio
 import { ClientRequestApiStore } from '@app/store/bw/co/centralkyc/organisation/client/client-request-api.store';
 import { BranchEditorForm } from '@app/components/organisation/branch/branch-editor';
 import { TargetEntity } from '@app/models/bw/co/centralkyc/target-entity';
+import { ClientRequestStatus } from '@app/models/bw/co/centralkyc/organisation/client/client-request-status';
 
 @Component({
   selector: 'app-organisation-details',
@@ -67,6 +68,7 @@ export class OrganisationDetailsImplComponent extends OrganisationDetailsCompone
   override loaderMessage = linkedSignal(() => 'Loading...');
   override messages = linkedSignal(() => false);
   override success = linkedSignal(() => false);
+  override loading = linkedSignal(() => this.organisationApiStore.loading() || this.clientRequestApiStore.loading());
   organisation = linkedSignal(() => this.organisationApiStore.data());
 
   // Branches related properties
@@ -83,6 +85,13 @@ export class OrganisationDetailsImplComponent extends OrganisationDetailsCompone
   // Subscriptions related properties
   subscriptions = linkedSignal<KycSubscriptionDTO[]>(() => this.kycSubscriptionApiStore.dataList());
   subscriptionsLoading = linkedSignal(() => false);
+
+  override clientRequestsTableSignal = linkedSignal<Page<ClientRequestDTO>>(() => this.clientRequestApiStore.dataPage());
+  clientRequests = linkedSignal<ClientRequestDTO[]>(() => this.clientRequestsTableSignal().content || []);
+  clientRequestStatuses = Object.values(ClientRequestStatus);
+  clientRequestsColumns = [
+    'createdAt', 'organisation', 'status'
+  ]
 
   // Individual Client Requests related properties
   individualClientRequests = linkedSignal(() => this.clientRequestApiStore.individualsRequestsPage());
@@ -112,6 +121,7 @@ export class OrganisationDetailsImplComponent extends OrganisationDetailsCompone
         this.loadSubscriptions();
         this.loadIndividualClientRequests();
         this.loadOrganisationClientRequests();
+        this.doSearchRequests();
       }
     });
 
@@ -121,6 +131,11 @@ export class OrganisationDetailsImplComponent extends OrganisationDetailsCompone
       if (branchList) {
         this.totalBranches.set(branchList.length);
       }
+    });
+
+    effect(() => {
+      let page = this.clientRequestApiStore.dataPage();
+      console.log('Client Requests Page updated:', page);
     });
 
   }
@@ -190,18 +205,17 @@ export class OrganisationDetailsImplComponent extends OrganisationDetailsCompone
   }
 
   override doNgAfterViewInit(): void {
-    this.doSearchRequests();
 
   }
 
   private doSearchRequests(pageNumber: number = 0, pageSize: number = 10, target?: TargetEntity): void {
     let org = this.organisation();
     if (org?.id) {
-      this.clientRequestApiStore.findByOrganisationPaged({
-        organisationId: org.id,
+      this.clientRequestApiStore.findByTargetPaged({
+        target: TargetEntity.ORGANISATION,
+        targetId: org.id,
         pageNumber,
         pageSize,
-        target,
       });
     }
   }
@@ -443,8 +457,11 @@ export class OrganisationDetailsImplComponent extends OrganisationDetailsCompone
   }
 
   refreshClientRequests(): void {
-    this.loadIndividualClientRequests();
-    this.loadOrganisationClientRequests();
+    this.doSearchRequests();
+  }
+
+  loadClientRequests(pageNumber: number = 0, pageSize: number = 10): void {
+    this.doSearchRequests(pageNumber, pageSize);
   }
 
   addNewClientRequest(target: TargetEntity): void {
@@ -574,77 +591,6 @@ export class OrganisationDetailsImplComponent extends OrganisationDetailsCompone
     }
   }
 
-  // Client Request File Upload Methods
-  // onClientRequestFileSelected(event: any, target: TargetEntity): void {
-  //   const files: FileList = event.target.files;
-  //   if (files && files.length > 0) {
-  //     this.isUploadingClientRequestFile.set(true);
-  //     this.clientRequestFileUploadProgress.set(0);
-
-  //     // Simulate file upload progress
-  //     const interval = setInterval(() => {
-  //       const currentProgress = this.clientRequestFileUploadProgress();
-  //       if (currentProgress < 100) {
-  //         this.clientRequestFileUploadProgress.set(currentProgress + 10);
-  //       } else {
-  //         clearInterval(interval);
-
-  //         // Add files to the uploaded list
-  //         const newFiles = Array.from(files).map((file, index) => ({
-  //           id: `file-${Date.now()}-${index}`,
-  //           fileName: file.name,
-  //           fileSize: file.size,
-  //           file: file,
-  //         }));
-
-  //         this.uploadedClientRequestFiles.set([...this.uploadedClientRequestFiles(), ...newFiles]);
-  //         this.isUploadingClientRequestFile.set(false);
-  //         this.clientRequestFileUploadProgress.set(0);
-
-  //         // Reset the file input
-  //         event.target.value = '';
-  //       }
-  //     }, 300);
-
-  //     // TODO: Implement actual file upload to server
-  //     this.clientRequestApiStore.uploadRequests({ file: files[0], organisationId: this.organisation().id, target });
-  //   }
-  // }
-
-  // formatFileSize(bytes: number): string {
-  //   if (bytes === 0) return '0 Bytes';
-  //   const k = 1024;
-  //   const sizes = ['Bytes', 'KB', 'MB', 'GB'];
-  //   const i = Math.floor(Math.log(bytes) / Math.log(k));
-  //   return Math.round((bytes / Math.pow(k, i)) * 100) / 100 + ' ' + sizes[i];
-  // }
-
-  // downloadClientRequestFile(file: any): void {
-  //   // Create a blob URL and trigger download
-  //   const url = window.URL.createObjectURL(file.file);
-  //   const a = document.createElement('a');
-  //   a.href = url;
-  //   a.download = file.fileName;
-  //   document.body.appendChild(a);
-  //   a.click();
-  //   window.URL.revokeObjectURL(url);
-  //   document.body.removeChild(a);
-
-  //   // TODO: Implement actual file download from server
-  //   // this.clientRequestApiStore.downloadFile({ fileId: file.id });
-  // }
-
-  // deleteClientRequestFile(fileId: string): void {
-  //   if (confirm('Are you sure you want to delete this file?')) {
-  //     const currentFiles = this.uploadedClientRequestFiles();
-  //     const updatedFiles = currentFiles.filter((f) => f.id !== fileId);
-  //     this.uploadedClientRequestFiles.set(updatedFiles);
-
-  //     // TODO: Implement actual file deletion from server
-  //     // this.clientRequestApiStore.deleteFile({ fileId });
-  //   }
-  // }
-
   downloadIndividualRequestTemplate(): void {
     // TODO: Optionally fetch template from server if backend provides a specific format
     this.clientRequestApi.downloadRequestTemplate().subscribe({
@@ -674,5 +620,24 @@ export class OrganisationDetailsImplComponent extends OrganisationDetailsCompone
 
   override createNewDomains(): OrganisationDomain {
     return new OrganisationDomain();
+  }
+
+  onClientRequestStatusChange(clientRequest: ClientRequestDTO, newStatus: ClientRequestStatus): void {
+
+    console.log('Changing status of Client Request ID:', clientRequest.id, 'to', newStatus);
+
+    this.clientRequestApiStore.updateStatus({
+      id: clientRequest.id,
+      status: newStatus
+    });
+  }
+
+  onClientRequestsPageChange(event: any): void {
+    // this.clientRequestsPageIndex.set(event.pageIndex);
+    // this.clientRequestsPageSize.set(event.pageSize);
+    // const individual = this.individual();
+    // if (individual?.id) {
+    //   this.loadClientRequests(individual.id);
+    // }
   }
 }

@@ -4,7 +4,6 @@ import { EditOrganisationComponent } from '@views/organisation/edit/edit-organis
 import { CommonModule } from '@angular/common';
 import { TranslateModule } from '@ngx-translate/core';
 import { MaterialModule } from '@app/material.module';
-import { TableComponent } from '@components/table/table';
 import { Loader } from "@shared/loader/loader";
 import { Field } from '@angular/forms/signals';
 import { RouterLink, RouterModule } from "@angular/router";
@@ -21,7 +20,6 @@ import { OrganisationDTO } from '@app/models/bw/co/centralkyc/organisation/organ
     CommonModule,
     TranslateModule,
     MaterialModule,
-    TableComponent,
     Loader,
     Field,
     RouterModule
@@ -91,6 +89,6 @@ export class EditOrganisationImplComponent extends EditOrganisationComponent {
   }
 
   override createNewDomains(): OrganisationDomain {
-    throw new OrganisationDomain();
+    return new OrganisationDomain();
   }
 }

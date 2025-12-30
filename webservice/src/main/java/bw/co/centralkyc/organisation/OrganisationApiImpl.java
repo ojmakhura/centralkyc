@@ -18,6 +18,7 @@ import bw.co.centralkyc.AuditTracker;
 import bw.co.centralkyc.PropertySearchOrder;
 import bw.co.centralkyc.SearchObject;
 import bw.co.centralkyc.keycloak.KeycloakOrganisationService;
+import bw.co.centralkyc.organisation.client.ClientRequestDTO;
 
 @org.springframework.web.bind.annotation.RestController
 public class OrganisationApiImpl implements OrganisationApi {
@@ -71,7 +72,11 @@ public class OrganisationApiImpl implements OrganisationApi {
             SearchObject<OrganisationSearchCriteria> criteria) {
         try {
 
-            return ResponseEntity.ok(orgService.search(criteria));
+            Page<OrganisationListDTO> results = orgService.search(criteria);
+
+            updateOrganisationsDetails(results.getContent());
+
+            return ResponseEntity.ok(results);
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -90,6 +95,18 @@ public class OrganisationApiImpl implements OrganisationApi {
             throw e;
         }
     }
+
+    private void updateOrganisationsDetails(Collection<OrganisationListDTO> orgs) {
+        for (OrganisationListDTO org : orgs) {
+            
+            OrganisationDTO orgDetails = orgService.findById(org.getId());
+            if(orgDetails != null) {
+                org.contactEmailAddress = orgDetails.getContactEmailAddress();
+                org.registrationNo = orgDetails.getRegistrationNo();
+            }
+
+        }
+    }   
 
     @Override
     public ResponseEntity<OrganisationDTO> save(OrganisationDTO organisation) {
@@ -117,8 +134,11 @@ public class OrganisationApiImpl implements OrganisationApi {
                 sortings.addAll(sortings);
             }
             
-            return ResponseEntity.ok(orgService
-                    .search(criteria.getCriteria()));
+            Collection<OrganisationListDTO> results = orgService.search(
+                    criteria.getCriteria());
+
+            updateOrganisationsDetails(results);
+            return ResponseEntity.ok(results);
 
         } catch (Exception e) {
             e.printStackTrace();

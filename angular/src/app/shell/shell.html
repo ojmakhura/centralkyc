@@ -53,7 +53,7 @@
           <mat-icon>account_circle</mat-icon>
         </div>
         <div class="user-info">
-          <span class="user-name">{{ username }}</span>
+          <span class="user-name">{{ profile()?.username }}</span>
           <mat-icon class="dropdown">expand_more</mat-icon>
         </div>
       </button>
@@ -63,15 +63,15 @@
             <mat-icon>account_circle</mat-icon>
           </div>
           <div class="profile-info">
-            <div class="profile-name">{{ username }}</div>
-            <div class="profile-email">{{ userEmail }}</div>
+            <div class="profile-name">{{ profile()?.firstName }} {{ profile()?.lastName }}</div>
+            <div class="profile-email">{{ profile()?.email }}</div>
           </div>
         </div>
         <mat-divider></mat-divider>
-        <button mat-menu-item>
+        <a mat-menu-item type="button" href="{{ appEnvState.accountUri() }}">
           <mat-icon>person_outline</mat-icon>
           <span>{{ 'user.profile' | translate }}</span>
-        </button>
+        </a>
         <button mat-menu-item>
           <mat-icon>settings_outlined</mat-icon>
           <span>{{ 'user.settings' | translate }}</span>

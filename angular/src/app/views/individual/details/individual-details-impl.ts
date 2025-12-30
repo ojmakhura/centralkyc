@@ -25,6 +25,7 @@ import { ClientRequestStatus } from '@app/models/bw/co/centralkyc/organisation/c
 import Swal from 'sweetalert2';
 import { KycComplianceStatus } from '@app/models/bw/co/centralkyc/kyc/kyc-compliance-status';
 import { PhoneNumber } from '@app/models/bw/co/centralkyc/phone-number';
+import { ClientRequestApiStore } from '@app/store/bw/co/centralkyc/organisation/client/client-request-api.store';
 
 interface UploadProgress {
   [documentTypeId: string]: {
@@ -65,6 +66,7 @@ export class IndividualDetailsImplComponent extends IndividualDetailsComponent {
   kycRecords = linkedSignal<KycRecordDTO[]>(() => []);
 
   clientRequestApi = inject(ClientRequestApi);
+  clientRequestApiStore = inject(ClientRequestApiStore);
   clientRequests = linkedSignal<ClientRequestDTO[]>(() => []);
   clientRequestStatuses = Object.values(ClientRequestStatus);
   clientRequestsPageSize = signal<number>(10);
@@ -229,21 +231,12 @@ export class IndividualDetailsImplComponent extends IndividualDetailsComponent {
   }
 
   onClientRequestStatusChange(clientRequest: ClientRequestDTO, newStatus: ClientRequestStatus): void {
-    const updatedRequest = { ...clientRequest, status: newStatus };
-    this.clientRequestApi.save(updatedRequest).subscribe({
-      next: (res) => {
-        this.toaster.success('Client request status updated successfully');
-        // Reload client requests to reflect changes
-        const individual = this.individual();
-        if (individual?.id) {
-          this.loadClientRequests(individual.id);
-        }
-      },
-      error: (err) => {
-        console.error('Failed to update client request status:', err);
-        this.toaster.error(`Failed to update status: ${err.message || 'Update failed'}`);
-      },
-    });
+
+    this.clientRequestApiStore.updateStatus({
+      id: clientRequest.id!,
+      status: newStatus,
+    })
+
   }
 
   doNgOnDestroy(): void {}
@@ -462,16 +455,9 @@ export class IndividualDetailsImplComponent extends IndividualDetailsComponent {
       if (result.isConfirmed) {
         const individual: IndividualDTO = this.individual();
 
-        let kycRecord: KycRecordDTO = new KycRecordDTO();
-        kycRecord.targetId = individual?.id;
-        kycRecord.target = TargetEntity.INDIVIDUAL;
-        kycRecord.identityNo = individual?.identityNo || '';
-        kycRecord.kycStatus = KycComplianceStatus.CURRENT;
-        kycRecord.name = individual.firstName + ' ' + (individual.surname || '');
-
         if (individual?.id) {
-          this.kycRecordApi.save(
-            kycRecord
+          this.kycRecordApi.createIndividualRecord(
+            individual?.id
           ).subscribe({
             next: (response) => {
              this.router.navigate(['kyc'], { queryParams: { id: response.id } });

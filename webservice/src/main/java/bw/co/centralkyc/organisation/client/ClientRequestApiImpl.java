@@ -388,15 +388,14 @@ public class ClientRequestApiImpl implements ClientRequestApi {
         }
 
         @Override
-        public ResponseEntity<Collection<Page<ClientRequestDTO>>> findByTargetPaged(TargetEntity target,
+        public ResponseEntity<Page<ClientRequestDTO>> findByTargetPaged(TargetEntity target,
                 String targetId, Integer pageNumber, Integer pageSize) throws Exception {
         
             try {
                 Page<ClientRequestDTO> requests = clientRequestService.findByTarget(target, targetId, pageNumber, pageSize);
                 updateOrganisationsDetails(requests.getContent());
                 
-                Collection<Page<ClientRequestDTO>> response = Collections.singletonList(requests);
-                return ResponseEntity.ok(response);
+                return ResponseEntity.ok(requests);
             } catch (Exception e) {
 
                 e.printStackTrace();
@@ -459,5 +458,22 @@ public class ClientRequestApiImpl implements ClientRequestApi {
                 e.printStackTrace();
                 throw e;
             }
+        }
+
+        @Override
+        public ResponseEntity<ClientRequestDTO> updateStatus(String id, ClientRequestStatus status) throws Exception {
+            
+            try {
+
+                ClientRequestDTO request = clientRequestService.updateStatus(id, status);
+                updateOrganisationsDetails(Collections.singletonList(request));
+                return ResponseEntity.ok(request);
+
+            } catch (Exception e) {
+
+                e.printStackTrace();
+                throw e;
+            }
+
         }
 }

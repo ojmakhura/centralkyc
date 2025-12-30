@@ -29,7 +29,7 @@ const initialState: ClientRequestApiState = {
   individualsRequestsPage: new Page<ClientRequestDTO>(),
   organisationsRequests: [],
   organisationsRequestsPage: new Page<ClientRequestDTO>(),
-  searchCriteria: new SearchObject<any>(),
+  searchCriteria: new SearchObject<ClientRequestSearchCriteria>(),
   loading: false,
   success: false,
   messages: [],
@@ -398,16 +398,16 @@ export const ClientRequestApiStore = signalStore(
           );
         }),
       ),
-      findByTargetPaged: rxMethod<{target: TargetEntity | any , targetId: string | any , pageNumber: number | any , pageSize: number | any }>(
+      findByTargetPaged: rxMethod<{target: TargetEntity , targetId: string , pageNumber: number , pageSize: number }>(
         switchMap((data: any) => {
           patchState(store, { loading: true, loaderMessage: 'Loading ...' });
           return clientRequestApi.findByTargetPaged(data.target, data.targetId, data.pageNumber, data.pageSize, ).pipe(
             tapResponse({
-              next: (response: Page<ClientRequestDTO>[] | any[]) => {
+              next: (response: Page<ClientRequestDTO>) => {
                 patchState(
                   store,
                   {
-                    dataList: response,
+                    dataPage: response,
                     loading: false,
                     success: true,
                     messages: ['Success!!'],
@@ -760,6 +760,38 @@ export const ClientRequestApiStore = signalStore(
                   store,
                   {
                     dataPage: response,
+                    loading: false,
+                    success: true,
+                    messages: ['Success!!'],
+                    error: false,
+                  }
+                );
+              },
+              error: (error: any) => {
+                patchState(
+                  store, {
+                    status: (error?.status || 0),
+                    loading: false,
+                    success: false,
+                    error: true,
+                    messages: [error?.error?.message || 'An error occurred'],
+                  }
+                );
+              },
+            }),
+          );
+        }),
+      ),
+      updateStatus: rxMethod<{id: string, status: ClientRequestStatus}>(
+        switchMap((data: any) => {
+          patchState(store, { loading: true, loaderMessage: 'Loading ...' });
+          return clientRequestApi.updateStatus(data.id, data.status).pipe(
+            tapResponse({
+              next: (response: ClientRequestDTO) => {
+                patchState(
+                  store,
+                  {
+                    data: response,
                     loading: false,
                     success: true,
                     messages: ['Success!!'],

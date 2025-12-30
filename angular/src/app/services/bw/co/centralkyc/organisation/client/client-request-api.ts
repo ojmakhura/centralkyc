@@ -23,32 +23,29 @@ export class ClientRequestApi {
     return this.http.get<Blob | any>(`${this.path}/download-template`);
   }
 
-  public findByDocument(documentId: string | any): Observable<ClientRequestDTO[] | any[]> {
+  public findByDocument(documentId: string): Observable<ClientRequestDTO[]> {
 
-    return this.http.get<ClientRequestDTO[] | any[]>(`${this.path}/by-document/${documentId}`);
+    return this.http.get<ClientRequestDTO[]>(`${this.path}/by-document/${documentId}`);
   }
 
-  public findByDocumentPaged(documentId: string | any, pageNumber: number | any, pageSize: number | any): Observable<Page<ClientRequestDTO> | any> {
+  public findByDocumentPaged(documentId: string, pageNumber: number, pageSize: number): Observable<Page<ClientRequestDTO>> {
 
-    return this.http.get<Page<ClientRequestDTO> | any>(`${this.path}/by-document/${documentId}/paged?pageNumber=${pageNumber}&pageSize=${pageSize}`);
+    return this.http.get<Page<ClientRequestDTO>>(`${this.path}/by-document/${documentId}/paged?pageNumber=${pageNumber}&pageSize=${pageSize}`);
   }
 
-  public findById(id: string | any): Observable<ClientRequestDTO | any> {
-
-    return this.http.get<ClientRequestDTO | any>(`${this.path}/${id}`);
+  public findById(id: string): Observable<ClientRequestDTO> {
+    return this.http.get<ClientRequestDTO>(`${this.path}/${id}`);
   }
 
-  public findByIndividual(individualId: string | any): Observable<ClientRequestDTO[] | any[]> {
-
-    return this.http.get<ClientRequestDTO[] | any[]>(`${this.path}/by-individual/${individualId}`);
+  public findByIndividual(individualId: string): Observable<ClientRequestDTO[]> {
+    return this.http.get<ClientRequestDTO[]>(`${this.path}/by-individual/${individualId}`);
   }
 
-  public findByIndividualPaged(individualId: string | any, pageNumber: number | any, pageSize: number | any): Observable<Page<ClientRequestDTO> | any> {
-
-    return this.http.get<Page<ClientRequestDTO> | any>(`${this.path}/by-individual/${individualId}/paged?pageNumber=${pageNumber}&pageSize=${pageSize}`);
+  public findByIndividualPaged(individualId: string, pageNumber: number, pageSize: number): Observable<Page<ClientRequestDTO>> {
+    return this.http.get<Page<ClientRequestDTO>>(`${this.path}/by-individual/${individualId}/paged?pageNumber=${pageNumber}&pageSize=${pageSize}`);
   }
 
-  public findByOrganisation(organisationId: string | any, target: TargetEntity | any): Observable<ClientRequestDTO[] | any[]> {
+  public findByOrganisation(organisationId: string, target: TargetEntity): Observable<ClientRequestDTO[]> {
 
     let url = `${this.path}/by-org/${organisationId}`;
 
@@ -57,10 +54,10 @@ export class ClientRequestApi {
       url = `${url}&target=${target}`
     }
 
-    return this.http.get<ClientRequestDTO[] | any[]>(`${url}`);
+    return this.http.get<ClientRequestDTO[]>(`${url}`);
   }
 
-  public findByOrganisationPaged(organisationId: string | any, pageNumber: number | any, pageSize: number | any, target: TargetEntity | any): Observable<Page<ClientRequestDTO> | any> {
+  public findByOrganisationPaged(organisationId: string, pageNumber: number, pageSize: number, target: TargetEntity): Observable<Page<ClientRequestDTO>> {
 
     let url = `${this.path}/by-org/${organisationId}/paged?pageNumber=${pageNumber}&pageSize=${pageSize}`;
 
@@ -70,86 +67,91 @@ export class ClientRequestApi {
     }
 
 
-    return this.http.get<Page<ClientRequestDTO> | any>(`${url}`);
+    return this.http.get<Page<ClientRequestDTO>>(`${url}`);
   }
 
-  public findByStatus(status: ClientRequestStatus | any): Observable<ClientRequestDTO[] | any[]> {
+  public findByStatus(status: ClientRequestStatus | any): Observable<ClientRequestDTO[]> {
 
-    return this.http.get<ClientRequestDTO[] | any[]>(`${this.path}/status?status=${status}`);
+    return this.http.get<ClientRequestDTO[]>(`${this.path}/status?status=${status}`);
   }
 
-  public findByStatusPaged(status: ClientRequestStatus | any, pageNumber: number | any, pageSize: number | any): Observable<Page<ClientRequestDTO> | any> {
+  public findByStatusPaged(status: ClientRequestStatus, pageNumber: number, pageSize: number): Observable<Page<ClientRequestDTO>> {
 
-    return this.http.get<Page<ClientRequestDTO> | any>(`${this.path}/status/paged?status=${status}&pageNumber=${pageNumber}&pageSize=${pageSize}`);
+    return this.http.get<Page<ClientRequestDTO>>(`${this.path}/status/paged?status=${status}&pageNumber=${pageNumber}&pageSize=${pageSize}`);
   }
 
-  public findByTarget(target: TargetEntity | any, targetId: string | any): Observable<ClientRequestDTO[] | any[]> {
+  public findByTarget(target: TargetEntity, targetId: string): Observable<ClientRequestDTO[]> {
 
-    return this.http.get<ClientRequestDTO[] | any[]>(`${this.path}/target/${target}/${targetId}`);
+    return this.http.get<ClientRequestDTO[]>(`${this.path}/target/${target}/${targetId}`);
   }
 
-  public findByTargetPaged(target: TargetEntity | any, targetId: string | any, pageNumber: number | any, pageSize: number | any): Observable<Page<ClientRequestDTO>[] | any[]> {
+  public findByTargetPaged(target: TargetEntity, targetId: string, pageNumber: number, pageSize: number): Observable<Page<ClientRequestDTO>> {
 
-    return this.http.get<Page<ClientRequestDTO>[] | any[]>(`${this.path}/target/${target}/${targetId}/paged?pageNumber=${pageNumber}&pageSize=${pageSize}`);
+    return this.http.get<Page<ClientRequestDTO>>(`${this.path}/target/${target}/${targetId}/paged?pageNumber=${pageNumber}&pageSize=${pageSize}`);
   }
 
-  public findIndividualsByOrganisation(organisationId: string | any): Observable<ClientRequestDTO[] | any[]> {
+  public findIndividualsByOrganisation(organisationId: string): Observable<ClientRequestDTO[]> {
 
-    return this.http.get<ClientRequestDTO[] | any[]>(`${this.path}/by-org/${organisationId}/individuals`);
+    return this.http.get<ClientRequestDTO[]>(`${this.path}/by-org/${organisationId}/individuals`);
   }
 
-  public findIndividualsByOrganisationPaged(organisationId: string | any, pageNumber: number | any, pageSize: number | any): Observable<Page<ClientRequestDTO> | any> {
+  public findIndividualsByOrganisationPaged(organisationId: string, pageNumber: number, pageSize: number): Observable<Page<ClientRequestDTO>> {
 
-    return this.http.get<Page<ClientRequestDTO> | any>(`${this.path}/by-org/${organisationId}/individuals/paged?pageNumber=${pageNumber}&pageSize=${pageSize}`);
+    return this.http.get<Page<ClientRequestDTO>>(`${this.path}/by-org/${organisationId}/individuals/paged?pageNumber=${pageNumber}&pageSize=${pageSize}`);
   }
 
-  public findOrganisationsByOrganisation(organisationId: string | any): Observable<ClientRequestDTO[] | any[]> {
+  public findOrganisationsByOrganisation(organisationId: string): Observable<ClientRequestDTO[]> {
 
-    return this.http.get<ClientRequestDTO[] | any[]>(`${this.path}/by-org/${organisationId}/organisations`);
+    return this.http.get<ClientRequestDTO[]>(`${this.path}/by-org/${organisationId}/organisations`);
   }
 
-  public findOrganisationsByOrganisationPaged(organisationId: string | any, pageNumber: number | any, pageSize: number | any): Observable<Page<ClientRequestDTO> | any> {
+  public findOrganisationsByOrganisationPaged(organisationId: string, pageNumber: number, pageSize: number): Observable<Page<ClientRequestDTO>> {
 
-    return this.http.get<Page<ClientRequestDTO> | any>(`${this.path}/by-org/${organisationId}/organisations/paged?pageNumber=${pageNumber}&pageSize=${pageSize}`);
+    return this.http.get<Page<ClientRequestDTO>>(`${this.path}/by-org/${organisationId}/organisations/paged?pageNumber=${pageNumber}&pageSize=${pageSize}`);
   }
 
-  public getAll(): Observable<ClientRequestDTO[] | any[]> {
+  public getAll(): Observable<ClientRequestDTO[]> {
 
-    return this.http.get<ClientRequestDTO[] | any[]>(`${this.path}`);
+    return this.http.get<ClientRequestDTO[]>(`${this.path}`);
   }
 
-  public getAllPaged(pageNumber: number | any, pageSize: number | any): Observable<Page<ClientRequestDTO> | any> {
+  public getAllPaged(pageNumber: number, pageSize: number): Observable<Page<ClientRequestDTO>> {
 
-    return this.http.get<Page<ClientRequestDTO> | any>(`${this.path}/paged?pageNumber=${pageNumber}&pageSize=${pageSize}`);
+    return this.http.get<Page<ClientRequestDTO>>(`${this.path}/paged?pageNumber=${pageNumber}&pageSize=${pageSize}`);
   }
 
-  public pagedSearch(criteria: SearchObject<ClientRequestSearchCriteria> | any): Observable<Page<ClientRequestDTO> | any> {
+  public pagedSearch(criteria: SearchObject<ClientRequestSearchCriteria> | any): Observable<Page<ClientRequestDTO>> {
 
-    return this.http.post<Page<ClientRequestDTO> | any>(`${this.path}/search/paged`, criteria);
+    return this.http.post<Page<ClientRequestDTO>>(`${this.path}/search/paged`, criteria);
   }
 
-  public remove(id: string | any): Observable<boolean | any> {
+  public remove(id: string): Observable<boolean> {
 
-    return this.http.delete<boolean | any>(`${this.path}/${id}`);
+    return this.http.delete<boolean>(`${this.path}/${id}`);
   }
 
-  public save(clientRequest: ClientRequestDTO | any): Observable<ClientRequestDTO | any> {
+  public save(clientRequest: ClientRequestDTO): Observable<ClientRequestDTO> {
 
-    return this.http.post<ClientRequestDTO | any>(`${this.path}`, clientRequest);
+    return this.http.post<ClientRequestDTO>(`${this.path}`, clientRequest);
   }
 
-  public search(criteria: SearchObject<ClientRequestSearchCriteria> | any): Observable<ClientRequestDTO[] | any[]> {
+  public search(criteria: SearchObject<ClientRequestSearchCriteria> | any): Observable<ClientRequestDTO[]> {
 
-    return this.http.post<ClientRequestDTO[] | any[]>(`${this.path}/search`, criteria);
+    return this.http.post<ClientRequestDTO[]>(`${this.path}/search`, criteria);
   }
 
-  public uploadRequests(file: File | any, organisationId: string | any, target: TargetEntity | any): Observable<Page<ClientRequestDTO> | any> {
+  public uploadRequests(file: File, organisationId: string, target: TargetEntity): Observable<Page<ClientRequestDTO>> {
     const formData: FormData = new FormData();
     formData.append('file', file);
 
-    return this.http.post<Page<ClientRequestDTO> | any>(
+    return this.http.post<Page<ClientRequestDTO>>(
       `${this.path}/${organisationId}/upload?target=${target}`,
       formData,
     );
+  }
+
+  public updateStatus(id: string, status: ClientRequestStatus): Observable<ClientRequestDTO> {
+
+    return this.http.get<ClientRequestDTO>(`${this.path}/${id}/status?status=${status}`);
   }
 }

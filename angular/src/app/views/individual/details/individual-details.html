@@ -198,36 +198,34 @@
             <mat-card class="section-card documents-section" appearance="outlined">
               <mat-card-content>
                 @if (individualDocumentTypes() && individualDocumentTypes().length > 0) {
-                @for (docType of individualDocumentTypes(); track docType.id) {
-                <div class="document-type-item">
-                  <div class="document-type-header">
-                    <div class="document-type-info">
-                      <mat-icon class="doc-icon">description</mat-icon>
-                      <div>
-                        <h4 class="doc-type-name">{{ docType.name }}</h4>
+                <div class="grid-2">
+                  @for (docType of individualDocumentTypes(); track docType.id) {
+                  <div class="document-type-item">
+                    <div class="document-info">
+                      <mat-icon>description</mat-icon>
+                      <div class="document-details">
+                        <div class="document-name">{{ docType.name }}</div>
                         @if (docType.description) {
-                        <p class="doc-type-desc">{{ docType.description }}</p>
+                        <div class="document-type">{{ docType.description }}</div>
                         }
                       </div>
+                      <button mat-stroked-button color="primary" (click)="fileInput.click()">
+                        <mat-icon>attach_file</mat-icon>
+                        {{ 'attach' | translate }}
+                      </button>
+                      <input type="file" #fileInput (change)="onFileSelected($event, docType)"
+                        accept=".pdf,.jpg,.jpeg,.png,.doc,.docx" style="display: none" />
                     </div>
-                    <button mat-stroked-button color="primary" (click)="fileInput.click()">
-                      <mat-icon>attach_file</mat-icon>
-                      {{ 'attach' | translate }}
-                    </button>
-                    <input type="file" #fileInput (change)="onFileSelected($event, docType)"
-                      accept=".pdf,.jpg,.jpeg,.png,.doc,.docx" style="display: none" />
-                  </div>
 
-                  @if (getUploadedDocument(docType.id)) {
-                  <div class="document-preview">
-                    <mat-icon class="file-icon">insert_drive_file</mat-icon>
-                    <div class="file-info">
-                      <span class="file-name">{{ getUploadedDocument(docType.id)?.fileName }}</span>
-                      <span class="file-size">
-                        {{ formatFileSize(getUploadedDocument(docType.id)?.metadata?.fileSize || 0) }}
-                      </span>
-                    </div>
-                    <div class="file-actions">
+                    @if (getUploadedDocument(docType.id)) {
+                    <div class="document-info" style="margin-top: 12px;">
+                      <mat-icon>insert_drive_file</mat-icon>
+                      <div class="document-details">
+                        <div class="document-name">{{ getUploadedDocument(docType.id)?.fileName }}</div>
+                        <div class="document-type">
+                          {{ formatFileSize(getUploadedDocument(docType.id)?.metadata?.fileSize || 0) }}
+                        </div>
+                      </div>
                       <button mat-icon-button color="primary" matTooltip="{{ 'download' | translate }}"
                         (click)="getUploadedDocument(docType.id) && downloadDocument(getUploadedDocument(docType.id)!)">
                         <mat-icon>download</mat-icon>
@@ -237,27 +235,25 @@
                         <mat-icon>delete</mat-icon>
                       </button>
                     </div>
-                  </div>
-                  } @else {
-                  <div class="document-empty">
-                    <mat-icon>cloud_upload</mat-icon>
-                    <span>{{ 'no.document.attached' | translate }}</span>
-                  </div>
-                  }
+                    } @else {
+                    <div class="empty-state" style="margin-top: 12px;">
+                      <mat-icon>cloud_upload</mat-icon>
+                      <p>{{ 'no.document.attached' | translate }}</p>
+                    </div>
+                    }
 
-                  @if (isUploading(docType.id)) {
-                  <mat-progress-bar mode="determinate" [value]="getUploadProgress(docType.id)"></mat-progress-bar>
-                  <p class="upload-progress">{{ getUploadProgress(docType.id) }}% {{ 'uploading' | translate }}</p>
+                    @if (isUploading(docType.id)) {
+                    <mat-progress-bar mode="determinate" [value]="getUploadProgress(docType.id)" style="margin-top: 12px;"></mat-progress-bar>
+                    <p class="upload-progress" style="margin-top: 8px; text-align: center;">{{ getUploadProgress(docType.id) }}% {{ 'uploading' | translate }}</p>
+                    }
+                  </div>
                   }
                 </div>
-                }
                 } @else {
-                <div class="no-documents">
-                  <div class="no-documents-content">
-                    <mat-icon class="no-documents-icon">folder_open</mat-icon>
-                    <h3>{{ 'no.document.types.configured' | translate }}</h3>
-                    <p>No document types have been configured for upload.</p>
-                  </div>
+                <div class="empty-state">
+                  <mat-icon>folder_open</mat-icon>
+                  <p>{{ 'no.document.types.configured' | translate }}</p>
+                  <p style="margin-top: 4px;">No document types have been configured for upload.</p>
                 </div>
                 }
               </mat-card-content>
@@ -272,54 +268,92 @@
               {{ 'kyc.records' | translate }}
             </ng-template>
             <div class="tab-content">
-              <div class="kyc-records-section-wrapper">
-                <mat-card class="kyc-records-section modern-card">
-                  <mat-card-header class="modern-header">
-                    <div class="section-header">
-                      <!-- <div class="section-icon">
-                  <mat-icon>verified_user</mat-icon>
-                </div>
-                <div class="section-title">
-                  <h3>{{ 'kyc.records' | translate }}</h3>
-                  <p class="section-subtitle">{{ 'kyc.records.description' | translate }}</p>
-                </div> -->
-                      <div class="section-actions">
-                        <button mat-mini-fab color="primary" matTooltip="{{ 'add.kyc.record' | translate }}">
-                          <mat-icon>add</mat-icon>
-                        </button>
-                      </div>
-                    </div>
-                  </mat-card-header>
-                  <mat-card-content class="modern-content">
-                    @if (kycRecords() && kycRecords().length > 0) {
-                    <div class="kyc-records-list">
-                      @for (kycRecord of kycRecords(); track kycRecord.id; let i = $index) {
-                      <div class="kyc-record-card modern-record-card">
-                        <div class="record-header">
-                          <div class="record-icon">
-                            <mat-icon
-                              [class]="kycRecord.kycStatus === KycComplianceStatusT.APPROVED ? 'status-approved' : 'status-pending'">
-                              @if (kycRecord.kycStatus === KycComplianceStatusT.APPROVED) {
-                              check_circle
-                              } @else if (kycRecord.kycStatus === KycComplianceStatusT.PENDING) {
-                              schedule
-                              } @else if (kycRecord.kycStatus === KycComplianceStatusT.REJECTED) {
-                              cancel
+              <mat-card class="section-card" appearance="outlined" style="margin-bottom: 16px;">
+                <mat-card-header>
+                  <mat-card-title style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+                    <span style="display: flex; align-items: center; gap: 8px;">
+                      <mat-icon>verified_user</mat-icon>
+                      {{ 'kyc.records' | translate }}
+                    </span>
+                    <button mat-mini-fab color="primary" matTooltip="{{ 'add.kyc.record' | translate }}" (click)="addKycRecord()">
+                      <mat-icon>add</mat-icon>
+                    </button>
+                  </mat-card-title>
+                </mat-card-header>
+                <mat-card-content>
+                  @if (kycRecords() && kycRecords().length > 0) {
+                  <div class="kyc-records-list">
+                    @for (kycRecord of kycRecords(); track kycRecord.id; let i = $index) {
+                    <mat-card class="standard-card" appearance="outlined" style="margin-bottom: 24px;">
+                      <mat-card-header>
+                        <mat-icon mat-card-avatar [class]="kycRecord.kycStatus === KycComplianceStatusT.APPROVED ? 'status-approved' : 'status-pending'">
+                          @if (kycRecord.kycStatus === KycComplianceStatusT.APPROVED) {
+                          check_circle
+                          } @else if (kycRecord.kycStatus === KycComplianceStatusT.PENDING) {
+                          schedule
+                          } @else if (kycRecord.kycStatus === KycComplianceStatusT.REJECTED) {
+                          cancel
+                          } @else {
+                          help
+                          }
+                        </mat-icon>
+                        <mat-card-title>{{ kycRecord.name || 'KYC Record' }}</mat-card-title>
+                        <mat-card-subtitle>
+                          {{ 'identity.no' | translate }}: {{ kycRecord.identityNo || individual()?.identityNo }}
+                        </mat-card-subtitle>
+                        <span style="margin-left: auto;">
+                          <mat-chip class="status-chip"
+                            [class.approved]="kycRecord.kycStatus === KycComplianceStatusT.APPROVED"
+                            [class.pending]="kycRecord.kycStatus === KycComplianceStatusT.PENDING"
+                            [class.rejected]="kycRecord.kycStatus === KycComplianceStatusT.REJECTED">
+                            @if (kycRecord.kycStatus === KycComplianceStatusT.APPROVED) {
+                            {{ 'approved' | translate }}
+                            } @else if (kycRecord.kycStatus === KycComplianceStatusT.PENDING) {
+                            {{ 'pending' | translate }}
+                            } @else if (kycRecord.kycStatus === KycComplianceStatusT.REJECTED) {
+                            {{ 'rejected' | translate }}
+                            } @else {
+                            {{ 'unknown' | translate }}
+                            }
+                          </mat-chip>
+                        </span>
+                      </mat-card-header>
+                      <mat-card-content>
+                        <div class="grid-4" style="margin-bottom: 24px;">
+                          <div class="display-item">
+                            <div class="display-label">
+                              <mat-icon class="field-icon">event</mat-icon>
+                              <span>{{ 'upload.date' | translate }}</span>
+                            </div>
+                            <div class="display-value">
+                              @if (kycRecord.uploadDate) {
+                              {{ kycRecord.uploadDate | date:'MMM dd, yyyy' }}
                               } @else {
-                              help
+                              -
                               }
-                            </mat-icon>
+                            </div>
                           </div>
-                          <div class="record-info">
-                            <h4 class="record-title">{{ kycRecord.name || 'KYC Record' }}</h4>
-                            <p class="record-subtitle">{{ 'identity.no' | translate }}: {{ kycRecord.identityNo ||
-                              individual()?.identityNo }}</p>
+
+                          <div class="display-item">
+                            <div class="display-label">
+                              <mat-icon class="field-icon">schedule</mat-icon>
+                              <span>{{ 'expiry.date' | translate }}</span>
+                            </div>
+                            <div class="display-value">
+                              @if (kycRecord.expiryDate) {
+                              {{ kycRecord.expiryDate | date:'MMM dd, yyyy' }}
+                              } @else {
+                              -
+                              }
+                            </div>
                           </div>
-                          <div class="record-status">
-                            <span class="status-badge"
-                              [class.approved]="kycRecord.kycStatus === KycComplianceStatusT.APPROVED"
-                              [class.pending]="kycRecord.kycStatus === KycComplianceStatusT.PENDING"
-                              [class.rejected]="kycRecord.kycStatus === KycComplianceStatusT.REJECTED">
+
+                          <div class="display-item">
+                            <div class="display-label">
+                              <mat-icon class="field-icon">info</mat-icon>
+                              <span>{{ 'status' | translate }}</span>
+                            </div>
+                            <div class="display-value">
                               @if (kycRecord.kycStatus === KycComplianceStatusT.APPROVED) {
                               {{ 'approved' | translate }}
                               } @else if (kycRecord.kycStatus === KycComplianceStatusT.PENDING) {
@@ -329,104 +363,53 @@
                               } @else {
                               {{ 'unknown' | translate }}
                               }
-                            </span>
+                            </div>
+                          </div>
+
+                          <div class="display-item">
+                            <div class="display-label">
+                              <mat-icon class="field-icon">folder</mat-icon>
+                              <span>{{ 'documents.count' | translate }}</span>
+                            </div>
+                            <div class="display-value">
+                              {{ kycRecord.documents?.length || 0 }} {{ 'documents' | translate }}
+                            </div>
                           </div>
                         </div>
-
-                        <div class="record-details">
-                          <div class="detail-grid">
-                            <div class="detail-item">
-                              <label class="detail-label">{{ 'upload.date' | translate }}</label>
-                              <div class="detail-value">
-                                <mat-icon class="detail-icon">event</mat-icon>
-                                @if (kycRecord.uploadDate) {
-                                {{ kycRecord.uploadDate | date:'MMM dd, yyyy' }}
-                                } @else {
-                                -
-                                }
-                              </div>
-                            </div>
-
-                            <div class="detail-item">
-                              <label class="detail-label">{{ 'expiry.date' | translate }}</label>
-                              <div class="detail-value">
-                                <mat-icon class="detail-icon">schedule</mat-icon>
-                                @if (kycRecord.expiryDate) {
-                                {{ kycRecord.expiryDate | date:'MMM dd, yyyy' }}
-                                } @else {
-                                -
-                                }
-                              </div>
-                            </div>
-
-                            <div class="detail-item">
-                              <label class="detail-label">{{ 'status' | translate }}</label>
-                              <div class="detail-value">
-                                <mat-icon class="detail-icon">info</mat-icon>
-                                @if (kycRecord.kycStatus === KycComplianceStatusT.APPROVED) {
-                                {{ 'approved' | translate }}
-                                } @else if (kycRecord.kycStatus === KycComplianceStatusT.PENDING) {
-                                {{ 'pending' | translate }}
-                                } @else if (kycRecord.kycStatus === KycComplianceStatusT.REJECTED) {
-                                {{ 'rejected' | translate }}
-                                } @else {
-                                {{ 'unknown' | translate }}
-                                }
-                              </div>
-                            </div>
-
-                            <div class="detail-item">
-                              <label class="detail-label">{{ 'documents.count' | translate }}</label>
-                              <div class="detail-value">
-                                <mat-icon class="detail-icon">folder</mat-icon>
-                                {{ kycRecord.documents?.length || 0 }} {{ 'documents' | translate }}
-                              </div>
-                            </div>
-                          </div>
 
                           <!-- KYC Documents Grid -->
                           @if (kycRecord.documents && kycRecord.documents.length > 0) {
                           <div class="kyc-documents-section">
                             <h5 class="documents-title">{{ 'kyc.documents' | translate }}</h5>
-                            <div class="kyc-documents-grid">
+                            <div class="grid-2">
                               @for (document of kycRecord.documents; track document.id) {
-                              <div class="kyc-document-item">
-                                <div class="document-preview">
-                                  <mat-icon class="document-type-icon">
-                                    @if (document.fileName?.toLowerCase()?.includes('.pdf')) {
-                                    picture_as_pdf
-                                    } @else if (document.fileName?.toLowerCase()?.includes('.jpg') ||
-                                    document.fileName?.toLowerCase()?.includes('.jpeg') ||
-                                    document.fileName?.toLowerCase()?.includes('.png')) {
-                                    image
-                                    } @else if (document.fileName?.toLowerCase()?.includes('.doc') ||
-                                    document.fileName?.toLowerCase()?.includes('.docx')) {
-                                    description
-                                    } @else {
-                                    insert_drive_file
-                                    }
-                                  </mat-icon>
-                                  <div class="document-details">
-                                    <div class="document-name">{{ document.fileName }}</div>
-                                    <div class="document-meta">
-                                      <span class="document-size">{{ formatFileSize(document.metadata?.fileSize || 0)
-                                        }}</span>
-                                      <!-- @if (document.uploadDate) {
-                                      <span class="document-date">{{ document.uploadDate | date:'MMM dd, yyyy' }}</span>
-                                      } -->
-                                    </div>
-                                  </div>
+                              <div class="document-info">
+                                <mat-icon>
+                                  @if (document.fileName?.toLowerCase()?.includes('.pdf')) {
+                                  picture_as_pdf
+                                  } @else if (document.fileName?.toLowerCase()?.includes('.jpg') ||
+                                  document.fileName?.toLowerCase()?.includes('.jpeg') ||
+                                  document.fileName?.toLowerCase()?.includes('.png')) {
+                                  image
+                                  } @else if (document.fileName?.toLowerCase()?.includes('.doc') ||
+                                  document.fileName?.toLowerCase()?.includes('.docx')) {
+                                  description
+                                  } @else {
+                                  insert_drive_file
+                                  }
+                                </mat-icon>
+                                <div class="document-details">
+                                  <div class="document-name">{{ document.fileName }}</div>
+                                  <div class="document-type">{{ formatFileSize(document.metadata?.fileSize || 0) }}</div>
                                 </div>
-                                <div class="document-actions">
-                                  <button mat-icon-button color="primary" matTooltip="{{ 'download' | translate }}"
-                                    (click)="downloadDocument(document)" class="action-btn">
-                                    <mat-icon>download</mat-icon>
-                                  </button>
-                                  <button mat-icon-button color="warn" matTooltip="{{ 'delete' | translate }}"
-                                    (click)="deleteDocument(document.id)" class="action-btn">
-                                    <mat-icon>delete</mat-icon>
-                                  </button>
-                                </div>
+                                <button mat-icon-button color="primary" matTooltip="{{ 'download' | translate }}"
+                                  (click)="downloadDocument(document)">
+                                  <mat-icon>download</mat-icon>
+                                </button>
+                                <button mat-icon-button color="warn" matTooltip="{{ 'delete' | translate }}"
+                                  (click)="deleteDocument(document.id)">
+                                  <mat-icon>delete</mat-icon>
+                                </button>
                               </div>
                               }
                             </div>
@@ -437,22 +420,22 @@
                           @if (kycIndDocumentTypes() && kycIndDocumentTypes().length > 0) {
                           <div class="add-kyc-documents-section">
                             <h5 class="documents-title">{{ 'add.kyc.documents' | translate }}</h5>
-                            <div class="document-types-grid">
+                            <div class="grid-2">
                               @for (docType of kycIndDocumentTypes(); track docType.id) {
-                              <div class="document-type-card">
-                                <div class="document-type-header">
-                                  <mat-icon class="doc-type-icon">security</mat-icon>
-                                  <span class="doc-type-name">{{ docType.name }}</span>
+                              <div class="document-info">
+                                <mat-icon>security</mat-icon>
+                                <div class="document-details">
+                                  <div class="document-name">{{ docType.name }}</div>
+                                  @if (docType.description) {
+                                  <div class="document-type">{{ docType.description }}</div>
+                                  }
                                 </div>
-                                <div class="document-type-actions">
-                                  <input type="file" #kycFileInput (change)="onFileSelected($event, docType)"
-                                    accept=".pdf,.jpg,.jpeg,.png,.doc,.docx" style="display: none" />
-                                  <button mat-stroked-button color="primary" (click)="kycFileInput.click()"
-                                    class="upload-btn">
-                                    <mat-icon>upload</mat-icon>
-                                    {{ 'upload' | translate }}
-                                  </button>
-                                </div>
+                                <input type="file" #kycFileInput (change)="onFileSelected($event, docType)"
+                                  accept=".pdf,.jpg,.jpeg,.png,.doc,.docx" style="display: none" />
+                                <button mat-stroked-button color="primary" (click)="kycFileInput.click()">
+                                  <mat-icon>upload</mat-icon>
+                                  {{ 'upload' | translate }}
+                                </button>
                               </div>
                               }
                             </div>
@@ -460,42 +443,39 @@
                           }
 
                           <!-- KYC Record Actions -->
-                          <div class="record-actions">
-                            <button mat-stroked-button color="primary" class="action-button">
+                          <div style="display: flex; gap: 12px; margin-top: 16px; flex-wrap: wrap;">
+                            <button mat-stroked-button color="primary">
                               <mat-icon>edit</mat-icon>
                               {{ 'edit' | translate }}
                             </button>
-                            <button mat-stroked-button color="warn" class="action-button">
+                            <button mat-stroked-button color="warn">
                               <mat-icon>delete</mat-icon>
                               {{ 'delete' | translate }}
                             </button>
                             @if (kycRecord.kycStatus !== KycComplianceStatusT.APPROVED) {
-                            <button mat-raised-button color="primary" class="action-button primary">
+                            <button mat-raised-button color="primary">
                               <mat-icon>check_circle</mat-icon>
                               {{ 'submit.for.approval' | translate }}
                             </button>
                             }
                           </div>
-                        </div>
-                      </div>
-                      }
-                    </div>
-                    } @else {
-                    <div class="no-kyc-records modern-no-records">
-                      <div class="empty-state">
-                        <mat-icon class="empty-icon">verified_user</mat-icon>
-                        <h4>{{ 'no.kyc.records' | translate }}</h4>
-                        <p>{{ 'no.kyc.records.description' | translate }}</p>
-                        <button mat-raised-button color="primary" class="add-record-btn" (click)="addKycRecord()">
-                          <mat-icon>add</mat-icon>
-                          {{ 'add.first.kyc.record' | translate }}
-                        </button>
-                      </div>
-                    </div>
+                      </mat-card-content>
+                    </mat-card>
                     }
-                  </mat-card-content>
-                </mat-card>
-              </div>
+                  </div>
+                  } @else {
+                  <div class="empty-state">
+                    <mat-icon>verified_user</mat-icon>
+                    <h4 style="margin: 12px 0 8px 0; font-size: 1.25rem; color: #37474f;">{{ 'no.kyc.records' | translate }}</h4>
+                    <p>{{ 'no.kyc.records.description' | translate }}</p>
+                    <button mat-raised-button color="primary" (click)="addKycRecord()" style="margin-top: 16px;">
+                      <mat-icon>add</mat-icon>
+                      {{ 'add.first.kyc.record' | translate }}
+                    </button>
+                  </div>
+                  }
+                </mat-card-content>
+              </mat-card>
             </div>
           </mat-tab>
 

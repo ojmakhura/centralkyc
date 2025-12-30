@@ -7,6 +7,8 @@ import { MaterialModule } from '@app/material.module';
 import { TranslateModule } from '@ngx-translate/core';
 import { TranslationService } from '@core/services/translation.service';
 import * as nav from './navigation';
+import Keycloak from 'keycloak-js';
+import { AppEnvStore } from '@app/store/app-env.state';
 
 @Component({
   selector: 'app-shell',
@@ -22,6 +24,9 @@ export class Shell {
   private titleService = inject(Title);
   protected router = inject(Router);
   protected translationService = inject(TranslationService);
+  private keycloak = inject(Keycloak);
+  readonly appEnvState = inject(AppEnvStore);
+  profile = this.appEnvState.profile;
 
   menus: any[] = [];
   availableLanguages = this.translationService.getAvailableLanguages();
@@ -53,14 +58,8 @@ export class Shell {
 
   logout() {
     console.log('Logout clicked');
-  }
-
-  get username(): string {
-    return 'John Doe';
-  }
-
-  get userEmail(): string {
-    return 'john@example.com';
+    this.keycloak.logout();
+    this.appEnvState.reset();
   }
 
   get isMobile(): boolean {

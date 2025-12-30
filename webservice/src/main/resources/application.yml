@@ -11,6 +11,8 @@ server:
   servlet:
     context-path: /
 spring:
+  application:
+    name: centralkyc-webservice
   jpa:
     show-sql: true
     properties:
@@ -63,6 +65,22 @@ management:
     tags:
       application: ${spring.application.name}
       version: ${spring.application.version}
+  tracing:
+    sampling:
+      probability: 1.0  # 100% for development
+  otlp:
+    metrics:
+      export:
+        url: ${OTLP_URL:http://localhost:4318}/v1/metrics
+  opentelemetry:
+    tracing:
+      export:
+        otlp:
+          endpoint: ${OTLP_URL:http://localhost:4318}/v1/traces
+    logging:
+      export:
+        otlp:
+          endpoint: ${OTLP_URL:http://localhost:4318}/v1/logs
 rate-limiting:
   tokens: ${RATE_LIMIT:2000}
 minio:
