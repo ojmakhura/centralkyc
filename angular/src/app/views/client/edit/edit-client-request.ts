@@ -155,7 +155,9 @@ export class EditClientRequestComponent implements OnInit, AfterViewInit, OnDest
         name: organisation.name,
         registrationNo: organisation.registrationNo,
         contactEmailAddress: organisation.contactEmailAddress,
-        status: organisation.status
+        status: organisation.status,
+        isClient: organisation.isClient,
+        kycStatus: organisation.kycStatus
       }
 
       this.targetOrganisationList.set([{

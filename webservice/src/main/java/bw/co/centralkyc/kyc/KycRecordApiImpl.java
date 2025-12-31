@@ -16,6 +16,7 @@ import bw.co.centralkyc.keycloak.KeycloakOrganisationService;
 import bw.co.centralkyc.organisation.OrganisationDTO;
 
 import java.util.Collection;
+import java.util.List;
 
 import org.springframework.data.domain.Page;
 
@@ -32,12 +33,44 @@ public class KycRecordApiImpl implements KycRecordApi {
         this.keycloakOrganisationService = keycloakOrganisationService;
     }
 
+    private void updateOrganisations(Collection<KycRecordDTO> records) {
+
+        if(records == null || records.isEmpty()) {
+            return;
+        }
+
+        for (KycRecordDTO record : records) {
+
+            if (record.getTarget() == TargetEntity.ORGANISATION && record.getTargetId() != null) {
+
+                try {
+
+                    OrganisationDTO org = keycloakOrganisationService.findById(record.getTargetId());
+
+                    if (org != null) {
+
+                        record.setName(org.getName());
+                        record.setIdentityNo(org.getRegistrationNo());
+                    }
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+    }
+
     @Override
     public ResponseEntity<KycRecordDTO> findById(String id) throws Exception {
 
         try {
 
-            return ResponseEntity.ok(kycRecordService.findById(id));
+            KycRecordDTO record = kycRecordService.findById(id);
+
+            updateOrganisations(List.of(record));
+
+            return ResponseEntity.ok(record);
 
         } catch (Exception e) {
 
@@ -45,13 +78,16 @@ public class KycRecordApiImpl implements KycRecordApi {
         }
     }
 
+
+
     @Override
     public ResponseEntity<Collection<KycRecordDTO>> findByIdentityNo(String identityNo)
             throws Exception {
 
         try {
-
-            return ResponseEntity.ok(kycRecordService.findByIdentityNo(identityNo));
+            Collection<KycRecordDTO> records = kycRecordService.findByIdentityNo(identityNo);
+            updateOrganisations(records);
+            return ResponseEntity.ok(records);
 
         } catch (Exception e) {
 
@@ -64,8 +100,9 @@ public class KycRecordApiImpl implements KycRecordApi {
             throws Exception {
 
         try {
-
-            return ResponseEntity.ok(kycRecordService.findByIndividual(individualId));
+            Collection<KycRecordDTO> records = kycRecordService.findByIndividual(individualId);
+            updateOrganisations(records);
+            return ResponseEntity.ok(records);
 
         } catch (Exception e) {
 
@@ -77,7 +114,9 @@ public class KycRecordApiImpl implements KycRecordApi {
     public ResponseEntity<Collection<KycRecordDTO>> getAll() throws Exception {
 
         try {
-            return ResponseEntity.ok(kycRecordService.getAll());
+            Collection<KycRecordDTO> records = kycRecordService.getAll();
+            updateOrganisations(records);
+            return ResponseEntity.ok(records);
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -90,7 +129,9 @@ public class KycRecordApiImpl implements KycRecordApi {
             throws Exception {
 
         try {
-            return ResponseEntity.ok(kycRecordService.getAll(pageNumber, pageSize));
+            Page<KycRecordDTO> records = kycRecordService.getAll(pageNumber, pageSize);
+            updateOrganisations(records.getContent());
+            return ResponseEntity.ok(records);
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -102,7 +143,9 @@ public class KycRecordApiImpl implements KycRecordApi {
     public ResponseEntity<Page<KycRecordDTO>> pagedSearch(SearchObject<KycRecordSearchCriteria> criteria) throws Exception {
 
         try {
-            return ResponseEntity.ok(kycRecordService.search(criteria));
+            Page<KycRecordDTO> records = kycRecordService.search(criteria);
+            updateOrganisations(records.getContent());
+            return ResponseEntity.ok(records);
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -113,6 +156,7 @@ public class KycRecordApiImpl implements KycRecordApi {
     @Override
     public ResponseEntity<Boolean> remove(String id) throws Exception {
         try {
+
             return ResponseEntity.ok(kycRecordService.remove(id));
 
         } catch (Exception e) {
@@ -128,7 +172,9 @@ public class KycRecordApiImpl implements KycRecordApi {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             AuditTracker.auditTrail(kycRecord, authentication);
 
-            return ResponseEntity.ok(kycRecordService.save(kycRecord));
+            KycRecordDTO savedRecord = kycRecordService.save(kycRecord);
+            updateOrganisations(List.of(savedRecord));
+            return ResponseEntity.ok(savedRecord);
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -139,8 +185,11 @@ public class KycRecordApiImpl implements KycRecordApi {
     @Override
     public ResponseEntity<Collection<KycRecordDTO>> search(KycRecordSearchCriteria criteria) throws Exception {
         try {
+            
+            Collection<KycRecordDTO> records = kycRecordService.search(criteria);
+            updateOrganisations(records);
 
-            return ResponseEntity.ok(kycRecordService.search(criteria));
+            return ResponseEntity.ok(records);
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -153,7 +202,10 @@ public class KycRecordApiImpl implements KycRecordApi {
             Integer pageSize) throws Exception {
 
         try {
-            return ResponseEntity.ok(kycRecordService.findByIdentityNo(identityNo, pageNumber, pageSize));
+
+            Page<KycRecordDTO> records = kycRecordService.findByIdentityNo(identityNo, pageNumber, pageSize);
+            updateOrganisations(records.getContent());
+            return ResponseEntity.ok(records);
         } catch (Exception e) {
             e.printStackTrace();
             throw e;
@@ -165,7 +217,9 @@ public class KycRecordApiImpl implements KycRecordApi {
             Integer pageSize) throws Exception {
 
         try {
-            return ResponseEntity.ok(kycRecordService.findByIndividual(individualId, pageNumber, pageSize));
+            Page<KycRecordDTO> records = kycRecordService.findByIndividual(individualId, pageNumber, pageSize);
+            updateOrganisations(records.getContent());
+            return ResponseEntity.ok(records);
         } catch (Exception e) {
             e.printStackTrace();
             throw e;
@@ -176,7 +230,9 @@ public class KycRecordApiImpl implements KycRecordApi {
     public ResponseEntity<Collection<KycRecordDTO>> findByOrganisation(String organisationId) throws Exception {
 
         try {
-            return ResponseEntity.ok(kycRecordService.findByOrganisation(organisationId));
+            Collection<KycRecordDTO> records = kycRecordService.findByOrganisation(organisationId);
+            updateOrganisations(records);
+            return ResponseEntity.ok(records);
         } catch (Exception e) {
             e.printStackTrace();
             throw e;
@@ -188,13 +244,17 @@ public class KycRecordApiImpl implements KycRecordApi {
             throws Exception {
 
         try {
+
             OrganisationDTO org = keycloakOrganisationService.findByRegistrationNo(registrationNo);
 
             if (org == null) {
                 throw new Exception("Organisation not found for registration no: " + registrationNo);
             }
 
-            return ResponseEntity.ok(kycRecordService.findByOrganisation(org.getId()));
+            Collection<KycRecordDTO> records = kycRecordService.findByOrganisation(org.getId());
+            updateOrganisations(records);
+
+            return ResponseEntity.ok(records);
         } catch (Exception e) {
             e.printStackTrace();
             throw e;
@@ -212,7 +272,10 @@ public class KycRecordApiImpl implements KycRecordApi {
                 throw new Exception("Organisation not found for registration no: " + registrationNo);
             }
 
-            return ResponseEntity.ok(kycRecordService.findByOrganisation(org.getId(), pageNumber, pageSize));
+            Page<KycRecordDTO> records = kycRecordService.findByOrganisation(org.getId(), pageNumber, pageSize);
+            updateOrganisations(records.getContent());
+
+            return ResponseEntity.ok(records);
         } catch (Exception e) {
             e.printStackTrace();
             throw e;
@@ -231,7 +294,10 @@ public class KycRecordApiImpl implements KycRecordApi {
                 username = authentication.getName();
             }
 
-            return ResponseEntity.ok(kycRecordService.createTargetRecord(individualId, TargetEntity.INDIVIDUAL, username));
+            KycRecordDTO record = kycRecordService.createTargetRecord(individualId, TargetEntity.INDIVIDUAL, username);
+            updateOrganisations(List.of(record));
+
+            return ResponseEntity.ok(record);
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -251,7 +317,10 @@ public class KycRecordApiImpl implements KycRecordApi {
                 username = authentication.getName();
             }
 
-            return ResponseEntity.ok(kycRecordService.createTargetRecord(organisationId, TargetEntity.ORGANISATION, username));
+            KycRecordDTO record = kycRecordService.createTargetRecord(organisationId, TargetEntity.ORGANISATION, username);
+            updateOrganisations(List.of(record));
+
+            return ResponseEntity.ok(record);
 
         } catch (Exception e) {
             e.printStackTrace();

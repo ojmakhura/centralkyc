@@ -95,7 +95,9 @@ export class EditInvoiceImplComponent extends EditInvoiceComponent {
           code: invoice.organisatonCode,
           registrationNo: invoice.organisationRegistrationNo,
           status: '',
-          contactEmailAddress: ''
+          contactEmailAddress: '',
+          isClient: false,
+          kycStatus: ''
         }]);
 
       }

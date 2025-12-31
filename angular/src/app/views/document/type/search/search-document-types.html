@@ -1,5 +1,5 @@
-<!-- Modern Search Document Types Component -->
-<div class="search-container">
+<!-- Document Types Search — adapted to kyc-record style -->
+<div class="edit-container">
   <div class="breadcrumb-section">
     <mat-icon class="breadcrumb-icon">home</mat-icon>
     <span class="breadcrumb-text">{{ 'home' | translate }}</span>
@@ -31,72 +31,61 @@
   </div>
 
   @if (loading()) {
-  <div>
+  <div class="loading-container">
     <app-loader [isLoading]="loading()" [size]="'medium'" [message]="loaderMessage()"></app-loader>
   </div>
   }
 
-  <div class="content-container">
-    <mat-card class="search-section modern-card">
-      <mat-card-header class="modern-header">
-        <div class="section-header">
-          <div class="section-icon">
+  <div class="form-container">
+    <div class="edit-form">
+      <mat-card class="form-section">
+        <mat-card-header>
+          <mat-card-title>
             <mat-icon>filter_list</mat-icon>
+            {{ 'search.filters' | translate }}
+          </mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="field-row">
+            <mat-form-field appearance="outline" class="field-full">
+              <mat-label>{{ 'criteria' | translate }}</mat-label>
+              <input matInput type="text" id="criteria" [field]="searchDocumentTypesSignalForm.criteria"
+                placeholder="{{ 'enter.search.criteria' | translate }}">
+              <mat-icon matSuffix>search</mat-icon>
+            </mat-form-field>
           </div>
-          <div class="section-title">
-            <h3>{{ 'search.filters' | translate }}</h3>
-          </div>
-        </div>
-      </mat-card-header>
-      <mat-card-content class="modern-content">
-        <form class="search-form">
-          <div class="search-grid">
-            <div class="search-field">
-              <mat-form-field appearance="outline" class="full-width">
-                <mat-label>{{ 'criteria' | translate }}</mat-label>
-                <input matInput type="text" id="criteria" [field]="searchDocumentTypesSignalForm.criteria"
-                  placeholder="{{ 'enter.search.criteria' | translate }}">
-                <mat-icon matSuffix>search</mat-icon>
-              </mat-form-field>
-            </div>
-          </div>
-
-          <div class="search-actions">
+        </mat-card-content>
+        <mat-card-footer>
+          <div class="form-actions">
             <button mat-raised-button color="primary" type="button" (click)="searchDocumentTypesSearch()"
               class="action-button search-button">
               <mat-icon>search</mat-icon>
               {{ 'search' | translate }}
             </button>
-            <button mat-stroked-button type="button" (click)="searchDocumentTypesFormReset()"
-              class="action-button reset-button">
-              <mat-icon>refresh</mat-icon>
-              {{ 'reset' | translate }}
+            <button mat-stroked-button (click)="searchDocumentTypesFormReset()" class="action-secondary">
+              <mat-icon>restore</mat-icon>
+              <span>{{ 'reset' | translate }}</span>
             </button>
           </div>
-        </form>
-      </mat-card-content>
-    </mat-card>
+        </mat-card-footer>
+      </mat-card>
 
-    <mat-card class="results-section modern-card">
-      <mat-card-header class="modern-header">
-        <div class="section-header">
-          <div class="section-icon">
-            <mat-icon>folder_open</mat-icon>
+      <mat-card class="form-section modern-card">
+        <mat-card-header>
+          <mat-card-title>
+            <mat-icon>assignment</mat-icon>
+            {{ 'search.results' | translate }}
+          </mat-card-title>
+        </mat-card-header>
+        <mat-card-content class="modern-content results-content">
+          <div class="table-container">
+            <app-table #documentTypesTable [dataColumns]="documentTypesTableColumns" [showActions]="showDocumentTypesActions"
+              [paged]="documentTypesTablePaged" [actions]="documentTypesTableColumnsActions"
+              (actionClicked)="documentTypesTableActionClicked($event)" [dataSignal]="documentTypesTableSignal">
+            </app-table>
           </div>
-          <div class="section-title">
-            <h3>{{ 'search.results' | translate }}</h3>
-            <p class="section-subtitle">{{ 'document.types.found' | translate }}</p>
-          </div>
-        </div>
-      </mat-card-header>
-      <mat-card-content class="modern-content results-content">
-        <div class="table-container">
-          <app-table #documentTypesTable [dataColumns]="documentTypesTableColumns" [showActions]="showDocumentTypesActions"
-            [paged]="documentTypesTablePaged" [actions]="documentTypesTableColumnsActions"
-            (actionClicked)="documentTypesTableActionClicked($event)" [dataSignal]="documentTypesTableSignal">
-          </app-table>
-        </div>
-      </mat-card-content>
-    </mat-card>
+        </mat-card-content>
+      </mat-card>
+    </div>
   </div>
 </div>

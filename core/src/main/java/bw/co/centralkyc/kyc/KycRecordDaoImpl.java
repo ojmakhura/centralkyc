@@ -6,9 +6,11 @@
  */
 package bw.co.centralkyc.kyc;
 
+import bw.co.centralkyc.TargetEntity;
 import bw.co.centralkyc.document.Document;
 import bw.co.centralkyc.document.DocumentDTO;
 import bw.co.centralkyc.document.DocumentRepository;
+import bw.co.centralkyc.individual.Individual;
 import bw.co.centralkyc.individual.IndividualRepository;
 import bw.co.centralkyc.individual.employment.EmploymentRecordRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -22,14 +24,15 @@ import org.springframework.stereotype.Repository;
  */
 @Repository("kycRecordDao")
 public class KycRecordDaoImpl
-    extends KycRecordDaoBase
-{
-    
+        extends KycRecordDaoBase {
 
-    public KycRecordDaoImpl(DocumentRepository documentRepository,
+    private final IndividualRepository individualRepository;
+
+    public KycRecordDaoImpl(DocumentRepository documentRepository, IndividualRepository individualRepository,
             EmploymentRecordRepository employmentRecordRepository, KycRecordRepository kycRecordRepository) {
         super(documentRepository, employmentRecordRepository, kycRecordRepository);
-        //TODO Auto-generated constructor stub
+
+        this.individualRepository = individualRepository;
     }
 
     /**
@@ -37,58 +40,70 @@ public class KycRecordDaoImpl
      */
     @Override
     public void toKycRecordDTO(
-        KycRecord source,
-        KycRecordDTO target)
-    {
+            KycRecord source,
+            KycRecordDTO target) {
         // TODO verify behavior of toKycRecordDTO
         super.toKycRecordDTO(source, target);
-        // WARNING! No conversion for target.documents (can't convert source.getDocuments():bw.co.centralkyc.document.Document to bw.co.centralkyc.document.DocumentDTO
-        if(CollectionUtils.isNotEmpty(source.getDocuments())) {
-            for(Document doc : source.getDocuments()) {
+        // WARNING! No conversion for target.documents (can't convert
+        // source.getDocuments():bw.co.centralkyc.document.Document to
+        // bw.co.centralkyc.document.DocumentDTO
+        if (CollectionUtils.isNotEmpty(source.getDocuments())) {
+            for (Document doc : source.getDocuments()) {
                 DocumentDTO docDTO = new DocumentDTO();
                 this.documentDao.toDocumentDTO(doc, docDTO);
                 target.getDocuments().add(docDTO);
             }
         }
 
-        // target.setIndividualId(source.getIndividual().getId());
-        // target.setIdentityNo(source.getIndividual().getIdentityNo());
-        // target.setName(source.getIndividual().getFirstName() + " " + source.getIndividual().getSurname());
+        if (source.getTarget() == TargetEntity.INDIVIDUAL && StringUtils.isNotBlank(source.getTargetId())) {
+
+            Individual individual = individualRepository.findById(source.getTargetId())
+                    .orElseThrow(() -> new KycRecordServiceException(
+                            "Individual not found for id: " + source.getTargetId()));
+
+            target.setIdentityNo(individual.getIdentityNo());
+
+            StringBuilder builder = new StringBuilder();
+            
+            builder.append(individual.getFirstName());
+            if (StringUtils.isNotBlank(individual.getMiddleName())) {
+                builder.append(" ").append(individual.getMiddleName());
+            }
+            builder.append(" ").append(individual.getSurname());
+
+            target.setName(builder.toString());
+
+        }
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public KycRecordDTO toKycRecordDTO(final KycRecord entity)
-    {
+    public KycRecordDTO toKycRecordDTO(final KycRecord entity) {
         // TODO verify behavior of toKycRecordDTO
         return super.toKycRecordDTO(entity);
     }
 
     /**
-     * Retrieves the entity object that is associated with the specified value object
+     * Retrieves the entity object that is associated with the specified value
+     * object
      * from the object store. If no such entity object exists in the object store,
      * a new, blank entity is created
      */
-    private KycRecord loadKycRecordFromKycRecordDTO(KycRecordDTO kycRecordDTO)
-    {
-        if (kycRecordDTO.getId() == null)
-        {
-            return  KycRecord.Factory.newInstance();
-        }
-        else
-        {
+    private KycRecord loadKycRecordFromKycRecordDTO(KycRecordDTO kycRecordDTO) {
+        if (kycRecordDTO.getId() == null) {
+            return KycRecord.Factory.newInstance();
+        } else {
             return this.kycRecordRepository.findById(kycRecordDTO.getId())
-                .orElseThrow(() -> new EntityNotFoundException("Entity not found for id: " + kycRecordDTO.getId()));
+                    .orElseThrow(() -> new EntityNotFoundException("Entity not found for id: " + kycRecordDTO.getId()));
         }
     }
 
     /**
      * {@inheritDoc}
      */
-    public KycRecord kycRecordDTOToEntity(KycRecordDTO kycRecordDTO)
-    {
+    public KycRecord kycRecordDTOToEntity(KycRecordDTO kycRecordDTO) {
         // TODO verify behavior of kycRecordDTOToEntity
         KycRecord entity = this.loadKycRecordFromKycRecordDTO(kycRecordDTO);
         this.kycRecordDTOToEntity(kycRecordDTO, entity, true);
@@ -100,28 +115,26 @@ public class KycRecordDaoImpl
      */
     @Override
     public void kycRecordDTOToEntity(
-        KycRecordDTO source,
-        KycRecord target,
-        boolean copyIfNull)
-    {
+            KycRecordDTO source,
+            KycRecord target,
+            boolean copyIfNull) {
         // TODO verify behavior of kycRecordDTOToEntity
         super.kycRecordDTOToEntity(source, target, copyIfNull);
 
-        if(CollectionUtils.isNotEmpty(source.getDocuments())) {
-            for(DocumentDTO docDTO : source.getDocuments()) {
+        if (CollectionUtils.isNotEmpty(source.getDocuments())) {
+            for (DocumentDTO docDTO : source.getDocuments()) {
                 Document doc = this.documentDao.documentDTOToEntity(docDTO);
                 target.getDocuments().add(doc);
             }
         }
 
-        // if(StringUtils.isNotBlank(source.getIndividualId())) {
+        if (source.getTarget() == TargetEntity.INDIVIDUAL && StringUtils.isNotBlank(source.getTargetId())) {
 
-        //     target.setIndividual(
-        //         this.individualRepository.findById(source.getIndividualId())
-        //             .orElseThrow(() -> new KycRecordServiceException("Individual not found for id: " + source.getIndividualId()))
-        //     );
-        // } else if (copyIfNull) {
-        //     target.setIndividual(null);
-        // }
+            this.individualRepository.findById(source.getTargetId())
+                    .orElseThrow(() -> new KycRecordServiceException(
+                            "Individual not found for id: " + source.getTargetId()));
+        } else if (copyIfNull) {
+            // target.setIndividual(null);
+        }
     }
 }

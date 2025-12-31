@@ -15,7 +15,6 @@ import { PhoneType } from "@app/models/bw/co/centralkyc/phone-type";
 import { SettingsDTO } from "@app/models/bw/co/centralkyc/settings/settings-dto";
 import { TargetEntity } from "@app/models/bw/co/centralkyc/target-entity";
 import { DocumentApi } from "@app/services/bw/co/centralkyc/document/document-api";
-import { SettingsApi } from "@app/services/bw/co/centralkyc/settings/settings-api";
 import { KycRecordApiStore } from "@app/store/bw/co/centralkyc/kyc/kyc-record-api.store";
 import { SettingsApiStore } from "@app/store/bw/co/centralkyc/settings/settings-api.store";
 import { TranslateModule } from "@ngx-translate/core";
@@ -179,7 +178,9 @@ export class KycRecordDetails implements OnInit, OnDestroy, AfterViewInit {
             name: org.name,
             registrationNo: org.registrationNo,
             status: org.status,
-            contactEmailAddress: org.contactEmailAddress
+            contactEmailAddress: org.contactEmailAddress,
+            isClient: org.isClient,
+            kycStatus: org.kycStatus
           });
         },
         error: (err) => {

@@ -12,6 +12,7 @@ import bw.co.centralkyc.individual.IndividualRepository;
 import bw.co.centralkyc.kyc.KycRecord;
 import bw.co.centralkyc.kyc.KycRecordDTO;
 import bw.co.centralkyc.kyc.KycRecordRepository;
+import bw.co.centralkyc.settings.SalaryRangeRepository;
 import jakarta.persistence.EntityNotFoundException;
 
 import org.apache.commons.collections4.CollectionUtils;
@@ -26,19 +27,12 @@ public class EmploymentRecordDaoImpl
     extends EmploymentRecordDaoBase
 {
     
-    public EmploymentRecordDaoImpl(
-        DocumentRepository documentRepository,
-        KycRecordRepository kycRecordRepository,
-        IndividualRepository individualRepository,
-        EmploymentRecordRepository employmentRecordRepository
-    ) {
 
-        super(
-            documentRepository,
-            kycRecordRepository,
-            individualRepository,
-            employmentRecordRepository
-        );
+    public EmploymentRecordDaoImpl(DocumentRepository documentRepository, KycRecordRepository kycRecordRepository,
+            IndividualRepository individualRepository, SalaryRangeRepository salaryRangeRepository,
+            EmploymentRecordRepository employmentRecordRepository) {
+        super(documentRepository, kycRecordRepository, individualRepository, salaryRangeRepository, employmentRecordRepository);
+        //TODO Auto-generated constructor stub
     }
 
     /**

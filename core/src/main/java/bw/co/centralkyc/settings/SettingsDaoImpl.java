@@ -25,8 +25,8 @@ public class SettingsDaoImpl
     
 
     public SettingsDaoImpl(DocumentTypeRepository documentTypeRepository, DocumentRepository documentRepository,
-            SettingsRepository settingsRepository) {
-        super(documentTypeRepository, documentRepository, settingsRepository);
+            SalaryRangeRepository salaryRangeRepository, SettingsRepository settingsRepository) {
+        super(documentTypeRepository, documentRepository, salaryRangeRepository, settingsRepository);
         //TODO Auto-generated constructor stub
     }
 

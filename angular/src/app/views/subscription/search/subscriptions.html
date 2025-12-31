@@ -1,5 +1,5 @@
-<!-- Modern Search Subscriptions Component -->
-<div class="search-container">
+<!-- Subscriptions Search — adapted to kyc-record modern style -->
+<div class="edit-container">
   <div class="breadcrumb-section">
     <mat-icon class="breadcrumb-icon">home</mat-icon>
     <span class="breadcrumb-text">{{ 'home' | translate }}</span>
@@ -9,21 +9,19 @@
     <span class="breadcrumb-text active">{{ 'subscriptions.title' | translate }}</span>
   </div>
 
-  <!-- Hero Header Section -->
   <div class="hero-header">
     <div class="hero-content">
       <div class="header-info">
         <div class="header-icon">
-          <mat-icon class="main-icon">card_membership</mat-icon>
+          <mat-icon class="main-icon">subscriptions</mat-icon>
         </div>
         <div class="header-text">
-          <h1 class="page-title">{{ 'subscriptions.title' | translate }}</h1>
-          <p class="page-subtitle">{{ 'search.subscriptions.description' | translate }}</p>
+          <h1 class="page-title">{{ 'subscriptions' | translate }}</h1>
+          <!-- <p class="page-subtitle">{{ 'search.client.requests.description' | translate }}</p> -->
         </div>
       </div>
       <div class="header-actions">
-        <button mat-fab matTooltip="{{ 'add.new' | translate }}" color="primary" (click)="subscriptionsAddNew()"
-          class="fab-button">
+        <button mat-fab matTooltip="{{ 'add.new' | translate }}" color="primary" class="fab-button" (click)="subscriptionsAddNew()">
           <mat-icon fontIcon="add" aria-hidden="false" aria-label="add"></mat-icon>
         </button>
       </div>
@@ -31,72 +29,64 @@
   </div>
 
   @if (loading()) {
-  <div>
+  <div class="loading-container">
     <app-loader [isLoading]="loading()" [size]="'medium'" [message]="loaderMessage()"></app-loader>
   </div>
   }
 
-  <div class="content-container">
-    <mat-card class="search-section modern-card">
-      <mat-card-header class="modern-header">
-        <div class="section-header">
-          <div class="section-icon">
+  <div class="form-container">
+    <div class="edit-form">
+      <mat-card class="form-section">
+        <mat-card-header>
+          <mat-card-title>
             <mat-icon>filter_list</mat-icon>
+            {{ 'search.filters' | translate }}
+          </mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="field-row">
+            <mat-form-field appearance="outline" class="field-full-width">
+              <mat-label>{{ 'criteria' | translate }}</mat-label>
+              <input matInput type="text" id="criteria" [field]="subscriptionsSignalForm.criteria"
+                placeholder="{{ 'enter.search.criteria' | translate }}">
+              <mat-icon matSuffix>search</mat-icon>
+            </mat-form-field>
           </div>
-          <div class="section-title">
-            <h3>{{ 'search.filters' | translate }}</h3>
-          </div>
-        </div>
-      </mat-card-header>
-      <mat-card-content class="modern-content">
-        <form class="search-form">
-          <div class="search-grid">
-            <div class="search-field">
-              <mat-form-field appearance="outline" class="full-width">
-                <mat-label>{{ 'criteria' | translate }}</mat-label>
-                <input matInput type="text" id="criteria" [field]="subscriptionsSignalForm.criteria"
-                  placeholder="{{ 'enter.search.criteria' | translate }}">
-                <mat-icon matSuffix>search</mat-icon>
-              </mat-form-field>
-            </div>
-          </div>
-
-          <div class="search-actions">
+        </mat-card-content>
+        <mat-card-footer>
+          <div class="form-actions">
             <button mat-raised-button color="primary" type="button" (click)="subscriptionsSearch()"
               class="action-button search-button">
               <mat-icon>search</mat-icon>
               {{ 'search' | translate }}
             </button>
-            <button mat-stroked-button type="button" (click)="subscriptionsFormReset()"
-              class="action-button reset-button">
-              <mat-icon>refresh</mat-icon>
-              {{ 'reset' | translate }}
+
+            <button mat-stroked-button (click)="subscriptionsFormReset()" class="action-secondary">
+              <mat-icon>restore</mat-icon>
+              <span>{{ 'reset' | translate }}</span>
             </button>
           </div>
-        </form>
-      </mat-card-content>
-    </mat-card>
+        </mat-card-footer>
+      </mat-card>
 
-    <mat-card class="results-section modern-card">
-      <mat-card-header class="modern-header">
-        <div class="section-header">
-          <div class="section-icon">
-            <mat-icon>subscriptions</mat-icon>
+
+      <mat-card class="form-section modern-card">
+        <mat-card-header>
+          <mat-card-title>
+            <mat-icon>assignment</mat-icon>
+            {{ 'search.results' | translate }}
+          </mat-card-title>
+        </mat-card-header>
+        <mat-card-content class="modern-content results-content">
+          <div class="table-container">
+            <app-table #subscriptionsTable [dataColumns]="subscriptionsTableColumns"
+              [showActions]="showSubscriptionsActions" [paged]="subscriptionsTablePaged"
+              [actions]="subscriptionsTableColumnsActions" (actionClicked)="subscriptionsTableActionClicked($event)"
+              [dataSignal]="subscriptionsTableSignal">
+            </app-table>
           </div>
-          <div class="section-title">
-            <h3>{{ 'search.results' | translate }}</h3>
-            <p class="section-subtitle">{{ 'subscriptions.found' | translate }}</p>
-          </div>
-        </div>
-      </mat-card-header>
-      <mat-card-content class="modern-content results-content">
-        <div class="table-container">
-          <app-table #subscriptionsTable [dataColumns]="subscriptionsTableColumns" [showActions]="showSubscriptionsActions"
-            [paged]="subscriptionsTablePaged" [actions]="subscriptionsTableColumnsActions"
-            (actionClicked)="subscriptionsTableActionClicked($event)" [dataSignal]="subscriptionsTableSignal">
-          </app-table>
-        </div>
-      </mat-card-content>
-    </mat-card>
+        </mat-card-content>
+      </mat-card>
+    </div>
   </div>
 </div>

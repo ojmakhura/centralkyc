@@ -145,34 +145,19 @@ export class ClientRequestComponent implements OnInit, AfterViewInit, OnDestroy 
   showClientRequestsActions = true;
 
   clientRequestsTableActionClicked(event: any): void {
-    let form: any = {};
-    let queryParams: any = {};
-    let params: any = {};
 
     switch (event.action) {
       case 'client-request-edit':
-        form = {
-          id: event.row.id,
-        };
-        queryParams = {
-          id: event.row.id,
-        };
-        this.clientRequestController.setQueryParams(Object.assign({}, queryParams));
-        params = this.doClientRequestEdit(event);
-        this.useCaseScope.pageVariables = Object.assign({}, params);
-        // this.clientRequestController.clientRequestEdit(event.row.id);
+
+        this.router.navigate(["/client-request", "edit"], {
+          queryParams: { id: event.row.id }
+        });
+
         break;
       case 'client-request-details':
-        form = {
-          id: event.row.id,
-        };
-        queryParams = {
-          id: event.row.id,
-        };
-        this.clientRequestController.setQueryParams(Object.assign({}, queryParams));
-        params = this.doClientRequestDetails(event);
-        this.useCaseScope.pageVariables = Object.assign({}, params);
-        // this.clientRequestController.clientRequestDetails(event.row.id);
+        // this.router.navigate(["/client-request", "details"], {
+        //   queryParams: { id: event.row.id }
+        // });
         break;
     }
   }

@@ -23,6 +23,7 @@ import org.springframework.stereotype.Component;
 import bw.co.centralkyc.GeneralStatus;
 import bw.co.centralkyc.PhoneNumber;
 import bw.co.centralkyc.SearchObject;
+import bw.co.centralkyc.kyc.KycComplianceStatus;
 import bw.co.centralkyc.organisation.OrganisationDTO;
 import bw.co.centralkyc.organisation.OrganisationDomain;
 import bw.co.centralkyc.organisation.OrganisationListDTO;
@@ -116,11 +117,18 @@ public class KeycloakOrganisationService {
             attributes.put("clientRequestsFiles", List.of());
         }
 
-        attributes.put("isClient", List.of(organisation.getIsClient().toString()));
+        if(organisation.getIsClient() != null) {
+            attributes.put("isClient", List.of(organisation.getIsClient().toString()));
+        }
 
         if (CollectionUtils.isNotEmpty(organisation.getPhoneNumbers())) {
 
             attributes.put("phoneNumbers", organisation.getPhoneNumbers().stream().map(p -> p.toString()).toList());
+        }
+
+        if(organisation.getKycStatus() != null) {
+
+            attributes.put("kycStatus", List.of(organisation.getKycStatus().toString()));
         }
 
         rep.setAttributes(attributes);
@@ -211,6 +219,14 @@ public class KeycloakOrganisationService {
             org.setPhoneNumbers(phoneNumbers);
         }
 
+        if(attributes.containsKey("kycStatus")) {
+
+            org.setKycStatus(KycComplianceStatus.valueOf(attributes.get("kycStatus").listIterator().hasNext()
+                    ? attributes.get("kycStatus").get(0)
+                    : null));
+
+        }
+
         org.setDomains(
                 rep.getDomains().stream().map(r -> new OrganisationDomain(r.getName(), r.isVerified()))
                         .collect(Collectors.toSet()));
@@ -233,19 +249,41 @@ public class KeycloakOrganisationService {
 
         Map<String, List<String>> attributes = rep.getAttributes();
 
-        System.out.println("******************** " + attributes);
-
         if (attributes != null) {
-            org.setRegistrationNo(attributes.get("registrationNo").listIterator().hasNext()
-                    ? attributes.get("registrationNo").get(0)
-                    : null);
+            if (attributes.get("registrationNo") != null) {
+                org.setRegistrationNo(attributes.get("registrationNo").listIterator().hasNext()
+                        ? attributes.get("registrationNo").get(0)
+                        : null);
+            }
 
-            org.setStatus(GeneralStatus.valueOf(attributes.get("status").listIterator().hasNext()
-                    ? attributes.get("status").get(0)
-                    : null));
-            org.setContactEmailAddress(attributes.get("contactEmailAddress").listIterator().hasNext()
-                    ? attributes.get("contactEmailAddress").get(0)
-                    : null);
+            if (attributes.get("status") != null) {
+
+                org.setStatus(GeneralStatus.valueOf(attributes.get("status").listIterator().hasNext()
+                        ? attributes.get("status").get(0)
+                        : null));
+            }
+
+            if (attributes.get("contactEmailAddress") != null) {
+
+                org.setContactEmailAddress(attributes.get("contactEmailAddress").listIterator().hasNext()
+                        ? attributes.get("contactEmailAddress").get(0)
+                        : null);
+            }
+
+            if (attributes.get("contactEmailAddress") != null) {
+
+                org.setKycStatus(
+                        attributes.get("kycStatus").listIterator().hasNext()
+                                ? KycComplianceStatus.valueOf(attributes.get("kycStatus").get(0))
+                                : null);
+            }
+
+            if(attributes.get("isClient") != null) {
+
+                org.setIsClient(Boolean.parseBoolean(attributes.get("isClient").listIterator().hasNext()
+                        ? attributes.get("isClient").get(0)
+                        : null));
+            }
         }
 
         return org;

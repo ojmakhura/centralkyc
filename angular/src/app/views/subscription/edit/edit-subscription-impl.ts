@@ -84,18 +84,10 @@ export class EditSubscriptionImplComponent extends EditSubscriptionComponent {
       code: subscription.organisationCode,
       registrationNo: subscription.organisationRegistrationNo,
       status: '',
-      contactEmailAddress: ''
+      contactEmailAddress: '',
+      isClient: false,
+      kycStatus: ''
     }]);
-
-    // this.organisationControl.setValue(
-    //   {
-    //     id: subscription.organisationId,
-    //     name: subscription.organisationName,
-    //     code: subscription.organisationCode,
-    //     registrationNo: subscription.organisationRegistrationNo,
-    //   }
-    // );
-
   }
 });
   }

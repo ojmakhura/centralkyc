@@ -35,23 +35,15 @@ public class SettingsServiceImpl
     private final DocumentRepository documentRepository;
     private final DocumentTypeRepository documentTypeRepository;
 
-    public SettingsServiceImpl(
-        SettingsDao settingsDao, 
-        SettingsRepository settingsRepository,
-        MessageSource messageSource,
-        DocumentRepository documentRepository,
-        DocumentTypeRepository documentTypeRepository
-    ) {
-        
-        super(
-            settingsDao,
-            settingsRepository,
-            messageSource
-        );
+    public SettingsServiceImpl(SettingsDao settingsDao, SettingsRepository settingsRepository, DocumentRepository documentRepository, DocumentTypeRepository documentTypeRepository,
+            SalaryRangeDao salaryRangeDao, SalaryRangeRepository salaryRangeRepository, MessageSource messageSource) {
+        super(settingsDao, settingsRepository, salaryRangeDao, salaryRangeRepository, messageSource);
+        //TODO Auto-generated constructor stub
 
         this.documentRepository = documentRepository;
         this.documentTypeRepository = documentTypeRepository;
     }
+
 
     /**
      * @see bw.co.centralkyc.settings.SettingsService#findById(String)
