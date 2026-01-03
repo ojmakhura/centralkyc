@@ -131,6 +131,10 @@ public class KeycloakOrganisationService {
             attributes.put("kycStatus", List.of(organisation.getKycStatus().toString()));
         }
 
+        if(organisation.getCountryOfRegistration() != null) {
+            attributes.put("countryOfRegistration", List.of(organisation.getCountryOfRegistration()));
+        }
+
         rep.setAttributes(attributes);
 
         return rep;
@@ -225,6 +229,12 @@ public class KeycloakOrganisationService {
                     ? attributes.get("kycStatus").get(0)
                     : null));
 
+        }
+
+        if(attributes.containsKey("countryOfRegistration")) {
+            org.setCountryOfRegistration(attributes.get("countryOfRegistration").listIterator().hasNext()
+                    ? attributes.get("countryOfRegistration").get(0)
+                    : null);
         }
 
         org.setDomains(

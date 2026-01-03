@@ -150,6 +150,7 @@ export class EditSettingsImplComponent extends EditSettingsComponent {
       selectedKycOrgDocumentFilter: '',
       selectedIndDocumentFilter: '',
       selectedKycIndDocumentFilter: '',
+      salaryRanges: settings.salaryRanges || [],
     });
 
   }
@@ -173,6 +174,7 @@ export class EditSettingsImplComponent extends EditSettingsComponent {
     settings.quotationDocumentType = value.quotationDocumentType;
     settings.quotationTemplateType = value.quotationTemplateType;
     settings.quotationTemplate = value.quotationTemplate;
+    settings.salaryRanges = value.salaryRanges || [];
 
     return settings;
   }

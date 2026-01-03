@@ -30,8 +30,8 @@ export class EditOrganisationImplComponent extends EditOrganisationComponent {
   override error = linkedSignal(() => this.organisationApiStore.error());
   override messages = linkedSignal(() => this.organisationApiStore.messages());
   override success = linkedSignal(() => this.organisationApiStore.success());
-  override loading = linkedSignal(() => false);
-  override loaderMessage = linkedSignal(() => '');
+  override loading = linkedSignal(() => this.organisationApiStore.loading());
+  override loaderMessage = linkedSignal(() => this.organisationApiStore.loaderMessage());
 
   constructor() {
     super();
@@ -62,6 +62,9 @@ export class EditOrganisationImplComponent extends EditOrganisationComponent {
   doNgOnDestroy(): void { }
 
   override beforeEditOrganisationSave(form: any): void {
+
+    this.editOrganisationSignalForm().invalid()
+
     let value = this.editOrganisationSignal();
     let org = {
       code: value.code,
@@ -78,17 +81,12 @@ export class EditOrganisationImplComponent extends EditOrganisationComponent {
       createdBy: value.createdBy,
       modifiedAt: value.modifiedAt,
       modifiedBy: value.modifiedBy,
+      isClient: value.isClient,
+      kycStatus: value.kycStatus,
+      countryOfRegistration: value.countryOfRegistration,
       id: value.id
     } as OrganisationDTO;
 
     this.organisationApiStore.save({organisation: org});
-  }
-
-  override createNewPhoneNumbers(): PhoneNumber {
-    return new PhoneNumber();
-  }
-
-  override createNewDomains(): OrganisationDomain {
-    return new OrganisationDomain();
   }
 }

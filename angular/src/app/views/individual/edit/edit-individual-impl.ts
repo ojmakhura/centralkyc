@@ -124,9 +124,4 @@ export class EditIndividualImplComponent extends EditIndividualComponent {
   override branchCompare(o1: BranchDTO | any, o2: BranchDTO | any) {
     return o1 && o2 ? o1.id === o2.id : false;
   }
-
-  createNewPhoneNumbers(): PhoneNumber {
-
-    return new PhoneNumber()
-  }
 }

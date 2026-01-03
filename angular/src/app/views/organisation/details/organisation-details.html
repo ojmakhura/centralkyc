@@ -46,15 +46,41 @@
     <!-- Status Section -->
     <mat-card class="section-card status-section" appearance="outlined">
       <mat-card-content>
-        <div class="display-item">
-          <div class="display-label">
-            <mat-icon class="field-icon">flag</mat-icon>
-            <span>{{ 'status' | translate }}</span>
+        <div class="display-grid">
+          <div class="display-item">
+            <div class="display-label">
+              <mat-icon class="field-icon">flag</mat-icon>
+              <span>{{ 'status' | translate }}</span>
+            </div>
+            <div class="display-value">
+              <mat-chip class="status-chip" [ngClass]="'status-' + organisation().status">
+                {{ GeneralStatusT[organisation().status] || 'N/A' }}
+              </mat-chip>
+            </div>
           </div>
-          <div class="display-value">
-            <mat-chip class="status-chip" [ngClass]="'status-' + organisation().status">
-              {{ GeneralStatusT[organisation().status] || 'N/A' }}
-            </mat-chip>
+
+          <div class="display-item">
+            <div class="display-label">
+              <mat-icon class="field-icon">verified_user</mat-icon>
+              <span>{{ 'kyc.status' | translate }}</span>
+            </div>
+            <div class="display-value">
+              <mat-chip class="status-chip" [ngClass]="'kyc-status-' + organisation().kycStatus">
+                {{ organisation().kycStatus || 'N/A' }}
+              </mat-chip>
+            </div>
+          </div>
+
+          <div class="display-item">
+            <div class="display-label">
+              <mat-icon class="field-icon">business_center</mat-icon>
+              <span>{{ 'is.client' | translate }}</span>
+            </div>
+            <div class="display-value">
+              <mat-chip class="status-chip" [ngClass]="organisation().isClient ? 'status-active' : 'status-inactive'">
+                {{ (organisation().isClient ? 'yes' : 'no') | translate }}
+              </mat-chip>
+            </div>
           </div>
         </div>
       </mat-card-content>
@@ -89,6 +115,17 @@
               {{ organisation().code || 'N/A' }}
             </div>
           </div>
+
+          <div class="display-item">
+            <div class="display-label">
+              <mat-icon class="field-icon">public</mat-icon>
+              <span>{{ 'country.of.registration' | translate }}</span>
+            </div>
+            <div class="display-value">
+              {{ organisation().countryOfRegistration || 'N/A' }}
+            </div>
+          </div>
+
           <div class="display-item full-width">
             <div class="display-label">
               <mat-icon class="field-icon">description</mat-icon>
@@ -171,10 +208,56 @@
       </mat-card-content>
     </mat-card>
 
+    <!-- Audit Information Section -->
+    @if((organisation().domains || []).length > 0) {
+    <mat-card class="section-card audit-info-section" appearance="outlined">
+      <mat-card-header>
+        <mat-card-title>
+          <mat-icon class="section-icon">history</mat-icon>
+          {{ 'domains' | translate }}
+        </mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="display-grid">
+          <div class="display-item">
+            <div class="display-label">
+              <mat-icon class="field-icon">person</mat-icon>
+              <span>{{ 'created.by' | translate }}</span>
+            </div>
+          </div>
+
+          <div class="display-item">
+            <div class="display-label">
+              <mat-icon class="field-icon">business_center</mat-icon>
+              <span>{{ 'verified' | translate }}</span>
+            </div>
+          </div>
+          @for(domain of organisation().domains; track domain) {
+          <div class="display-item">
+            <div class="display-value">
+              {{ domain.name || 'N/A' }}
+            </div>
+          </div>
+
+          <div class="display-item">
+            <div class="display-value">
+              <mat-chip class="status-chip" [ngClass]="domain.verified ? 'status-active' : 'status-inactive'">
+                {{ (domain.verified ? 'yes' : 'no') | translate }}
+              </mat-chip>
+            </div>
+          </div>
+
+          }
+        </div>
+      </mat-card-content>
+    </mat-card>
+    }
+
     <!-- Tabbed Sections -->
     <mat-card class="section-card tabs-section" appearance="outlined">
       <mat-card-content>
         <mat-tab-group>
+
           <!-- Branches Tab -->
           <mat-tab>
             <ng-template mat-tab-label>
@@ -302,31 +385,26 @@
             </ng-template>
             <div class="tab-content">
               <table mat-table [dataSource]="clientRequests()" class="modern-table">
-                <!-- Name Column -->
                 <ng-container matColumnDef="name">
                   <th mat-header-cell *matHeaderCellDef>{{ 'name' | translate }}</th>
                   <td mat-cell *matCellDef="let request">{{ request.name || 'N/A' }}</td>
                 </ng-container>
 
-                <!-- Registration Column -->
                 <ng-container matColumnDef="registration">
                   <th mat-header-cell *matHeaderCellDef>{{ 'registration' | translate }}</th>
                   <td mat-cell *matCellDef="let request">{{ request.registration || 'N/A' }}</td>
                 </ng-container>
 
-                <!-- Email Column -->
-                <ng-container matColumnDef="email">
+                <ng-container matColumnDef="emailAddress">
                   <th mat-header-cell *matHeaderCellDef>{{ 'email.address' | translate }}</th>
                   <td mat-cell *matCellDef="let request">{{ request.emailAddress || 'N/A' }}</td>
                 </ng-container>
 
-                <!-- Organisation Column -->
                 <ng-container matColumnDef="organisation">
                   <th mat-header-cell *matHeaderCellDef>{{ 'organisation' | translate }}</th>
                   <td mat-cell *matCellDef="let request">{{ request.organisation || 'N/A' }}</td>
                 </ng-container>
 
-                <!-- Status Column -->
                 <ng-container matColumnDef="status">
                   <th mat-header-cell *matHeaderCellDef>{{ 'status' | translate }}</th>
                   <td mat-cell *matCellDef="let request">
@@ -345,9 +423,8 @@
                   </td>
                 </ng-container>
 
-                <!-- Created Date Column -->
                 <ng-container matColumnDef="createdAt">
-                  <th mat-header-cell *matHeaderCellDef>{{ 'created' | translate }}</th>
+                  <th mat-header-cell *matHeaderCellDef>{{ 'created.at' | translate }}</th>
                   <td mat-cell *matCellDef="let request">
                     @if (request.createdAt) {
                     {{ request.createdAt | date:'dd-MM-yyyy' }}
@@ -357,7 +434,6 @@
                   </td>
                 </ng-container>
 
-                <!-- Actions Column -->
                 <ng-container matColumnDef="actions">
                   <th mat-header-cell *matHeaderCellDef>{{ 'actions' | translate }}</th>
                   <td mat-cell *matCellDef="let request">
@@ -381,8 +457,8 @@
                   </td>
                 </ng-container>
 
-                <tr mat-header-row *matHeaderRowDef="clientRequestsFilesTableColumns"></tr>
-                <tr mat-row *matRowDef="let row; columns: clientRequestsFilesTableColumns;"></tr>
+                <tr mat-header-row *matHeaderRowDef="requestsColumns"></tr>
+                <tr mat-row *matRowDef="let row; columns: requestsColumns;"></tr>
               </table>
               <mat-paginator [length]="clientRequestsTableSignal().page.totalElements || 0"
                 [pageSize]="clientRequestsTableSignal().page.size" [pageIndex]="clientRequestsTableSignal().page.number"
@@ -520,6 +596,60 @@
                   <h3>{{ 'no.organisation.client.requests.found' | translate }}</h3>
                   <p>{{ 'no.organisation.client.requests.message' | translate }}</p>
                 </div>
+              </div>
+              }
+            </div>
+          </mat-tab>
+          <!-- Documents Tab -->
+          <mat-tab>
+            <ng-template mat-tab-label>
+              <mat-icon class="tab-icon">insert_drive_file</mat-icon>
+              {{ 'documents' | translate }}
+            </ng-template>
+            <div class="tab-content">
+              @if (organisation().documents && organisation().documents.length > 0) {
+              <div class="documents-list">
+                @for(doc of organisation().documents; track doc.id) {
+                <div class="document-item">
+                  <mat-icon class="document-icon">description</mat-icon>
+                  <div class="document-info">
+                    <span class="document-name">{{ doc.name || 'N/A' }}</span>
+                    <span class="document-type">{{ doc.type || 'N/A' }}</span>
+                  </div>
+                </div>
+                }
+              </div>
+              } @else {
+              <div class="no-content">
+                <mat-icon class="no-content-icon">insert_drive_file</mat-icon>
+                <h3>{{ 'no.documents.found' | translate }}</h3>
+              </div>
+              }
+            </div>
+          </mat-tab>
+
+          <!-- Client KYC Documents Tab -->
+          <mat-tab>
+            <ng-template mat-tab-label>
+              <mat-icon class="tab-icon">verified</mat-icon>
+              {{ 'client.kyc.documents' | translate }}
+            </ng-template>
+            <div class="tab-content">
+              @if (organisation().clientKycDocuments && organisation().clientKycDocuments.length > 0) {
+              <div class="documents-list">
+                @for(docType of organisation().clientKycDocuments; track docType.id) {
+                <div class="document-item">
+                  <mat-icon class="document-icon">verified</mat-icon>
+                  <div class="document-info">
+                    <span class="document-name">{{ docType.name || 'N/A' }}</span>
+                  </div>
+                </div>
+                }
+              </div>
+              } @else {
+              <div class="no-content">
+                <mat-icon class="no-content-icon">verified</mat-icon>
+                <h3>{{ 'no.client.kyc.documents.found' | translate }}</h3>
               </div>
               }
             </div>

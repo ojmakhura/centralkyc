@@ -65,7 +65,7 @@
 
         <mat-card-content>
           <div class="field-row">
-            <mat-form-field appearance="outline" class="col-md-8 field-full-width">
+            <mat-form-field appearance="outline" class="field-half">
               <mat-label>{{ 'status' | translate }}</mat-label>
               <mat-select id="status" [field]="editOrganisationSignalForm.status" required>
                 <mat-option value="">{{ 'select.status' | translate }}</mat-option>
@@ -75,11 +75,36 @@
                 </mat-option>
                 }
               </mat-select>
-              <mat-icon matSuffix>expand_more</mat-icon>
-              <!-- @if (statusControl.hasError('required')) {
-                <mat-error>{{ 'status.required' | translate }}</mat-error>
-              } -->
+              <mat-icon matSuffix>verified</mat-icon>
+              @for (error of editOrganisationSignalForm.status.errors; track error) {
+              <mat-error translate>{{error.message}}</mat-error>
+              }
             </mat-form-field>
+
+            <mat-form-field appearance="outline" class="field-half">
+              <mat-label>{{ 'kyc.status' | translate }}</mat-label>
+              <mat-select id="kycStatus" [field]="editOrganisationSignalForm.kycStatus" required>
+                <mat-option value="">{{ 'select.kyc.status' | translate }}</mat-option>
+                @for (key of KycComplianceStatusOptions; track key) {
+                <mat-option [value]="key">
+                  {{ KycComplianceStatusT[key] }}
+                </mat-option>
+                }
+              </mat-select>
+              <mat-icon matSuffix>security</mat-icon>
+              @for (error of editOrganisationSignalForm.kycStatus.errors; track error) {
+              <mat-error translate>{{error.message}}</mat-error>
+              }
+            </mat-form-field>
+          </div>
+
+          <div class="field-row">
+            <mat-checkbox [field]="editOrganisationSignalForm.isClient" color="primary">
+              <span translate>is.client</span>
+            </mat-checkbox>
+            @for (error of editOrganisationSignalForm.isClient.errors; track error) {
+            <mat-error class="checkbox-error" translate>{{error.message}}</mat-error>
+            }
           </div>
 
           <div class="field-row">
@@ -88,9 +113,9 @@
               <input matInput type="text" id="registrationNo" [field]="editOrganisationSignalForm.registrationNo"
                 placeholder="{{ 'enter.registration.no' | translate }}" />
               <mat-icon matSuffix>assignment</mat-icon>
-              <!-- @if (registrationNoControl.hasError('required')) {
-                <mat-error>{{ 'registration.no.required' | translate }}</mat-error>
-              } -->
+              @for (error of editOrganisationSignalForm.registrationNo.errors; track error) {
+              <mat-error translate>{{error.message}}</mat-error>
+              }
             </mat-form-field>
 
             <mat-form-field appearance="outline" class="field-half">
@@ -98,9 +123,9 @@
               <input matInput type="text" id="code" [field]="editOrganisationSignalForm.code"
                 placeholder="{{ 'enter.code' | translate }}" />
               <mat-icon matSuffix>qr_code</mat-icon>
-              <!-- @if (codeControl.hasError('required')) {
-                <mat-error>{{ 'code.required' | translate }}</mat-error>
-              } -->
+              @for (error of editOrganisationSignalForm.code.errors; track error) {
+              <mat-error translate>{{error.message}}</mat-error>
+              }
             </mat-form-field>
           </div>
 
@@ -110,9 +135,22 @@
               <input matInput type="text" id="name" [field]="editOrganisationSignalForm.name"
                 placeholder="{{ 'enter.organisation.name' | translate }}" />
               <mat-icon matSuffix>business</mat-icon>
-              <!-- @if (nameControl.hasError('required')) {
-                <mat-error>{{ 'name.required' | translate }}</mat-error>
-              } -->
+              @for (error of editOrganisationSignalForm.name.errors; track error) {
+              <mat-error translate>{{error.message}}</mat-error>
+              }
+            </mat-form-field>
+          </div>
+
+          <div class="field-row">
+            <mat-form-field appearance="outline" class="field-full-width">
+              <mat-label>{{ 'country.of.registration' | translate }}</mat-label>
+              <input matInput type="text" id="countryOfRegistration"
+                [field]="editOrganisationSignalForm.countryOfRegistration"
+                placeholder="{{ 'enter.country.of.registration' | translate }}" />
+              <mat-icon matSuffix>flag</mat-icon>
+              @for (error of editOrganisationSignalForm.countryOfRegistration.errors; track error) {
+              <mat-error translate>{{error.message}}</mat-error>
+              }
             </mat-form-field>
           </div>
 
@@ -122,9 +160,9 @@
               <textarea matInput id="description" [field]="editOrganisationSignalForm.description"
                 placeholder="{{ 'enter.description' | translate }}" rows="3"></textarea>
               <mat-icon matSuffix>description</mat-icon>
-              <!-- @if (descriptionControl.hasError('required')) {
-                <mat-error>{{ 'description.required' | translate }}</mat-error>
-              } -->
+              @for (error of editOrganisationSignalForm.description.errors; track error) {
+              <mat-error translate>{{error.message}}</mat-error>
+              }
             </mat-form-field>
           </div>
         </mat-card-content>
@@ -189,9 +227,9 @@
               <textarea matInput id="postalAddress" [field]="editOrganisationSignalForm.postalAddress"
                 placeholder="{{ 'enter.postal.address' | translate }}" rows="3"></textarea>
               <mat-icon matSuffix>mail</mat-icon>
-              <!-- @if (postalAddressControl.hasError('required')) {
-                <mat-error>{{ 'postal.address.required' | translate }}</mat-error>
-              } -->
+              @for (error of editOrganisationSignalForm.postalAddress.errors; track error) {
+              <mat-error translate>{{error.message}}</mat-error>
+              }
             </mat-form-field>
 
             <mat-form-field appearance="outline" class="field-half">
@@ -199,9 +237,9 @@
               <textarea matInput id="physicalAddress" [field]="editOrganisationSignalForm.physicalAddress"
                 placeholder="{{ 'enter.physical.address' | translate }}" rows="3"></textarea>
               <mat-icon matSuffix>location_on</mat-icon>
-              <!-- @if (physicalAddressControl.hasError('required')) {
-                <mat-error>{{ 'physical.address.required' | translate }}</mat-error>
-              } -->
+              @for (error of editOrganisationSignalForm.physicalAddress.errors; track error) {
+              <mat-error translate>{{error.message}}</mat-error>
+              }
             </mat-form-field>
           </div>
         </mat-card-content>
@@ -261,8 +299,8 @@
 
       <!-- Form Actions (Bottom) -->
       <div class="form-actions">
-        <button mat-raised-button color="primary" type="submit" (click)="editOrganisationSave()" [disabled]="loading()"
-          class="action-primary">
+        <button mat-raised-button color="primary" type="button" (click)="editOrganisationSave()"
+          [disabled]="editOrganisationSignalForm().invalid()" class="action-primary">
           <mat-icon>save</mat-icon>
           <span>{{ 'save' | translate }}</span>
         </button>

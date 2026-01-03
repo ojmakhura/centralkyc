@@ -109,6 +109,8 @@ export class OrganisationDetailsImplComponent extends OrganisationDetailsCompone
   isUploadingOrganisationClientRequestFile = signal(false);
   organisationClientRequestFileUploadProgress = signal(0);
 
+  requestsColumns = [...this.clientRequestsTableColumns.map(column => column.id), 'actions'];
+
   constructor() {
     super();
 
@@ -612,14 +614,6 @@ export class OrganisationDetailsImplComponent extends OrganisationDetailsCompone
 
   override organisationDetailsEdit(): void {
     this.router.navigate(['/organisation/edit'], { queryParams: { id: this.organisation().id } });
-  }
-
-  override createNewPhoneNumbers(): PhoneNumber {
-    return new PhoneNumber();
-  }
-
-  override createNewDomains(): OrganisationDomain {
-    return new OrganisationDomain();
   }
 
   onClientRequestStatusChange(clientRequest: ClientRequestDTO, newStatus: ClientRequestStatus): void {

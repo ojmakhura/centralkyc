@@ -22,6 +22,7 @@ import { MatDialog } from "@angular/material/dialog";
 import { ToastrService } from "ngx-toastr";
 import { MatSelectChange, MatSelectModule } from "@angular/material/select";
 import { NgxMatSelectSearchModule } from "ngx-mat-select-search";
+import { Sex } from "@app/models/bw/co/centralkyc/individual/sex";
 
 export class EditClientRequestVarsForm {
   id: string = '';
@@ -128,7 +129,8 @@ export class EditClientRequestComponent implements OnInit, AfterViewInit, OnDest
         identityType: individual.identityType,
         identityNo: individual.identityNo,
         emailAddress: individual.emailAddress,
-        kycStatus: individual.kycStatus
+        kycStatus: individual.kycStatus,
+        sex: Sex.UNSPECIFIED,
       }
 
       this.targetIndividualList.set([{
