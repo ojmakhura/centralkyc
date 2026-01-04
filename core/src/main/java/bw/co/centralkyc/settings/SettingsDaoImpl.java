@@ -207,15 +207,8 @@ public class SettingsDaoImpl
 
                     SalaryRange salaryRange = salaryRangeDao.salaryRangeDTOToEntity(salaryRangeDTO);
                     salaryRange.setSettings(target);
-                    // ranges.add(salaryRange);
                     salaryRange = salaryRangeRepository.save(salaryRange);
                     ranges.add(salaryRange);
-
-                    System.out.println("====================================================== ");
-                    System.out.println(salaryRange.getMin() + " - " + salaryRange.getMax());
-                    System.out.println(ranges);
-                    System.out.println(ranges.size());
-                    System.out.println("====================================================== ");
 
                 } else {
 
