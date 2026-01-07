@@ -45,7 +45,7 @@
 
   <!-- Form Container -->
   <div class="form-container">
-    <form class="edit-form" (ngSubmit)="editClientRequestFormSave()">
+    <form class="edit-form">
 
       <!-- Target Information Section -->
       <mat-card class="form-section">
@@ -193,7 +193,7 @@
             <mat-icon>refresh</mat-icon>
             {{ 'reset' | translate }}
           </button>
-          <button mat-raised-button color="primary" type="submit">
+          <button mat-raised-button color="primary" type="button" (click)="editClientRequestFormSave()">
             <mat-icon>save</mat-icon>
             {{ 'save' | translate }}
           </button>

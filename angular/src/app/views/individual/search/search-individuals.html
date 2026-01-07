@@ -21,7 +21,7 @@
         </div>
       </div>
       <div class="header-actions">
-        <button mat-fab matTooltip="{{ 'add.new' | translate }}" color="primary" (click)="searchIndividualsAddNew()"
+        <button mat-fab type="button" matTooltip="{{ 'add.new' | translate }}" color="primary" (click)="searchIndividualsAddNew()"
           class="fab-button">
           <mat-icon fontIcon="add" aria-hidden="false" aria-label="add"></mat-icon>
         </button>
@@ -102,11 +102,11 @@
         </mat-card-content>
         <mat-card-footer>
           <div class="form-actions">
-            <button mat-raised-button color="primary" type="button" (click)="searchIndividualsSearch()" class="action-button search-button">
+            <button mat-raised-button type="button" color="primary" type="button" (click)="searchIndividualsSearch()" class="action-button search-button">
               <mat-icon>search</mat-icon>
               {{ 'search' | translate }}
             </button>
-            <button mat-stroked-button (click)="searchIndividualsFormReset()" class="action-secondary">
+            <button mat-stroked-button type="button" (click)="searchIndividualsFormReset()" class="action-secondary">
               <mat-icon>restore</mat-icon>
               <span>{{ 'reset' | translate }}</span>
             </button>

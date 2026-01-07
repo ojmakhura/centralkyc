@@ -157,16 +157,16 @@
 
       <!-- Form Actions (Bottom) -->
       <div class="form-actions">
-        <button mat-raised-button color="primary" class="action-primary" (click)="editInvoiceSave()">
+        <button mat-raised-button type="button" color="primary" class="action-primary" (click)="editInvoiceSave()">
           <mat-icon>save</mat-icon>
           <span>{{ 'save' | translate }}</span>
         </button>
-        <button mat-stroked-button color="warn" class="action-secondary" (click)="editInvoiceDelete()"
+        <button mat-stroked-button type="button" color="warn" class="action-secondary" (click)="editInvoiceDelete()"
           *ngIf="deleteUnrestricted()">
           <mat-icon>delete</mat-icon>
           <span>{{ 'delete' | translate }}</span>
         </button>
-        <button mat-stroked-button (click)="editInvoiceFormReset()" class="action-secondary">
+        <button mat-stroked-button type="button" (click)="editInvoiceFormReset()" class="action-secondary">
           <mat-icon>restore</mat-icon>
           <span>{{ 'reset' | translate }}</span>
         </button>

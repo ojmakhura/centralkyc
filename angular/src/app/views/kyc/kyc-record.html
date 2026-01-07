@@ -21,7 +21,7 @@
         </div>
       </div>
       <div class="header-actions">
-        <button mat-fab matTooltip="{{ 'add.new' | translate }}" color="primary" class="fab-button">
+        <button mat-fab type="button" matTooltip="{{ 'add.new' | translate }}" color="primary" class="fab-button">
           <mat-icon fontIcon="add" aria-hidden="false" aria-label="add"></mat-icon>
         </button>
       </div>
@@ -101,7 +101,7 @@
               {{ 'search' | translate }}
             </button>
 
-            <button mat-stroked-button (click)="kycRecordSearchFormReset()" class="action-secondary">
+            <button mat-stroked-button type="button" (click)="kycRecordSearchFormReset()" class="action-secondary">
               <mat-icon>restore</mat-icon>
               <span>{{ 'reset' | translate }}</span>
             </button>

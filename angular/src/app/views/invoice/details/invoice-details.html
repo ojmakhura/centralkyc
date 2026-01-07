@@ -154,7 +154,7 @@
           <mat-icon class="section-icon">description</mat-icon>
           {{ 'invoice.document' | translate }}
         </mat-card-title>
-        <button mat-raised-button color="primary" (click)="attachInvoiceDocument()" class="action-button">
+        <button mat-raised-button type="button" color="primary" (click)="attachInvoiceDocument()" class="action-button">
           <mat-icon>attach_file</mat-icon>
           {{ (kycInvoice()?.invoiceDocument ? 'update.document' : 'attach.document') | translate }}
         </button>
@@ -225,7 +225,7 @@
           <mat-icon class="section-icon">verified</mat-icon>
           {{ 'proof.of.payment' | translate }}
         </mat-card-title>
-        <button mat-raised-button color="primary" (click)="attachProofOfPayment()" class="action-button">
+        <button mat-raised-button type="button" color="primary" (click)="attachProofOfPayment()" class="action-button">
           <mat-icon>attach_file</mat-icon>
           {{ (kycInvoice()?.proofOfPayment ? 'update.document' : 'attach.document') | translate }}
         </button>

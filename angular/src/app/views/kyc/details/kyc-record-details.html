@@ -48,11 +48,11 @@
             {{ 'unknown' | translate }}
             }
           </mat-chip>
-          <button mat-raised-button color="primary" class="action-button">
+          <button mat-raised-button color="primary" type="button" class="action-button">
             <mat-icon>edit</mat-icon>
             {{ 'edit' | translate }}
           </button>
-          <button mat-stroked-button color="primary" class="action-button">
+          <button mat-stroked-button color="primary" type="button" class="action-button">
             <mat-icon>refresh</mat-icon>
             {{ 'refresh' | translate }}
           </button>
@@ -272,7 +272,7 @@
                 <div class="document-type">{{ docType.description }}</div>
                 }
               </div>
-              <button mat-stroked-button color="primary" (click)="kycFileInput.click()">
+              <button mat-stroked-button type="button" color="primary" (click)="kycFileInput.click()">
                 <mat-icon>upload</mat-icon>
                 {{ 'upload' | translate }}
               </button>
@@ -296,7 +296,7 @@
             <mat-icon>check_circle</mat-icon>
             {{ 'submit.for.approval' | translate }}
           </button> -->
-          <button mat-stroked-button color="warn" class="action-button">
+          <button mat-stroked-button type="button" color="warn" class="action-button">
             <mat-icon>delete</mat-icon>
             {{ 'delete.kyc.record' | translate }}
           </button>

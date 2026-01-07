@@ -280,20 +280,20 @@
         <mat-card-content>
           <div class="action-buttons-footer">
             <div class="primary-actions">
-              <button mat-raised-button color="primary" (click)="editSubscriptionSave()"
+              <button mat-raised-button type="button" color="primary" (click)="editSubscriptionSave()"
                       [disabled]="!editSubscriptionSignalForm().valid()"
                       class="action-button-large primary-button">
                 <mat-icon>save</mat-icon>
                 <span>{{ 'save' | translate }}</span>
               </button>
-              <button mat-flat-button (click)="editSubscriptionFormReset()" class="action-button-large reset-button">
+              <button mat-flat-button type="button" (click)="editSubscriptionFormReset()" class="action-button-large reset-button">
                 <mat-icon>refresh</mat-icon>
                 <span>{{ 'reset' | translate }}</span>
               </button>
             </div>
             <div class="secondary-actions">
               @if (deleteUnrestricted()) {
-                <button mat-stroked-button color="warn" (click)="editSubscriptionDelete()"
+                <button mat-stroked-button type="button" color="warn" (click)="editSubscriptionDelete()"
                         class="action-button-large delete-button">
                   <mat-icon>delete</mat-icon>
                   <span>{{ 'delete' | translate }}</span>

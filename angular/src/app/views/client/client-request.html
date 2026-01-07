@@ -20,7 +20,7 @@
         </div>
       </div>
       <div class="header-actions">
-        <button mat-fab matTooltip="{{ 'add.new' | translate }}" color="primary" class="fab-button"
+        <button mat-fab type="button" matTooltip="{{ 'add.new' | translate }}" color="primary" class="fab-button"
           (click)="addNewClientRequest()">
           <mat-icon fontIcon="add" aria-hidden="false" aria-label="add"></mat-icon>
         </button>
@@ -191,12 +191,12 @@
           </div>
 
           <div class="form-actions">
-            <button mat-raised-button color="primary" type="button" (click)="searchClientRequests()"
+            <button mat-raised-button type="button" color="primary" type="button" (click)="searchClientRequests()"
               class="action-button search-button">
               <mat-icon>search</mat-icon>
               {{ 'search' | translate }}
             </button>
-            <button mat-stroked-button (click)="formReset()" class="action-secondary">
+            <button mat-stroked-button type="button" (click)="formReset()" class="action-secondary">
               <mat-icon>restore</mat-icon>
               <span>{{ 'reset' | translate }}</span>
             </button>

@@ -51,6 +51,9 @@ export class EditInvoiceImplComponent extends EditInvoiceComponent {
   constructor() {
     super();
 
+    this.kycInvoiceApiStore.reset();
+    this.organisationApiStore.reset();
+
     effect(() => {
       const invoice = this.kycInvoiceApiStore.data();
 
@@ -102,6 +105,38 @@ export class EditInvoiceImplComponent extends EditInvoiceComponent {
 
       }
     });
+
+    effect(() => {
+
+      const org = this.organisationApiStore.data();
+
+      if (!(org?.id)) {
+        return;
+      }
+
+      this.editInvoiceSignal.update((form) => ({
+        ...form,
+        organisation: {
+          id: org.id,
+          name: org.name,
+          code: org.code,
+          registrationNo: org.registrationNo,
+          status: org.status,
+          contactEmailAddress: org.contactEmailAddress
+        }
+      }));
+
+      this.organisationFilteredList.set([{
+        id: org.id,
+        name: org.name,
+        code: org.code,
+        registrationNo: org.registrationNo,
+        status: org.status,
+        contactEmailAddress: org.contactEmailAddress,
+        isClient: org.isClient,
+        kycStatus: org.kycStatus
+      }]);
+    });
   }
 
   override ngOnInit() {
@@ -110,6 +145,10 @@ export class EditInvoiceImplComponent extends EditInvoiceComponent {
     this.route.queryParams.subscribe((params: any) => {
       if (params.id) {
         this.kycInvoiceApiStore.findById(params);
+      }
+
+      if (params.organisationId) {
+        this.organisationApiStore.findById({ id: params.organisationId });
       }
     });
   }

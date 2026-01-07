@@ -266,7 +266,7 @@
             </ng-template>
             <div class="tab-content">
               <div class="tab-header">
-                <div class="branch-actions">
+                <div class="action-buttons">
                   <button mat-raised-button color="accent" (click)="addNewBranch()" class="branch-action-button">
                     <mat-icon>add</mat-icon>
                     {{ 'add.branch' | translate }}
@@ -311,7 +311,11 @@
             </ng-template>
             <div class="tab-content">
               <div class="tab-header">
-                <div class="invoice-actions">
+                <div class="action-buttons">
+                  <button mat-raised-button color="accent" (click)="addNewInvoice()" class="action-button">
+                    <mat-icon>add</mat-icon>
+                    {{ 'add.invoice' | translate }}
+                  </button>
                   <button mat-stroked-button color="primary" (click)="refreshInvoices()" class="action-button">
                     <mat-icon>refresh</mat-icon>
                     {{ 'refresh' | translate }}
@@ -348,7 +352,22 @@
             </ng-template>
             <div class="tab-content">
               <div class="tab-header">
-                <div class="subscription-actions">
+                <div class="action-buttons">
+                  <button mat-raised-button color="accent" (click)="addNewClientRequest(TargetEntityT.INDIVIDUAL)"  class="action-button">
+                    <mat-icon>add</mat-icon>
+                    <span>{{ 'add.individual.request' | translate }}</span>
+                  </button>
+                  <button mat-stroked-button color="primary" (click)="downloadIndividualRequestTemplate()"  class="action-button">
+                    <mat-icon>download</mat-icon>
+                    <span>{{ 'download.template' | translate }}</span>
+                  </button>
+                  <input type="file" #individualClientRequestFileInput
+                    (change)="onIndividualClientRequestFileSelected($event)" accept=".csv,.xlsx,.xls"
+                    style="display: none"  class="action-button"/>
+                  <button mat-raised-button color="primary" (click)="individualClientRequestFileInput.click()"  class="action-button">
+                    <mat-icon>upload_file</mat-icon>
+                    <span>{{ 'upload.bulk.requests' | translate }}</span>
+                  </button>
                   <button mat-stroked-button color="primary" (click)="refreshSubscriptions()" class="action-button">
                     <mat-icon>refresh</mat-icon>
                     {{ 'refresh' | translate }}
@@ -478,7 +497,7 @@
             <div class="tab-content">
               <div class="tab-header">
                 <div class="actions-group">
-                  <div class="primary-actions">
+                  <div class="action-buttons">
                     <button mat-raised-button color="accent" (click)="addNewClientRequest(TargetEntityT.INDIVIDUAL)">
                       <mat-icon>add</mat-icon>
                       <span>{{ 'add.individual.request' | translate }}</span>
@@ -544,7 +563,7 @@
             <div class="tab-content">
               <div class="tab-header">
                 <div class="actions-group">
-                  <div class="primary-actions">
+                  <div class="action-buttons">
                     <button mat-raised-button color="accent" (click)="addNewClientRequest(TargetEntityT.ORGANISATION)">
                       <mat-icon>add</mat-icon>
                       <span>{{ 'add.organisation.request' | translate }}</span>

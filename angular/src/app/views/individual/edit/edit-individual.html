@@ -26,7 +26,7 @@
         <mat-icon>save</mat-icon>
         <span>{{ 'save' | translate }}</span>
       </button> -->
-      <button mat-stroked-button color="primary" [routerLink]="['/individual']" routerLinkActive="router-link-active" ]>
+      <button mat-stroked-button type="button" color="primary" [routerLink]="['/individual']" routerLinkActive="router-link-active" ]>
         <mat-icon>search</mat-icon>
         <span>{{ 'search' | translate }}</span>
       </button>
@@ -293,20 +293,20 @@
 
       <!-- Form Actions (Bottom) -->
       <div class="form-actions">
-        <button mat-raised-button color="primary" class="action-primary" (click)="editIndividualSave()">
+        <button mat-raised-button type="button" color="primary" class="action-primary" (click)="editIndividualSave()">
           <mat-icon>save</mat-icon>
           <span>{{ 'save' | translate }}</span>
         </button>
-        <!-- <button mat-stroked-button color="primary" class="action-secondary" (click)="editIndividualSearch()">
+        <!-- <button mat-stroked-button type="button" color="primary" class="action-secondary" (click)="editIndividualSearch()">
           <mat-icon>search</mat-icon>
           <span>{{ 'search' | translate }}</span>
         </button> -->
-        <button mat-stroked-button color="warn" class="action-secondary" (click)="editIndividualDelete()"
+        <button mat-stroked-button type="button" color="warn" class="action-secondary" (click)="editIndividualDelete()"
           *ngIf="deleteUnrestricted()">
           <mat-icon>delete</mat-icon>
           <span>{{ 'delete' | translate }}</span>
         </button>
-        <button mat-stroked-button (click)="editIndividualFormReset()" class="action-secondary">
+        <button mat-stroked-button type="button" (click)="editIndividualFormReset()" class="action-secondary">
           <mat-icon>restore</mat-icon>
           <span>{{ 'reset' | translate }}</span>
         </button>
