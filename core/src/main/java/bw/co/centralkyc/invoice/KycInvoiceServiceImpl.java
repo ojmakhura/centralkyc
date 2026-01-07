@@ -113,7 +113,7 @@ public class KycInvoiceServiceImpl
 
     private Specification<KycInvoice> createSearchSpecification(InvoiceSearchCriteria criteria) {
 
-        Specification<KycInvoice> specification = null;
+        Specification<KycInvoice> specification = ((root, query, builder) -> builder.conjunction());
 
         if (criteria.getPaid() != null) {
             specification = (root, query, cb) -> cb.equal(root.get("paid"), criteria.getPaid());

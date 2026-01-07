@@ -20,7 +20,7 @@ export const kycRecordRoutes: Routes = [
     providers: [KycRecordControllerImpl, KycRecordApi, UseCaseScope],
   },
   {
-    path: 'details',
+    path: 'kyc/details',
     component: KycRecordDetails,
     canActivate: [AuthenticationGuard],
     data: { title: 'Kyc Record Details' },
@@ -32,7 +32,7 @@ export const kycRecordRoutes: Routes = [
     ],
   },
   {
-    path: 'details/{id}',
+    path: 'kyc/details/{id}',
     component: KycRecordDetails,
     canActivate: [AuthenticationGuard],
     data: { title: 'Kyc Record Details' },

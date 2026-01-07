@@ -113,7 +113,7 @@ public class OrganisationServiceImpl
 
     // private Specification<Organisation> createSpecification(OrganisationSearchCriteria criteria) {
 
-    //     Specification<Organisation> spec = null;
+    //     Specification<Organisation> spec = ((root, query, builder) -> builder.conjunction());
 
     //     if(criteria == null) {
     //         return spec;

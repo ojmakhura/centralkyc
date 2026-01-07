@@ -106,7 +106,7 @@ public class IndividualServiceImpl
 
     private Specification<Individual> createSpecification(IndividualSearchCriteria criteria) {
 
-        Specification<Individual> spec = null;
+        Specification<Individual> spec = ((root, query, builder) -> builder.conjunction());
 
         if(StringUtils.isNotBlank(criteria.getEmailAddress())) {
 

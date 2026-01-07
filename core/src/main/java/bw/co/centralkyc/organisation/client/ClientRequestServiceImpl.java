@@ -182,7 +182,7 @@ public class ClientRequestServiceImpl
 
     private Specification<ClientRequest> buildSpecificationFromCriteria(ClientRequestSearchCriteria criteria) {
 
-        Specification<ClientRequest> spec = Specification.unrestricted();
+        Specification<ClientRequest> spec = ((root, query, builder) -> builder.conjunction());
 
         if(criteria == null) {
             return spec;

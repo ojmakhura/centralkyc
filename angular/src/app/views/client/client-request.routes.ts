@@ -19,14 +19,14 @@ export const clientRequestRoutes: Routes = [
     providers: [ClientRequestControllerImpl, ClientRequestApi, UseCaseScope],
   },
   {
-    path: 'edit',
+    path: 'client-request/edit',
     component: EditClientRequestComponent,
     canActivate: [AuthenticationGuard],
     data: { title: 'Edit Client Request' },
     providers: [ClientRequestControllerImpl, ClientRequestApi, UseCaseScope],
   },
   {
-    path: 'edit/:id',
+    path: 'client-request/edit/:id',
     component: EditClientRequestComponent,
     canActivate: [AuthenticationGuard],
     data: { title: 'Edit Client Request' },

@@ -130,7 +130,7 @@ public class KycRecordServiceImpl
 
     private Specification<KycRecord> createSpecification(KycRecordSearchCriteria criteria) {
 
-        Specification<KycRecord> spec = null;
+        Specification<KycRecord> spec = ((root, query, builder) -> builder.conjunction());
 
         if(criteria.getTarget() != null) {
 
