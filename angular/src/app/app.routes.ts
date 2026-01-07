@@ -6,84 +6,44 @@
  * MODEL CLASS:  $validationName
  */
 import { Routes } from '@angular/router';
-import { Shell } from '@app/shell/shell';
-import { UseCaseScope } from './utils/use-case-scope';
+import { Shell } from './shell';
+// import { LoginComponent } from './auth/login.component';
+import { organisationRoutes } from '@app/views/organisation/organisation.routes';
+import { settingsRoutes } from '@app/views/settings/settings.routes';
+import { documentTypeRoutes } from '@app/views/document/type/document-type.routes';
+import { individualRoutes } from '@app/views/individual/individual.routes';
+import { usersRoutes } from '@app/views/user/user.routes';
+import { kycSubscriptionRoutes } from '@app/views/subscription/subcription.routes';
+import { invoiceRoutes } from '@app/views/invoice/invoice.routes';
+import { kycRecordRoutes } from '@app/views/kyc/kyc-record.routes';
+import { clientRequestRoutes } from '@app/views/client/client-request.routes';
 
 export const routes: Routes = [
+  // Uncomment the following lines to enable login route
+  //{
+  //  path: 'login',
+  //  component: LoginComponent,
+  //},
   Shell.childRoutes([
     {
       path: '',
       data: { title: 'Home' },
-      loadComponent: () => import('./views/home/home').then((c) => c.Home),
+      loadComponent: () => import('./views/home/home').then((m) => m.Home),
     },
     {
       path: 'about',
       data: { title: 'About' },
-      loadComponent: () => import('./views/about/about').then((c) => c.About),
+      loadComponent: () => import('./views/about/about').then((m) => m.About),
     },
-    {
-      path: 'organisation', 
-      loadChildren: () => import('@views/organisation/organisation.routes').then((m) => m.routes),
-      providers: [
-        UseCaseScope
-      ]
-    },
-    {
-      path: 'settings', 
-      loadChildren: () => import('@views/settings/settings.routes').then((m) => m.routes),
-      providers: [
-        UseCaseScope
-      ]
-    },
-    {
-      path: 'document/type', 
-      loadChildren: () => import('@views/document/type/document-type.routes').then((m) => m.routes),
-      providers: [
-        UseCaseScope
-      ]
-    },
-    {
-      path: 'individual', 
-      loadChildren: () => import('@views/individual/individual.routes').then((m) => m.routes),
-      providers: [
-        UseCaseScope
-      ]
-    },
-    {
-      path: 'user', 
-      loadChildren: () => import('@views/user/user.routes').then((m) => m.routes),
-      providers: [
-        UseCaseScope
-      ]
-    },
-    {
-      path: 'subscription', 
-      loadChildren: () => import('@views/subscription/subcription.routes').then((m) => m.routes),
-      providers: [
-        UseCaseScope
-      ]
-    },
-    {
-      path: 'invoice', 
-      loadChildren: () => import('@views/invoice/invoice.routes').then((m) => m.routes),
-      providers: [
-        UseCaseScope
-      ]
-    },
-    {
-      path: 'kyc', 
-      loadChildren: () => import('@views/kyc/kyc-record.routes').then((m) => m.routes),
-      providers: [
-        UseCaseScope
-      ]
-    },
-    {
-      path: 'client-request', 
-      loadChildren: () => import('@views/client/client-request.routes').then((m) => m.routes),
-      providers: [
-        UseCaseScope
-      ]
-    },
+    ...organisationRoutes,
+    ...settingsRoutes,
+    ...documentTypeRoutes,
+    ...individualRoutes,
+    ...usersRoutes,
+    ...kycSubscriptionRoutes,
+    ...invoiceRoutes,
+    ...kycRecordRoutes,
+    ...clientRequestRoutes,
   ]),
   // Fallback when no prior route is matched
   { 

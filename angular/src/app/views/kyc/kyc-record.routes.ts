@@ -9,39 +9,38 @@ import { AuthenticationGuard } from '@app/auth/authentication.guard';
 import { KycRecordControllerImpl } from '@controllers/kyc/kyc-record-controller-impl';
 import { KycRecordApi } from '@services/bw/co/centralkyc/kyc/kyc-record-api';
 import { KycRecordDetails } from './details/kyc-record-details';
+import { UseCaseScope } from '@app/utils/use-case-scope';
 
-export const routes: Routes = [
+export const kycRecordRoutes: Routes = [
   {
-      path: '',
-      component: KycRecordComponent,
-      canActivate: [AuthenticationGuard],
-      data: { title: 'Kyc Record' },
-      providers: [
-        KycRecordControllerImpl,
-        KycRecordApi,
-      ]
+    path: 'kyc',
+    component: KycRecordComponent,
+    canActivate: [AuthenticationGuard],
+    data: { title: 'Kyc Record' },
+    providers: [KycRecordControllerImpl, KycRecordApi, UseCaseScope],
   },
-    {
-      path: 'details',
-      component: KycRecordDetails,
-      canActivate: [AuthenticationGuard],
-      data: { title: 'Kyc Record Details' },
-      providers: [
-        importProvidersFrom(RouterModule),
-        KycRecordControllerImpl,
-        KycRecordApi,
-      ]
-    },
-    {
-      path: 'details/{id}',
-      component: KycRecordDetails,
-      canActivate: [AuthenticationGuard],
-      data: { title: 'Kyc Record Details' },
-      providers: [
-        importProvidersFrom(RouterModule),
-        KycRecordControllerImpl,
-        KycRecordApi,
-      ]
-    }
+  {
+    path: 'details',
+    component: KycRecordDetails,
+    canActivate: [AuthenticationGuard],
+    data: { title: 'Kyc Record Details' },
+    providers: [
+      importProvidersFrom(RouterModule),
+      KycRecordControllerImpl,
+      KycRecordApi,
+      UseCaseScope,
+    ],
+  },
+  {
+    path: 'details/{id}',
+    component: KycRecordDetails,
+    canActivate: [AuthenticationGuard],
+    data: { title: 'Kyc Record Details' },
+    providers: [
+      importProvidersFrom(RouterModule),
+      KycRecordControllerImpl,
+      KycRecordApi,
+      UseCaseScope,
+    ],
+  },
 ];
-

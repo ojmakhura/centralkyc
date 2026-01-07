@@ -8,38 +8,28 @@ import { AuthenticationGuard } from '@app/auth/authentication.guard';
 import { ClientRequestControllerImpl } from '@controllers/client/client-request-controller-impl';
 import { ClientRequestApi } from '@services/bw/co/centralkyc/organisation/client/client-request-api';
 import { EditClientRequestComponent } from './edit/edit-client-request';
+import { UseCaseScope } from '@app/utils/use-case-scope';
 
-export const routes: Routes = [
+export const clientRequestRoutes: Routes = [
   {
-      path: '',
-      component: ClientRequestComponent,
-      canActivate: [AuthenticationGuard],
-      data: { title: 'Client Request' },
-      providers: [
-        ClientRequestControllerImpl,
-        ClientRequestApi,
-      ]
+    path: 'client-request',
+    component: ClientRequestComponent,
+    canActivate: [AuthenticationGuard],
+    data: { title: 'Client Request' },
+    providers: [ClientRequestControllerImpl, ClientRequestApi, UseCaseScope],
   },
   {
     path: 'edit',
     component: EditClientRequestComponent,
     canActivate: [AuthenticationGuard],
     data: { title: 'Edit Client Request' },
-    providers: [
-      ClientRequestControllerImpl,
-      ClientRequestApi,
-    ]
+    providers: [ClientRequestControllerImpl, ClientRequestApi, UseCaseScope],
   },
   {
     path: 'edit/:id',
     component: EditClientRequestComponent,
     canActivate: [AuthenticationGuard],
     data: { title: 'Edit Client Request' },
-    providers: [
-      ClientRequestControllerImpl,
-      ClientRequestApi,
-    ]
-  }
-
+    providers: [ClientRequestControllerImpl, ClientRequestApi, UseCaseScope],
+  },
 ];
-
