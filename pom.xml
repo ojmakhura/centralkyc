@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
         <version>4.0.1</version>
-        <relativePath/>
+        <relativePath />
     </parent>
     <groupId>bw.co.centralkyc</groupId>
     <artifactId>centralkyc</artifactId>
@@ -125,8 +125,8 @@
             </dependency>
             <dependency>
                 <groupId>org.apache.commons</groupId>
-			    <artifactId>commons-collections4</artifactId>
-			    <version>4.2</version>
+                <artifactId>commons-collections4</artifactId>
+                <version>4.2</version>
             </dependency>
             <dependency>
                 <groupId>commons-fileupload</groupId>
@@ -140,14 +140,14 @@
                 <version>2.17.0</version>
             </dependency>
             <dependency>
-              <groupId>org.apache.commons</groupId>
-              <artifactId>commons-lang3</artifactId>
-              <version>3.20.0</version>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-lang3</artifactId>
+                <version>3.20.0</version>
             </dependency>
             <dependency>
-              <groupId>org.apache.commons</groupId>
-              <artifactId>commons-text</artifactId>
-              <version>1.3</version>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-text</artifactId>
+                <version>1.3</version>
             </dependency>
             <!-- <dependency>
                 <groupId>commons-logging</groupId>
@@ -193,9 +193,20 @@
                 <version>3.0.0</version>
             </dependency>
             <dependency>
-                <groupId>org.liquibase</groupId> 
+                <groupId>org.liquibase</groupId>
                 <artifactId>liquibase-core</artifactId>
                 <version>5.0.1</version>
+            </dependency>
+            <dependency>
+                <groupId>org.mapstruct</groupId>
+                <artifactId>mapstruct</artifactId>
+                <version>1.6.3</version>
+            </dependency>
+            <dependency>
+                <groupId>org.mapstruct</groupId>
+                <artifactId>mapstruct-processor</artifactId>
+                <version>1.6.3</version>
+                <scope>provided</scope>
             </dependency>
             <!-- <dependency>
                 <groupId>org.springframework.boot</groupId>
@@ -292,22 +303,23 @@
                     <artifactId>tomcat-maven-plugin</artifactId>
                     <version>1.1</version>
                     <configuration>
-                      <contextFile>${project.basedir}/src/test/resources/context.xml</contextFile>
-                      <additionalConfigFilesDir>${project.basedir}/src/test/resources</additionalConfigFilesDir>
+                        <contextFile>${project.basedir}/src/test/resources/context.xml</contextFile>
+                        <additionalConfigFilesDir>${project.basedir}/src/test/resources</additionalConfigFilesDir>
                     </configuration>
                 </plugin>
             </plugins>
         </pluginManagement>
         <plugins>
             <plugin>
-				<groupId>org.springframework.boot</groupId>
-				<artifactId>spring-boot-maven-plugin</artifactId>
-				<configuration>
-					<skip>true</skip>
-				</configuration>
-			</plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <skip>true</skip>
+                </configuration>
+            </plugin>
             <plugin>
-                <!-- See https://github.com/lkwg82/enforcer-maven-plugin. Patched original. Fix cloudbees error on pom download -->
+                <!-- See https://github.com/lkwg82/enforcer-maven-plugin. Patched original. Fix
+                cloudbees error on pom download -->
                 <groupId>de.lgohlke.mojo</groupId>
                 <artifactId>maven-enforcer-plugin</artifactId>
                 <version>${maven-enforcer-plugin.version}</version>
@@ -371,7 +383,7 @@
         <!-- See http://www.h2database.com/html/features.html#database_url (mixed mode) -->
         <testdb.url>
             jdbc:h2:~/${application.id};AUTO_SERVER=TRUE;AUTO_RECONNECT=TRUE;DB_CLOSE_ON_EXIT=FALSE;DB_CLOSE_DELAY=-1</testdb.url>
-        <testdb.username>sa</testdb.username> 
+        <testdb.username>sa</testdb.username>
         <testdb.password>sa</testdb.password>
         <!--
             Change this to generate to the correct MDA database mappings,
@@ -394,7 +406,8 @@
         <!--
         Change this for the appropriate database
         For H2 use: org.hibernate.dialect.H2Dialect
-        For DB2 use: org.hibernate.dialect.DB2Dialect or org.hibernate.dialect.DB2390Dialect org.hibernate.dialect.DB2400Dialect
+        For DB2 use: org.hibernate.dialect.DB2Dialect or org.hibernate.dialect.DB2390Dialect
+        org.hibernate.dialect.DB2400Dialect
         For Derby use: org.hibernate.dialect.DerbyDialect
         For Hypersonic use: org.hibernate.dialect.HSQLDialect
         For Informix use: org.hibernate.dialect.InformixDialect
@@ -424,18 +437,20 @@
         <application.version>0.0.1</application.version>
         <dataSource.name>jdbc/${application.id}</dataSource.name>
         <dataSource>java:comp/env/${dataSource.name}</dataSource>
-        <!-- Set andromda.xml hibernateVersion=7, sessionFactory and localTransactionManager to hibernate4.-->
+        <!-- Set andromda.xml hibernateVersion=7, sessionFactory and localTransactionManager to
+        hibernate4.-->
         <hibernate.version>7.1.10.Final</hibernate.version>
         <!-- Set andromda.xml hibernateVersion=7, sessionFactory and localTransactionManager to
         hibernate4.-->
         <!-- v 9.x only supports JDK7 and you cannot configure jetty.port from maven.-->
         <!-- v5 migration needed -->
         <!-- <spring.version>5.3.2</spring.version> -->
-	    <spring-boot.version>4.0.1</spring-boot.version>
+        <spring-boot.version>4.0.1</spring-boot.version>
         <openapi.version>1.6.13</openapi.version>
         <!-- To override parent default settings for compiler plugin and compliance checks-->
         <dependencyConvergence>true</dependencyConvergence>
-        <!-- Any of these configuration values can be overridden by the descendant, the default is JDK 1.6 >
+        <!-- Any of these configuration values can be overridden by the descendant, the default is
+        JDK 1.6 >
         <java.runtime.version>1.7</java.runtime.version>
         <java.required.version>1.7</java.required.version>
         <java.source.version>1.7</java.source.version>
@@ -451,7 +466,8 @@
         <postgresql.version>42.7.4</postgresql.version>
     </properties>
     <profiles>
-        <!--Profile configuration for local builds, activeByDefault, customize for your project -->
+        <!--Profile
+        configuration for local builds, activeByDefault, customize for your project -->
         <profile>
             <id>local</id>
             <activation>
@@ -489,12 +505,14 @@
                     Change connection url for appropriate database
                     For H2 use: jdbc:h2:~/centralkyc
                     For MySQL use: jdbc:mysql://localhost:3306/centralkyc
-                    For Hypersonic use: jdbc:hsqldb:hsql://127.0.0.1/centralkyc or jdbc:hsqldb:file:<path>/centralkyc;shutdown=true
+                    For Hypersonic use: jdbc:hsqldb:hsql://127.0.0.1/centralkyc or
+                jdbc:hsqldb:file:<path>/centralkyc;shutdown=true
                     For Oracle9i use: jdbc:oracle:thin:@localhost:1521:yoursid
                     For DB2 use: jdbc:db2:centralkyc
                     For Informix use: jdbc:informix-sqli://localhost:1557/centralkyc:INFORMIXSERVER=myserver
                     For MSSQL use: jdbc:microsoft:sqlserver://localhost:1433;DatabaseName=centralkyc
-                    For Pointbase use: jdbc:pointbase:server://@pointbase.server@:@pointbase.port/pointbase.centralkyc@,new
+                    For Pointbase use:
+                jdbc:pointbase:server://@pointbase.server@:@pointbase.port/pointbase.centralkyc@,new
                     For Postgres use: jdbc:postgresql://localhost/centralkyc
                     For Sybase use: jdbc:sybase:Tds:localhost:5000/centralkyc?JCONNECT_VERSION=6
                     For SapDB use: jdbc:sapdb://127.0.0.1/centralkyc
@@ -536,7 +554,8 @@
                             <groupId>org.andromda.maven.plugins</groupId>
                             <artifactId>andromdapp-maven-plugin</artifactId>
                             <version>${andromda.version}</version>
-                            <!-- provides the injection of the script wrapper support into the class files (this should only
+                            <!-- provides the injection of the script wrapper support into the class
+                            files (this should only
                                  be done when developing locally), uncomment this executions element to enable
                             <executions>
                                 <execution>
@@ -552,7 +571,8 @@
                                 <locations>
                                     <location>
                                         <rootPath>${project.basedir}/src/main/java</rootPath>
-                                        <!-- adjust these to include or exclude specific files, by default
+                                        <!-- adjust these to include or exclude specific files, by
+                                        default
                                              all files found in the rootPath are considered
                                         <includes>
                                             <include>relative/path/to/file/to/include/SomeClass.java</include>
@@ -588,56 +608,58 @@
                 </site>
             </distributionManagement-->
         </profile>
-        <!-- Cloudbees WebDav: See https://github.com/CloudBees-community/maven-config-github-cloudbees/blob/master/pom.xml
+        <!-- Cloudbees WebDav: See
+        https://github.com/CloudBees-community/maven-config-github-cloudbees/blob/master/pom.xml
             For deployment of andromda samples. Configure server id/password in settings.xml to deploy. -->
         <profile>
             <id>cloudbees</id>
             <activation>
                 <activeByDefault>false</activeByDefault>
             </activation>
-            <!-- Deploy releases and snapshots to the CloudBees maven repositories. Customize for your project if using Cloudbees, or remove. -->
+            <!-- Deploy releases and snapshots to the CloudBees maven repositories. Customize for
+            your project if using Cloudbees, or remove. -->
             <distributionManagement>
-              <repository>
-                <id>andromdabuild-cloudbees-release</id>
-                <name>andromdabuild-cloudbees-release</name>
-                <!-- Webdav repository url are prefixed with dav: -->
-                <url>dav:https://repository-andromdabuild.forge.cloudbees.com/release/</url>
-                <uniqueVersion>true</uniqueVersion>
-              </repository>
-              <snapshotRepository>
-                <id>andromdabuild-cloudbees-snapshot</id>
-                <name>andromdabuild-cloudbees-snapshot</name>
-                <url>dav:https://andromdabuild-javaetmoi.forge.cloudbees.com/snapshot/</url>
-                <uniqueVersion>false</uniqueVersion>
-              </snapshotRepository>
-              <site>
-                  <id>website</id>
-                  <url>file:/scratch/hudson/workspace/Andromda/site/</url>
-              </site>
+                <repository>
+                    <id>andromdabuild-cloudbees-release</id>
+                    <name>andromdabuild-cloudbees-release</name>
+                    <!-- Webdav repository url are prefixed with dav: -->
+                    <url>dav:https://repository-andromdabuild.forge.cloudbees.com/release/</url>
+                    <uniqueVersion>true</uniqueVersion>
+                </repository>
+                <snapshotRepository>
+                    <id>andromdabuild-cloudbees-snapshot</id>
+                    <name>andromdabuild-cloudbees-snapshot</name>
+                    <url>dav:https://andromdabuild-javaetmoi.forge.cloudbees.com/snapshot/</url>
+                    <uniqueVersion>false</uniqueVersion>
+                </snapshotRepository>
+                <site>
+                    <id>website</id>
+                    <url>file:/scratch/hudson/workspace/Andromda/site/</url>
+                </site>
             </distributionManagement>
             <repositories>
-              <repository>
-                <id>andromdabuild-cloudbees-release</id>
-                <name>andromdabuild-cloudbees-release</name>
-                <url>https://andromdabuild-javaetmoi.forge.cloudbees.com/release/</url>
-                <releases>
-                  <enabled>true</enabled>
-                </releases>
-                <snapshots>
-                  <enabled>false</enabled>
-                </snapshots>
-              </repository>
-              <repository>
-                <id>andromdabuild-cloudbees-snapshot</id>
-                <name>andromdabuild-cloudbees-snapshot</name>
-                <url>https://repository-andromdabuild.forge.cloudbees.com/snapshot/</url>
-                <releases>
-                  <enabled>false</enabled>
-                </releases>
-                <snapshots>
-                  <enabled>true</enabled>
-                </snapshots>
-              </repository>
+                <repository>
+                    <id>andromdabuild-cloudbees-release</id>
+                    <name>andromdabuild-cloudbees-release</name>
+                    <url>https://andromdabuild-javaetmoi.forge.cloudbees.com/release/</url>
+                    <releases>
+                        <enabled>true</enabled>
+                    </releases>
+                    <snapshots>
+                        <enabled>false</enabled>
+                    </snapshots>
+                </repository>
+                <repository>
+                    <id>andromdabuild-cloudbees-snapshot</id>
+                    <name>andromdabuild-cloudbees-snapshot</name>
+                    <url>https://repository-andromdabuild.forge.cloudbees.com/snapshot/</url>
+                    <releases>
+                        <enabled>false</enabled>
+                    </releases>
+                    <snapshots>
+                        <enabled>true</enabled>
+                    </snapshots>
+                </repository>
             </repositories>
         </profile>
     </profiles>
@@ -666,25 +688,25 @@
                 <artifactId>maven-project-info-reports-plugin</artifactId>
                 <version>${maven-project-info-reports-plugin.version}</version>
                 <reportSets>
-                  <reportSet>
-                    <reports>
-                      <report>cim</report>
-                      <report>dependencies</report>
-                      <report>dependency-convergence</report>
-                      <report>dependency-management</report>
-                      <report>help</report>
-                      <report>index </report>
-                      <report>issue-tracking</report>
-                      <report>license</report>
-                      <report>mailing-list</report>
-                      <report>modules</report>
-                      <report>plugin-management</report>
-                      <report>plugins</report>
-                      <report>project-team</report>
-                      <report>scm</report>
-                      <report>summary</report>
-                    </reports>
-                  </reportSet>
+                    <reportSet>
+                        <reports>
+                            <report>cim</report>
+                            <report>dependencies</report>
+                            <report>dependency-convergence</report>
+                            <report>dependency-management</report>
+                            <report>help</report>
+                            <report>index </report>
+                            <report>issue-tracking</report>
+                            <report>license</report>
+                            <report>mailing-list</report>
+                            <report>modules</report>
+                            <report>plugin-management</report>
+                            <report>plugins</report>
+                            <report>project-team</report>
+                            <report>scm</report>
+                            <report>summary</report>
+                        </reports>
+                    </reportSet>
                 </reportSets>
             </plugin>
             <plugin>
@@ -693,11 +715,12 @@
                 <configuration>
                     <minmemory>128m</minmemory>
                     <maxmemory>1g</maxmemory>
-                    <sourcepath>${project.basedir}/src/main/java;${project.basedir}/target/src/main/java</sourcepath>
-                    <detectLinks/>
+                    <sourcepath>
+                        ${project.basedir}/src/main/java;${project.basedir}/target/src/main/java</sourcepath>
+                    <detectLinks />
                     <links>
-                                    <link>http://docs.oracle.com/javase/8/docs/api/</link>
-                                    <link>http://docs.oracle.com/javaee/7/api/</link>
+                        <link>http://docs.oracle.com/javase/8/docs/api/</link>
+                        <link>http://docs.oracle.com/javaee/7/api/</link>
                         <link>http://docs.jboss.org/hibernate/stable/orm/javadocs/</link>
                         <link>http://docs.spring.io/spring/docs/current/javadoc-api/</link>
                         <link>http://jakarta.apache.org/commons/collections/apidocs/</link>

@@ -31,15 +31,20 @@ import bw.co.centralkyc.document.Document;
 @Transactional(propagation = Propagation.REQUIRED, readOnly = false)
 public class DocumentTypeServiceImpl
         extends DocumentTypeServiceBase {
+
+    private final DocumentTypeMapper documentTypeMapper;
+    
     public DocumentTypeServiceImpl(
             DocumentTypeDao documentTypeDao,
             DocumentTypeRepository documentTypeRepository,
-            MessageSource messageSource) {
+            MessageSource messageSource,
+            DocumentTypeMapper documentTypeMapper) {
 
         super(
                 documentTypeDao,
                 documentTypeRepository,
                 messageSource);
+        this.documentTypeMapper = documentTypeMapper;
     }
 
     /**
@@ -48,7 +53,10 @@ public class DocumentTypeServiceImpl
     @Override
     protected DocumentTypeDTO handleFindById(String id)
             throws Exception {
-        return documentTypeDao.toDocumentTypeDTO(documentTypeRepository.getReferenceById(id));
+
+        DocumentType entity = documentTypeRepository.findById(id).orElseThrow(() -> new Exception("DocumentType not found for id: " + id));
+        
+        return documentTypeMapper.toDocumentTypeDTO(entity);
     }
 
     /**
