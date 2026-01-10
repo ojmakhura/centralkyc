@@ -9,6 +9,7 @@ import bw.co.centralkyc.document.type.DocumentTypeMapper;
 import java.util.Collection;
 import java.util.List;
 import org.mapstruct.BeanMapping;
+import org.mapstruct.InheritInverseConfiguration;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
@@ -23,9 +24,10 @@ public interface DocumentMapper {
     
     /**
      * Converts this entity to an object of type {@link DocumentDTO}.
-     * @param entity 
+     * @param entity
      * @return DocumentDTO
      */
+    // WARNING! No conversion for target.documentType (can't convert source.getDocumentType():bw.co.centralkyc.document.type.DocumentType to java.lang.String
     @Mapping(target = "documentTypeId", source = "documentType.id")
     @Mapping(target = "documentType", source = "documentType.name")
     DocumentDTO toDocumentDTO(Document entity);
@@ -41,11 +43,11 @@ public interface DocumentMapper {
      * @param documentDTO
      * @return Document
      */
-    @Mapping(target = "documentType", ignore = true)
+    @InheritInverseConfiguration
     Document documentDTOToEntity(DocumentDTO documentDTO);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
-    @Mapping(target = "documentType", ignore = true)
+    @InheritInverseConfiguration
     void updateDocumentFromDocumentDTO(DocumentDTO documentDTO, @MappingTarget Document entity);
 
 }

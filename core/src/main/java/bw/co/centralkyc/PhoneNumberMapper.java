@@ -3,24 +3,40 @@ package bw.co.centralkyc;
 import java.util.Collection;
 import java.util.Map;
 
+import org.mapstruct.Mapper;
+
+@Mapper(
+    componentModel = "spring"
+)
 public interface PhoneNumberMapper {
-    default Collection<PhoneNumber> toDto(Collection<Map> maps) {
+
+    default Map toMap(PhoneNumber phone) {
+        if (phone == null) return null;
+        return Map.of(
+            "type", phone.getType().getValue(),
+            "phoneNumber", phone.getPhoneNumber()
+        );
+    }
+
+    default PhoneNumber toPhoneNumber(Map map) {
+        if (map == null) return null;
+        return new PhoneNumber(
+            PhoneType.fromString((String) map.get("type")),
+            (String) map.get("phoneNumber")
+        );
+    }
+
+    default Collection<PhoneNumber> toMapCollection(Collection<Map> maps) {
         if (maps == null) return null;
         return maps.stream()
-            .map(m -> new PhoneNumber(
-                PhoneType.fromString((String) m.get("type")),
-                (String) m.get("phoneNumber")
-            ))
+            .map(m -> this.toPhoneNumber(m))
             .toList();
     }
 
-    default Collection<Map<String, String>> toEntity(Collection<PhoneNumber> phones) {
+    default Collection<Map> toPhoneNumberCollection(Collection<PhoneNumber> phones) {
         if (phones == null) return null;
         return phones.stream()
-            .map(p -> Map.of(
-                "type", p.getType().getValue(),
-                "phoneNumber", p.getPhoneNumber()
-            ))
+            .map(p -> this.toMap(p))
             .toList();
     }
 }

@@ -10,6 +10,7 @@ import bw.co.centralkyc.individual.IndividualMapper;
 import java.util.Collection;
 import java.util.List;
 import org.mapstruct.BeanMapping;
+import org.mapstruct.InheritInverseConfiguration;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingTarget;
 import org.mapstruct.NullValuePropertyMappingStrategy;
@@ -40,6 +41,7 @@ public interface BranchMapper {
      * @param branchDTO
      * @return Branch
      */
+    @InheritInverseConfiguration
     Branch branchDTOToEntity(BranchDTO branchDTO);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)

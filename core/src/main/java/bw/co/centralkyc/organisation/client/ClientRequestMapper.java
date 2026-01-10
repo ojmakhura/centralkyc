@@ -9,6 +9,7 @@ import bw.co.centralkyc.document.DocumentMapper;
 import java.util.Collection;
 import java.util.List;
 import org.mapstruct.BeanMapping;
+import org.mapstruct.InheritInverseConfiguration;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingTarget;
 import org.mapstruct.NullValuePropertyMappingStrategy;
@@ -38,6 +39,7 @@ public interface ClientRequestMapper {
      * @param clientRequestDTO
      * @return ClientRequest
      */
+    @InheritInverseConfiguration
     ClientRequest clientRequestDTOToEntity(ClientRequestDTO clientRequestDTO);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)

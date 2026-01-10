@@ -8,7 +8,9 @@ package bw.co.centralkyc.document.type;
 import java.util.Collection;
 import java.util.List;
 import org.mapstruct.BeanMapping;
+import org.mapstruct.InheritInverseConfiguration;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 import org.mapstruct.NullValuePropertyMappingStrategy;
 
@@ -35,9 +37,13 @@ public interface DocumentTypeMapper {
      * @param documentTypeDTO
      * @return DocumentType
      */
+    @InheritInverseConfiguration
+    @Mapping(target = "documents", ignore = true)
     DocumentType documentTypeDTOToEntity(DocumentTypeDTO documentTypeDTO);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+    @InheritInverseConfiguration
+    @Mapping(target = "documents", ignore = true)
     void updateDocumentTypeFromDocumentTypeDTO(DocumentTypeDTO documentTypeDTO, @MappingTarget DocumentType entity);
 
 }

@@ -10,7 +10,9 @@ import bw.co.centralkyc.individual.employment.EmploymentRecordMapper;
 import java.util.Collection;
 import java.util.List;
 import org.mapstruct.BeanMapping;
+import org.mapstruct.InheritInverseConfiguration;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 import org.mapstruct.NullValuePropertyMappingStrategy;
 
@@ -27,6 +29,8 @@ public interface KycRecordMapper {
      * @param entity
      * @return KycRecordDTO
      */
+    @Mapping(source = "documents", target = "documents")
+    @Mapping(source = "employmentRecord", target = "employmentRecord")
     KycRecordDTO toKycRecordDTO(KycRecord entity);
 
      /**
@@ -40,6 +44,7 @@ public interface KycRecordMapper {
      * @param kycRecordDTO
      * @return KycRecord
      */
+    @InheritInverseConfiguration
     KycRecord kycRecordDTOToEntity(KycRecordDTO kycRecordDTO);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)

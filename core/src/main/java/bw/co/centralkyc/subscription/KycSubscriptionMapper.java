@@ -9,6 +9,7 @@ import bw.co.centralkyc.invoice.KycInvoiceMapper;
 import java.util.Collection;
 import java.util.List;
 import org.mapstruct.BeanMapping;
+import org.mapstruct.InheritInverseConfiguration;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingTarget;
 import org.mapstruct.NullValuePropertyMappingStrategy;
@@ -25,6 +26,8 @@ public interface KycSubscriptionMapper {
      * @param entity
      * @return KycSubscriptionDTO
      */
+    // WARNING! No conversion for target.startDate (can't convert source.getStartDate():java.util.Date to java.util.Date
+    // WARNING! No conversion for target.endDate (can't convert source.getEndDate():java.util.Date to java.util.Date
     KycSubscriptionDTO toKycSubscriptionDTO(KycSubscription entity);
 
      /**
@@ -38,9 +41,14 @@ public interface KycSubscriptionMapper {
      * @param kycSubscriptionDTO
      * @return KycSubscription
      */
+    // No conversion for target.startDate (can't convert source.getStartDate():java.util.Date to java.util.Date
+    // No conversion for target.endDate (can't convert source.getEndDate():java.util.Date to java.util.Date
+    @InheritInverseConfiguration
     KycSubscription kycSubscriptionDTOToEntity(KycSubscriptionDTO kycSubscriptionDTO);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+    // No conversion for target.startDate (can't convert source.getStartDate():java.util.Date to java.util.Date
+    // No conversion for target.endDate (can't convert source.getEndDate():java.util.Date to java.util.Date
     void updateKycSubscriptionFromKycSubscriptionDTO(KycSubscriptionDTO kycSubscriptionDTO, @MappingTarget KycSubscription entity);
 
 }

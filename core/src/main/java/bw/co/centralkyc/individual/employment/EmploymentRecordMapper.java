@@ -12,7 +12,9 @@ import bw.co.centralkyc.settings.SalaryRangeMapper;
 import java.util.Collection;
 import java.util.List;
 import org.mapstruct.BeanMapping;
+import org.mapstruct.InheritInverseConfiguration;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 import org.mapstruct.NullValuePropertyMappingStrategy;
 
@@ -31,12 +33,15 @@ public interface EmploymentRecordMapper {
      * @param entity
      * @return EmploymentRecordDTO
      */
+    @Mapping(source = "salaryRange", target = "salaryRange")
+    @Mapping(target = "kycRecords", ignore = true)
     EmploymentRecordDTO toEmploymentRecordDTO(EmploymentRecord entity);
 
      /**
      * Converts this DAO's entity to a Collection of instances of type {@link EmploymentRecordDTO}.
      * @param entities
      * @return Collection<EmploymentRecordDTO>     */
+    @Mapping(target = "kycRecords", ignore = true)
     List<EmploymentRecordDTO> toEmploymentRecordDTOCollection(Collection<EmploymentRecord> entities);
 
     /**
@@ -44,9 +49,12 @@ public interface EmploymentRecordMapper {
      * @param employmentRecordDTO
      * @return EmploymentRecord
      */
+    @InheritInverseConfiguration
+    @Mapping(target = "kycRecords", ignore = true)
     EmploymentRecord employmentRecordDTOToEntity(EmploymentRecordDTO employmentRecordDTO);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+    @Mapping(target = "kycRecords", ignore = true)
     void updateEmploymentRecordFromEmploymentRecordDTO(EmploymentRecordDTO employmentRecordDTO, @MappingTarget EmploymentRecord entity);
 
 }

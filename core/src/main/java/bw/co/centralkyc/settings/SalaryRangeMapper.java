@@ -8,6 +8,7 @@ package bw.co.centralkyc.settings;
 import java.util.Collection;
 import java.util.List;
 import org.mapstruct.BeanMapping;
+import org.mapstruct.InheritInverseConfiguration;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingTarget;
 import org.mapstruct.NullValuePropertyMappingStrategy;
@@ -37,6 +38,7 @@ public interface SalaryRangeMapper {
      * @param salaryRangeDTO
      * @return SalaryRange
      */
+    @InheritInverseConfiguration
     SalaryRange salaryRangeDTOToEntity(SalaryRangeDTO salaryRangeDTO);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)

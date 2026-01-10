@@ -10,7 +10,9 @@ import bw.co.centralkyc.document.type.DocumentTypeMapper;
 import java.util.Collection;
 import java.util.List;
 import org.mapstruct.BeanMapping;
+import org.mapstruct.InheritInverseConfiguration;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 import org.mapstruct.NullValuePropertyMappingStrategy;
 
@@ -28,6 +30,18 @@ public interface SettingsMapper {
      * @param entity
      * @return SettingsDTO
      */
+    @Mapping(source = "organisationDocuments", target = "organisationDocuments")
+    @Mapping(source = "individualDocuments", target = "individualDocuments")
+    @Mapping(source = "indKycDocuments", target = "indKycDocuments")
+    @Mapping(source = "orgKycDocuments", target = "orgKycDocuments")
+    @Mapping(source = "invoiceDocumentType", target = "invoiceDocumentType")
+    @Mapping(source = "invoiceTemplate", target = "invoiceTemplate")
+    @Mapping(source = "invoiceTemplateType", target = "invoiceTemplateType")
+    @Mapping(source = "quotationDocumentType", target = "quotationDocumentType")
+    @Mapping(source = "quotationTemplateType", target = "quotationTemplateType")
+    @Mapping(source = "quotationTemplate", target = "quotationTemplate")
+    @Mapping(source = "clientRequestFileType", target = "clientRequestFileType")
+    @Mapping(source = "salaryRanges", target = "salaryRanges")
     SettingsDTO toSettingsDTO(Settings entity);
 
      /**
@@ -41,6 +55,7 @@ public interface SettingsMapper {
      * @param settingsDTO
      * @return Settings
      */
+    @InheritInverseConfiguration
     Settings settingsDTOToEntity(SettingsDTO settingsDTO);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)

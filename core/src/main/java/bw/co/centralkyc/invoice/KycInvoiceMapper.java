@@ -10,7 +10,9 @@ import bw.co.centralkyc.subscription.KycSubscriptionMapper;
 import java.util.Collection;
 import java.util.List;
 import org.mapstruct.BeanMapping;
+import org.mapstruct.InheritInverseConfiguration;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 import org.mapstruct.NullValuePropertyMappingStrategy;
 
@@ -27,6 +29,9 @@ public interface KycInvoiceMapper {
      * @param entity
      * @return KycInvoiceDTO
      */
+    // WARNING! No conversion for target.issueDate (can't convert source.getIssueDate():java.util.Date to java.util.Date
+    @Mapping(source = "invoiceDocument", target = "invoiceDocument")
+    @Mapping(source = "proofOfPayment", target = "proofOfPayment")
     KycInvoiceDTO toKycInvoiceDTO(KycInvoice entity);
 
      /**
@@ -40,9 +45,12 @@ public interface KycInvoiceMapper {
      * @param kycInvoiceDTO
      * @return KycInvoice
      */
+    // No conversion for target.issueDate (can't convert source.getIssueDate():java.util.Date to java.util.Date
+    @InheritInverseConfiguration
     KycInvoice kycInvoiceDTOToEntity(KycInvoiceDTO kycInvoiceDTO);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+    // No conversion for target.issueDate (can't convert source.getIssueDate():java.util.Date to java.util.Date
     void updateKycInvoiceFromKycInvoiceDTO(KycInvoiceDTO kycInvoiceDTO, @MappingTarget KycInvoice entity);
 
 }

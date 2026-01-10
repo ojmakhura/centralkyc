@@ -66,10 +66,10 @@ public class DocumentTypeServiceImpl
     protected DocumentTypeDTO handleSave(DocumentTypeDTO documentType)
             throws Exception {
 
-        DocumentType doc = documentTypeDao.documentTypeDTOToEntity(documentType);
+        DocumentType doc = documentTypeMapper.documentTypeDTOToEntity(documentType);
         doc = documentTypeRepository.save(doc);
 
-        return documentTypeDao.toDocumentTypeDTO(doc);
+        return documentTypeMapper.toDocumentTypeDTO(doc);
     }
 
     /**
@@ -93,7 +93,7 @@ public class DocumentTypeServiceImpl
 
         Collection<DocumentType> types = documentTypeRepository.findAll();
 
-        return documentTypeDao.toDocumentTypeDTOCollection(types);
+        return documentTypeMapper.toDocumentTypeDTOCollection(types);
     }
 
     private Specification<DocumentType> createSpecification(String criteria) {
@@ -124,7 +124,7 @@ public class DocumentTypeServiceImpl
         Collection<DocumentType> types = spec == null ? documentTypeRepository.findAll(Sort.by(Direction.ASC, "name"))
                 : documentTypeRepository.findAll(spec, Sort.by(Direction.ASC, "name"));
 
-        return documentTypeDao.toDocumentTypeDTOCollection(types);
+        return documentTypeMapper.toDocumentTypeDTOCollection(types);
     }
 
     /**
@@ -140,7 +140,7 @@ public class DocumentTypeServiceImpl
         Pageable pageable = PageRequest.of(pageNumber, pageSize, Sort.by(Direction.ASC, "name"));
         Page<DocumentType> types = documentTypeRepository.findAll(pageable);
 
-        return types.map(type -> documentTypeDao.toDocumentTypeDTO(type));
+        return types.map(type -> documentTypeMapper.toDocumentTypeDTO(type));
     }
 
     /**
@@ -156,7 +156,7 @@ public class DocumentTypeServiceImpl
         Page<DocumentType> types = spec == null ? documentTypeRepository.findAll(pageable)
                 : documentTypeRepository.findAll(spec, pageable);
 
-        return types.map(type -> documentTypeDao.toDocumentTypeDTO(type));
+        return types.map(type -> documentTypeMapper.toDocumentTypeDTO(type));
 
     }
 

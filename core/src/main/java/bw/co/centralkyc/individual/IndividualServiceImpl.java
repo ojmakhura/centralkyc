@@ -32,8 +32,11 @@ import bw.co.centralkyc.SortOrderFactory;
 @Transactional(propagation = Propagation.REQUIRED, readOnly = false)
 public class IndividualServiceImpl
         extends IndividualServiceBase {
+
+    private final IndividualMapper individualMapper;
+
     public IndividualServiceImpl(
-            IndividualDao individualDao,
+            IndividualDao individualDao, IndividualMapper individualMapper,
             IndividualRepository individualRepository,
             MessageSource messageSource) {
 
@@ -41,6 +44,8 @@ public class IndividualServiceImpl
                 individualDao,
                 individualRepository,
                 messageSource);
+        
+        this.individualMapper = individualMapper;
     }
 
     /**
@@ -51,7 +56,9 @@ public class IndividualServiceImpl
             throws Exception {
 
         Individual individual = individualRepository.getReferenceById(id);
-        return individualDao.toIndividualDTO(individual);
+
+        System.out.println("Fetched Individual: " + individual);
+        return individualMapper.toIndividualDTO(individual);
     }
 
     /**
@@ -61,7 +68,7 @@ public class IndividualServiceImpl
     protected Collection<IndividualListDTO> handleGetAll()
             throws Exception {
 
-        return individualDao.toIndividualListDTOCollection(individualRepository.findAll());
+        return individualMapper.toIndividualListDTOCollection(individualRepository.findAll());
     }
 
     /**

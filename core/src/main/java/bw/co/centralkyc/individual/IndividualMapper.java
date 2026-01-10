@@ -12,63 +12,86 @@ import bw.co.centralkyc.organisation.branch.BranchMapper;
 import java.util.Collection;
 import java.util.List;
 import org.mapstruct.BeanMapping;
+import org.mapstruct.InheritInverseConfiguration;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 import org.mapstruct.NullValuePropertyMappingStrategy;
-import org.springframework.security.core.parameters.P;
 
-@Mapper(
-    componentModel = "spring"
-    , uses = {
+@Mapper(componentModel = "spring", uses = {
         DocumentMapper.class,
         EmploymentRecordMapper.class,
         BranchMapper.class,
-        PhoneNumberMapper.class      
-    }
-)
+        PhoneNumberMapper.class
+})
 public interface IndividualMapper {
-    
+
     /**
      * Converts this entity to an object of type {@link IndividualDTO}.
+     * 
      * @param entity
      * @return IndividualDTO
      */
-    IndividualDTO toIndividualDTO(Individual entity);
+    @Mapping(source = "branch", target = "branch")
+    @Mapping(source = "employmentRecords", target = "employmentRecords")
+    @Mapping(source = "phoneNumbers", target = "phoneNumbers")
+    IndividualDTO toIndividualDTO(Individual individual);
 
-     /**
-     * Converts this DAO's entity to a Collection of instances of type {@link IndividualDTO}.
+    /**
+     * Converts this DAO's entity to a Collection of instances of type
+     * {@link IndividualDTO}.
+     * 
      * @param entities
-     * @return Collection<IndividualDTO>     */
+     * @return Collection<IndividualDTO>
+     */
     List<IndividualDTO> toIndividualDTOCollection(Collection<Individual> entities);
 
     /**
      * Converts an instance of type {@link IndividualDTO} to this DAO's entity.
+     * 
      * @param individualDTO
      * @return Individual
      */
+    // source.getPhoneNumbers():bw.co.centralkyc.PhoneNumber to java.util.Map
+    @InheritInverseConfiguration
+    @Mapping(target = "phoneNumbers", expression = "java(phoneNumberMapper.toPhoneNumberCollection(individualDTO.getPhoneNumbers()))")
+    @Mapping(target = "branch", ignore = true)
+    @Mapping(target = "organisationId", source = "organisation.id")
+    @Mapping(target = "employmentRecords", ignore = true)
+    @Mapping(target = "documents", ignore = true)
     Individual individualDTOToEntity(IndividualDTO individualDTO);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
-    void updateIndividualFromIndividualDTO(IndividualDTO individualDTO, @MappingTarget Individual entity);
+    // No conversion for target.phoneNumbers (can't convert
+    // source.getPhoneNumbers():bw.co.centralkyc.PhoneNumber to java.util.Map
+    // @Mapping(target = "phoneNumbers", expression = "java(phoneNumberMapper.toPhoneNumberCollection(individualDTO.getPhoneNumbers()))")
+    void updateIndividualFromIndividualDTO(IndividualDTO individualDTO, @MappingTarget Individual individual);
 
     /**
      * Converts this entity to an object of type {@link IndividualListDTO}.
+     * 
      * @param entity
      * @return IndividualListDTO
      */
-    IndividualListDTO toIndividualListDTO(Individual entity);
+    @Mapping(target = "name", expression = "java(individual.getFirstName() + \" \" + individual.getSurname())")
+    IndividualListDTO toIndividualListDTO(Individual individual);
 
-     /**
-     * Converts this DAO's entity to a Collection of instances of type {@link IndividualListDTO}.
+    /**
+     * Converts this DAO's entity to a Collection of instances of type
+     * {@link IndividualListDTO}.
+     * 
      * @param entities
-     * @return Collection<IndividualListDTO>     */
+     * @return Collection<IndividualListDTO>
+     */
     List<IndividualListDTO> toIndividualListDTOCollection(Collection<Individual> entities);
 
     /**
      * Converts an instance of type {@link IndividualListDTO} to this DAO's entity.
+     * 
      * @param individualListDTO
      * @return Individual
      */
+    @InheritInverseConfiguration
     Individual individualListDTOToEntity(IndividualListDTO individualListDTO);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
