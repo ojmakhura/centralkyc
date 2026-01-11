@@ -218,6 +218,21 @@
             <mat-error translate>{{error.message}}</mat-error>
             }
           </div>
+          <div class="field-row">
+            <mat-form-field class="field-half">
+              <mat-label id="postalAddress_label" for="postalAddress">
+                <span translate>postal.address</span>
+              </mat-label>
+              <textarea matInput id="postalAddress" [field]="editIndividualSignalForm.postalAddress"></textarea>
+            </mat-form-field>
+
+            <mat-form-field class="field-half">
+              <mat-label id="physicalAddress_label" for="physicalAddress">
+                <span translate>physical.address</span>
+              </mat-label>
+              <textarea matInput id="physicalAddress" [field]="editIndividualSignalForm.physicalAddress"></textarea>
+            </mat-form-field>
+          </div>
           <div class="row">
             <div class="field-full">
               <h3 class="col-form-label col-sm-2 pt-0" translate>phone.numbers</h3>
@@ -254,33 +269,6 @@
                 }
               </div>
             </div>
-          </div>
-        </mat-card-content>
-      </mat-card>
-
-      <!-- Addresses -->
-      <mat-card class="form-section">
-        <mat-card-header>
-          <mat-card-title>
-            <mat-icon>home</mat-icon>
-            {{ 'addresses' | translate }}
-          </mat-card-title>
-        </mat-card-header>
-        <mat-card-content>
-          <div class="field-row">
-            <mat-form-field class="field-half">
-              <mat-label id="postalAddress_label" for="postalAddress">
-                <span translate>postal.address</span>
-              </mat-label>
-              <textarea matInput id="postalAddress" [field]="editIndividualSignalForm.postalAddress"></textarea>
-            </mat-form-field>
-
-            <mat-form-field class="field-half">
-              <mat-label id="physicalAddress_label" for="physicalAddress">
-                <span translate>physical.address</span>
-              </mat-label>
-              <textarea matInput id="physicalAddress" [field]="editIndividualSignalForm.physicalAddress"></textarea>
-            </mat-form-field>
           </div>
         </mat-card-content>
       </mat-card>

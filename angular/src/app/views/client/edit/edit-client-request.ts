@@ -222,7 +222,7 @@ export class EditClientRequestComponent implements OnInit, AfterViewInit, OnDest
       this.editClientRequestSignal.update((value) => ({
         ...value,
         id: clientRequest.id,
-        status: clientRequest.status || ClientRequestStatus.PENDING,
+        status: clientRequest.status,
         organisationId: clientRequest.organisationId,
         organisation: clientRequest.organisationId ? org : null,
         documentId: clientRequest.documentId,
@@ -244,7 +244,6 @@ export class EditClientRequestComponent implements OnInit, AfterViewInit, OnDest
 
   ngAfterViewInit(): void {
 
-    console.log('EditClientRequestComponent initialized with id:', this.id);
     this.route.queryParams.subscribe((params: any) => {
       if (params.id) {
         this.clientRequestApiStore.findById(params);

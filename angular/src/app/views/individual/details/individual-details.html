@@ -25,11 +25,13 @@
         </div>
 
         <div class="action-buttons">
-          <button mat-raised-button type="button" color="primary" (click)="individualDetailsEdit()" class="action-button">
+          <button mat-raised-button type="button" color="primary" (click)="individualDetailsEdit()"
+            class="action-button">
             <mat-icon>edit</mat-icon>
             {{ 'edit' | translate }}
           </button>
-          <button mat-stroked-button color="primary" type="button" (click)="individualDetailsFormReset()" class="action-button">
+          <button mat-stroked-button color="primary" type="button" (click)="individualDetailsFormReset()"
+            class="action-button">
             <mat-icon>refresh</mat-icon>
             {{ 'refresh' | translate }}
           </button>
@@ -57,56 +59,6 @@
       </mat-card-header>
       <mat-card-content>
         <div class="display-grid">
-          <div class="display-item">
-            <div class="display-label">
-              <mat-icon class="field-icon">badge</mat-icon>
-              <span>{{ 'first.name' | translate }}</span>
-            </div>
-            <div class="display-value">
-              {{ individual().firstName || 'N/A' }}
-            </div>
-          </div>
-
-          <div class="display-item">
-            <div class="display-label">
-              <mat-icon class="field-icon">badge</mat-icon>
-              <span>{{ 'middle.name' | translate }}</span>
-            </div>
-            <div class="display-value">
-              {{ individual().middleName || 'N/A' }}
-            </div>
-          </div>
-
-          <div class="display-item">
-            <div class="display-label">
-              <mat-icon class="field-icon">badge</mat-icon>
-              <span>{{ 'surname' | translate }}</span>
-            </div>
-            <div class="display-value">
-              {{ individual().surname || 'N/A' }}
-            </div>
-          </div>
-
-          <div class="display-item">
-            <div class="display-label">
-              <mat-icon class="field-icon">fingerprint</mat-icon>
-              <span>{{ 'identity.type' | translate }}</span>
-            </div>
-            <div class="display-value">
-              {{ individual().identityType || 'N/A' }}
-            </div>
-          </div>
-
-          <div class="display-item">
-            <div class="display-label">
-              <mat-icon class="field-icon">qr_code</mat-icon>
-              <span>{{ 'identity.no' | translate }}</span>
-            </div>
-            <div class="display-value">
-              {{ individual().identityNo || 'N/A' }}
-            </div>
-          </div>
-
           <div class="display-item">
             <div class="display-label">
               <mat-icon class="field-icon">public</mat-icon>
@@ -239,10 +191,12 @@
                         <div class="document-type">{{ docType.description }}</div>
                         }
                       </div>
+                      @if (!getUploadedDocument(docType.id)) {
                       <button mat-stroked-button type="button" color="primary" (click)="fileInput.click()">
                         <mat-icon>attach_file</mat-icon>
                         {{ 'attach' | translate }}
                       </button>
+                      }
                       <input type="file" #fileInput (change)="onFileSelected($event, docType)"
                         accept=".pdf,.jpg,.jpeg,.png,.doc,.docx" style="display: none" />
                     </div>
@@ -272,10 +226,10 @@
                     </div>
                     }
 
-                    @if (isUploading(docType.id)) {
+                    <!-- @if (isUploading(docType.id)) {
                     <mat-progress-bar mode="determinate" [value]="getUploadProgress(docType.id)" style="margin-top: 12px;"></mat-progress-bar>
                     <p class="upload-progress" style="margin-top: 8px; text-align: center;">{{ getUploadProgress(docType.id) }}% {{ 'uploading' | translate }}</p>
-                    }
+                    } -->
                   </div>
                   }
                 </div>
@@ -300,12 +254,14 @@
             <div class="tab-content">
               <mat-card class="section-card" appearance="outlined" style="margin-bottom: 16px;">
                 <mat-card-header>
-                  <mat-card-title style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+                  <mat-card-title
+                    style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
                     <span style="display: flex; align-items: center; gap: 8px;">
                       <mat-icon>verified_user</mat-icon>
                       {{ 'kyc.records' | translate }}
                     </span>
-                    <button mat-mini-fab type="button" color="primary" matTooltip="{{ 'add.kyc.record' | translate }}" (click)="addKycRecord()">
+                    <button mat-mini-fab type="button" color="primary" matTooltip="{{ 'add.kyc.record' | translate }}"
+                      (click)="addKycRecord()">
                       <mat-icon>add</mat-icon>
                     </button>
                   </mat-card-title>
@@ -316,7 +272,8 @@
                     @for (kycRecord of kycRecords(); track kycRecord.id; let i = $index) {
                     <mat-card class="standard-card" appearance="outlined" style="margin-bottom: 24px;">
                       <mat-card-header>
-                        <mat-icon mat-card-avatar [class]="kycRecord.kycStatus === KycComplianceStatusT.APPROVED ? 'status-approved' : 'status-pending'">
+                        <mat-icon mat-card-avatar
+                          [class]="kycRecord.kycStatus === KycComplianceStatusT.APPROVED ? 'status-approved' : 'status-pending'">
                           @if (kycRecord.kycStatus === KycComplianceStatusT.APPROVED) {
                           check_circle
                           } @else if (kycRecord.kycStatus === KycComplianceStatusT.PENDING) {
@@ -407,88 +364,88 @@
                           </div>
                         </div>
 
-                          <!-- KYC Documents Grid -->
-                          @if (kycRecord.documents && kycRecord.documents.length > 0) {
-                          <div class="kyc-documents-section">
-                            <h5 class="documents-title">{{ 'kyc.documents' | translate }}</h5>
-                            <div class="grid-2">
-                              @for (document of kycRecord.documents; track document.id) {
-                              <div class="document-info">
-                                <mat-icon>
-                                  @if (document.fileName?.toLowerCase()?.includes('.pdf')) {
-                                  picture_as_pdf
-                                  } @else if (document.fileName?.toLowerCase()?.includes('.jpg') ||
-                                  document.fileName?.toLowerCase()?.includes('.jpeg') ||
-                                  document.fileName?.toLowerCase()?.includes('.png')) {
-                                  image
-                                  } @else if (document.fileName?.toLowerCase()?.includes('.doc') ||
-                                  document.fileName?.toLowerCase()?.includes('.docx')) {
-                                  description
-                                  } @else {
-                                  insert_drive_file
-                                  }
-                                </mat-icon>
-                                <div class="document-details">
-                                  <div class="document-name">{{ document.fileName }}</div>
-                                  <div class="document-type">{{ formatFileSize(document.metadata?.fileSize || 0) }}</div>
-                                </div>
-                                <button mat-icon-button type="button" color="primary" matTooltip="{{ 'download' | translate }}"
-                                  (click)="downloadDocument(document)">
-                                  <mat-icon>download</mat-icon>
-                                </button>
-                                <button mat-icon-button type="button" color="warn" matTooltip="{{ 'delete' | translate }}"
-                                  (click)="deleteDocument(document.id)">
-                                  <mat-icon>delete</mat-icon>
-                                </button>
+                        <!-- KYC Documents Grid -->
+                        @if (kycRecord.documents && kycRecord.documents.length > 0) {
+                        <div class="kyc-documents-section">
+                          <h5 class="documents-title">{{ 'kyc.documents' | translate }}</h5>
+                          <div class="grid-2">
+                            @for (document of kycRecord.documents; track document.id) {
+                            <div class="document-info">
+                              <mat-icon>
+                                @if (document.fileName?.toLowerCase()?.includes('.pdf')) {
+                                picture_as_pdf
+                                } @else if (document.fileName?.toLowerCase()?.includes('.jpg') ||
+                                document.fileName?.toLowerCase()?.includes('.jpeg') ||
+                                document.fileName?.toLowerCase()?.includes('.png')) {
+                                image
+                                } @else if (document.fileName?.toLowerCase()?.includes('.doc') ||
+                                document.fileName?.toLowerCase()?.includes('.docx')) {
+                                description
+                                } @else {
+                                insert_drive_file
+                                }
+                              </mat-icon>
+                              <div class="document-details">
+                                <div class="document-name">{{ document.fileName }}</div>
+                                <div class="document-type">{{ formatFileSize(document.metadata?.fileSize || 0) }}</div>
                               </div>
-                              }
+                              <button mat-icon-button type="button" color="primary"
+                                matTooltip="{{ 'download' | translate }}" (click)="downloadDocument(document)">
+                                <mat-icon>download</mat-icon>
+                              </button>
+                              <button mat-icon-button type="button" color="warn" matTooltip="{{ 'delete' | translate }}"
+                                (click)="deleteDocument(document.id)">
+                                <mat-icon>delete</mat-icon>
+                              </button>
                             </div>
-                          </div>
-                          }
-
-                          <!-- Add Documents Section for this KYC Record -->
-                          @if (kycIndDocumentTypes() && kycIndDocumentTypes().length > 0) {
-                          <div class="add-kyc-documents-section">
-                            <h5 class="documents-title">{{ 'add.kyc.documents' | translate }}</h5>
-                            <div class="grid-2">
-                              @for (docType of kycIndDocumentTypes(); track docType.id) {
-                              <div class="document-info">
-                                <mat-icon>security</mat-icon>
-                                <div class="document-details">
-                                  <div class="document-name">{{ docType.name }}</div>
-                                  @if (docType.description) {
-                                  <div class="document-type">{{ docType.description }}</div>
-                                  }
-                                </div>
-                                <input type="file" #kycFileInput (change)="onFileSelected($event, docType)"
-                                  accept=".pdf,.jpg,.jpeg,.png,.doc,.docx" style="display: none" />
-                                <button mat-stroked-button type="button" color="primary" (click)="kycFileInput.click()">
-                                  <mat-icon>upload</mat-icon>
-                                  {{ 'upload' | translate }}
-                                </button>
-                              </div>
-                              }
-                            </div>
-                          </div>
-                          }
-
-                          <!-- KYC Record Actions -->
-                          <div style="display: flex; gap: 12px; margin-top: 16px; flex-wrap: wrap;">
-                            <button mat-stroked-button type="button" color="primary">
-                              <mat-icon>edit</mat-icon>
-                              {{ 'edit' | translate }}
-                            </button>
-                            <button mat-stroked-button type="button" color="warn">
-                              <mat-icon>delete</mat-icon>
-                              {{ 'delete' | translate }}
-                            </button>
-                            @if (kycRecord.kycStatus !== KycComplianceStatusT.APPROVED) {
-                            <button mat-raised-button type="button" color="primary">
-                              <mat-icon>check_circle</mat-icon>
-                              {{ 'submit.for.approval' | translate }}
-                            </button>
                             }
                           </div>
+                        </div>
+                        }
+
+                        <!-- Add Documents Section for this KYC Record -->
+                        @if (kycIndDocumentTypes() && kycIndDocumentTypes().length > 0) {
+                        <div class="add-kyc-documents-section">
+                          <h5 class="documents-title">{{ 'add.kyc.documents' | translate }}</h5>
+                          <div class="grid-2">
+                            @for (docType of kycIndDocumentTypes(); track docType.id) {
+                            <div class="document-info">
+                              <mat-icon>security</mat-icon>
+                              <div class="document-details">
+                                <div class="document-name">{{ docType.name }}</div>
+                                @if (docType.description) {
+                                <div class="document-type">{{ docType.description }}</div>
+                                }
+                              </div>
+                              <input type="file" #kycFileInput (change)="onFileSelected($event, docType)"
+                                accept=".pdf,.jpg,.jpeg,.png,.doc,.docx" style="display: none" />
+                              <button mat-stroked-button type="button" color="primary" (click)="kycFileInput.click()">
+                                <mat-icon>upload</mat-icon>
+                                {{ 'upload' | translate }}
+                              </button>
+                            </div>
+                            }
+                          </div>
+                        </div>
+                        }
+
+                        <!-- KYC Record Actions -->
+                        <div style="display: flex; gap: 12px; margin-top: 16px; flex-wrap: wrap;">
+                          <button mat-stroked-button type="button" color="primary">
+                            <mat-icon>edit</mat-icon>
+                            {{ 'edit' | translate }}
+                          </button>
+                          <button mat-stroked-button type="button" color="warn">
+                            <mat-icon>delete</mat-icon>
+                            {{ 'delete' | translate }}
+                          </button>
+                          @if (kycRecord.kycStatus !== KycComplianceStatusT.APPROVED) {
+                          <button mat-raised-button type="button" color="primary">
+                            <mat-icon>check_circle</mat-icon>
+                            {{ 'submit.for.approval' | translate }}
+                          </button>
+                          }
+                        </div>
                       </mat-card-content>
                     </mat-card>
                     }
@@ -496,9 +453,11 @@
                   } @else {
                   <div class="empty-state">
                     <mat-icon>verified_user</mat-icon>
-                    <h4 style="margin: 12px 0 8px 0; font-size: 1.25rem; color: #37474f;">{{ 'no.kyc.records' | translate }}</h4>
+                    <h4 style="margin: 12px 0 8px 0; font-size: 1.25rem; color: #37474f;">{{ 'no.kyc.records' |
+                      translate }}</h4>
                     <p>{{ 'no.kyc.records.description' | translate }}</p>
-                    <button mat-raised-button type="button" color="primary" (click)="addKycRecord()" style="margin-top: 16px;">
+                    <button mat-raised-button type="button" color="primary" (click)="addKycRecord()"
+                      style="margin-top: 16px;">
                       <mat-icon>add</mat-icon>
                       {{ 'add.first.kyc.record' | translate }}
                     </button>
@@ -660,13 +619,19 @@
               {{ 'client.requests' | translate }}
             </ng-template>
             <div class="tab-content">
+
               <div class="client-requests-section-wrapper">
                 <mat-card class="client-requests-section modern-card">
                   <mat-card-header class="modern-header">
                     <div class="section-header">
-                      <div class="section-actions">
-                        <button mat-mini-fab type="button" color="primary" matTooltip="{{ 'refresh' | translate }}" (click)="loadClientRequests(individual().id)">
+                      <div class="action-buttons">
+                        <button mat-mini-fab type="button" color="primary" matTooltip="{{ 'refresh' | translate }}"
+                          (click)="loadClientRequests(individual().id)">
                           <mat-icon>refresh</mat-icon>
+                        </button>
+                        <button mat-mini-fab type="button" color="primary"
+                          matTooltip="{{ 'add.client.request' | translate }}" (click)="addClientRequest()">
+                          <mat-icon>add</mat-icon>
                         </button>
                       </div>
                     </div>
@@ -704,7 +669,8 @@
                           <th mat-header-cell *matHeaderCellDef>{{ 'status' | translate }}</th>
                           <td mat-cell *matCellDef="let request">
                             <mat-form-field appearance="outline" class="status-select">
-                              <mat-select [value]="request.status" (selectionChange)="onClientRequestStatusChange(request, $event.value)">
+                              <mat-select [value]="request.status"
+                                (selectionChange)="onClientRequestStatusChange(request, $event.value)">
                                 @for (status of clientRequestStatuses; track status) {
                                 <mat-option [value]="status">
                                   <span [class]="'status-badge ' + status.toLowerCase()">
@@ -754,15 +720,12 @@
                         </ng-container>
 
                         <tr mat-header-row *matHeaderRowDef="['createdAt', 'organisation', 'status', 'actions']"></tr>
-                        <tr mat-row *matRowDef="let row; columns: ['createdAt', 'organisation', 'status', 'actions'];"></tr>
+                        <tr mat-row *matRowDef="let row; columns: ['createdAt', 'organisation', 'status', 'actions'];">
+                        </tr>
                       </table>
-                      <mat-paginator
-                        [length]="clientRequestsTotalElements()"
-                        [pageSize]="clientRequestsPageSize()"
-                        [pageIndex]="clientRequestsPageIndex()"
-                        [pageSizeOptions]="[5, 10, 25, 50, 100]"
-                        (page)="onClientRequestsPageChange($event)"
-                        showFirstLastButtons>
+                      <mat-paginator [length]="clientRequestsTotalElements()" [pageSize]="clientRequestsPageSize()"
+                        [pageIndex]="clientRequestsPageIndex()" [pageSizeOptions]="[5, 10, 25, 50, 100]"
+                        (page)="onClientRequestsPageChange($event)" showFirstLastButtons>
                       </mat-paginator>
                     </div>
                     } @else {

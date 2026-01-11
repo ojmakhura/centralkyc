@@ -21,7 +21,7 @@
       </div>
       <div class="header-actions">
         <button mat-fab type="button" matTooltip="{{ 'add.new' | translate }}" color="primary" class="fab-button"
-          (click)="addNewClientRequest()">
+          [routerLink]="['/client-request', 'edit']">
           <mat-icon fontIcon="add" aria-hidden="false" aria-label="add"></mat-icon>
         </button>
       </div>

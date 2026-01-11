@@ -10,12 +10,12 @@ import { Page } from '@app/models/page.model';
 import { KycSubscriptionDTO } from '@app/models/bw/co/centralkyc/subscription/kyc-subscription-dto';
 import { KycSubscriptionApi } from '@app/services/bw/co/centralkyc/subscription/kyc-subscription-api';
 
-export type KycSubscriptionApiState = AppState<any, any> & {};
+export type KycSubscriptionApiState = AppState<KycSubscriptionDTO, KycSubscriptionDTO> & {};
 
 const initialState: KycSubscriptionApiState = {
-  data: null,
+  data: new KycSubscriptionDTO(),
   dataList: [],
-  dataPage: new Page<any>(),
+  dataPage: new Page<KycSubscriptionDTO>(),
   searchCriteria: new SearchObject<any>(),
   loading: false,
   success: false,
@@ -33,12 +33,12 @@ export const KycSubscriptionApiStore = signalStore(
       reset: () => {
         patchState(store, initialState);
       },
-      findById: rxMethod<{id: string | any }>(
+      findById: rxMethod<{id: string }>(
         switchMap((data: any) => {
           patchState(store, { loading: true, loaderMessage: 'Loading ...' });
           return kycSubscriptionApi.findById(data.id, ).pipe(
             tapResponse({
-              next: (response: KycSubscriptionDTO | any) => {
+              next: (response: KycSubscriptionDTO) => {
                 patchState(
                   store,
                   {
@@ -65,12 +65,12 @@ export const KycSubscriptionApiStore = signalStore(
           );
         }),
       ),
-      findByOrganisation: rxMethod<{organisationId: string | any }>(
+      findByOrganisation: rxMethod<{organisationId: string }>(
         switchMap((data: any) => {
           patchState(store, { loading: true, loaderMessage: 'Loading ...' });
           return kycSubscriptionApi.findByOrganisation(data.organisationId, ).pipe(
             tapResponse({
-              next: (response: KycSubscriptionDTO[] | any[]) => {
+              next: (response: KycSubscriptionDTO[]) => {
                 patchState(
                   store,
                   {
@@ -102,7 +102,7 @@ export const KycSubscriptionApiStore = signalStore(
           patchState(store, { loading: true, loaderMessage: 'Loading ...' });
           return kycSubscriptionApi.getAll().pipe(
             tapResponse({
-              next: (response: KycSubscriptionDTO[] | any[]) => {
+              next: (response: KycSubscriptionDTO[]) => {
                 patchState(
                   store,
                   {
@@ -129,12 +129,12 @@ export const KycSubscriptionApiStore = signalStore(
           );
         }),
       ),
-      getAllPaged: rxMethod<{pageNumber: number | any , pageSize: number | any }>(
+      getAllPaged: rxMethod<{pageNumber: number, pageSize: number }>(
         switchMap((data: any) => {
           patchState(store, { loading: true, loaderMessage: 'Loading ...' });
           return kycSubscriptionApi.getAllPaged(data.pageNumber, data.pageSize, ).pipe(
             tapResponse({
-              next: (response: Page<KycSubscriptionDTO> | any) => {
+              next: (response: Page<KycSubscriptionDTO>) => {
                 patchState(
                   store,
                   {
@@ -161,12 +161,12 @@ export const KycSubscriptionApiStore = signalStore(
           );
         }),
       ),
-      pagedSearch: rxMethod<{criteria: string | any , pageNumber: number | any , pageSize: number | any }>(
+      pagedSearch: rxMethod<{criteria: string , pageNumber: number , pageSize: number }>(
         switchMap((data: any) => {
           patchState(store, { loading: true, loaderMessage: 'Loading ...' });
           return kycSubscriptionApi.pagedSearch(data.criteria, data.pageNumber, data.pageSize, ).pipe(
             tapResponse({
-              next: (response: Page<KycSubscriptionDTO> | any) => {
+              next: (response: Page<KycSubscriptionDTO>) => {
                 patchState(
                   store,
                   {
@@ -193,12 +193,12 @@ export const KycSubscriptionApiStore = signalStore(
           );
         }),
       ),
-      remove: rxMethod<{id: string | any }>(
+      remove: rxMethod<{id: string }>(
         switchMap((data: any) => {
           patchState(store, { loading: true, loaderMessage: 'Loading ...' });
           return kycSubscriptionApi.remove(data.id, ).pipe(
             tapResponse({
-              next: (response: boolean | any) => {
+              next: (response: boolean) => {
                 patchState(
                   store,
                   {
@@ -225,12 +225,12 @@ export const KycSubscriptionApiStore = signalStore(
           );
         }),
       ),
-      save: rxMethod<{subscription: KycSubscriptionDTO | any }>(
+      save: rxMethod<{subscription: KycSubscriptionDTO }>(
         switchMap((data: any) => {
           patchState(store, { loading: true, loaderMessage: 'Loading ...' });
           return kycSubscriptionApi.save(data.subscription, ).pipe(
             tapResponse({
-              next: (response: KycSubscriptionDTO | any) => {
+              next: (response: KycSubscriptionDTO) => {
                 patchState(
                   store,
                   {
@@ -257,12 +257,12 @@ export const KycSubscriptionApiStore = signalStore(
           );
         }),
       ),
-      search: rxMethod<{criteria: string | any }>(
+      search: rxMethod<{criteria: string }>(
         switchMap((data: any) => {
           patchState(store, { loading: true, loaderMessage: 'Loading ...' });
           return kycSubscriptionApi.search(data.criteria, ).pipe(
             tapResponse({
-              next: (response: KycSubscriptionDTO[] | any[]) => {
+              next: (response: KycSubscriptionDTO[]) => {
                 patchState(
                   store,
                   {

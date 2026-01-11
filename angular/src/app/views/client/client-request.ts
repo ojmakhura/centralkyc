@@ -16,7 +16,7 @@ import {
   Field,
   form,
 } from "@angular/forms/signals";
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { MatDialog } from '@angular/material/dialog';
 import { ClientRequestControllerImpl } from '@controllers/client/client-request-controller-impl';
@@ -66,8 +66,9 @@ export class ClientRequestSearchForm {
     TranslateModule,
     TableComponent,
     Loader,
-    Field
-  ],
+    Field,
+    RouterModule
+],
 })
 export class ClientRequestComponent implements OnInit, AfterViewInit, OnDestroy {
 
@@ -134,12 +135,12 @@ export class ClientRequestComponent implements OnInit, AfterViewInit, OnDestroy 
       icon: 'edit',
       tooltip: 'edit',
     },
-    {
-      id: 'client-request-details',
-      label: 'details',
-      icon: 'remove_red_eye',
-      tooltip: 'details',
-    },
+    // {
+    //   id: 'client-request-details',
+    //   label: 'details',
+    //   icon: 'remove_red_eye',
+    //   tooltip: 'details',
+    // },
   ];
 
   showClientRequestsActions = true;
@@ -149,9 +150,7 @@ export class ClientRequestComponent implements OnInit, AfterViewInit, OnDestroy 
     switch (event.action) {
       case 'client-request-edit':
 
-        this.router.navigate(["/client-request", "edit"], {
-          queryParams: { id: event.row.id }
-        });
+        this.router.navigate(["/client-request", "edit", event.row.id],);
 
         break;
       case 'client-request-details':

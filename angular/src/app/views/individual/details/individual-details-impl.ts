@@ -239,7 +239,7 @@ export class IndividualDetailsImplComponent extends IndividualDetailsComponent {
 
   }
 
-  doNgOnDestroy(): void {}
+  doNgOnDestroy(): void { }
 
   // Document upload event handlers
   onDragOver(event: DragEvent): void {
@@ -354,7 +354,7 @@ export class IndividualDetailsImplComponent extends IndividualDetailsComponent {
   // Document management methods
   getUploadedDocument(documentTypeId?: string): DocumentDTO | undefined {
 
-    if(!documentTypeId) return undefined;
+    if (!documentTypeId) return undefined;
 
     const docs = this.uploadedDocuments() || [];
     return docs.find((doc) => doc.documentTypeId === documentTypeId);
@@ -362,14 +362,14 @@ export class IndividualDetailsImplComponent extends IndividualDetailsComponent {
 
   isUploading(documentTypeId?: string): boolean {
 
-    if(!documentTypeId) return false;
+    if (!documentTypeId) return false;
 
     return this.uploadProgress()[documentTypeId]?.isUploading || false;
   }
 
   getUploadProgress(documentTypeId?: string): number {
 
-    if(!documentTypeId) return 0;
+    if (!documentTypeId) return 0;
 
     return this.uploadProgress()[documentTypeId]?.progress || 0;
   }
@@ -408,12 +408,9 @@ export class IndividualDetailsImplComponent extends IndividualDetailsComponent {
     if (confirm(`Are you sure you want to delete "${document.fileName}"?`)) {
       this.documentApi.remove(document.id).subscribe({
         next: (response) => {
-          if (response.success) {
-            this.loadIndividualDocuments(document.targetId!);
-            this.toaster.success('Document deleted successfully');
-          } else {
-            this.toaster.error(`Failed to delete document: ${response.message || 'Unknown error'}`);
-          }
+          this.loadIndividualDocuments(document.targetId!);
+          this.toaster.success('Document deleted successfully');
+
         },
         error: (error) => {
           console.error('Delete error:', error);
@@ -460,7 +457,7 @@ export class IndividualDetailsImplComponent extends IndividualDetailsComponent {
             individual?.id
           ).subscribe({
             next: (response) => {
-             this.router.navigate(['kyc'], { queryParams: { id: response.id } });
+              this.router.navigate(['kyc'], { queryParams: { id: response.id } });
             },
             error: (error) => {
               console.error('Add KYC record error:', error);
@@ -477,5 +474,9 @@ export class IndividualDetailsImplComponent extends IndividualDetailsComponent {
 
   override createNewPhoneNumbers(): PhoneNumber {
     return new PhoneNumber();
+  }
+
+  addClientRequest() {
+    this.router.navigate(['/client-request/edit'], { queryParams: { targetIndividual: this.individual().id } });
   }
 }

@@ -17,10 +17,10 @@
           <a routerLink="/home">{{ 'home' | translate }}</a>
         </li>
         <li class="breadcrumb-item">
-          <a routerLink="/client/client-request">{{ 'client.requests' | translate }}</a>
+          <a routerLink="/client-request">{{ 'client.requests' | translate }}</a>
         </li>
         <li class="breadcrumb-item active" aria-current="page">
-          {{ editClientRequestSignal().id ? ('edit.client.request' | translate) : ('new.client.request' | translate) }}
+          {{ editClientRequestSignal().id ? ('edit' | translate) : ('new' | translate) }}
         </li>
       </ol>
     </nav>
@@ -29,17 +29,12 @@
   <!-- Page Header -->
   <div class="page-header">
     <div class="header-content">
-      <div class="icon-wrapper">
+      <h2 class="page-title">
         <mat-icon class="header-icon">person_add</mat-icon>
-      </div>
-      <div class="header-text">
-        <h1 class="header-title">
-          {{ editClientRequestSignal().id ? ('edit.client.request' | translate) : ('new.client.request' | translate) }}
-        </h1>
-        <p class="header-subtitle">
-          {{ 'manage.client.request.information' | translate }}
-        </p>
-      </div>
+        {{ 'edit.client.request' | translate }}
+      </h2>
+    </div>
+     <div class="action-buttons">
     </div>
   </div>
 
@@ -176,15 +171,15 @@
 
       <!-- Form Actions -->
       <div class="form-actions">
-        <div class="action-group action-group-left">
+        <div class="action-buttons">
           @if (editClientRequestSignal().id) {
           <button mat-raised-button color="warn" type="button" (click)="editClientRequestFormDelete()">
             <mat-icon>delete</mat-icon>
             {{ 'delete' | translate }}
           </button>
           }
-        </div>
-        <div class="action-group action-group-right">
+        <!-- </div> -->
+        <!-- <div class="action-group action-group-right"> -->
           <!-- <button mat-raised-button type="button" (click)="goBack()">
             <mat-icon>cancel</mat-icon>
             {{ 'cancel' | translate }}
