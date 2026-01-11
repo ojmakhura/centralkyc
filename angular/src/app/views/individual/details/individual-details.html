@@ -106,6 +106,36 @@
               {{ individual().identityNo || 'N/A' }}
             </div>
           </div>
+
+          <div class="display-item">
+            <div class="display-label">
+              <mat-icon class="field-icon">public</mat-icon>
+              <span>{{ 'nationality' | translate }}</span>
+            </div>
+            <div class="display-value">
+              {{ individual().nationality || 'N/A' }}
+            </div>
+          </div>
+
+          <div class="display-item">
+            <div class="display-label">
+              <mat-icon class="field-icon">favorite</mat-icon>
+              <span>{{ 'marital.status' | translate }}</span>
+            </div>
+            <div class="display-value">
+              {{ individual().maritalStatus || 'N/A' }}
+            </div>
+          </div>
+
+          <div class="display-item">
+            <div class="display-label">
+              <mat-icon class="field-icon">work</mat-icon>
+              <span>{{ 'employment.status' | translate }}</span>
+            </div>
+            <div class="display-value">
+              {{ individual().employmentStatus || 'N/A' }}
+            </div>
+          </div>
         </div>
       </mat-card-content>
     </mat-card>

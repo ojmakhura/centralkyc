@@ -10,10 +10,10 @@ import { Page } from '@app/models/page.model';
 import { EmploymentRecordDTO } from '@app/models/bw/co/centralkyc/individual/employment/employment-record-dto';
 import { EmploymentRecordApi } from '@app/services/bw/co/centralkyc/individual/employment/employment-record-api';
 
-export type EmploymentRecordApiState = AppState<any, any> & {};
+export type EmploymentRecordApiState = AppState<EmploymentRecordDTO, any> & {};
 
 const initialState: EmploymentRecordApiState = {
-  data: null,
+  data: new EmploymentRecordDTO(),
   dataList: [],
   dataPage: new Page<any>(),
   searchCriteria: new SearchObject<any>(),

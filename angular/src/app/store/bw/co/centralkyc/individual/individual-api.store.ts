@@ -12,12 +12,12 @@ import { IndividualDTO } from '@app/models/bw/co/centralkyc/individual/individua
 import { IndividualApi } from '@app/services/bw/co/centralkyc/individual/individual-api';
 import { IndividualSearchCriteria } from '@app/models/bw/co/centralkyc/individual/individual-search-criteria';
 
-export type IndividualApiState = AppState<any, any> & {};
+export type IndividualApiState = AppState<IndividualDTO, IndividualListDTO> & {};
 
 const initialState: IndividualApiState = {
-  data: null,
+  data: new IndividualDTO(),
   dataList: [],
-  dataPage: new Page<any>(),
+  dataPage: new Page<IndividualListDTO>(),
   searchCriteria: new SearchObject<any>(),
   loading: false,
   success: false,

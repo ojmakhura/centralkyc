@@ -146,6 +146,55 @@
               }
             </mat-form-field>
           </div>
+
+          <div class="field-row">
+            <mat-form-field class="field-half">
+              <mat-label id="nationality_label" for="nationality">
+                <span translate>nationality</span>
+              </mat-label>
+              <mat-select id="nationality" [field]="editIndividualSignalForm.nationality">
+                <mat-option></mat-option>
+                @for (country of countries; track country) {
+                <mat-option [value]="country">{{ country }}</mat-option>
+                }
+              </mat-select>
+              @for (error of editIndividualSignalForm.nationality().errors(); track error) {
+              <mat-error translate>{{error.message}}</mat-error>
+              }
+            </mat-form-field>
+
+            <mat-form-field class="field-half">
+              <mat-label id="maritalStatus_label" for="maritalStatus">
+                <span translate>marital.status</span>
+              </mat-label>
+              <mat-select id="maritalStatus" [field]="editIndividualSignalForm.maritalStatus">
+                <mat-option></mat-option>
+                @for (key of MaritalStatusOptions; track key) {
+                <mat-option [value]="key">{{ MaritalStatusT[key] }}</mat-option>
+                }
+              </mat-select>
+              @for (error of editIndividualSignalForm.maritalStatus().errors(); track error) {
+              <mat-error translate>{{error.message}}</mat-error>
+              }
+            </mat-form-field>
+          </div>
+
+          <div class="field-row">
+            <mat-form-field class="field-half">
+              <mat-label id="employmentStatus_label" for="employmentStatus">
+                <span translate>employment.status</span>
+              </mat-label>
+              <mat-select id="employmentStatus" [field]="editIndividualSignalForm.employmentStatus">
+                <mat-option></mat-option>
+                @for (key of EmploymentStatusOptions; track key) {
+                <mat-option [value]="key">{{ EmploymentStatusT[key] }}</mat-option>
+                }
+              </mat-select>
+              @for (error of editIndividualSignalForm.employmentStatus().errors(); track error) {
+              <mat-error translate>{{error.message}}</mat-error>
+              }
+            </mat-form-field>
+          </div>
         </mat-card-content>
       </mat-card>
 

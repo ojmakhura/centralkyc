@@ -10,10 +10,10 @@ import { Page } from '@app/models/page.model';
 import { DocumentTypeDTO } from '@app/models/bw/co/centralkyc/document/type/document-type-dto';
 import { DocumentTypeApi } from '@app/services/bw/co/centralkyc/document/type/document-type-api';
 
-export type DocumentTypeApiState = AppState<any, any> & {};
+export type DocumentTypeApiState = AppState<DocumentTypeDTO, DocumentTypeDTO> & {};
 
 const initialState: DocumentTypeApiState = {
-  data: null,
+  data: new DocumentTypeDTO(),
   dataList: [],
   dataPage: new Page<any>(),
   searchCriteria: new SearchObject<any>(),

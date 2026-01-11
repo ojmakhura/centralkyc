@@ -82,7 +82,7 @@ public class UserApiImpl implements UserApi {
     public ResponseEntity<Collection<UserDTO>> findByClientRoles(
             Set<String> roles, String clientId) {
         try {
-            return ResponseEntity.ok(this.keycloakUserService.getUsersByRoles(clientId, roles));
+            return ResponseEntity.ok(this.keycloakUserService.getUsersByClientRoles(clientId, roles));
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -95,7 +95,7 @@ public class UserApiImpl implements UserApi {
     public ResponseEntity<Collection<UserDTO>> findByRealmRoles(
             Set<String> roles) {
         try {
-            return ResponseEntity.ok(this.keycloakUserService.getUsersByRoles(roles));
+            return ResponseEntity.ok(this.keycloakUserService.getUsersByRealmRoles(roles));
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -122,7 +122,7 @@ public class UserApiImpl implements UserApi {
     public ResponseEntity<Collection<UserDTO>> loadUsers() {
         try {
             
-            Collection<UserDTO> data = this.keycloakUserService.loadUsers();
+            Collection<UserDTO> data = this.keycloakUserService.findAll();
             return ResponseEntity.ok(data);
 
         } catch (Exception e) {

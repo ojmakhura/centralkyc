@@ -634,4 +634,6 @@ export class OrganisationDetailsImplComponent extends OrganisationDetailsCompone
     //   this.loadClientRequests(individual.id);
     // }
   }
+
+  addNewInvoice(): void {}
 }
