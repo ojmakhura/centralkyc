@@ -13,6 +13,9 @@ server:
 spring:
   application:
     name: centralkyc-webservice
+  threads:
+    virtual:
+      enabled: true
   jpa:
     show-sql: true
     properties:

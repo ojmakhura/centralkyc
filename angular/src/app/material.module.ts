@@ -8,7 +8,6 @@
 
 import { NgModule } from '@angular/core';
 import {
-  // MatCommonModule,
   MatLineModule,
   MatNativeDateModule,
   MatOptionModule,
@@ -49,7 +48,6 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatTreeModule } from '@angular/material/tree';
 import { NgxMatSelectSearchModule } from 'ngx-mat-select-search';
-// import { MatMomentDateModule, MomentDateAdapter } from '@angular/material-moment-adapter';
 
 @NgModule({
   exports: [
@@ -60,7 +58,6 @@ import { NgxMatSelectSearchModule } from 'ngx-mat-select-search';
     MatCardModule,
     MatCheckboxModule,
     MatChipsModule,
-    // MatCommonModule,
     MatDatepickerModule,
     MatDialogModule,
     MatDividerModule,
@@ -93,7 +90,6 @@ import { NgxMatSelectSearchModule } from 'ngx-mat-select-search';
     MatTooltipModule,
     MatTreeModule,
     NgxMatSelectSearchModule,
-    // MatMomentDateModule,
   ],
 })
 export class MaterialModule {}
