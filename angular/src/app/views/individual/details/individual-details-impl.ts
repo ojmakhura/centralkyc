@@ -7,7 +7,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { MaterialModule } from '@app/material.module';
 import { TableComponent } from '@components/table/table';
 import { Loader } from "@shared/loader/loader";
-import { Field } from '@angular/forms/signals';
+import { FormField } from '@angular/forms/signals';
 import { IndividualDTO } from '@app/models/bw/co/centralkyc/individual/individual-dto';
 import { EmploymentRecordApi } from '@app/services/bw/co/centralkyc/individual/employment/employment-record-api';
 import { KycRecordApi } from '@app/services/bw/co/centralkyc/kyc/kyc-record-api';
@@ -47,7 +47,7 @@ interface UploadProgress {
     MaterialModule,
     TableComponent,
     Loader,
-    Field,
+    FormField,
   ],
 })
 export class IndividualDetailsImplComponent extends IndividualDetailsComponent {

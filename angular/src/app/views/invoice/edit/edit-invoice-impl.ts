@@ -10,7 +10,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { MaterialModule } from '@app/material.module';
 import { TableComponent } from '@components/table/table';
 import { Loader } from "@shared/loader/loader";
-import { Field } from '@angular/forms/signals';
+import { FormField } from '@angular/forms/signals';
 import { OrganisationApiStore } from '@app/store/bw/co/centralkyc/organisation/organisation-api.store';
 import { OrganisationListDTO } from '@app/models/bw/co/centralkyc/organisation/organisation-list-dto';
 
@@ -27,7 +27,7 @@ import { OrganisationListDTO } from '@app/models/bw/co/centralkyc/organisation/o
     MaterialModule,
     TableComponent,
     Loader,
-    Field,
+    FormField,
   ],
 })
 export class EditInvoiceImplComponent extends EditInvoiceComponent {

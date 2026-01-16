@@ -67,7 +67,7 @@
           <div class="field-row">
             <mat-form-field appearance="outline" class="field-half">
               <mat-label>{{ 'status' | translate }}</mat-label>
-              <mat-select id="status" [field]="editOrganisationSignalForm.status" required>
+              <mat-select id="status" [formField]="editOrganisationSignalForm.status">
                 <mat-option value="">{{ 'select.status' | translate }}</mat-option>
                 @for (key of GeneralStatusOptions; track key) {
                 <mat-option [value]="key">
@@ -83,7 +83,7 @@
 
             <mat-form-field appearance="outline" class="field-half">
               <mat-label>{{ 'kyc.status' | translate }}</mat-label>
-              <mat-select id="kycStatus" [field]="editOrganisationSignalForm.kycStatus" required>
+              <mat-select id="kycStatus" [formField]="editOrganisationSignalForm.kycStatus">
                 <mat-option value="">{{ 'select.kyc.status' | translate }}</mat-option>
                 @for (key of KycComplianceStatusOptions; track key) {
                 <mat-option [value]="key">
@@ -99,7 +99,7 @@
           </div>
 
           <div class="field-row">
-            <mat-checkbox [field]="editOrganisationSignalForm.isClient" color="primary">
+            <mat-checkbox [formField]="editOrganisationSignalForm.isClient" color="primary">
               <span translate>is.client</span>
             </mat-checkbox>
             @for (error of editOrganisationSignalForm.isClient.errors; track error) {
@@ -110,7 +110,7 @@
           <div class="field-row">
             <mat-form-field appearance="outline" class="field-half">
               <mat-label>{{ 'registration.no' | translate }}</mat-label>
-              <input matInput type="text" id="registrationNo" [field]="editOrganisationSignalForm.registrationNo"
+              <input matInput type="text" id="registrationNo" [formField]="editOrganisationSignalForm.registrationNo"
                 placeholder="{{ 'enter.registration.no' | translate }}" />
               <mat-icon matSuffix>assignment</mat-icon>
               @for (error of editOrganisationSignalForm.registrationNo.errors; track error) {
@@ -120,7 +120,7 @@
 
             <mat-form-field appearance="outline" class="field-half">
               <mat-label>{{ 'code' | translate }}</mat-label>
-              <input matInput type="text" id="code" [field]="editOrganisationSignalForm.code"
+              <input matInput type="text" id="code" [formField]="editOrganisationSignalForm.code"
                 placeholder="{{ 'enter.code' | translate }}" />
               <mat-icon matSuffix>qr_code</mat-icon>
               @for (error of editOrganisationSignalForm.code.errors; track error) {
@@ -132,7 +132,7 @@
           <div class="field-row">
             <mat-form-field appearance="outline" class="field-full-width">
               <mat-label>{{ 'name' | translate }}</mat-label>
-              <input matInput type="text" id="name" [field]="editOrganisationSignalForm.name"
+              <input matInput type="text" id="name" [formField]="editOrganisationSignalForm.name"
                 placeholder="{{ 'enter.organisation.name' | translate }}" />
               <mat-icon matSuffix>business</mat-icon>
               @for (error of editOrganisationSignalForm.name.errors; track error) {
@@ -145,7 +145,7 @@
             <mat-form-field appearance="outline" class="field-full-width">
               <mat-label>{{ 'country.of.registration' | translate }}</mat-label>
               <input matInput type="text" id="countryOfRegistration"
-                [field]="editOrganisationSignalForm.countryOfRegistration"
+                [formField]="editOrganisationSignalForm.countryOfRegistration"
                 placeholder="{{ 'enter.country.of.registration' | translate }}" />
               <mat-icon matSuffix>flag</mat-icon>
               @for (error of editOrganisationSignalForm.countryOfRegistration.errors; track error) {
@@ -157,7 +157,7 @@
           <div class="field-row">
             <mat-form-field appearance="outline" class="field-full-width">
               <mat-label>{{ 'description' | translate }}</mat-label>
-              <textarea matInput id="description" [field]="editOrganisationSignalForm.description"
+              <textarea matInput id="description" [formField]="editOrganisationSignalForm.description"
                 placeholder="{{ 'enter.description' | translate }}" rows="3"></textarea>
               <mat-icon matSuffix>description</mat-icon>
               @for (error of editOrganisationSignalForm.description.errors; track error) {
@@ -192,7 +192,7 @@
                 <div class="field-row">
                   <mat-form-field appearance="outline" class="col-md-4">
                     <mat-label>{{ 'type' | translate }}</mat-label>
-                    <mat-select id="type" [field]="item.type">
+                    <mat-select id="type" [formField]="item.type">
                       <mat-option value="">{{ 'select.type' | translate }}</mat-option>
                       @for (key of PhoneTypeOptions; track key) {
                       <mat-option [value]="key">
@@ -204,11 +204,11 @@
                   </mat-form-field>
                   <!-- <mat-form-field class="col-md-4">
                     <mat-label for="type" class="col-sm-2 col-form-label" translate>type</mat-label>
-                    <input matInput type="text" id="type" [field]="item.type" />
+                    <input matInput type="text" id="type" [formField]="item.type" />
                   </mat-form-field> -->
                   <mat-form-field class="col-md-4">
                     <mat-label for="phoneNumber" class="col-sm-2 col-form-label" translate>phone.number</mat-label>
-                    <input matInput type="text" id="phoneNumber" [field]="item.phoneNumber" />
+                    <input matInput type="text" id="phoneNumber" [formField]="item.phoneNumber" />
                   </mat-form-field>
                   <button type="button" mat-mini-fab matTooltip="{{'remove' | translate}}" color="warn"
                     (click)="phoneNumbersRemove(i, item().value())">
@@ -224,7 +224,7 @@
           <div class="field-row">
             <mat-form-field appearance="outline" class="field-half">
               <mat-label>{{ 'postal.address' | translate }}</mat-label>
-              <textarea matInput id="postalAddress" [field]="editOrganisationSignalForm.postalAddress"
+              <textarea matInput id="postalAddress" [formField]="editOrganisationSignalForm.postalAddress"
                 placeholder="{{ 'enter.postal.address' | translate }}" rows="3"></textarea>
               <mat-icon matSuffix>mail</mat-icon>
               @for (error of editOrganisationSignalForm.postalAddress.errors; track error) {
@@ -234,7 +234,7 @@
 
             <mat-form-field appearance="outline" class="field-half">
               <mat-label>{{ 'physical.address' | translate }}</mat-label>
-              <textarea matInput id="physicalAddress" [field]="editOrganisationSignalForm.physicalAddress"
+              <textarea matInput id="physicalAddress" [formField]="editOrganisationSignalForm.physicalAddress"
                 placeholder="{{ 'enter.physical.address' | translate }}" rows="3"></textarea>
               <mat-icon matSuffix>location_on</mat-icon>
               @for (error of editOrganisationSignalForm.physicalAddress.errors; track error) {
@@ -259,7 +259,7 @@
             <mat-form-field appearance="outline" class="field-full-width">
               <mat-label>{{ 'contact.email.address' | translate }}</mat-label>
               <input matInput type="text" id="contactEmailAddress"
-                [field]="editOrganisationSignalForm.contactEmailAddress"
+                [formField]="editOrganisationSignalForm.contactEmailAddress"
                 placeholder="{{ 'enter.contact.email.address' | translate }}" />
               <mat-icon matSuffix>phone</mat-icon>
               <!-- <mat-hint>{{ 'separate.multiple.numbers.with.commas' | translate }}</mat-hint> -->
@@ -279,9 +279,9 @@
                 <div class="field-row">
                   <mat-form-field class="col-md-4">
                     <mat-label for="name" class="col-sm-2 col-form-label" translate>name</mat-label>
-                    <input matInput type="text" id="name" [field]="item.name" />
+                    <input matInput type="text" id="name" [formField]="item.name" />
                   </mat-form-field>
-                  <mat-checkbox [field]="item.verified" color="primary">
+                  <mat-checkbox [formField]="item.verified" color="primary">
                     <span translate>verified</span>
                   </mat-checkbox>
                   <button type="button" mat-mini-fab matTooltip="{{'remove' | translate}}" color="warn"

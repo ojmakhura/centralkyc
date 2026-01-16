@@ -10,7 +10,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { MaterialModule } from '@app/material.module';
 import { TableComponent } from '@components/table/table';
 import { Loader } from "@shared/loader/loader";
-import { Field } from '@angular/forms/signals';
+import { FormField } from '@angular/forms/signals';
 import { UserEditorImplComponent } from '@components/user/user-editor-impl';
 import { ChangePasswordImplComponent } from '@views/user/change-password/change-password-impl';
 
@@ -27,7 +27,7 @@ import { ChangePasswordImplComponent } from '@views/user/change-password/change-
     MaterialModule,
     TableComponent,
     Loader,
-    Field,
+    FormField,
     UserEditorImplComponent,
     ChangePasswordImplComponent,
   ],

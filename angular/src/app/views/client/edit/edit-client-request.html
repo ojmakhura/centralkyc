@@ -53,7 +53,7 @@
             <!-- Target Entity -->
             <mat-form-field appearance="outline">
               <mat-label>{{ 'target.entity' | translate }}</mat-label>
-              <mat-select [field]="editClientRequestForm.target"
+              <mat-select [formField]="editClientRequestForm.target"
                 (selectionChange)="targetEntitySelectionChange($event)">
                 @for (option of TargetEntityOptions; track option) {
                 <mat-option [value]="option">
@@ -67,9 +67,9 @@
             @if (editClientRequestSignal().target === TargetEntityT.INDIVIDUAL) {
             <mat-form-field appearance="outline">
               <mat-label>{{ 'individual' | translate }}</mat-label>
-              <mat-select [field]="editClientRequestForm.targetObject" [compareWith]="individualCompare">
+              <mat-select [formField]="editClientRequestForm.targetObject" [compareWith]="individualCompare">
                 <mat-option>
-                  <ngx-mat-select-search [field]="editClientRequestForm.targetObjectFilter"
+                  <ngx-mat-select-search [formField]="editClientRequestForm.targetObjectFilter"
                     (keyup.enter)="filterTargetIndividual()" [placeholderLabel]="'search.individual' | translate"
                     [noEntriesFoundLabel]="'no.matching.individual.found' | translate">
                   </ngx-mat-select-search>
@@ -85,9 +85,9 @@
             @if (editClientRequestSignal().target === TargetEntityT.ORGANISATION) {
             <mat-form-field appearance="outline">
               <mat-label>{{ 'organisation' | translate }}</mat-label>
-              <mat-select [field]="editClientRequestForm.targetObject" [compareWith]="organisationCompare">
+              <mat-select [formField]="editClientRequestForm.targetObject" [compareWith]="organisationCompare">
                 <mat-option>
-                  <ngx-mat-select-search [field]="editClientRequestForm.targetObjectFilter"
+                  <ngx-mat-select-search [formField]="editClientRequestForm.targetObjectFilter"
                     (keyup.enter)="filterTargetOrganisation()" [placeholderLabel]="'search.organisation' | translate"
                     [noEntriesFoundLabel]="'no.matching.organisation.found' | translate">
                   </ngx-mat-select-search>
@@ -103,7 +103,7 @@
 
             <mat-form-field appearance="outline">
               <mat-label>{{ 'request.status' | translate }}</mat-label>
-              <mat-select [field]="editClientRequestForm.status">
+              <mat-select [formField]="editClientRequestForm.status">
                 @for (option of ClientRequestStatusOptions; track option) {
                 <mat-option [value]="ClientRequestStatusT[option]">
                   {{ ('client.request.status.' + ClientRequestStatusT[option]) | translate }}
@@ -126,9 +126,9 @@
             <!-- Organisation -->
             <mat-form-field appearance="outline">
               <mat-label>{{ 'organisation' | translate }}</mat-label>
-              <mat-select [field]="editClientRequestForm.organisation" [compareWith]="organisationCompare">
+              <mat-select [formField]="editClientRequestForm.organisation" [compareWith]="organisationCompare">
                 <mat-option>
-                  <ngx-mat-select-search [field]="editClientRequestForm.organisationFilter"
+                  <ngx-mat-select-search [formField]="editClientRequestForm.organisationFilter"
                     (keyup.enter)="filterOrganisation()" [placeholderLabel]="'search.organisation' | translate"
                     [noEntriesFoundLabel]="'no.matching.organisation.found' | translate">
                   </ngx-mat-select-search>

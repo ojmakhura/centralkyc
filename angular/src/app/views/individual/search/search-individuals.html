@@ -47,14 +47,14 @@
           <div class="field-row">
             <mat-form-field appearance="outline" class="field-half">
               <mat-label>{{ 'identity.no' | translate }}</mat-label>
-              <input matInput type="text" id="identityNo" [field]="searchIndividualsSignalForm.identityNo"
+              <input matInput type="text" id="identityNo" [formField]="searchIndividualsSignalForm.identityNo"
                 placeholder="{{ 'enter.identity.no' | translate }}">
               <mat-icon matSuffix>credit_card</mat-icon>
             </mat-form-field>
 
             <mat-form-field appearance="outline" class="field-half">
               <mat-label>{{ 'first.name' | translate }}</mat-label>
-              <input matInput type="text" id="firstName" [field]="searchIndividualsSignalForm.firstName"
+              <input matInput type="text" id="firstName" [formField]="searchIndividualsSignalForm.firstName"
                 placeholder="{{ 'enter.first.name' | translate }}">
               <mat-icon matSuffix>person</mat-icon>
             </mat-form-field>
@@ -63,14 +63,14 @@
           <div class="field-row">
             <mat-form-field appearance="outline" class="field-half">
               <mat-label>{{ 'middle.name' | translate }}</mat-label>
-              <input matInput type="text" id="middleName" [field]="searchIndividualsSignalForm.middleName"
+              <input matInput type="text" id="middleName" [formField]="searchIndividualsSignalForm.middleName"
                 placeholder="{{ 'enter.middle.name' | translate }}">
               <mat-icon matSuffix>person_outline</mat-icon>
             </mat-form-field>
 
             <mat-form-field appearance="outline" class="field-half">
               <mat-label>{{ 'surname' | translate }}</mat-label>
-              <input matInput type="text" id="surname" [field]="searchIndividualsSignalForm.surname"
+              <input matInput type="text" id="surname" [formField]="searchIndividualsSignalForm.surname"
                 placeholder="{{ 'enter.surname' | translate }}">
               <mat-icon matSuffix>account_circle</mat-icon>
             </mat-form-field>
@@ -79,14 +79,14 @@
           <div class="field-row">
             <mat-form-field appearance="outline" class="field-half">
               <mat-label>{{ 'email.address' | translate }}</mat-label>
-              <input matInput type="email" id="emailAddress" [field]="searchIndividualsSignalForm.emailAddress"
+              <input matInput type="email" id="emailAddress" [formField]="searchIndividualsSignalForm.emailAddress"
                 placeholder="{{ 'enter.email.address' | translate }}">
               <mat-icon matSuffix>email</mat-icon>
             </mat-form-field>
 
             <mat-form-field appearance="outline" class="field-half">
               <mat-label>{{ 'kyc.status' | translate }}</mat-label>
-              <mat-select id="kycStatus" [field]="searchIndividualsSignalForm.kycStatus"
+              <mat-select id="kycStatus" [formField]="searchIndividualsSignalForm.kycStatus"
                 placeholder="{{ 'select.kyc.status' | translate }}">
                 <mat-option value="">{{ 'all.statuses' | translate }}</mat-option>
                 @for (key of KycComplianceStatusOptions; track key) {

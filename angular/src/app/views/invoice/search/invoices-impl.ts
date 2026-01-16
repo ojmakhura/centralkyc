@@ -7,7 +7,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { MaterialModule } from '@app/material.module';
 import { TableComponent } from '@components/table/table';
 import { Loader } from "@shared/loader/loader";
-import { Field } from '@angular/forms/signals';
+import { FormField } from '@angular/forms/signals';
 import { InvoiceSearchCriteria } from '@app/models/bw/co/centralkyc/invoice/invoice-search-criteria';
 import { SearchObject } from '@app/models/search-object';
 import { ColumnModel } from '@app/models/column.model';
@@ -25,7 +25,7 @@ import { ColumnModel } from '@app/models/column.model';
     MaterialModule,
     TableComponent,
     Loader,
-    Field,
+    FormField,
   ],
   providers: [
     CurrencyPipe,

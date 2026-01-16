@@ -50,7 +50,7 @@
           <div class="field-row">
             <mat-form-field appearance="outline" class="field-half">
               <mat-label>{{ 'kyc.duration' | translate }}</mat-label>
-              <input matInput type="number" id="kycDuration" [field]="editSettingsSignalForm.kycDuration"
+              <input matInput type="number" id="kycDuration" [formField]="editSettingsSignalForm.kycDuration"
                 placeholder="{{ 'enter.kyc.duration' | translate }}" />
               <mat-icon matSuffix>schedule</mat-icon>
               @for (error of editSettingsSignalForm.kycDuration.errors; track error) {
@@ -59,11 +59,11 @@
             </mat-form-field>
             <mat-form-field appearance="outline" class="field-half">
               <mat-label>{{ 'client.request.file.type' | translate }}</mat-label>
-              <mat-select id="clientRequestFileType" [field]="editSettingsSignalForm.clientRequestFileType"
+              <mat-select id="clientRequestFileType" [formField]="editSettingsSignalForm.clientRequestFileType"
                 [compareWith]="documentCompare">
                 <mat-option>
                   <ngx-mat-select-search [placeholderLabel]="'Search'"
-                    [field]="editSettingsSignalForm.clientRequestFileTypeFilter"
+                    [formField]="editSettingsSignalForm.clientRequestFileTypeFilter"
                     [noEntriesFoundLabel]="'No Entries Found'"></ngx-mat-select-search>
                   <button mat-flat-button color="primary" type="button"
                     (click)="filterClientRequestFileType()">Search</button>
@@ -80,11 +80,11 @@
           <div class="field-row">
             <mat-form-field appearance="outline" class="field-half">
               <mat-label>{{ 'invoice.document.type' | translate }}</mat-label>
-              <mat-select id="invoiceDocumentType" [field]="editSettingsSignalForm.invoiceDocumentType"
+              <mat-select id="invoiceDocumentType" [formField]="editSettingsSignalForm.invoiceDocumentType"
                 [compareWith]="documentCompare">
                 <mat-option>
                   <ngx-mat-select-search [placeholderLabel]="'Search'"
-                    [field]="editSettingsSignalForm.invoiceDocumentTypeFilter"
+                    [formField]="editSettingsSignalForm.invoiceDocumentTypeFilter"
                     [noEntriesFoundLabel]="'No Entries Found'"></ngx-mat-select-search>
                   <button mat-flat-button color="primary" type="button"
                     (click)="filterInvoiceDocumentType()">Search</button>
@@ -98,11 +98,11 @@
 
             <mat-form-field appearance="outline" class="field-half">
               <mat-label>{{ 'invoice.template.type' | translate }}</mat-label>
-              <mat-select id="invoiceTemplateType" [field]="editSettingsSignalForm.invoiceTemplateType"
+              <mat-select id="invoiceTemplateType" [formField]="editSettingsSignalForm.invoiceTemplateType"
                 [compareWith]="documentCompare">
                 <mat-option>
                   <ngx-mat-select-search [placeholderLabel]="'Search'"
-                    [field]="editSettingsSignalForm.invoiceTemplateTypeFilter"
+                    [formField]="editSettingsSignalForm.invoiceTemplateTypeFilter"
                     [noEntriesFoundLabel]="'No Entries Found'"></ngx-mat-select-search>
                   <button mat-flat-button color="primary" type="button"
                     (click)="filterInvoiceTemplateType()">Search</button>
@@ -153,11 +153,11 @@
           <div class="field-row">
             <mat-form-field appearance="outline" class="field-half">
               <mat-label>{{ 'quotation.document.type' | translate }}</mat-label>
-              <mat-select id="quotationDocumentType" [field]="editSettingsSignalForm.quotationDocumentType"
+              <mat-select id="quotationDocumentType" [formField]="editSettingsSignalForm.quotationDocumentType"
                 [compareWith]="documentCompare">
                 <mat-option>
                   <ngx-mat-select-search [placeholderLabel]="'Search'"
-                    [field]="editSettingsSignalForm.quotationDocumentTypeFilter"
+                    [formField]="editSettingsSignalForm.quotationDocumentTypeFilter"
                     [noEntriesFoundLabel]="'No Entries Found'"></ngx-mat-select-search>
                   <button mat-flat-button color="primary" type="button"
                     (click)="filterQuotationDocumentType()">Search</button>
@@ -171,11 +171,11 @@
 
             <mat-form-field appearance="outline" class="field-half">
               <mat-label>{{ 'quotation.template.type' | translate }}</mat-label>
-              <mat-select id="quotationTemplateType" [field]="editSettingsSignalForm.quotationTemplateType"
+              <mat-select id="quotationTemplateType" [formField]="editSettingsSignalForm.quotationTemplateType"
                 [compareWith]="documentCompare">
                 <mat-option>
                   <ngx-mat-select-search [placeholderLabel]="'Search'"
-                    [field]="editSettingsSignalForm.quotationTemplateTypeFilter"
+                    [formField]="editSettingsSignalForm.quotationTemplateTypeFilter"
                     [noEntriesFoundLabel]="'No Entries Found'"></ngx-mat-select-search>
                   <button mat-flat-button color="primary" type="button"
                     (click)="filterQuotationTemplateType()">Search</button>
@@ -246,19 +246,19 @@
 
               <mat-form-field appearance="outline" class="field-quarter">
                 <mat-label translate>min</mat-label>
-                <input matInput type="number" id="salaryRangeMin_{{i}}" [field]="item.min" />
+                <input matInput type="number" id="salaryRangeMin_{{i}}" [formField]="item.min" />
                 <mat-icon matSuffix>trending_down</mat-icon>
               </mat-form-field>
 
               <mat-form-field appearance="outline" class="field-quarter">
                 <mat-label translate>max</mat-label>
-                <input matInput type="number" id="salaryRangeMax_{{i}}" [field]="item.max" />
+                <input matInput type="number" id="salaryRangeMax_{{i}}" [formField]="item.max" />
                 <mat-icon matSuffix>trending_up</mat-icon>
               </mat-form-field>
 
               <mat-form-field appearance="outline" class="field-quarter">
                 <mat-label translate>active</mat-label>
-                <mat-select id="salaryRangeActive_{{i}}" [field]="item.active">
+                <mat-select id="salaryRangeActive_{{i}}" [formField]="item.active">
                   <mat-option [value]="true">{{ 'yes' | translate }}</mat-option>
                   <mat-option [value]="false">{{ 'no' | translate }}</mat-option>
                 </mat-select>
@@ -303,10 +303,10 @@
               <mat-form-field appearance="outline" class="field-full-width">
                 <mat-label>{{ 'selected.org.document' | translate }}</mat-label>
                 <mat-select id="selectedOrgDocument" [compareWith]="documentCompare"
-                  [field]="editSettingsSignalForm.selectedOrgDocument">
+                  [formField]="editSettingsSignalForm.selectedOrgDocument">
                   <mat-option>
                     <ngx-mat-select-search [placeholderLabel]="'Search'"
-                      [field]="editSettingsSignalForm.selectedOrgDocumentFilter"
+                      [formField]="editSettingsSignalForm.selectedOrgDocumentFilter"
                       [noEntriesFoundLabel]="'No Entries Found'"></ngx-mat-select-search>
                     <button mat-flat-button type="button" color="primary" (click)="filterSelectedOrgDocument()">Search</button>
                   </mat-option>
@@ -347,10 +347,10 @@
               <mat-form-field appearance="outline" class="field-full-width">
                 <mat-label>{{ 'selected.kyc.org.document' | translate }}</mat-label>
                 <mat-select id="selectedKycOrgDocument" [compareWith]="documentCompare"
-                  [field]="editSettingsSignalForm.selectedKycOrgDocument">
+                  [formField]="editSettingsSignalForm.selectedKycOrgDocument">
                   <mat-option>
                     <ngx-mat-select-search [placeholderLabel]="'Search'"
-                      [field]="editSettingsSignalForm.selectedKycOrgDocumentFilter"
+                      [formField]="editSettingsSignalForm.selectedKycOrgDocumentFilter"
                       (keyup.enter)="filterSelectedKycOrgDocument()"
                       [noEntriesFoundLabel]="'No Entries Found'"></ngx-mat-select-search>
                     <button mat-flat-button type="button" color="primary" (click)="filterSelectedKycOrgDocument()">Search</button>
@@ -391,10 +391,10 @@
               <mat-form-field appearance="outline" class="field-full-width">
                 <mat-label>{{ 'selected.ind.document' | translate }}</mat-label>
                 <mat-select id="selectedIndDocument" [compareWith]="documentCompare"
-                  [field]="editSettingsSignalForm.selectedIndDocument">
+                  [formField]="editSettingsSignalForm.selectedIndDocument">
                   <mat-option>
                     <ngx-mat-select-search [placeholderLabel]="'Search'"
-                      [field]="editSettingsSignalForm.selectedIndDocumentFilter"
+                      [formField]="editSettingsSignalForm.selectedIndDocumentFilter"
                       (keyup.enter)="filterSelectedIndDocument()"
                       [noEntriesFoundLabel]="'No Entries Found'"></ngx-mat-select-search>
                     <button mat-flat-button type="button" color="primary" (click)="filterSelectedIndDocument()">Search</button>
@@ -436,10 +436,10 @@
               <mat-form-field appearance="outline" class="field-full-width">
                 <mat-label>{{ 'selected.kyc.ind.document' | translate }}</mat-label>
                 <mat-select id="selectedKycIndDocument" [compareWith]="documentCompare"
-                  [field]="editSettingsSignalForm.selectedKycIndDocument">
+                  [formField]="editSettingsSignalForm.selectedKycIndDocument">
                   <mat-option>
                     <ngx-mat-select-search [placeholderLabel]="'Search'"
-                      [field]="editSettingsSignalForm.selectedKycIndDocumentFilter"
+                      [formField]="editSettingsSignalForm.selectedKycIndDocumentFilter"
                       (keyup.enter)="filterSelectedKycIndDocument()"
                       [noEntriesFoundLabel]="'No Entries Found'"></ngx-mat-select-search>
                     <button mat-flat-button type="button" color="primary" (click)="filterSelectedKycIndDocument()">Search</button>

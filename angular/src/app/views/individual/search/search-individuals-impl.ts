@@ -7,7 +7,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { MaterialModule } from '@app/material.module';
 import { TableComponent } from '@components/table/table';
 import { Loader } from "@shared/loader/loader";
-import { Field } from '@angular/forms/signals';
+import { FormField } from '@angular/forms/signals';
 import { MatPaginator } from '@angular/material/paginator';
 import { IndividualSearchCriteria } from '@app/models/bw/co/centralkyc/individual/individual-search-criteria';
 import { SearchObject } from '@app/models/search-object';
@@ -23,7 +23,7 @@ import { SearchObject } from '@app/models/search-object';
     MaterialModule,
     TableComponent,
     Loader,
-    Field,
+    FormField,
   ],
 })
 export class SearchIndividualsImplComponent extends SearchIndividualsComponent {

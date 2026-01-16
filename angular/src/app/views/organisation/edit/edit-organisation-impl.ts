@@ -5,7 +5,7 @@ import { CommonModule } from '@angular/common';
 import { TranslateModule } from '@ngx-translate/core';
 import { MaterialModule } from '@app/material.module';
 import { Loader } from "@shared/loader/loader";
-import { Field } from '@angular/forms/signals';
+import { FormField } from '@angular/forms/signals';
 import { RouterLink, RouterModule } from "@angular/router";
 import { PhoneNumber } from '@app/models/bw/co/centralkyc/phone-number';
 import { OrganisationDomain } from '@app/models/bw/co/centralkyc/organisation/organisation-domain';
@@ -21,7 +21,7 @@ import { OrganisationDTO } from '@app/models/bw/co/centralkyc/organisation/organ
     TranslateModule,
     MaterialModule,
     Loader,
-    Field,
+    FormField,
     RouterModule
 ],
 })

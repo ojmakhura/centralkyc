@@ -10,7 +10,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { MaterialModule } from '@app/material.module';
 import { TableComponent } from '@components/table/table';
 import { Loader } from '@shared/loader/loader';
-import { Field } from '@angular/forms/signals';
+import { FormField } from '@angular/forms/signals';
 import { SettingsApi } from '@app/services/bw/co/centralkyc/settings/settings-api';
 import { DocumentTypeApi } from '@app/services/bw/co/centralkyc/document/type/document-type-api';
 import { DocumentApi } from '@app/services/bw/co/centralkyc/document/document-api';
@@ -33,7 +33,7 @@ import Swal from 'sweetalert2';
     MaterialModule,
     TableComponent,
     Loader,
-    Field,
+    FormField,
   ],
 })
 export class EditSettingsImplComponent extends EditSettingsComponent {

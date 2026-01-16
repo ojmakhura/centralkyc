@@ -6,7 +6,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
 import { MaterialModule } from '@app/material.module';
 import { Loader } from "@shared/loader/loader";
-import { Field } from '@angular/forms/signals';
+import { FormField } from '@angular/forms/signals';
 import { OrganisationApiStore } from '@app/store/bw/co/centralkyc/organisation/organisation-api.store';
 import { SearchObject } from '@app/models/search-object';
 import { OrganisationSearchCriteria } from '@app/models/bw/co/centralkyc/organisation/organisation-search-criteria';
@@ -23,7 +23,7 @@ import { KycSubscriptionDTO } from '@app/models/bw/co/centralkyc/subscription/ky
     TranslateModule,
     MaterialModule,
     Loader,
-    Field,
+    FormField,
   ],
 })
 export class EditSubscriptionImplComponent extends EditSubscriptionComponent {

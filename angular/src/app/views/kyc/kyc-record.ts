@@ -12,7 +12,7 @@ import {
     OnDestroy,
 } from '@angular/core';
 import { form } from '@angular/forms/signals';
-import { Field } from '@angular/forms/signals';
+import { FormField } from '@angular/forms/signals';
 import { ActivatedRoute, Router } from '@angular/router';
 import { KycRecordControllerImpl } from '@controllers/kyc/kyc-record-controller-impl';
 import { UseCaseScope } from '@app/utils/use-case-scope';
@@ -54,7 +54,7 @@ export class KycRecordSearchForm {
     MaterialModule,
     TableComponent,
     Loader,
-    Field,
+    FormField,
     RouterModule,
   ],
 })

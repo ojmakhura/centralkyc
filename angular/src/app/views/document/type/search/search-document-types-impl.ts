@@ -7,7 +7,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { MaterialModule } from '@app/material.module';
 import { TableComponent } from '@components/table/table';
 import { Loader } from "@shared/loader/loader";
-import { Field } from '@angular/forms/signals';
+import { FormField } from '@angular/forms/signals';
 import { MatPaginator } from '@angular/material/paginator';
 import { Page } from '@app/models/page.model';
 import { DocumentTypeDTO } from '@app/models/bw/co/centralkyc/document/type/document-type-dto';
@@ -26,7 +26,7 @@ import { ActionTemplate } from '@app/models/action-template';
     MaterialModule,
     TableComponent,
     Loader,
-    Field,
+    FormField,
   ],
 })
 export class SearchDocumentTypesImplComponent extends SearchDocumentTypesComponent {

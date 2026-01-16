@@ -92,7 +92,7 @@
                 <mat-icon class="field-icon">flag</mat-icon>
                 <span>{{ 'status' | translate }}</span>
               </mat-label>
-              <mat-select id="status" [field]="editSubscriptionSignalForm.status" required>
+              <mat-select id="status" [formField]="editSubscriptionSignalForm.status">
                 @for(key of KycSubsciptionStatusOptions; track key) {
                   <mat-option [value]="key">
                     <div class="select-option-content">
@@ -117,7 +117,7 @@
                 <mat-icon class="field-icon">confirmation_number</mat-icon>
                 <span>{{ 'ref' | translate }}</span>
               </mat-label>
-              <input matInput type="text" id="ref" [field]="editSubscriptionSignalForm.ref" />
+              <input matInput type="text" id="ref" [formField]="editSubscriptionSignalForm.ref" />
               <mat-icon matSuffix class="field-suffix-icon readonly-icon">lock</mat-icon>
               <mat-hint>
                 <mat-icon class="hint-icon">info</mat-icon>
@@ -147,11 +147,11 @@
                 <mat-icon class="field-icon">business</mat-icon>
                 <span>{{ 'organisation' | translate }}</span>
               </mat-label>
-              <mat-select id="organisation" [compareWith]="organisationCompare" [field]="editSubscriptionSignalForm.organisation">
+              <mat-select id="organisation" [compareWith]="organisationCompare" [formField]="editSubscriptionSignalForm.organisation">
                 <mat-option>
                   <ngx-mat-select-search
                     [placeholderLabel]="'search.organisation' | translate"
-                    [field]="editSubscriptionSignalForm.organisationFilter"
+                    [formField]="editSubscriptionSignalForm.organisationFilter"
                     (keyup.enter)="filterOrganisation()"
                     [noEntriesFoundLabel]="'no.entries.found' | translate">
                   </ngx-mat-select-search>
@@ -200,7 +200,7 @@
                 <mat-icon class="field-icon">schedule</mat-icon>
                 <span>{{ 'period' | translate }}</span>
               </mat-label>
-              <mat-select id="period" [field]="editSubscriptionSignalForm.period" required>
+              <mat-select id="period" [formField]="editSubscriptionSignalForm.period">
                 @for(key of TimePeriodOptions; track key) {
                   <mat-option [value]="key">
                     <div class="select-option-content">
@@ -225,7 +225,7 @@
                 <mat-icon class="field-icon">payments</mat-icon>
                 <span>{{ 'amount' | translate }}</span>
               </mat-label>
-              <input matInput type="number" id="amount" [field]="editSubscriptionSignalForm.amount" step="0.01" />
+              <input matInput type="number" id="amount" [formField]="editSubscriptionSignalForm.amount" step="0.01" />
               <span matTextPrefix class="currency-prefix">BWP&nbsp;</span>
               <mat-icon matSuffix class="field-suffix-icon">attach_money</mat-icon>
               <!-- @if(amountControl.hasError('required')) {
@@ -242,7 +242,7 @@
                 <mat-icon class="field-icon">event_available</mat-icon>
                 <span>{{ 'start.date' | translate }}</span>
               </mat-label>
-              <input matInput [matDatepicker]="startDatePicker" id="startDate" [field]="editSubscriptionSignalForm.startDate" required />
+              <input matInput [matDatepicker]="startDatePicker" id="startDate" [formField]="editSubscriptionSignalForm.startDate" />
               <mat-datepicker-toggle matIconSuffix [for]="startDatePicker">
                 <mat-icon matDatepickerToggleIcon>calendar_today</mat-icon>
               </mat-datepicker-toggle>
@@ -261,7 +261,7 @@
                 <mat-icon class="field-icon">event_busy</mat-icon>
                 <span>{{ 'end.date' | translate }}</span>
               </mat-label>
-              <input matInput [matDatepicker]="endDatePicker" id="endDate" [field]="editSubscriptionSignalForm.endDate" />
+              <input matInput [matDatepicker]="endDatePicker" id="endDate" [formField]="editSubscriptionSignalForm.endDate" />
               <mat-datepicker-toggle matIconSuffix [for]="endDatePicker">
                 <mat-icon matDatepickerToggleIcon>calendar_today</mat-icon>
               </mat-datepicker-toggle>

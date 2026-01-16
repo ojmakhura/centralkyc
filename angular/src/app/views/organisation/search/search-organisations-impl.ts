@@ -7,7 +7,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { MaterialModule } from '@app/material.module';
 import { TableComponent } from '@components/table/table';
 import { Loader } from "@shared/loader/loader";
-import { Field } from '@angular/forms/signals';
+import { FormField } from '@angular/forms/signals';
 import { OrganisationSearchCriteria } from '@app/models/bw/co/centralkyc/organisation/organisation-search-criteria';
 import { SearchObject } from '@app/models/search-object';
 import { Page } from '@app/models/page.model';
@@ -26,7 +26,7 @@ import { MatPaginator } from '@angular/material/paginator';
     MaterialModule,
     TableComponent,
     Loader,
-    Field,
+    FormField,
   ],
 })
 export class SearchOrganisationsImplComponent extends SearchOrganisationsComponent {

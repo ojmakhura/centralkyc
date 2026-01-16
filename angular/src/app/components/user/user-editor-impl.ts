@@ -35,7 +35,7 @@ import { BranchDTO } from '@models/bw/co/centralkyc/organisation/branch/branch-d
 import { SearchObject } from '@models/search-object';
 import { UserEditorComponent } from './user-editor';
 import { TableComponent } from '@components/table/table';
-import { Field, PathKind, SchemaPathTree } from "@angular/forms/signals";
+import { FormField, PathKind, SchemaPathTree } from "@angular/forms/signals";
 
 @Component({
   selector: "app-user-editor",
@@ -49,7 +49,7 @@ import { Field, PathKind, SchemaPathTree } from "@angular/forms/signals";
     TranslateModule,
     MaterialModule,
     TableComponent,
-    Field,
+    FormField,
   ]
 })
 export class UserEditorImplComponent extends UserEditorComponent {

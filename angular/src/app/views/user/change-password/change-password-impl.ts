@@ -11,7 +11,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { MaterialModule } from '@app/material.module';
 import { TableComponent } from '@components/table/table';
 import { Loader } from "@shared/loader/loader";
-import { Field } from '@angular/forms/signals';
+import { FormField } from '@angular/forms/signals';
 
 @Component({
   selector: 'app-change-password',
@@ -26,7 +26,7 @@ import { Field } from '@angular/forms/signals';
     MaterialModule,
     TableComponent,
     Loader,
-    Field,
+    FormField,
   ],
 })
 export class ChangePasswordImplComponent extends ChangePasswordComponent {

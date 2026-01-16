@@ -102,8 +102,8 @@ export class TableComponent<T> implements OnInit, OnDestroy, AfterViewInit {
   ngAfterViewInit() {
     this.tablePaginator.page.subscribe({
       next: (paginator: MatPaginator) => {
-        if (this.tableLoadEmitter) {
-          this.tableLoadEmitter.emit({
+        if (this.paginatorChange) {
+          this.paginatorChange.emit({
             pageNumber: paginator.pageIndex,
             pageSize: paginator.pageSize,
           });

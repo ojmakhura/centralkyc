@@ -25,7 +25,7 @@ import { BranchEditorImplComponent } from '@app/components/organisation/branch/b
 import { ActionTemplate } from '@app/models/action-template';
 import { KycSubscriptionDTO } from '@app/models/bw/co/centralkyc/subscription/kyc-subscription-dto';
 import { KycInvoiceDTO } from '@app/models/bw/co/centralkyc/invoice/kyc-invoice-dto';
-import { Field } from '@angular/forms/signals';
+import { FormField } from '@angular/forms/signals';
 import { PhoneNumber } from '@app/models/bw/co/centralkyc/phone-number';
 import { OrganisationDomain } from '@app/models/bw/co/centralkyc/organisation/organisation-domain';
 import { BranchApiStore } from '@app/store/bw/co/centralkyc/organisation/branch/branch-api.store';
@@ -49,7 +49,7 @@ import { ClientRequestStatus } from '@app/models/bw/co/centralkyc/organisation/c
     MaterialModule,
     TableComponent,
     Loader,
-    Field
+    FormField
   ],
   providers: [DatePipe, CurrencyPipe],
 })
@@ -303,7 +303,7 @@ export class OrganisationDetailsImplComponent extends OrganisationDetailsCompone
         if (data?.action === 'save') {
           this.branchApi.save(data.value).subscribe({
             next: (field) => {
-              // this.toastr.success('Field saved successfully');
+              // this.toastr.success('FormField saved successfully');
               this.loadBranches();
             },
             error: (err) => {

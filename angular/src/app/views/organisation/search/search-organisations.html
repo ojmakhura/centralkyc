@@ -49,7 +49,7 @@
           <div class="field-row">
             <mat-form-field appearance="outline" class="col-md-8">
               <mat-label>{{ 'criteria' | translate }}</mat-label>
-              <input matInput type="text" id="criteria" [field]="searchOrganisationsSignalForm.criteria" placeholder="{{ 'enter.search.criteria' | translate }}">
+              <input matInput type="text" id="criteria" [formField]="searchOrganisationsSignalForm.criteria" placeholder="{{ 'enter.search.criteria' | translate }}">
               <mat-icon matSuffix>search</mat-icon>
             </mat-form-field>
           </div>

@@ -13,7 +13,7 @@ import {
   linkedSignal,
 } from '@angular/core';
 import {
-  Field,
+  FormField,
   form,
 } from "@angular/forms/signals";
 import { ActivatedRoute, Router, RouterLink, RouterModule } from '@angular/router';
@@ -66,7 +66,7 @@ export class ClientRequestSearchForm {
     TranslateModule,
     TableComponent,
     Loader,
-    Field,
+    FormField,
     RouterModule
 ],
 })

@@ -49,15 +49,15 @@
           <div class="field-row">
             <mat-form-field appearance="outline" class="field-half">
               <mat-label>{{ 'ref' | translate }}</mat-label>
-              <input matInput type="text" id="ref" [field]="invoicesSignalForm.ref" placeholder="{{ 'enter.ref' | translate }}">
+              <input matInput type="text" id="ref" [formField]="invoicesSignalForm.ref" placeholder="{{ 'enter.ref' | translate }}">
               <mat-icon matSuffix>confirmation_number</mat-icon>
             </mat-form-field>
 
             <mat-form-field appearance="outline" class="field-half">
               <mat-label>{{ 'organisation' | translate }}</mat-label>
-              <mat-select id="organisation" [compareWith]="organisationCompare" [field]="invoicesSignalForm.organisation" placeholder="{{ 'select.organisation' | translate }}">
+              <mat-select id="organisation" [compareWith]="organisationCompare" [formField]="invoicesSignalForm.organisation" placeholder="{{ 'select.organisation' | translate }}">
                 <mat-option>
-                  <ngx-mat-select-search placeholderLabel="'Search'" [field]="invoicesSignalForm.organisationFilter" (keyup.enter)="filterOrganisation()" noEntriesFoundLabel="'No Entries Found'"></ngx-mat-select-search>
+                  <ngx-mat-select-search placeholderLabel="'Search'" [formField]="invoicesSignalForm.organisationFilter" (keyup.enter)="filterOrganisation()" noEntriesFoundLabel="'No Entries Found'"></ngx-mat-select-search>
                 </mat-option>
                 @for(item of organisationFilteredList(); track item) {
                 <mat-option [value]="item">{{ item.name }}</mat-option>
@@ -69,7 +69,7 @@
 
           <div class="field-row">
             <div class="checkbox-field">
-              <mat-checkbox id="paid" [field]="invoicesSignalForm.paid">
+              <mat-checkbox id="paid" [formField]="invoicesSignalForm.paid">
                 <span translate>paid</span>
               </mat-checkbox>
             </div>

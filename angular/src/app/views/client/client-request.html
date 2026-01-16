@@ -47,14 +47,14 @@
           <div class="field-row">
             <mat-form-field appearance="outline" class="field-half">
               <mat-label>{{ 'name' | translate }}</mat-label>
-              <input matInput type="text" id="name" [field]="clientRequestSignalForm.name"
+              <input matInput type="text" id="name" [formField]="clientRequestSignalForm.name"
                 placeholder="{{ 'enter.name' | translate }}">
               <mat-icon matSuffix>person</mat-icon>
             </mat-form-field>
 
             <mat-form-field appearance="outline" class="field-half">
               <mat-label>{{ 'email.address' | translate }}</mat-label>
-              <input matInput type="email" id="emailAddress" [field]="clientRequestSignalForm.emailAddress"
+              <input matInput type="email" id="emailAddress" [formField]="clientRequestSignalForm.emailAddress"
                 placeholder="{{ 'enter.email.address' | translate }}">
               <mat-icon matSuffix>email</mat-icon>
             </mat-form-field>
@@ -67,10 +67,10 @@
                 <span>{{ 'organisation' | translate }}</span>
               </mat-label>
               <mat-select id="organisation" [compareWith]="organisationCompare"
-                [field]="clientRequestSignalForm.organisation">
+                [formField]="clientRequestSignalForm.organisation">
                 <mat-option>
                   <ngx-mat-select-search [placeholderLabel]="'search.organisation' | translate"
-                    [field]="clientRequestSignalForm.organisationFilter" (keyup.enter)="filterOrganisation()"
+                    [formField]="clientRequestSignalForm.organisationFilter" (keyup.enter)="filterOrganisation()"
                     [noEntriesFoundLabel]="'no.entries.found' | translate">
                   </ngx-mat-select-search>
                 </mat-option>
@@ -94,7 +94,7 @@
 
             <mat-form-field appearance="outline" class="field-half">
               <mat-label>{{ 'status' | translate }}</mat-label>
-              <mat-select id="status" [field]="clientRequestSignalForm.status"
+              <mat-select id="status" [formField]="clientRequestSignalForm.status"
                 placeholder="{{ 'select.status' | translate }}">
                 <mat-option value="">{{ 'all.statuses' | translate }}</mat-option>
                 @for (key of ClientRequestStatusOptions; track key) {
@@ -110,7 +110,7 @@
           <div class="field-row">
             <mat-form-field appearance="outline" class="field-half">
               <mat-label>{{ 'target.entity' | translate }}</mat-label>
-              <mat-select id="target" [field]="clientRequestSignalForm.target"
+              <mat-select id="target" [formField]="clientRequestSignalForm.target"
                 placeholder="{{ 'select.target.entity' | translate }}">
                 <mat-option value="">{{ 'all.targets' | translate }}</mat-option>
                 @for (key of TargetEntityOptions; track key) {
@@ -130,10 +130,10 @@
                 <span>{{ 'target.organisation' | translate }}</span>
               </mat-label>
               <mat-select id="targetIdOrganisation" [compareWith]="targetOrganisationCompare"
-                [field]="clientRequestSignalForm.targetId">
+                [formField]="clientRequestSignalForm.targetId">
                 <mat-option>
                   <ngx-mat-select-search [placeholderLabel]="'search.organisation' | translate"
-                    [field]="clientRequestSignalForm.targetIdFilter" (keyup.enter)="filterTargetOrganisation()"
+                    [formField]="clientRequestSignalForm.targetIdFilter" (keyup.enter)="filterTargetOrganisation()"
                     [noEntriesFoundLabel]="'no.entries.found' | translate">
                   </ngx-mat-select-search>
                 </mat-option>
@@ -163,10 +163,10 @@
                 <span>{{ 'target.individual' | translate }}</span>
               </mat-label>
               <mat-select id="targetIdIndividual" [compareWith]="individualCompare"
-                [field]="clientRequestSignalForm.targetId">
+                [formField]="clientRequestSignalForm.targetId">
                 <mat-option>
                   <ngx-mat-select-search [placeholderLabel]="'search.individual' | translate"
-                    [field]="clientRequestSignalForm.targetIdFilter" (keyup.enter)="filterTargetIndividual()"
+                    [formField]="clientRequestSignalForm.targetIdFilter" (keyup.enter)="filterTargetIndividual()"
                     [noEntriesFoundLabel]="'no.entries.found' | translate">
                   </ngx-mat-select-search>
                 </mat-option>

@@ -1,6 +1,6 @@
 import { CommonModule } from "@angular/common";
 import { AfterViewInit, Component, computed, effect, inject, Input, linkedSignal, OnDestroy, OnInit, signal } from "@angular/core";
-import { email, Field, form, required } from "@angular/forms/signals";
+import { email, FormField, form, required } from "@angular/forms/signals";
 import { FormsModule } from "@angular/forms";
 import { Loader } from "@app/@shared/loader/loader";
 import { MaterialModule } from "@app/material.module";
@@ -46,7 +46,7 @@ export class EditClientRequestVarsForm {
     MaterialModule,
     TranslateModule,
     Loader,
-    Field,
+    FormField,
     MatSelectModule,
     NgxMatSelectSearchModule
   ],

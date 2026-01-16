@@ -10,7 +10,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { MaterialModule } from '@app/material.module';
 import { TableComponent } from '@components/table/table';
 import { Loader } from "@shared/loader/loader";
-import { Field } from '@angular/forms/signals';
+import { FormField } from '@angular/forms/signals';
 import { MatPaginator } from '@angular/material/paginator';
 import { ColumnModel } from '@app/models/column.model';
 
@@ -27,7 +27,7 @@ import { ColumnModel } from '@app/models/column.model';
     MaterialModule,
     TableComponent,
     Loader,
-    Field,
+    FormField,
   ],
   providers: [DatePipe, CurrencyPipe],
 })

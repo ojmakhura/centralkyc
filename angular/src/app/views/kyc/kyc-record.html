@@ -46,13 +46,13 @@
           <div class="field-row">
             <mat-form-field appearance="outline" class="field-half">
               <mat-label>{{ 'name' | translate }}</mat-label>
-              <input matInput type="text" id="name" [field]="kycRecordSearchSignalForm.name"
+              <input matInput type="text" id="name" [formField]="kycRecordSearchSignalForm.name"
                 placeholder="{{ 'enter.name' | translate }}">
               <mat-icon matSuffix>person</mat-icon>
             </mat-form-field>
             <mat-form-field appearance="outline" class="field-half">
               <mat-label>{{ 'registration' | translate }}</mat-label>
-              <input matInput type="text" id="registration" [field]="kycRecordSearchSignalForm.registration"
+              <input matInput type="text" id="registration" [formField]="kycRecordSearchSignalForm.registration"
                 placeholder="{{ 'enter.registration' | translate }}">
               <mat-icon matSuffix>badge</mat-icon>
             </mat-form-field>
@@ -60,7 +60,7 @@
           <div class="field-row">
             <mat-form-field appearance="outline" class="field-half">
               <mat-label>{{ 'target.entity' | translate }}</mat-label>
-              <mat-select id="target" [field]="kycRecordSearchSignalForm.target"
+              <mat-select id="target" [formField]="kycRecordSearchSignalForm.target"
                 placeholder="{{ 'select.target.entity' | translate }}">
                 <mat-option value="">{{ 'all.targets' | translate }}</mat-option>
                 @for (key of TargetEntityOptions; track key) {
@@ -73,7 +73,7 @@
             </mat-form-field>
             <mat-form-field appearance="outline" class="field-half">
               <mat-label>{{ 'target.id' | translate }}</mat-label>
-              <input matInput type="text" id="targetId" [field]="kycRecordSearchSignalForm.targetId"
+              <input matInput type="text" id="targetId" [formField]="kycRecordSearchSignalForm.targetId"
                 placeholder="{{ 'enter.target.id' | translate }}">
               <mat-icon matSuffix>fingerprint</mat-icon>
             </mat-form-field>
@@ -81,7 +81,7 @@
           <div class="field-row">
             <mat-form-field class="field-half">
               <mat-label>{{ 'kyc.status' | translate }}</mat-label>
-              <mat-select id="statuses" [field]="kycRecordSearchSignalForm.statuses" multiple
+              <mat-select id="statuses" [formField]="kycRecordSearchSignalForm.statuses" multiple
                 placeholder="{{ 'select.kyc.statuses' | translate }}">
                 @for (key of KycComplianceStatusOptions; track key) {
                 <mat-option [value]="key">

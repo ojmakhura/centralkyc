@@ -63,7 +63,7 @@
             <mat-label id="kycStatus_label" for="kycStatus">
               <span translate>lyc.status</span>
             </mat-label>
-            <mat-radio-group id="kycStatus" [field]="editIndividualSignalForm.kycStatus">
+            <mat-radio-group id="kycStatus" [formField]="editIndividualSignalForm.kycStatus">
               @for(status of KycComplianceStatusOptions; track status) {
               <mat-radio-button [value]="status">{{ status }}</mat-radio-button>
               }
@@ -78,7 +78,7 @@
               <mat-label id="identityType_label" for="identityType">
                 <span translate>identity.type</span>
               </mat-label>
-              <mat-select id="identityType" [field]="editIndividualSignalForm.identityType" required>
+              <mat-select id="identityType" [formField]="editIndividualSignalForm.identityType">
                 <mat-option></mat-option>
                 @for (key of IndividualIdentityTypeOptions; track key) {
                 <mat-option [value]="key">{{ IndividualIdentityTypeT[key] }}</mat-option>
@@ -93,7 +93,7 @@
               <mat-label id="identityNo_label" for="identityNo">
                 <span translate>identity.no</span>
               </mat-label>
-              <input matInput type="text" id="identityNo" [field]="editIndividualSignalForm.identityNo" />
+              <input matInput type="text" id="identityNo" [formField]="editIndividualSignalForm.identityNo" />
               @for (error of editIndividualSignalForm.identityNo().errors(); track error) {
               <mat-error translate>{{error.message}}</mat-error>
               }
@@ -102,7 +102,7 @@
           <div class="field-row">
             <mat-form-field class="field-half">
               <mat-label id="sex_label" class="col-sm-2 col-form-label" for="sex"><span translate>sex</span></mat-label>
-              <mat-select id="sex" [field]="editIndividualSignalForm.sex">
+              <mat-select id="sex" [formField]="editIndividualSignalForm.sex">
                 <mat-option>
                 </mat-option>
                 @for(key of SexOptions; track key) {
@@ -121,7 +121,7 @@
               <mat-label id="firstName_label" for="firstName">
                 <span translate>first.name</span>
               </mat-label>
-              <input matInput type="text" id="firstName" [field]="editIndividualSignalForm.firstName" />
+              <input matInput type="text" id="firstName" [formField]="editIndividualSignalForm.firstName" />
               @for (error of editIndividualSignalForm.identityNo().errors(); track error) {
               <mat-error translate>{{error.message}}</mat-error>
               }
@@ -131,7 +131,7 @@
               <mat-label id="middleName_label" for="middleName">
                 <span translate>middle.name</span>
               </mat-label>
-              <input matInput type="text" id="middleName" [field]="editIndividualSignalForm.middleName" />
+              <input matInput type="text" id="middleName" [formField]="editIndividualSignalForm.middleName" />
             </mat-form-field>
           </div>
 
@@ -140,7 +140,7 @@
               <mat-label id="surname_label" for="surname">
                 <span translate>surname</span>
               </mat-label>
-              <input matInput type="text" id="surname" [field]="editIndividualSignalForm.surname" />
+              <input matInput type="text" id="surname" [formField]="editIndividualSignalForm.surname" />
               @for (error of editIndividualSignalForm.surname().errors(); track error) {
               <mat-error translate>{{error.message}}</mat-error>
               }
@@ -152,7 +152,7 @@
               <mat-label id="nationality_label" for="nationality">
                 <span translate>nationality</span>
               </mat-label>
-              <mat-select id="nationality" [field]="editIndividualSignalForm.nationality">
+              <mat-select id="nationality" [formField]="editIndividualSignalForm.nationality">
                 <mat-option></mat-option>
                 @for (country of countries; track country) {
                 <mat-option [value]="country">{{ country }}</mat-option>
@@ -167,7 +167,7 @@
               <mat-label id="maritalStatus_label" for="maritalStatus">
                 <span translate>marital.status</span>
               </mat-label>
-              <mat-select id="maritalStatus" [field]="editIndividualSignalForm.maritalStatus">
+              <mat-select id="maritalStatus" [formField]="editIndividualSignalForm.maritalStatus">
                 <mat-option></mat-option>
                 @for (key of MaritalStatusOptions; track key) {
                 <mat-option [value]="key">{{ MaritalStatusT[key] }}</mat-option>
@@ -184,7 +184,7 @@
               <mat-label id="employmentStatus_label" for="employmentStatus">
                 <span translate>employment.status</span>
               </mat-label>
-              <mat-select id="employmentStatus" [field]="editIndividualSignalForm.employmentStatus">
+              <mat-select id="employmentStatus" [formField]="editIndividualSignalForm.employmentStatus">
                 <mat-option></mat-option>
                 @for (key of EmploymentStatusOptions; track key) {
                 <mat-option [value]="key">{{ EmploymentStatusT[key] }}</mat-option>
@@ -212,7 +212,7 @@
               <mat-label id="emailAddress_label" for="emailAddress">
                 <span translate>email.address</span>
               </mat-label>
-              <input matInput type="text" id="emailAddress" [field]="editIndividualSignalForm.emailAddress" />
+              <input matInput type="text" id="emailAddress" [formField]="editIndividualSignalForm.emailAddress" />
             </mat-form-field>
             @for (error of editIndividualSignalForm.emailAddress().errors(); track error) {
             <mat-error translate>{{error.message}}</mat-error>
@@ -223,14 +223,14 @@
               <mat-label id="postalAddress_label" for="postalAddress">
                 <span translate>postal.address</span>
               </mat-label>
-              <textarea matInput id="postalAddress" [field]="editIndividualSignalForm.postalAddress"></textarea>
+              <textarea matInput id="postalAddress" [formField]="editIndividualSignalForm.postalAddress"></textarea>
             </mat-form-field>
 
             <mat-form-field class="field-half">
               <mat-label id="physicalAddress_label" for="physicalAddress">
                 <span translate>physical.address</span>
               </mat-label>
-              <textarea matInput id="physicalAddress" [field]="editIndividualSignalForm.physicalAddress"></textarea>
+              <textarea matInput id="physicalAddress" [formField]="editIndividualSignalForm.physicalAddress"></textarea>
             </mat-form-field>
           </div>
           <div class="row">
@@ -247,7 +247,7 @@
                 <div class="field-row">
                   <mat-form-field appearance="outline" class="col-md-4">
                     <mat-label>{{ 'type' | translate }}</mat-label>
-                    <mat-select id="type" [field]="item.type">
+                    <mat-select id="type" [formField]="item.type">
                       <mat-option value="">{{ 'select.type' | translate }}</mat-option>
                       @for (key of PhoneTypeOptions; track key) {
                       <mat-option [value]="key">
@@ -259,7 +259,7 @@
                   </mat-form-field>
                   <mat-form-field class="col-md-4">
                     <mat-label for="phoneNumber" class="col-sm-2 col-form-label" translate>phone.number</mat-label>
-                    <input matInput type="text" id="phoneNumber" [field]="item.phoneNumber" />
+                    <input matInput type="text" id="phoneNumber" [formField]="item.phoneNumber" />
                   </mat-form-field>
                   <button type="button" mat-mini-fab matTooltip="{{'remove' | translate}}" color="warn"
                     (click)="phoneNumbersRemove(i, item().value())">
@@ -283,7 +283,7 @@
         </mat-card-header>
         <mat-card-content>
           <div class="field-row">
-            <mat-checkbox id="hasUser" [field]="editIndividualSignalForm.hasUser" required>
+            <mat-checkbox id="hasUser" [formField]="editIndividualSignalForm.hasUser">
               <span translate>has.user</span>
             </mat-checkbox>
           </div>
@@ -295,10 +295,10 @@
                 <span translate>organisation</span>
               </mat-label>
               <mat-select id="organisation" [compareWith]="organisationCompare"
-                [field]="editIndividualSignalForm.organisation">
+                [formField]="editIndividualSignalForm.organisation">
                 <mat-option>
                   <ngx-mat-select-search [placeholderLabel]="'Search'"
-                    [field]="editIndividualSignalForm.organisationFilter" (keyup.enter)="filterOrganisation()"
+                    [formField]="editIndividualSignalForm.organisationFilter" (keyup.enter)="filterOrganisation()"
                     [noEntriesFoundLabel]="'No Entries Found'"></ngx-mat-select-search>
                 </mat-option>
                 @for (item of organisationList(); track item.id) {
@@ -313,9 +313,9 @@
               <mat-label id="branch_label" for="branch">
                 <span translate>branch</span>
               </mat-label>
-              <mat-select id="branch" [compareWith]="branchCompare" [field]="editIndividualSignalForm.branch">
+              <mat-select id="branch" [compareWith]="branchCompare" [formField]="editIndividualSignalForm.branch">
                 <mat-option>
-                  <ngx-mat-select-search [placeholderLabel]="'Search'" [field]="editIndividualSignalForm.branchFilter"
+                  <ngx-mat-select-search [placeholderLabel]="'Search'" [formField]="editIndividualSignalForm.branchFilter"
                     (keyup.enter)="filterBranch()" [noEntriesFoundLabel]="'No Entries Found'"></ngx-mat-select-search>
                 </mat-option>
                 @for (item of branchList(); track item.id) {

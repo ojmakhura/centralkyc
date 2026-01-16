@@ -6,7 +6,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
 import { MaterialModule } from '@app/material.module';
 import { Loader } from "@shared/loader/loader";
-import { Field } from '@angular/forms/signals';
+import { FormField } from '@angular/forms/signals';
 import { OrganisationApiStore } from '@app/store/bw/co/centralkyc/organisation/organisation-api.store';
 import { BranchApiStore } from '@app/store/bw/co/centralkyc/organisation/branch/branch-api.store';
 import { SearchObject } from '@app/models/search-object';
@@ -26,7 +26,7 @@ import { RouterModule } from '@angular/router';
     TranslateModule,
     MaterialModule,
     Loader,
-    Field,
+    FormField,
     RouterModule
   ],
 })

@@ -7,7 +7,7 @@ import { MaterialModule } from '@app/material.module';
 import { Loader } from '@app/@shared/loader/loader';
 import { EditDocumentTypeComponent, EditDocumentTypeVarsForm } from './edit-document-type';
 import { DocumentTypeDTO } from '@app/models/bw/co/centralkyc/document/type/document-type-dto';
-import { Field } from '@angular/forms/signals';
+import { FormField } from '@angular/forms/signals';
 
 @Component({
   selector: 'app-edit-document-type',
@@ -21,7 +21,7 @@ import { Field } from '@angular/forms/signals';
     TranslateModule,
     MaterialModule,
     Loader,
-    Field,
+    FormField,
   ],
 })
 export class EditDocumentTypeImplComponent extends EditDocumentTypeComponent {
@@ -30,7 +30,7 @@ export class EditDocumentTypeImplComponent extends EditDocumentTypeComponent {
   override success = linkedSignal(() => false);
   override loading = linkedSignal(() => false);
   override loaderMessage = linkedSignal(() => 'Loading...');
-  
+
   constructor() {
     super();
 
@@ -69,7 +69,7 @@ export class EditDocumentTypeImplComponent extends EditDocumentTypeComponent {
 
   override beforeEditDocumentTypeSave(form: any): void {
     this.loading.set(true);
-    
+
     this.documentTypeApi.save(this.editDocumentTypeSignal()).subscribe({
       next: (documentType: DocumentTypeDTO) => {
         this.editDocumentTypeSignal.set(this.updateDocumentTypeSignal(documentType));
