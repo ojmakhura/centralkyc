@@ -52,7 +52,7 @@ export class TableComponent<T> implements OnInit, OnDestroy, AfterViewInit {
   @Input() selectionType = SelectionType.NONE;
 
   @Output() actionClicked: EventEmitter<any> = new EventEmitter<any>();
-  @Output() tableLoadEmitter: EventEmitter<any> = new EventEmitter<any>();
+  @Output() paginatorChange: EventEmitter<any> = new EventEmitter<any>();
   @Input() selectionFilter: any;
 
   dataSource = new MatTableDataSource<T>([]);
