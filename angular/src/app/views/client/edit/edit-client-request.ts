@@ -26,6 +26,11 @@ import { Sex } from "@app/models/bw/co/centralkyc/individual/sex";
 
 export class EditClientRequestVarsForm {
   id: string = '';
+  createdAt: Date | null = null;
+  createdBy: string = '';
+  modifiedAt: Date | null = null;
+  modifiedBy: string = '';
+  targetKycStatus: string | null = null;
   status: ClientRequestStatus = ClientRequestStatus.PENDING;
   organisation: OrganisationListDTO | null = null;
   organisationFilter: string = '';
@@ -222,6 +227,10 @@ export class EditClientRequestComponent implements OnInit, AfterViewInit, OnDest
       this.editClientRequestSignal.update((value) => ({
         ...value,
         id: clientRequest.id,
+        createdAt: clientRequest.createdAt,
+        createdBy: clientRequest.createdBy,
+        modifiedAt: clientRequest.modifiedAt,
+        modifiedBy: clientRequest.modifiedBy,
         status: clientRequest.status,
         organisationId: clientRequest.organisationId,
         organisation: clientRequest.organisationId ? org : null,
@@ -232,7 +241,8 @@ export class EditClientRequestComponent implements OnInit, AfterViewInit, OnDest
         targetObject: target || null,
         organisationFilter: '',
         targetOrganisationFilter: '',
-        targetIndividualFilter: ''
+        targetIndividualFilter: '',
+        targetKycStatus: clientRequest.targetKycStatus || null,
       }));
 
       if (clientRequest.organisationId) {
@@ -355,6 +365,10 @@ export class EditClientRequestComponent implements OnInit, AfterViewInit, OnDest
     const clientRequest = new ClientRequestDTO();
 
     clientRequest.id = formData.id;
+    clientRequest.createdAt = formData.createdAt;
+    clientRequest.createdBy = formData.createdBy;
+    clientRequest.modifiedAt = formData.modifiedAt;
+    clientRequest.modifiedBy = formData.modifiedBy;
     clientRequest.status = formData.status;
     clientRequest.organisationId = formData.organisation?.id;
     clientRequest.organisation = formData.organisation ? formData.organisation.name : '';
