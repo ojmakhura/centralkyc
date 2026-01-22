@@ -63,7 +63,8 @@ management:
     web:
       base-path: /actuator
       exposure:
-        include: '*'
+        include: health,info,metrics,prometheus
+        exclude: env,shutdown,heapdump
   metrics:
     tags:
       application: ${spring.application.name}
