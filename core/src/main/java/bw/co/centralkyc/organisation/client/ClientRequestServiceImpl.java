@@ -22,6 +22,7 @@ import bw.co.centralkyc.individual.IndividualIdentityType;
 import bw.co.centralkyc.individual.IndividualRepository;
 import bw.co.centralkyc.individual.Sex;
 import bw.co.centralkyc.kyc.KycComplianceStatus;
+import ch.qos.logback.core.net.server.Client;
 import io.micrometer.common.util.StringUtils;
 
 import java.io.BufferedReader;
@@ -44,6 +45,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
@@ -51,28 +53,36 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
 
 /**
  * @see bw.co.centralkyc.organisation.client.ClientRequestService
  */
 @Service("clientRequestService")
-@Transactional(propagation = Propagation.REQUIRED, readOnly = false)
 public class ClientRequestServiceImpl
         extends ClientRequestServiceBase {
 
+    @Value("${app.request-token-length}")
+    private int requestTokenLength;
+
+    private final String specialChars = "!@#$%^&*()_-";
+
+    private final PasswordEncoder passwordEncoder;
+
     public ClientRequestServiceImpl(ClientRequestDao clientRequestDao, ClientRequestRepository clientRequestRepository,
             IndividualDao individualDao, IndividualRepository individualRepository, DocumentDao documentDao,
-            DocumentRepository documentRepository, MessageSource messageSource) {
-        super(clientRequestDao, clientRequestRepository, individualDao, individualRepository, documentDao, documentRepository, messageSource);
-        // TODO Auto-generated constructor stub
+            DocumentRepository documentRepository, MessageSource messageSource, PasswordEncoder passwordEncoder) {
+        super(clientRequestDao, clientRequestRepository, individualDao, individualRepository, documentDao,
+                documentRepository, messageSource);
+        this.passwordEncoder = passwordEncoder;
     }
 
     /**
@@ -81,8 +91,9 @@ public class ClientRequestServiceImpl
     @Override
     protected ClientRequestDTO handleFindById(String id)
             throws Exception {
-        
-        ClientRequest clientRequest = clientRequestRepository.findById(id).orElseThrow(() -> new ClientRequestServiceException("ClientRequest not found"));
+
+        ClientRequest clientRequest = clientRequestRepository.findById(id)
+                .orElseThrow(() -> new ClientRequestServiceException("ClientRequest not found"));
 
         return clientRequestDao.toClientRequestDTO(clientRequest);
     }
@@ -95,7 +106,40 @@ public class ClientRequestServiceImpl
             throws Exception {
 
         ClientRequest clientRequestEntity = clientRequestDao.clientRequestDTOToEntity(clientRequest);
+
+        boolean isNew = StringUtils.isBlank(clientRequest.getId());
+        String token = null;
+
+        if (isNew) {
+
+            // Genetare a random token with requestTokenLength length. It should include all
+            // letters, digits and special characters
+
+            token = RandomStringUtils.random(
+                    requestTokenLength,
+                    0,
+                    0,
+                    true,
+                    true,
+                    specialChars.toCharArray());
+
+            // Encode the token
+            String encodedToken = passwordEncoder.encode(token);
+
+            clientRequestEntity.setAccountRequestToken(encodedToken);
+        }
+
         clientRequestEntity = clientRequestRepository.save(clientRequestEntity);
+
+        if (isNew) {
+
+            // For new requests, we might want to send the token via email or other means
+            // For this example, we'll just print it to the console (not recommended for
+            // production)
+            System.out.println("Client Request Created. ID: " + clientRequestEntity.getId() + ", Token: " + token);
+
+        }
+
         return clientRequestDao.toClientRequestDTO(clientRequestEntity);
     }
 
@@ -106,11 +150,11 @@ public class ClientRequestServiceImpl
     protected boolean handleRemove(String id)
             throws Exception {
 
-        if(clientRequestRepository.existsById(id)) {
+        if (clientRequestRepository.existsById(id)) {
             clientRequestRepository.deleteById(id);
             return true;
         }
-        
+
         throw new ClientRequestServiceException("ClientRequest not found");
     }
 
@@ -120,7 +164,7 @@ public class ClientRequestServiceImpl
     @Override
     protected Collection<ClientRequestDTO> handleGetAll()
             throws Exception {
-       
+
         return clientRequestDao.toClientRequestDTOCollection(clientRequestRepository.findAll());
     }
 
@@ -142,7 +186,7 @@ public class ClientRequestServiceImpl
                 : clientRequestRepository.findAll(spec);
 
         return clientRequestDao.toClientRequestDTOCollection(requests);
-        
+
     }
 
     /**
@@ -184,32 +228,28 @@ public class ClientRequestServiceImpl
 
         Specification<ClientRequest> spec = ((root, query, builder) -> builder.conjunction());
 
-        if(criteria == null) {
+        if (criteria == null) {
             return spec;
         }
 
-        if(StringUtils.isNotBlank(criteria.getOrganisationId())) {
+        if (StringUtils.isNotBlank(criteria.getOrganisationId())) {
 
-            spec = spec.and((root, query, cb) -> 
-                cb.equal(root.get("organisationId"), criteria.getOrganisationId()));
+            spec = spec.and((root, query, cb) -> cb.equal(root.get("organisationId"), criteria.getOrganisationId()));
         }
 
-        if(criteria.getTarget() != null) {
+        if (criteria.getTarget() != null) {
 
-            spec = spec.and((root, query, cb) -> 
-                cb.equal(root.get("target"), criteria.getTarget()));
+            spec = spec.and((root, query, cb) -> cb.equal(root.get("target"), criteria.getTarget()));
         }
 
-        if(StringUtils.isNotBlank(criteria.getTargetId())) {
+        if (StringUtils.isNotBlank(criteria.getTargetId())) {
 
-            spec = spec.and((root, query, cb) -> 
-                cb.equal(root.get("targetId"), criteria.getTargetId()));
+            spec = spec.and((root, query, cb) -> cb.equal(root.get("targetId"), criteria.getTargetId()));
         }
 
-        if(CollectionUtils.isNotEmpty(criteria.getStatuses())) {
+        if (CollectionUtils.isNotEmpty(criteria.getStatuses())) {
 
-            spec = spec.and((root, query, cb) -> 
-                root.get("status").in(criteria.getStatuses()));
+            spec = spec.and((root, query, cb) -> root.get("status").in(criteria.getStatuses()));
 
         }
 
@@ -258,8 +298,7 @@ public class ClientRequestServiceImpl
     protected Collection<ClientRequestDTO> handleFindByStatus(ClientRequestStatus status)
             throws Exception {
 
-        Specification<ClientRequest> spec = (root, query, cb) -> 
-            cb.equal(root.get("status"), status);
+        Specification<ClientRequest> spec = (root, query, cb) -> cb.equal(root.get("status"), status);
 
         Collection<ClientRequest> requests = clientRequestRepository.findAll(spec);
 
@@ -274,10 +313,12 @@ public class ClientRequestServiceImpl
             String organisationId, DocumentDTO document, TargetEntity target)
             throws Exception {
 
-        if(target != null && target != TargetEntity.INDIVIDUAL && target != TargetEntity.ORGANISATION) {
+        if (target != null && target != TargetEntity.INDIVIDUAL && target != TargetEntity.ORGANISATION) {
 
             throw new ClientRequestServiceException("Only 'null', 'ORGANISATION' and 'INDIVIDUAL' are allowed.");
         }
+
+        Map<String, String> tokenMap = new HashMap<>();
 
         List<ClientRequest> clientRequests = new ArrayList<>();
 
@@ -310,27 +351,61 @@ public class ClientRequestServiceImpl
             throw new Exception("Error reading file: " + e.getMessage(), e);
         }
 
+        clientRequests.forEach(c -> {
+            boolean isNew = StringUtils.isBlank(c.getId());
+
+            if (isNew) {
+
+                // Genetare a random token with requestTokenLength length. It should include all
+                // letters, digits and special characters
+
+                String token = RandomStringUtils.random(
+                        requestTokenLength,
+                        0,
+                        0,
+                        true,
+                        true,
+                        specialChars.toCharArray());
+
+                // Encode the token
+                String encodedToken = passwordEncoder.encode(token);
+
+                c.setAccountRequestToken(encodedToken);
+
+                tokenMap.put(c.getTargetId(), token);
+            }
+        });
+
         clientRequests = clientRequestRepository.saveAll(clientRequests);
 
-        if(target == TargetEntity.INDIVIDUAL) {
+        if (target == TargetEntity.INDIVIDUAL) {
 
-        } else if(target == TargetEntity.ORGANISATION) {
+        } else if (target == TargetEntity.ORGANISATION) {
 
         }
 
+        queueEmailNotificationsForRequests(clientRequests, tokenMap);
+
         return findByTargetAndOrganisation(target, null, organisationId, 0, 10);
+    }
+
+    @Async
+    private void queueEmailNotificationsForRequests(List<ClientRequest> clientRequests,
+            Map<String, String> tokenMap) {
+        // TODO: Implementation for queuing email notifications
     }
 
     /**
      * Save individual entity and create client request
      */
-    private ClientRequest saveIndividualAndRequest(Individual individual, String user, String organisationId, Document document, TargetEntity target) {
+    private ClientRequest saveIndividualAndRequest(Individual individual, String user, String organisationId,
+            Document document, TargetEntity target) {
         // Save individual entity
 
         Individual savedIndividual = individualRepository.findByIdentityNoAndIdentityType(
                 individual.getIdentityNo(), individual.getIdentityType());
 
-        if( savedIndividual == null) {
+        if (savedIndividual == null) {
             savedIndividual = individual;
 
             savedIndividual.setCreatedAt(LocalDateTime.now());
@@ -366,7 +441,8 @@ public class ClientRequestServiceImpl
      * No,
      * Email Address, Phone Numbers, Physical Address, Postal Address
      */
-    private List<ClientRequest> processIndividualExcelFile(Workbook workbook, String user, String organisationId, Document document, TargetEntity target) {
+    private List<ClientRequest> processIndividualExcelFile(Workbook workbook, String user, String organisationId,
+            Document document, TargetEntity target) {
         List<ClientRequest> clientRequests = new ArrayList<>();
         Sheet sheet = workbook.getSheetAt(0); // Read first sheet
         Iterator<Row> rowIterator = sheet.iterator();
@@ -394,7 +470,8 @@ public class ClientRequestServiceImpl
      * No,
      * Email Address, Phone Numbers, Physical Address, Postal Address
      */
-    private List<ClientRequest> processIndividualCsvFile(InputStream inputStream, String user, String organisationId, Document document, TargetEntity target)
+    private List<ClientRequest> processIndividualCsvFile(InputStream inputStream, String user, String organisationId,
+            Document document, TargetEntity target)
             throws IOException {
         List<ClientRequest> clientRequests = new ArrayList<>();
 
@@ -409,8 +486,9 @@ public class ClientRequestServiceImpl
             for (CSVRecord csvRecord : csvParser) {
                 Individual individual = extractIndividualFromCsvRecord(csvRecord);
                 if (individual != null) {
-                    ClientRequest request = saveIndividualAndRequest(individual, user, organisationId, document, target);
-                    
+                    ClientRequest request = saveIndividualAndRequest(individual, user, organisationId, document,
+                            target);
+
                     clientRequests.add(request);
                 }
             }
@@ -593,8 +671,6 @@ public class ClientRequestServiceImpl
         return null;
     }
 
-
-
     /**
      * Get cell value as string regardless of cell type
      */
@@ -640,14 +716,14 @@ public class ClientRequestServiceImpl
     private Sex parseSex(String sexStr) {
         if (sexStr == null || sexStr.trim().isEmpty()) {
             throw new ClientRequestServiceException("Sex must be specified");
-        }  
+        }
 
         try {
 
-            if("M".equalsIgnoreCase(sexStr.trim())) {
+            if ("M".equalsIgnoreCase(sexStr.trim())) {
 
                 return Sex.MALE;
-            } else if("F".equalsIgnoreCase(sexStr.trim())) {    
+            } else if ("F".equalsIgnoreCase(sexStr.trim())) {
 
                 return Sex.FEMALE;
             }
@@ -657,6 +733,7 @@ public class ClientRequestServiceImpl
             throw new ClientRequestServiceException("Invalid sex value: " + sexStr);
         }
     }
+
     /**
      * @see bw.co.centralkyc.organisation.client.ClientRequestService#findByIndividual(String)
      */
@@ -664,7 +741,7 @@ public class ClientRequestServiceImpl
     protected Collection<ClientRequestDTO> handleFindByIndividual(String individualId)
             throws Exception {
 
-        ClientRequestSearchCriteria criteria = new ClientRequestSearchCriteria();   
+        ClientRequestSearchCriteria criteria = new ClientRequestSearchCriteria();
         criteria.setTargetId(individualId);
         criteria.setTarget(TargetEntity.INDIVIDUAL);
 
@@ -682,13 +759,13 @@ public class ClientRequestServiceImpl
     protected Page<ClientRequestDTO> handleFindByIndividual(String individualId, Integer pageNumber, Integer pageSize)
             throws Exception {
 
-        ClientRequestSearchCriteria criteria = new ClientRequestSearchCriteria();   
+        ClientRequestSearchCriteria criteria = new ClientRequestSearchCriteria();
         criteria.setTargetId(individualId);
         criteria.setTarget(TargetEntity.INDIVIDUAL);
 
         Specification<ClientRequest> spec = this.buildSpecificationFromCriteria(criteria);
         Page<ClientRequest> requests = clientRequestRepository.findAll(spec, PageRequest.of(pageNumber, pageSize));
-        
+
         return requests.map(clientRequestDao::toClientRequestDTO);
     }
 
@@ -701,15 +778,15 @@ public class ClientRequestServiceImpl
     @Override
     protected Page<ClientRequestDTO> handleFindByDocument(String documentId, Integer pageNumber, Integer pageSize)
             throws Exception {
-        return null; // clientRequestRepository.findByDocumentId(documentId, PageRequest.of(pageNumber, pageSize));
+        return null; // clientRequestRepository.findByDocumentId(documentId,
+                     // PageRequest.of(pageNumber, pageSize));
     }
 
     @Override
     protected Page<ClientRequestDTO> handleFindByStatus(ClientRequestStatus status, Integer pageNumber,
             Integer pageSize) throws Exception {
 
-        Specification<ClientRequest> spec = (root, query, cb) -> 
-            cb.equal(root.get("status"), status);
+        Specification<ClientRequest> spec = (root, query, cb) -> cb.equal(root.get("status"), status);
 
         Page<ClientRequest> requests = clientRequestRepository.findAll(spec, PageRequest.of(pageNumber, pageSize));
         return requests.map(clientRequestDao::toClientRequestDTO);
@@ -717,11 +794,10 @@ public class ClientRequestServiceImpl
 
     @Override
     protected Collection<ClientRequestDTO> handleFindByTarget(TargetEntity target, String targetId) throws Exception {
-        
+
         Specification<ClientRequest> spec = (root, query, cb) -> cb.and(
-            cb.equal(root.get("target"), target),
-            cb.equal(root.get("targetId"), targetId)
-        );
+                cb.equal(root.get("target"), target),
+                cb.equal(root.get("targetId"), targetId));
 
         Collection<ClientRequest> requests = clientRequestRepository.findAll(spec);
 
@@ -731,14 +807,13 @@ public class ClientRequestServiceImpl
     @Override
     protected Page<ClientRequestDTO> handleFindByTarget(TargetEntity target, String targetId, Integer pageNumber,
             Integer pageSize) throws Exception {
-            
+
         Specification<ClientRequest> spec = (root, query, cb) -> cb.and(
-            cb.equal(root.get("target"), target),
-            cb.equal(root.get("targetId"), targetId)
-        );
+                cb.equal(root.get("target"), target),
+                cb.equal(root.get("targetId"), targetId));
 
         Page<ClientRequest> requests = clientRequestRepository.findAll(spec, PageRequest.of(pageNumber, pageSize));
-        
+
         return requests.map(clientRequestDao::toClientRequestDTO);
     }
 
@@ -760,7 +835,7 @@ public class ClientRequestServiceImpl
     @Override
     protected Page<ClientRequestDTO> handleFindByTargetAndOrganisation(TargetEntity target, String targetId,
             String organisationId, Integer pageNumber, Integer pageSize) throws Exception {
-        
+
         ClientRequestSearchCriteria criteria = new ClientRequestSearchCriteria();
         criteria.setTarget(target);
         criteria.setTargetId(targetId);
@@ -768,19 +843,29 @@ public class ClientRequestServiceImpl
 
         Specification<ClientRequest> spec = this.buildSpecificationFromCriteria(criteria);
         Page<ClientRequest> requests = clientRequestRepository.findAll(spec, PageRequest.of(pageNumber, pageSize));
-        
+
         return requests.map(clientRequestDao::toClientRequestDTO);
     }
 
     @Override
     protected ClientRequestDTO handleUpdateStatus(String id, ClientRequestStatus status) throws Exception {
-        
-        ClientRequest clientRequest = clientRequestRepository.findById(id).orElseThrow(() -> new ClientRequestServiceException("ClientRequest not found"));
+
+        ClientRequest clientRequest = clientRequestRepository.findById(id)
+                .orElseThrow(() -> new ClientRequestServiceException("ClientRequest not found"));
 
         clientRequest.setStatus(status);
         clientRequest = clientRequestRepository.save(clientRequest);
 
         return clientRequestDao.toClientRequestDTO(clientRequest);
+    }
+
+    @Override
+    protected boolean handleConfirmToken(String requestId, String token) throws Exception {
+
+        ClientRequest clientRequest = clientRequestRepository.findById(requestId)
+                .orElseThrow(() -> new ClientRequestServiceException("ClientRequest not found"));
+
+        return passwordEncoder.matches(token, clientRequest.getAccountRequestToken());
     }
 
 }

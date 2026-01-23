@@ -93,6 +93,7 @@ minio:
     secret-key: ${MINIO_SECRET_KEY:minio123}
     bucket-name: ${MINIO_BUCKET:centralkyc}
 app:
+  request-token-length: ${REQUEST_TOKEN_LENGTH:32}
   admin-web: ${ADMIN_WEB_URL:http://localhost:4200}
   tessdata-prefix: ${TESSDATA_PREFIX:/usr/share/tesseract-ocr/5/tessdata}
   tessdata-langs: ${TESSDATA_LANGS:eng}

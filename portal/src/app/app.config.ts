@@ -1,6 +1,15 @@
-import { ApplicationConfig, importProvidersFrom, provideBrowserGlobalErrorListeners } from '@angular/core';
+import {
+  ApplicationConfig,
+  importProvidersFrom,
+  provideBrowserGlobalErrorListeners,
+} from '@angular/core';
 import { provideRouter } from '@angular/router';
-import { provideHttpClient, withFetch, withInterceptors, withInterceptorsFromDi } from '@angular/common/http';
+import {
+  provideHttpClient,
+  withFetch,
+  withInterceptors,
+  withInterceptorsFromDi,
+} from '@angular/common/http';
 import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { MAT_FORM_FIELD_DEFAULT_OPTIONS } from '@angular/material/form-field';
@@ -53,7 +62,7 @@ export const provideKeycloakAndInterceptor = (env: any) => {
       initOptions: {
         onLoad: 'check-sso',
         checkLoginIframe: true,
-        silentCheckSsoRedirectUri: window.location.origin + '/silent-check-sso.html'
+        silentCheckSsoRedirectUri: window.location.origin + '/silent-check-sso.html',
       },
       features: [
         withAutoRefreshToken({
@@ -79,18 +88,20 @@ export function HttpLoaderFactory(http: HttpClient) {
   return new CustomTranslateLoader(http);
 }
 
-export const appConfig: ApplicationConfig = {
-  providers: [
-    provideBrowserGlobalErrorListeners(),
-    provideRouter(routes),
+export const appConfig = (env: any) => {
+  return {
+    providers: [
+      provideBrowserGlobalErrorListeners(),
+      provideRouter(routes),
+      provideKeycloakAndInterceptor(env),
       provideHttpClient(
         withFetch(),
         withInterceptorsFromDi(),
         withInterceptors([
           apiPrefixInterceptor,
           errorHandlerInterceptor,
-          // includeBearerTokenInterceptor,
-        ])
+          includeBearerTokenInterceptor,
+        ]),
       ),
       provideToastr({
         timeOut: 3000,
@@ -104,17 +115,18 @@ export const appConfig: ApplicationConfig = {
         maxOpened: 5,
         autoDismiss: true,
       }),
-    importProvidersFrom(
-      TranslateModule.forRoot({
-        defaultLanguage: 'en',
-        loader: {
-          provide: TranslateLoader,
-          useFactory: HttpLoaderFactory,
-          deps: [HttpClient]
-        }
-      })
-    ),
-    { provide: MAT_FORM_FIELD_DEFAULT_OPTIONS, useValue: { appearance: 'outline' } },
-    { provide: MAT_DATE_FORMATS, useValue: CUSTOM_DATE_FORMATS },
-  ]
+      importProvidersFrom(
+        TranslateModule.forRoot({
+          defaultLanguage: 'en',
+          loader: {
+            provide: TranslateLoader,
+            useFactory: HttpLoaderFactory,
+            deps: [HttpClient],
+          },
+        }),
+      ),
+      { provide: MAT_FORM_FIELD_DEFAULT_OPTIONS, useValue: { appearance: 'outline' } },
+      { provide: MAT_DATE_FORMATS, useValue: CUSTOM_DATE_FORMATS },
+    ],
+  };
 };
