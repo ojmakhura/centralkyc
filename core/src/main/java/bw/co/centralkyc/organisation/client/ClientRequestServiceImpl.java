@@ -22,6 +22,8 @@ import bw.co.centralkyc.individual.IndividualIdentityType;
 import bw.co.centralkyc.individual.IndividualRepository;
 import bw.co.centralkyc.individual.Sex;
 import bw.co.centralkyc.kyc.KycComplianceStatus;
+import bw.co.roguesystems.comm.MessagingPlatform;
+import bw.co.roguesystems.comm.message.CommMessageDTO;
 import ch.qos.logback.core.net.server.Client;
 import io.micrometer.common.util.StringUtils;
 
@@ -72,6 +74,67 @@ public class ClientRequestServiceImpl
 
     @Value("${app.request-token-length}")
     private int requestTokenLength;
+
+    private final String requestEmailTemplate = """
+                <!DOCTYPE html>
+            <html>
+            <head>
+              <meta charset="UTF-8">
+              <title>KYC Registration Invitation</title>
+            </head>
+            <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
+              <p>Dear {{recipientName}},</p>
+
+              <p>
+                You are invited to complete your registration on our secure KYC platform
+                following a request from <strong>{{organisationName}}</strong>.
+              </p>
+
+              <p>
+                To ensure timely access to services, please note that this invitation is
+                <strong>valid for {{expiryDays}} days</strong>. If registration is not completed
+                within this period, the invitation link may expire and you may need to request
+                a new one through <strong>{{organisationName}}</strong>.
+              </p>
+
+              <p>
+                Completing your registration will allow you to securely submit your
+                identification and verification documents, as required to access or continue
+                using services provided by <strong>{{organisationName}}</strong>.
+              </p>
+
+              <p><strong>How to get started:</strong></p>
+              <ol>
+                <li>
+                  Click the link below to access the KYC platform:<br/>
+                  <a href="{{kycPortalLink}}" style="color: #1a73e8;">{{kycPortalLink}}</a>
+                </li>
+                <li>Complete your registration by creating your account</li>
+                <li>Log in and upload the requested documents</li>
+                <li>Submit your information for review</li>
+              </ol>
+
+              <p>
+                All information you provide will be handled securely and used strictly for
+                identity verification purposes, in accordance with applicable data protection
+                and privacy regulations.
+              </p>
+
+              <p>
+                If you have any questions or require assistance during the registration
+                process, please contact <strong>{{supportContact}}</strong>.
+              </p>
+
+              <p>
+                Kind regards,<br/>
+                <strong>Onalenna Makhura</strong><br/>
+                KYC Platform Support Team<br/>
+                {{platformName}}<br/>
+                <a href="{{platformUrl}}" style="color: #1a73e8;">{{platformUrl}}</a>
+              </p>
+            </body>
+            </html>
+                """;
 
     private final String specialChars = "!@#$%^&*()_-";
 
@@ -137,6 +200,11 @@ public class ClientRequestServiceImpl
             // For this example, we'll just print it to the console (not recommended for
             // production)
             System.out.println("Client Request Created. ID: " + clientRequestEntity.getId() + ", Token: " + token);
+
+            this.queueEmailNotificationsForRequests(
+                    Arrays.asList(clientRequestEntity),
+                    Map.of(clientRequestEntity.getTargetId(), token),
+                    clientRequest.getOrganisation());
 
         }
 
@@ -310,7 +378,7 @@ public class ClientRequestServiceImpl
      */
     @Override
     protected Page<ClientRequestDTO> handleUploadRequests(InputStream inputStream, String user,
-            String organisationId, DocumentDTO document, TargetEntity target)
+            String organisationId, DocumentDTO document, TargetEntity target, String organisation)
             throws Exception {
 
         if (target != null && target != TargetEntity.INDIVIDUAL && target != TargetEntity.ORGANISATION) {
@@ -384,15 +452,40 @@ public class ClientRequestServiceImpl
 
         }
 
-        queueEmailNotificationsForRequests(clientRequests, tokenMap);
+        queueEmailNotificationsForRequests(clientRequests, tokenMap, organisation);
 
         return findByTargetAndOrganisation(target, null, organisationId, 0, 10);
     }
 
     @Async
     private void queueEmailNotificationsForRequests(List<ClientRequest> clientRequests,
-            Map<String, String> tokenMap) {
+            Map<String, String> tokenMap, String organisation) {
         // TODO: Implementation for queuing email notifications
+        List<CommMessageDTO> notifiedRequests = new ArrayList<>();
+        String subject = "Client Request Notification from " + organisation;
+
+        String tmp = requestEmailTemplate
+                .replace("{{organisationName}}", organisation)
+                .replace("{{platformName}}", "Central KYC Platform")
+                .replace("{{platformUrl}}", "https://centralkyc.co.bw")
+                .replace("{{supportContact}}", "support@centralkyc.co.bw");
+
+        for (ClientRequest request : clientRequests) {
+            String token = tokenMap.get(request.getTargetId());
+            // Create and queue email notification with the token
+            // For now, just print to console (not recommended for production)
+            System.out.println("Queue email notification for Request ID: " + request.getId() + ", Token: " + token);
+
+            CommMessageDTO message = new CommMessageDTO();
+            message.setPlatform(MessagingPlatform.EMAIL);
+            message.setSubject(subject);
+
+            tmp = tmp.replace("{{recipientName}}", request.getTargetId())
+                    .replace("{{kycPortalLink}}", "https://centralkyc.co.bw/register?token=" + token); // Placeholder
+
+            notifiedRequests.add(message);
+        }
+
     }
 
     /**

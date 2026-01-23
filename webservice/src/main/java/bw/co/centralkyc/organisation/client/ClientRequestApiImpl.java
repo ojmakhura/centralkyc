@@ -320,8 +320,9 @@ public class ClientRequestApiImpl implements ClientRequestApi {
                             file)
                     .getBody();
 
+            OrganisationDTO org = keycloakOrganisationService.findById(organisationId);
             Page<ClientRequestDTO> requests = clientRequestService.uploadRequests(inputStream, organisationId,
-                    organisationId, doc, target);
+                    organisationId, doc, target, org.getName());
             updateOrganisationsDetails(requests.getContent());
 
             return ResponseEntity.ok(requests);

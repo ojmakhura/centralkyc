@@ -1,0 +1,127 @@
+<div class="shell">
+  <!-- Header -->
+  <header class="shell__header" role="banner">
+    <div class="header__content">
+      @if (appEnvState.isLoggedIn()) {
+      <button type="button" class="header__menu-button" (click)="toggleSidebar()"
+        [attr.aria-label]="'common.toggleSidebar' | translate" [attr.aria-expanded]="!isSidebarCollapsed()">
+        <mat-icon>menu</mat-icon>
+      </button>
+      }
+
+      <h1 class="header__title">
+        <a routerLink="/" class="header__title-link">{{ 'app.title' | translate }}</a>
+      </h1>
+
+      <div class="header__actions">
+        <!-- <app-language-selector /> -->
+
+        @if (appEnvState.isLoggedIn()) {
+        <button mat-button class="user-menu-btn" [matMenuTriggerFor]="userMenu">
+          <div class="user-avatar">
+            <mat-icon>account_circle</mat-icon>
+          </div>
+          <div class="user-info">
+            <span class="user-name">{{ profile()?.username }}</span>
+            <mat-icon class="dropdown">expand_more</mat-icon>
+          </div>
+        </button>
+        <mat-menu #userMenu="matMenu" class="modern-menu user-dropdown">
+          <div class="user-profile-header">
+            <div class="profile-avatar">
+              <mat-icon>account_circle</mat-icon>
+            </div>
+            <div class="profile-info">
+              <div class="profile-name">{{ profile()?.firstName }} {{ profile()?.lastName }}</div>
+              <div class="profile-email">{{ profile()?.email }}</div>
+            </div>
+          </div>
+          <mat-divider></mat-divider>
+          <a mat-menu-item type="button" [href]="appEnvState.accountUri()" target="_blank" rel="noopener noreferrer">
+            <mat-icon>person_outline</mat-icon>
+            <span>{{ 'user.profile' | translate }}</span>
+          </a>
+          <button mat-menu-item routerLink="/settings">
+            <mat-icon>settings_outlined</mat-icon>
+            <span>{{ 'user.settings' | translate }}</span>
+          </button>
+          <mat-divider></mat-divider>
+          <button mat-menu-item (click)="logout()" class="logout-item">
+            <mat-icon>logout</mat-icon>
+            <span>{{ 'user.logout' | translate }}</span>
+          </button>
+        </mat-menu>
+        } @else {
+        <button mat-raised-button color="primary" (click)="login()" class="login-btn">
+          <mat-icon>login</mat-icon>
+          <span>{{ 'user.login' | translate }}</span>
+        </button>
+        }
+      </div>
+    </div>
+  </header>
+
+  <div class="shell__body">
+  @if (appEnvState.isLoggedIn()) {
+    <!-- Sidebar -->
+    <aside class="shell__sidebar" [class.shell__sidebar--collapsed]="isSidebarCollapsed()"
+      [class.shell__sidebar--mobile-open]="isMobileMenuOpen()" role="navigation"
+      [attr.aria-label]="'common.mainNavigation' | translate">
+      <nav class="sidebar__nav">
+        <ul class="nav__list" role="list">
+          @for (item of navigationItems(); track item.route) {
+          <li class="nav__item">
+            <a class="nav__link" [routerLink]="item.route" routerLinkActive="nav__link--active"
+              (click)="closeMobileMenu()" [attr.aria-current]="'page'">
+              <span class="material-icons nav__icon">{{ item.icon }}</span>
+              @if (!isSidebarCollapsed()) {
+              <span class="nav__label">{{ item.label | translate }}</span>
+              }
+            </a>
+          </li>
+          }
+        </ul>
+      </nav>
+    </aside>
+    }
+
+    <!-- Main Content -->
+    <main class="shell__main" role="main">
+      <div class="main__content">
+        <router-outlet />
+      </div>
+    </main>
+  </div>
+
+  <!-- Footer -->
+  <footer class="shell__footer" role="contentinfo">
+    <div class="footer__content">
+      <div class="footer__left">
+        <p class="footer__text">{{ 'home.footer.copyright' | translate }}</p>
+        <div class="footer__powered">
+          <span class="footer__powered-text">Powered by</span>
+          <img 
+            src="/rogue_systems_v2_1024.png" 
+            alt="Rogue Systems" 
+            class="footer__logo"
+            width="24"
+            height="24">
+          <span class="footer__powered-name">Rogue Systems</span>
+        </div>
+      </div>
+      <div class="footer__links">
+        <a href="/privacy-policy" class="footer__link">{{ 'home.footer.privacy' | translate }}</a>
+        <span class="footer__separator">•</span>
+        <a href="/terms-of-service" class="footer__link">{{ 'home.footer.terms' | translate }}</a>
+        <span class="footer__separator">•</span>
+        <a href="/contact" class="footer__link">{{ 'home.footer.contact' | translate }}</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Mobile Overlay -->
+  @if (isMobileMenuOpen()) {
+  <div class="shell__overlay" (click)="closeMobileMenu()" [attr.aria-hidden]="true">
+  </div>
+  }
+</div>
