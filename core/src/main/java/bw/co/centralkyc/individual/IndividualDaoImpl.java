@@ -9,6 +9,7 @@ package bw.co.centralkyc.individual;
 import bw.co.centralkyc.PhoneNumber;
 import bw.co.centralkyc.document.DocumentRepository;
 import bw.co.centralkyc.individual.employment.EmploymentRecordRepository;
+import bw.co.centralkyc.kyc.KycComplianceStatus;
 import bw.co.centralkyc.kyc.KycRecordRepository;
 import bw.co.centralkyc.organisation.OrganisationListDTO;
 import bw.co.centralkyc.organisation.branch.BranchDTO;
@@ -18,6 +19,7 @@ import jakarta.persistence.EntityNotFoundException;
 import tools.jackson.core.type.TypeReference;
 import tools.jackson.databind.json.JsonMapper;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -220,5 +222,53 @@ public class IndividualDaoImpl
             boolean copyIfNull) {
         // TODO verify behavior of individualListDTOToEntity
         super.individualListDTOToEntity(source, target, copyIfNull);
+    }
+
+    @Override
+    public Long countByPepStatus(PepStatus pepStatus) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'countByPepStatus'");
+    }
+
+    @Override
+    public Collection<?> countByPepStatus(int transform, PepStatus pepStatus) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'countByPepStatus'");
+    }
+
+    @Override
+    public Long countByKycStatus(KycComplianceStatus kycStatus) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'countByKycStatus'");
+    }
+
+    @Override
+    public Collection<?> countByKycStatus(int transform, KycComplianceStatus kycStatus) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'countByKycStatus'");
+    }
+
+    @Override
+    public Long countByEmploymentStatus(EmploymentStatus employmentStatus) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'countByEmploymentStatus'");
+    }
+
+    @Override
+    public Collection<?> countByEmploymentStatus(int transform, EmploymentStatus employmentStatus) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'countByEmploymentStatus'");
+    }
+
+    @Override
+    public Long countBySex(Sex sex) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'countBySex'");
+    }
+
+    @Override
+    public Collection<?> countBySex(int transform, Sex sex) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'countBySex'");
     }
 }

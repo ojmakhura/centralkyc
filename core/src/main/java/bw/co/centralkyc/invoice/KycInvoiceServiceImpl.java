@@ -368,4 +368,28 @@ public class KycInvoiceServiceImpl
         return kycInvoiceRepository.findInvoicesBySubscriptionId(subscriptionId, PageRequest.of(pageNumber, pageSize));
     }
 
+    @Override
+    protected Long handleCountInvoicesByOrganisationId(String organisationId) throws Exception {
+        
+        return kycInvoiceRepository.countInvoicesByOrganisationId(organisationId);
+    }
+
+    @Override
+    protected Long handleCountInvoices(Boolean paid) throws Exception {
+        
+        return kycInvoiceRepository.countInvoices(paid);
+    }
+
+    @Override
+    protected Long handleCountOrganisationInvoices(Boolean paid, String organisationId) throws Exception {
+        
+        return kycInvoiceRepository.countOrganisationInvoices(paid, organisationId);
+    }
+
+    @Override
+    protected Long handleCount() throws Exception {
+        
+        return kycInvoiceRepository.count();
+    }
+
 }

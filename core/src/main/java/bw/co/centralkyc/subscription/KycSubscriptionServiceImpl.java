@@ -195,4 +195,16 @@ public class KycSubscriptionServiceImpl
 
     }
 
+    @Override
+    protected Long handleCountByStatus(KycSubsciptionStatus status) throws Exception {
+        
+        return this.kycSubscriptionRepository.countByStatus(status);
+    }
+
+    @Override
+    protected Long handleCount() throws Exception {
+        
+        return this.kycSubscriptionRepository.count();
+    }
+
 }

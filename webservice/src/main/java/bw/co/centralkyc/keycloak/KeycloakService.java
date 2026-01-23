@@ -21,6 +21,13 @@ public class KeycloakService {
      */
     public Jwt getJwt() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        System.out.println("============================> : " + authentication.getPrincipal());
+
+        if(authentication.getPrincipal() instanceof String) {
+            return null;
+        }
+
         return (Jwt) authentication.getPrincipal();
     }
 
@@ -29,6 +36,10 @@ public class KeycloakService {
      */
     private Keycloak createKeycloak() {
         Jwt jwt = getJwt();
+
+        if(jwt == null) {
+            return null;
+        }
 
         String iss = jwt.getClaimAsString("iss");  // e.g., https://auth.example.com/realms/bocraportal
         String realm = iss.substring(iss.lastIndexOf('/') + 1);
@@ -47,7 +58,13 @@ public class KeycloakService {
      * Returns the Keycloak realm name for the current JWT
      */
     private String getRealm() {
-        String iss = getJwt().getClaimAsString("iss");
+        Jwt jwt = getJwt();
+
+        if(jwt == null) {
+            return null;
+        }
+        
+        String iss = jwt.getClaimAsString("iss");
         return iss.substring(iss.lastIndexOf('/') + 1);
     }
 
@@ -60,6 +77,11 @@ public class KeycloakService {
      */
     public <T> T withRealm(Function<RealmResource, T> fn) {
         try (Keycloak kc = createKeycloak()) {
+
+            if(kc == null) {
+                return null;
+            }
+
             RealmResource realm = kc.realm(getRealm());
             return fn.apply(realm);
         }
@@ -70,6 +92,11 @@ public class KeycloakService {
      */
     public void runWithRealm(Consumer<RealmResource> fn) {
         try (Keycloak kc = createKeycloak()) {
+
+            if(kc == null) {
+                return;
+            }
+
             RealmResource realm = kc.realm(getRealm());
             fn.accept(realm);
         }

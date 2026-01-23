@@ -12,6 +12,7 @@ import bw.co.centralkyc.individual.Individual;
 import bw.co.centralkyc.individual.IndividualRepository;
 import jakarta.persistence.EntityNotFoundException;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -166,5 +167,30 @@ public class ClientRequestDaoImpl
 
             target.setOrganisationId(source.getOrganisationId());
         }
+    }
+
+    @Override
+    public Long countByStatus(ClientRequestStatus status) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'countByStatus'");
+    }
+
+    @Override
+    public Collection<?> countByStatus(int transform, ClientRequestStatus status) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'countByStatus'");
+    }
+
+    @Override
+    public Long countByStatusAndOrganisationId(ClientRequestStatus status, String organisationId) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'countByStatusAndOrganisationId'");
+    }
+
+    @Override
+    public Collection<?> countByStatusAndOrganisationId(int transform, ClientRequestStatus status,
+            String organisationId) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'countByStatusAndOrganisationId'");
     }
 }

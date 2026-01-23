@@ -135,7 +135,8 @@ export class EditClientRequestComponent implements OnInit, AfterViewInit, OnDest
         identityNo: individual.identityNo,
         emailAddress: individual.emailAddress,
         kycStatus: individual.kycStatus,
-        sex: Sex.UNSPECIFIED,
+        sex: individual.sex,
+        pepStatus: individual.pepStatus
       }
 
       this.targetIndividualList.set([{

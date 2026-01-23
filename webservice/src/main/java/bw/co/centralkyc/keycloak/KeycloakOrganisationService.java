@@ -261,6 +261,13 @@ public class KeycloakOrganisationService {
         });
     }
 
+    public Long countOrganisations() {
+        return keycloakService.withOrganizations(orgsResource -> {
+
+            return orgsResource.count(null);
+        });
+    }
+
     // --------------------- DTO Mapping --------------------- //
 
     private OrganisationListDTO toOrganisationListDTO(OrganizationRepresentation rep) {

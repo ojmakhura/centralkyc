@@ -9,6 +9,8 @@ package bw.co.centralkyc.subscription;
 import bw.co.centralkyc.invoice.KycInvoiceRepository;
 import jakarta.persistence.EntityNotFoundException;
 
+import java.util.Collection;
+
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Repository;
 
@@ -109,5 +111,17 @@ public class KycSubscriptionDaoImpl
             // Organisation organisation = this.organisationRepository.getReferenceById(source.getOrganisationId());
             // target.setOrganisation(organisation);
         }
+    }
+
+    @Override
+    public Long countByStatus(KycSubsciptionStatus status) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'countByStatus'");
+    }
+
+    @Override
+    public Collection<?> countByStatus(int transform, KycSubsciptionStatus status) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'countByStatus'");
     }
 }

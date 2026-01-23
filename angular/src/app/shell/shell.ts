@@ -17,7 +17,7 @@ import { AppEnvStore } from '@app/store/app-env.state';
   styleUrl: './shell.scss',
 })
 export class Shell {
-  @ViewChild('sidenav') drawer!: MatDrawer;
+  @ViewChild('sidenav') sidenav!: MatDrawer;
 
   protected readonly currentYear = new Date().getFullYear();
   private breakpoint = inject(BreakpointObserver);
@@ -44,13 +44,13 @@ export class Shell {
 
     // Watch for breakpoint changes and adjust drawer accordingly
     this.breakpoint.observe([Breakpoints.Small, Breakpoints.XSmall]).subscribe(result => {
-      if (this.drawer) {
+      if (this.sidenav) {
         if (result.matches) {
           // Mobile: close drawer
-          this.drawer.close();
+          this.sidenav.close();
         } else {
           // Desktop: open drawer
-          this.drawer.open();
+          this.sidenav.open();
         }
       }
     });
@@ -60,6 +60,14 @@ export class Shell {
     console.log('Logout clicked');
     this.keycloak.logout();
     this.appEnvState.reset();
+  }
+
+  login() {
+    try {
+      this.keycloak.login();
+    } catch (e) {
+      console.error('Login failed', e);
+    }
   }
 
   get isMobile(): boolean {

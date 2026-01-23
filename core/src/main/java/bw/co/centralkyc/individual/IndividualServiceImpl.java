@@ -24,6 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 import bw.co.centralkyc.PropertySearchOrder;
 import bw.co.centralkyc.SearchObject;
 import bw.co.centralkyc.SortOrderFactory;
+import bw.co.centralkyc.kyc.KycComplianceStatus;
 
 /**
  * @see bw.co.centralkyc.individual.IndividualService
@@ -191,16 +192,53 @@ public class IndividualServiceImpl
     }
 
     @Override
-    protected Collection<IndividualDTO> handleGetOrganisationClients(String organisationId) throws Exception {
+    protected Collection<IndividualListDTO> handleGetOrganisationClients(String organisationId) throws Exception {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'handleGetOrganisationClients'");
     }
 
     @Override
-    protected Collection<IndividualDTO> handleGetOrganisationClients(String organisationId, Integer pageNumber,
+    protected Page<IndividualListDTO> handleGetOrganisationClients(String organisationId, Integer pageNumber,
             Integer pageSize) throws Exception {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'handleGetOrganisationClients'");
+    }
+
+    @Override
+    protected IndividualDTO handleFindByIdentityNoAndIdentityType(String identityNo, IndividualIdentityType identityType)
+            throws Exception {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'handleFindByIdentityNoAndIdentityType'");
+    }
+
+    @Override
+    protected Long handleCountByPepStatus(PepStatus pepStatus) throws Exception {
+        
+        return this.individualRepository.countByPepStatus(pepStatus);
+    }
+
+    @Override
+    protected Long handleCount() throws Exception {
+        // TODO Auto-generated method stub
+        return this.individualRepository.count();
+    }
+
+    @Override
+    protected Long handleCountByKycStatus(KycComplianceStatus kycStatus) throws Exception {
+        
+        return this.individualRepository.countByKycStatus(kycStatus);
+    }
+
+    @Override
+    protected Long handleCountByEmploymentStatus(EmploymentStatus employmentStatus) throws Exception {
+        
+        return this.individualRepository.countByEmploymentStatus(employmentStatus);
+    }
+
+    @Override
+    protected Long handleCountBySex(Sex sex) throws Exception {
+        
+        return this.individualRepository.countBySex(sex);
     }
 
 }

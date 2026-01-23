@@ -2,9 +2,11 @@
   <!-- Top Navigation Bar -->
   <header class="top-navbar">
     <div class="navbar-left">
-      <button mat-icon-button class="sidebar-toggle" (click)="sidenav.toggle()">
-        <mat-icon>{{ sidenav.opened ? 'menu_open' : 'menu' }}</mat-icon>
-      </button>
+      @if (appEnvState.isLoggedIn()) {
+        <button mat-icon-button class="sidebar-toggle" (click)="sidenav?.toggle()">
+          <mat-icon>{{ sidenav?.opened ? 'menu_open' : 'menu' }}</mat-icon>
+        </button>
+      }
 
       <div class="brand-section">
         <div class="brand-logo">
@@ -35,13 +37,14 @@
       <mat-menu #langMenu="matMenu" class="modern-menu">
         <div class="menu-title">Select Language</div>
         @for (lang of availableLanguages; track lang.code) {
-          <button mat-menu-item (click)="changeLanguage(lang.code)" [class.selected]="currentLanguage === lang.code">
-            <mat-icon>{{ currentLanguage === lang.code ? 'check_circle' : 'radio_button_unchecked' }}</mat-icon>
-            <span>{{ lang.name }}</span>
-          </button>
+        <button mat-menu-item (click)="changeLanguage(lang.code)" [class.selected]="currentLanguage === lang.code">
+          <mat-icon>{{ currentLanguage === lang.code ? 'check_circle' : 'radio_button_unchecked' }}</mat-icon>
+          <span>{{ lang.name }}</span>
+        </button>
         }
       </mat-menu>
 
+      @if (appEnvState.isLoggedIn()) {
       <!-- Notifications -->
       <button mat-icon-button class="nav-action" matTooltip="Notifications">
         <mat-icon [matBadge]="3" matBadgeColor="warn" matBadgeSize="small">notifications_none</mat-icon>
@@ -82,6 +85,13 @@
           <span>{{ 'user.logout' | translate }}</span>
         </button>
       </mat-menu>
+      }
+      @if (!appEnvState.isLoggedIn()) {
+      <button mat-button color="primary" class="login-btn" (click)="login()">
+        <mat-icon>login</mat-icon>
+        <span>{{ 'login.submit' | translate }}</span>
+      </button>
+      }
     </div>
   </header>
 
@@ -89,13 +99,14 @@
   <div class="app-layout">
     <!-- Sidebar -->
     <mat-drawer-container class="drawer-container" autosize>
+      @if (appEnvState.isLoggedIn()) {
       <mat-drawer #sidenav class="app-sidebar" [mode]="isMobile ? 'over' : 'side'" [opened]="!isMobile">
         <nav class="sidebar-nav">
           <!-- Main Section -->
           <div class="nav-group">
             <div class="group-label">MAIN</div>
-            <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }"
-               class="nav-link" (click)="isMobile && sidenav.close()">
+            <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }" class="nav-link"
+              (click)="isMobile && sidenav?.close()">
               <mat-icon>home_outlined</mat-icon>
               <span>{{ 'home' | translate }}</span>
               <div class="active-indicator"></div>
@@ -106,12 +117,12 @@
           <div class="nav-group">
             <div class="group-label">MANAGEMENT</div>
             @for (item of menus; track item.routerLink) {
-              <a [routerLink]="item.routerLink" routerLinkActive="active"
-                 class="nav-link" (click)="isMobile && sidenav.close()">
-                <mat-icon>{{ item.icon }}</mat-icon>
-                <span>{{ item.titleKey | translate }}</span>
-                <div class="active-indicator"></div>
-              </a>
+            <a [routerLink]="item.routerLink" routerLinkActive="active" class="nav-link"
+              (click)="isMobile && sidenav?.close()">
+              <mat-icon>{{ item.icon }}</mat-icon>
+              <span>{{ item.titleKey | translate }}</span>
+              <div class="active-indicator"></div>
+            </a>
             }
           </div>
 
@@ -119,7 +130,7 @@
           <div class="nav-group">
             <div class="group-label">SYSTEM</div>
             <a routerLink="/about" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }"
-               class="nav-link" (click)="isMobile && sidenav.close()">
+              class="nav-link" (click)="isMobile && sidenav?.close()">
               <mat-icon>info_outlined</mat-icon>
               <span>{{ 'about' | translate }}</span>
               <div class="active-indicator"></div>
@@ -135,6 +146,7 @@
           </div>
         </div>
       </mat-drawer>
+      }
 
       <!-- Main Content Area -->
       <mat-drawer-content class="main-content">

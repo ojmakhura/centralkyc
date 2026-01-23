@@ -23,10 +23,6 @@
             "outputPath": "dist/portal",
             "index": "src/index.html",
             "browser": "src/main.ts",
-            "server": "src/main.server.ts",
-            "ssr": {
-              "entry": "server.ts"
-            },
             "tsConfig": "tsconfig.app.json",
             "inlineStyleLanguage": "scss",
             "assets": [
@@ -89,18 +85,6 @@
         },
         "test": {
           "builder": "@angular/build:unit-test"
-        },
-        "serve-ssr": {
-          "builder": "@angular/build:ssr-dev-server",
-          "configurations": {
-            "development": {
-              "buildTarget": "portal:build:development"
-            },
-            "production": {
-              "buildTarget": "portal:build:production"
-            }
-          },
-          "defaultConfiguration": "development"
         }
       }
     }

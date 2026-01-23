@@ -38,6 +38,7 @@ public class SpringSecurityConfig {
 								"/swagger-resources/**",
 								"/actuator/**",
 								"/test/**",
+								"/analytics/**",
 								"/public/**")
 						.permitAll()
 						.anyRequest().authenticated())

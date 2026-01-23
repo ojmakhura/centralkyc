@@ -25,13 +25,14 @@
   <!-- Statistics Cards -->
   <section class="stats-section">
     <div class="stats-grid">
-      <mat-card class="stat-card" *ngFor="let stat of statCards">
+      @for (stat of statCards; track $index) {
+      <mat-card class="stat-card">
         <mat-card-content>
           <div class="stat-icon" [style.background-color]="stat.color + '20'">
             <mat-icon [style.color]="stat.color">{{ stat.icon }}</mat-icon>
           </div>
           <div class="stat-info">
-            <h3 class="stat-value">{{ stat.value }}</h3>
+            <h3 class="stat-value">{{ stat.value() }}</h3>
             <p class="stat-title">{{ stat.title }}</p>
             <div class="stat-trend" [class]="getTrendClass(stat.trend)" *ngIf="stat.trend">
               <mat-icon class="trend-icon">{{ getTrendIcon(stat.trend) }}</mat-icon>
@@ -40,6 +41,7 @@
           </div>
         </mat-card-content>
       </mat-card>
+      }
     </div>
   </section>
 

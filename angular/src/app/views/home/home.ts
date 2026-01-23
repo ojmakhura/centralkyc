@@ -1,12 +1,14 @@
+import { computed, Signal, signal } from '@angular/core';
 import { AfterViewInit, Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
 import { MaterialModule } from '@app/material.module';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import { AnalyticsApiStore } from '@app/store/bw/co/centralkyc/analytics/analytics-api.store';
 
 interface StatCard {
   title: string;
-  value: string;
+  value: Signal<number>;
   icon: string;
   color: string;
   trend?: string;
@@ -35,32 +37,33 @@ interface Feature {
 })
 export class Home implements OnInit, AfterViewInit, OnDestroy  {
   private router = inject(Router);
+  protected analyticsApiStore = inject(AnalyticsApiStore);
 
   statCards: StatCard[] = [
     {
       title: 'Total Individuals',
-      value: '1,234',
+      value: computed(() => this.analyticsApiStore.data().individualCount || 0),
       icon: 'people',
       color: '#3f51b5',
       trend: '+12%'
     },
     {
       title: 'Pending Verifications',
-      value: '45',
+      value: computed(() => this.analyticsApiStore.data().pendingVerificationCount || 0),
       icon: 'pending_actions',
       color: '#ff9800',
       trend: '-5%'
     },
     {
       title: 'Organizations',
-      value: '89',
+      value: computed(() => this.analyticsApiStore.data().organisationCount || 0),
       icon: 'business',
       color: '#4caf50',
       trend: '+8%'
     },
     {
       title: 'Documents Processed',
-      value: '3,567',
+      value: computed(() => this.analyticsApiStore.data().documentCount || 0),
       icon: 'description',
       color: '#9c27b0',
       trend: '+23%'
@@ -130,6 +133,10 @@ export class Home implements OnInit, AfterViewInit, OnDestroy  {
       icon: 'integration_instructions'
     }
   ];
+
+  constructor() {
+    this.analyticsApiStore.countAnalytics();
+  }
 
   ngOnInit(): void {
   }

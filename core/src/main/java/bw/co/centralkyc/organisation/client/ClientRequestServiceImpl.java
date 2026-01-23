@@ -961,4 +961,23 @@ public class ClientRequestServiceImpl
         return passwordEncoder.matches(token, clientRequest.getAccountRequestToken());
     }
 
+    @Override
+    protected Long handleCountByStatus(ClientRequestStatus status) throws Exception {
+        
+        return clientRequestRepository.countByStatus(status);
+    }
+
+    @Override
+    protected Long handleCountByStatusAndOrganisationId(ClientRequestStatus status, String organisationId)
+            throws Exception {
+        
+        return clientRequestRepository.countByStatusAndOrganisationId(status, organisationId);
+    }
+
+    @Override
+    protected Long handleCount() throws Exception {
+        
+        return clientRequestRepository.count();
+    }
+
 }
