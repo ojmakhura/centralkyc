@@ -154,4 +154,9 @@ export class ClientRequestApi {
 
     return this.http.get<ClientRequestDTO>(`${this.path}/${id}/status?status=${status}`);
   }
+
+  public confirmToken(requestId: string, token: string): Observable<string> {
+
+    return this.http.get<string>(`${this.path}/confirm-token/${requestId}?token=${token}`, {responseType: 'text' as 'json' });
+  }
 }

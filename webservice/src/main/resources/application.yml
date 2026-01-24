@@ -94,6 +94,7 @@ minio:
     bucket-name: ${MINIO_BUCKET:centralkyc}
 app:
   request-token-length: ${REQUEST_TOKEN_LENGTH:32}
+  registration-url: ${REGISTRATION_URL:http://localhost:4300/register}
   admin-web: ${ADMIN_WEB_URL:http://localhost:4200}
   tessdata-prefix: ${TESSDATA_PREFIX:/usr/share/tesseract-ocr/5/tessdata}
   tessdata-langs: ${TESSDATA_LANGS:eng}

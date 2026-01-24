@@ -100,7 +100,8 @@ export class EditInvoiceImplComponent extends EditInvoiceComponent {
           status: '',
           contactEmailAddress: '',
           isClient: false,
-          kycStatus: ''
+          kycStatus: '',
+          keycloakId: ''
         }]);
 
       }
@@ -134,7 +135,8 @@ export class EditInvoiceImplComponent extends EditInvoiceComponent {
         status: org.status,
         contactEmailAddress: org.contactEmailAddress,
         isClient: org.isClient,
-        kycStatus: org.kycStatus
+        kycStatus: org.kycStatus,
+        keycloakId: org.keycloakId
       }]);
     });
   }

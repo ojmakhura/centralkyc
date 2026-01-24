@@ -7,6 +7,8 @@
 package bw.co.centralkyc.subscription;
 
 import bw.co.centralkyc.invoice.KycInvoiceRepository;
+import bw.co.centralkyc.organisation.Organisation;
+import bw.co.centralkyc.organisation.OrganisationRepository;
 import jakarta.persistence.EntityNotFoundException;
 
 import java.util.Collection;
@@ -22,8 +24,9 @@ public class KycSubscriptionDaoImpl
     extends KycSubscriptionDaoBase
 {
 
-    public KycSubscriptionDaoImpl(KycInvoiceRepository kycInvoiceRepository, KycSubscriptionRepository kycSubscriptionRepository) {
-        super(kycInvoiceRepository, kycSubscriptionRepository);
+    public KycSubscriptionDaoImpl(KycInvoiceRepository kycInvoiceRepository,
+            OrganisationRepository organisationRepository, KycSubscriptionRepository kycSubscriptionRepository) {
+        super(kycInvoiceRepository, organisationRepository, kycSubscriptionRepository);
         //TODO Auto-generated constructor stub
     }
 
@@ -42,13 +45,13 @@ public class KycSubscriptionDaoImpl
         // WARNING! No conversion for target.endDate (can't convert source.getEndDate():java.util.Date to java.util.Date
         target.setEndDate(source.getEndDate());
 
-        // if(source.getOrganisation() != null) {
+        if(source.getOrganisation() != null) {
 
-        //     target.setOrganisationId(source.getOrganisation().getId());
-        //     target.setOrganisationCode(source.getOrganisation().getCode());
-        //     target.setOrganisationName(source.getOrganisation().getName());
-        //     target.setOrganisationRegistrationNo(source.getOrganisation().getRegistrationNo());
-        // }
+            target.setOrganisationId(source.getOrganisation().getId());
+            target.setOrganisationCode(source.getOrganisation().getCode());
+            target.setOrganisationName(source.getOrganisation().getName());
+            target.setOrganisationRegistrationNo(source.getOrganisation().getRegistrationNo());
+        }
     }
 
     /**
@@ -108,8 +111,8 @@ public class KycSubscriptionDaoImpl
 
         if(StringUtils.isNotBlank(source.getOrganisationId())) {
 
-            // Organisation organisation = this.organisationRepository.getReferenceById(source.getOrganisationId());
-            // target.setOrganisation(organisation);
+            Organisation organisation = this.organisationRepository.getReferenceById(source.getOrganisationId());
+            target.setOrganisation(organisation);
         }
     }
 

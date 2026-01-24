@@ -814,6 +814,43 @@ export const ClientRequestApiStore = signalStore(
           );
         }),
       ),
+      confirmToken: rxMethod<{requestId: string, token: string}>(
+        switchMap((data: any) => {
+          patchState(store, { loading: true, loaderMessage: 'Loading ...' });
+          return clientRequestApi.confirmToken(data.requestId, data.token).pipe(
+            tapResponse({
+              next: (response: string) => {
+                console.log('TOKEN CONFIRMED RESPONSE:', response);
+
+                patchState(
+                  store,
+                  {
+                    identityConfirmationToken: response,
+                    tokenConfirmed: true,
+                    loading: false,
+                    success: true,
+                    messages: ['Registration token confirmed!!'],
+                    error: false,
+                  }
+                );
+              },
+              error: (error: any) => {
+                patchState(
+                  store, {
+                    status: (error?.status || 0),
+                    identityConfirmationToken: '',
+                    tokenConfirmed: false,
+                    loading: false,
+                    success: false,
+                    error: true,
+                    messages: [error?.error?.message || 'An error occurred'],
+                  }
+                );
+              },
+            }),
+          );
+        }),
+      ),
     }
   }),
 );

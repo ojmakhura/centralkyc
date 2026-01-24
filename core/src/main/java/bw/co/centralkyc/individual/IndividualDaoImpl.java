@@ -62,8 +62,8 @@ public class IndividualDaoImpl
             target.getBranch().setId(source.getBranch().getId());
 
             target.setOrganisation(new OrganisationListDTO());
-            target.getOrganisation().setId(source.getBranch().getOrganisationId());
-            target.getOrganisation().setName(source.getBranch().getOrganisation());
+            target.getOrganisation().setId(source.getBranch().getOrganisation().getId());
+            target.getOrganisation().setName(source.getBranch().getOrganisation().getName());
         } else {
 
             target.setOrganisation(new OrganisationListDTO());
@@ -130,8 +130,6 @@ public class IndividualDaoImpl
                     .orElseThrow(() -> new EntityNotFoundException(
                             "Entity not found for id: " + source.getBranch().getId())));
 
-            target.setOrganisationId(target.getBranch().getOrganisationId());
-
         } else if (source.getOrganisation() != null && source.getOrganisation().getId() != null) {
 
             target.setOrganisationId(source.getOrganisation().getId());
@@ -142,6 +140,11 @@ public class IndividualDaoImpl
             target.setPhoneNumbers(jsonMapper.convertValue(source.getPhoneNumbers(), new TypeReference<List<Map>>() {
 
             }));
+        }
+
+        if(target.getHasUser() == null) {
+
+            target.setHasUser(Boolean.FALSE);
         }
     }
 

@@ -95,4 +95,15 @@ organisationApiStore = inject(OrganisationApiStore);
   }
 
   doNgOnDestroy(): void {}
+
+  override invoicesTableActionClicked(event: any): void {
+
+    switch (event.action) {
+      case 'kyc-subscription-details':
+        this.router.navigate(['/invoice/details'], { queryParams: { id: event.row.id } });
+        break;
+      default:
+        break;
+    }
+  }
 }

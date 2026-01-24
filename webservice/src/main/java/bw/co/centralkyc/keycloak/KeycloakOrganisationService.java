@@ -26,6 +26,7 @@ import bw.co.centralkyc.organisation.OrganisationDTO;
 import bw.co.centralkyc.organisation.OrganisationDomain;
 import bw.co.centralkyc.organisation.OrganisationListDTO;
 import bw.co.centralkyc.organisation.OrganisationSearchCriteria;
+import bw.co.centralkyc.subscription.KycSubscriptionRepository;
 import jakarta.ws.rs.WebApplicationException;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.Response.StatusType;
@@ -39,6 +40,8 @@ public class KeycloakOrganisationService {
     private final KeycloakService keycloakService;
     private final JsonMapper jsonMapper;
     private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss.SSSSSS");
+
+    private final KycSubscriptionRepository subscriptionRepository;
 
     // --------------------- Core Conversion Methods --------------------- //
 
@@ -223,13 +226,17 @@ public class KeycloakOrganisationService {
         if (StringUtils.isBlank(registrationNo)) {
             throw new IllegalArgumentException("Registration number must be provided.");
         }
-        return keycloakService
-                .withOrganizations(orgsResource -> orgsResource.searchByAttribute("registrationNo:" + registrationNo)
-                        .stream()
-                        .filter(rep -> registrationNo.equals(getFirst(rep.getAttributes(), "registrationNo")))
-                        .findFirst()
-                        .map(this::toOrganisationDTO)
-                        .orElse(null));
+
+        return keycloakService.withOrganizations(resource -> {
+
+            List<OrganizationRepresentation> t = resource.searchByAttribute("registrationNo:" + registrationNo);
+
+            if(t == null || t.size() == 0) {
+                return null;
+            }
+
+            return toOrganisationDTO(t.get(0));
+        });
     }
 
     // --------------------- Search Helpers --------------------- //
@@ -262,14 +269,13 @@ public class KeycloakOrganisationService {
     }
 
     public Long countOrganisations() {
-        return keycloakService.withOrganizations(orgsResource -> {
+        return keycloakService.withOrganizations(orgResources -> {
 
-            return orgsResource.count(null);
+            return orgResources.count(null);
         });
     }
 
     // --------------------- DTO Mapping --------------------- //
-
     private OrganisationListDTO toOrganisationListDTO(OrganizationRepresentation rep) {
         OrganisationListDTO org = new OrganisationListDTO();
         org.setId(rep.getId());

@@ -10,6 +10,7 @@ import bw.co.centralkyc.individual.PepStatus;
 import bw.co.centralkyc.invoice.KycInvoiceService;
 import bw.co.centralkyc.keycloak.KeycloakOrganisationService;
 import bw.co.centralkyc.kyc.KycComplianceStatus;
+import bw.co.centralkyc.organisation.OrganisationService;
 import bw.co.centralkyc.organisation.client.ClientRequestService;
 import bw.co.centralkyc.subscription.KycSubscriptionService;
 import org.springframework.http.ResponseEntity;
@@ -22,17 +23,19 @@ public class AnalyticsApiImpl implements AnalyticsApi {
     protected final KycSubscriptionService kycSubscriptionService;
     protected final KycInvoiceService kycInvoiceService;
     private final KeycloakOrganisationService keycloakOrganisationService;
+    private final OrganisationService organisationService;
 
     public AnalyticsApiImpl(
             ClientRequestService clientRequestService, IndividualService individualService,
             KycSubscriptionService kycSubscriptionService, KycInvoiceService kycInvoiceService,
-            KeycloakOrganisationService keycloakOrganisationService) {
+            KeycloakOrganisationService keycloakOrganisationService, OrganisationService organisationService) {
 
         this.clientRequestService = clientRequestService;
         this.individualService = individualService;
         this.kycSubscriptionService = kycSubscriptionService;
         this.kycInvoiceService = kycInvoiceService;
         this.keycloakOrganisationService = keycloakOrganisationService;
+        this.organisationService = organisationService;
     }
 
     @Override
@@ -40,7 +43,7 @@ public class AnalyticsApiImpl implements AnalyticsApi {
         try {
 
             CountDTO counts = new CountDTO();
-            counts.setOrganisationCount(keycloakOrganisationService.countOrganisations());
+            counts.setOrganisationCount(organisationService.count());
             counts.setIndividualCount(individualService.count());
             counts.setRequestCount(clientRequestService.count());
             counts.setSubscriptionCount(kycSubscriptionService.count());

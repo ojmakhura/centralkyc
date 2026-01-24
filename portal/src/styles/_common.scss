@@ -621,3 +621,76 @@ mat-card-actions {
     }
   }
 }
+
+// ==========================================
+// REGISTER STEPPER
+// Styles for the register stepper and form controls
+// ==========================================
+.register-stepper {
+  max-width: 720px;
+  margin: 24px auto;
+  padding: 0 16px;
+
+  mat-horizontal-stepper {
+    background: transparent;
+  }
+
+  mat-card {
+    border-radius: 12px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.06);
+    overflow: visible;
+  }
+
+  mat-card-header {
+    padding-bottom: 8px;
+
+    mat-card-title {
+      font-size: 1.125rem;
+      font-weight: 700;
+      color: #263238;
+    }
+
+    mat-card-subtitle {
+      color: #546e7a;
+      font-size: 0.95rem;
+      margin-top: 4px;
+    }
+  }
+
+  mat-card-content {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 12px;
+
+    mat-form-field.full-width {
+      width: 100%;
+      display: block;
+    }
+  }
+
+  .register-stepper__actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    padding-top: 8px;
+  }
+
+  @media (max-width: 599px) {
+    max-width: 100%;
+    padding: 0 8px;
+
+    mat-card {
+      box-shadow: none;
+      border: 1px solid rgba(0,0,0,0.04);
+    }
+
+    .register-stepper__actions {
+      flex-direction: column-reverse;
+      align-items: stretch;
+
+      button {
+        width: 100%;
+      }
+    }
+  }
+}

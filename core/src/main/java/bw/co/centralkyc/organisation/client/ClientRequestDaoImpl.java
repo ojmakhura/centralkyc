@@ -10,6 +10,7 @@ import bw.co.centralkyc.TargetEntity;
 import bw.co.centralkyc.document.DocumentRepository;
 import bw.co.centralkyc.individual.Individual;
 import bw.co.centralkyc.individual.IndividualRepository;
+import bw.co.centralkyc.organisation.OrganisationRepository;
 import jakarta.persistence.EntityNotFoundException;
 
 import java.util.Collection;
@@ -26,13 +27,12 @@ import org.springframework.stereotype.Repository;
 public class ClientRequestDaoImpl
         extends ClientRequestDaoBase {
 
-    private final IndividualRepository individualRepository;
 
-    public ClientRequestDaoImpl(DocumentRepository documentRepository,
-            ClientRequestRepository clientRequestRepository, IndividualRepository individualRepository) {
-        super(documentRepository, clientRequestRepository);
-        this.individualRepository = individualRepository;
-    }
+    public ClientRequestDaoImpl(DocumentRepository documentRepository, OrganisationRepository organisationRepository,
+            IndividualRepository individualRepository, ClientRequestRepository clientRequestRepository) {
+        super(documentRepository, organisationRepository, individualRepository, clientRequestRepository);
+        //TODO Auto-generated constructor stub
+        }
 
     /**
      * {@inheritDoc}
@@ -49,12 +49,12 @@ public class ClientRequestDaoImpl
         // source.getOrganisation():bw.co.centralkyc.organisation.Organisation to
         // java.lang.String
 
-        // if(source.getOrganisation() != null) {
+        if (source.getOrganisation() != null) {
 
-        // target.setOrganisationId(source.getOrganisation().getId());
-        // target.setOrganisation(source.getOrganisation().getName());
-        // target.setOrganisationRegistrationNo(source.getOrganisation().getRegistrationNo());
-        // }
+            target.setOrganisationId(source.getOrganisation().getId());
+            target.setOrganisation(source.getOrganisation().getName());
+            target.setOrganisationRegistrationNo(source.getOrganisation().getRegistrationNo());
+        }
 
         if (source.getTarget() == TargetEntity.INDIVIDUAL) {
 
@@ -152,9 +152,9 @@ public class ClientRequestDaoImpl
             target.setDocument(documentRepository.getReferenceById(source.getDocumentId()));
         }
 
-        if(source.getTarget() == TargetEntity.INDIVIDUAL && StringUtils.isNotBlank(source.getTargetId())) {
+        if (source.getTarget() == TargetEntity.INDIVIDUAL && StringUtils.isNotBlank(source.getTargetId())) {
 
-            if(individualRepository.existsById(source.getTargetId())) {
+            if (individualRepository.existsById(source.getTargetId())) {
 
                 target.setTargetId(source.getTargetId());
             } else {
@@ -164,8 +164,7 @@ public class ClientRequestDaoImpl
         }
 
         if (StringUtils.isNotBlank(source.getOrganisationId())) {
-
-            target.setOrganisationId(source.getOrganisationId());
+            target.setOrganisation(organisationRepository.getReferenceById(source.getOrganisationId()));
         }
     }
 

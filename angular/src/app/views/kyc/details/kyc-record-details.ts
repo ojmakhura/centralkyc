@@ -182,7 +182,8 @@ export class KycRecordDetails implements OnInit, OnDestroy, AfterViewInit {
             status: org.status,
             contactEmailAddress: org.contactEmailAddress,
             isClient: org.isClient,
-            kycStatus: org.kycStatus
+            kycStatus: org.kycStatus,
+            keycloakId: org.keycloakId
           });
         },
         error: (err) => {

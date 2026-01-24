@@ -18,7 +18,8 @@ export type ClientRequestApiState = AppState<ClientRequestDTO, ClientRequestDTO>
   individualsRequestsPage: Page<ClientRequestDTO>;
   organisationsRequests: ClientRequestDTO[];
   organisationsRequestsPage: Page<ClientRequestDTO>;
-
+  tokenConfirmed: boolean;
+  identityConfirmationToken: string;
 };
 
 const initialState: ClientRequestApiState = {
@@ -34,7 +35,9 @@ const initialState: ClientRequestApiState = {
   success: false,
   messages: [],
   loaderMessage: '',
-  error: false
+  error: false,
+  tokenConfirmed: false,
+  identityConfirmationToken: ''
 };
 
 export const ClientRequestApiStore = signalStore(
@@ -803,6 +806,43 @@ export const ClientRequestApiStore = signalStore(
                 patchState(
                   store, {
                     status: (error?.status || 0),
+                    loading: false,
+                    success: false,
+                    error: true,
+                    messages: [error?.error?.message || 'An error occurred'],
+                  }
+                );
+              },
+            }),
+          );
+        }),
+      ),
+      confirmToken: rxMethod<{requestId: string, token: string}>(
+        switchMap((data: any) => {
+          patchState(store, { loading: true, loaderMessage: 'Loading ...' });
+          return clientRequestApi.confirmToken(data.requestId, data.token).pipe(
+            tapResponse({
+              next: (response: string) => {
+                console.log('TOKEN CONFIRMED RESPONSE:', response);
+
+                patchState(
+                  store,
+                  {
+                    identityConfirmationToken: response,
+                    tokenConfirmed: true,
+                    loading: false,
+                    success: true,
+                    messages: ['Registration token confirmed!!'],
+                    error: false,
+                  }
+                );
+              },
+              error: (error: any) => {
+                patchState(
+                  store, {
+                    status: (error?.status || 0),
+                    identityConfirmationToken: '',
+                    tokenConfirmed: false,
                     loading: false,
                     success: false,
                     error: true,

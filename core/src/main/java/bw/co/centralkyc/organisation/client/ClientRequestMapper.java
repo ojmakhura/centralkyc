@@ -6,18 +6,23 @@
 package bw.co.centralkyc.organisation.client;
 
 import bw.co.centralkyc.document.DocumentMapper;
+import bw.co.centralkyc.organisation.OrganisationMapper;
+
 import java.util.Collection;
 import java.util.List;
 import org.mapstruct.BeanMapping;
 import org.mapstruct.InheritInverseConfiguration;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 import org.mapstruct.NullValuePropertyMappingStrategy;
 
 @Mapper(
     componentModel = "spring"
     , uses = {
-        DocumentMapper.class    }
+        DocumentMapper.class,
+        OrganisationMapper.class
+    }
 )
 public interface ClientRequestMapper {
     
@@ -26,6 +31,9 @@ public interface ClientRequestMapper {
      * @param entity
      * @return ClientRequestDTO
      */
+    @Mapping(target = "organisation", source = "organisation.name")
+    @Mapping(target = "organisationRegistrationNo", source = "organisation.registrationNo")
+    @Mapping(target = "organisationId", source = "organisation.id")
     ClientRequestDTO toClientRequestDTO(ClientRequest entity);
 
      /**
@@ -40,9 +48,11 @@ public interface ClientRequestMapper {
      * @return ClientRequest
      */
     @InheritInverseConfiguration
+    @Mapping(target = "organisation", ignore = true)
     ClientRequest clientRequestDTOToEntity(ClientRequestDTO clientRequestDTO);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+    @Mapping(target = "organisation", ignore = true)
     void updateClientRequestFromClientRequestDTO(ClientRequestDTO clientRequestDTO, @MappingTarget ClientRequest entity);
 
 }

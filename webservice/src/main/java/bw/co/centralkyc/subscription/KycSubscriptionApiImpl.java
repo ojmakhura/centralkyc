@@ -7,7 +7,6 @@ package bw.co.centralkyc.subscription;
 
 import java.util.Collection;
 
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -15,18 +14,16 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.RestController;
 
 import bw.co.centralkyc.AuditTracker;
-import bw.co.centralkyc.keycloak.KeycloakOrganisationService;
-import bw.co.centralkyc.organisation.OrganisationDTO;
+
 @RestController
 public class KycSubscriptionApiImpl implements KycSubscriptionApi {
     
     private final KycSubscriptionService kycSubscriptionService;
-    private final KeycloakOrganisationService keycloakOrganisationService;
+    // private final KeycloakOrganisationService keycloakOrganisationService;
 
-    public KycSubscriptionApiImpl(KycSubscriptionService kycSubscriptionService, KeycloakOrganisationService keycloakOrganisationService) {
+    public KycSubscriptionApiImpl(KycSubscriptionService kycSubscriptionService) {
         
         this.kycSubscriptionService = kycSubscriptionService;
-        this.keycloakOrganisationService = keycloakOrganisationService;
     }
 
     @Override
@@ -34,14 +31,6 @@ public class KycSubscriptionApiImpl implements KycSubscriptionApi {
         try {
 
             KycSubscriptionDTO subscription = kycSubscriptionService.findById(id);
-
-            OrganisationDTO org = keycloakOrganisationService.findById(subscription.getOrganisationId());
-            if(org != null) {
-                subscription.setOrganisationName(org.getName());
-                subscription.setOrganisationCode(org.getCode());
-                subscription.setOrganisationRegistrationNo(org.getRegistrationNo());
-            }
-
             return ResponseEntity.ok(subscription);
         } catch (Exception e) {
 
@@ -54,7 +43,6 @@ public class KycSubscriptionApiImpl implements KycSubscriptionApi {
     public ResponseEntity<Collection<KycSubscriptionDTO>> getAll() throws Exception {
         try {
             Collection<KycSubscriptionDTO> subscriptions = kycSubscriptionService.getAll();
-            this.updateOrganisationsDetails(subscriptions);
             return ResponseEntity.ok(subscriptions);
         } catch (Exception e) {
 
@@ -62,25 +50,12 @@ public class KycSubscriptionApiImpl implements KycSubscriptionApi {
             throw e;
         } 
     }
-
-    private void updateOrganisationsDetails(Collection<KycSubscriptionDTO> subscriptions) throws Exception {
-        for (KycSubscriptionDTO subscription : subscriptions) {
-            
-            OrganisationDTO org = keycloakOrganisationService.findById(subscription.getOrganisationId());
-            if(org != null) {
-                subscription.setOrganisationName(org.getName());
-                subscription.setOrganisationCode(org.getCode());
-                subscription.setOrganisationRegistrationNo(org.getRegistrationNo());
-            }
-
-        }
-    }   
+ 
 
     @Override
     public ResponseEntity<Page<KycSubscriptionDTO>> getAllPaged(Integer pageNumber, Integer pageSize) throws Exception {
         try {
             Page<KycSubscriptionDTO> page = kycSubscriptionService.getAll(pageNumber, pageSize);
-            this.updateOrganisationsDetails(page.getContent());
             return ResponseEntity.ok(page);
         } catch (Exception e) {
 
@@ -93,8 +68,6 @@ public class KycSubscriptionApiImpl implements KycSubscriptionApi {
     public ResponseEntity<Page<KycSubscriptionDTO>> pagedSearch(String criteria, Integer pageNumber, Integer pageSize) throws Exception {
         try {
             Page<KycSubscriptionDTO> page = kycSubscriptionService.search(criteria, pageNumber, pageSize);
-
-            this.updateOrganisationsDetails(page.getContent());
 
             return ResponseEntity.ok(page);
         } catch (Exception e) {
@@ -122,33 +95,6 @@ public class KycSubscriptionApiImpl implements KycSubscriptionApi {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             AuditTracker.auditTrail(subscription, authentication);
 
-            if(StringUtils.isNotBlank(subscription.getOrganisationId()) || StringUtils.isNotBlank(subscription.getOrganisationRegistrationNo())) {
-
-                OrganisationDTO org = null;
-
-                if(StringUtils.isNotBlank(subscription.getOrganisationId())) {
-                    org = keycloakOrganisationService.findById(subscription.getOrganisationId());
-                } else if(StringUtils.isNotBlank(subscription.getOrganisationRegistrationNo())) {
-                    org = keycloakOrganisationService.findByRegistrationNo(subscription.getOrganisationRegistrationNo());
-                }
-
-                if(org == null) {
-
-                    throw new KycSubscriptionServiceException("Provided organisation details do no match an existing organisation.");
-                } else {
-
-                    subscription.setOrganisationId(org.getId());
-                    subscription.setOrganisationCode(org.getCode());
-                    subscription.setOrganisationName(org.getName());
-                    subscription.setOrganisationRegistrationNo(org.getRegistrationNo());
-                }
-                
-
-            } else {
-
-                throw new KycSubscriptionServiceException("Subscription must have an organisation.");
-            }
-
             return ResponseEntity.ok(kycSubscriptionService.save(subscription));
         } catch (Exception e) {
 
@@ -162,8 +108,6 @@ public class KycSubscriptionApiImpl implements KycSubscriptionApi {
         try {
 
             Collection<KycSubscriptionDTO> subscriptions = kycSubscriptionService.search(criteria);
-            this.updateOrganisationsDetails(subscriptions);
-
             return ResponseEntity.ok(subscriptions);
         } catch (Exception e) {
 
@@ -183,7 +127,6 @@ public class KycSubscriptionApiImpl implements KycSubscriptionApi {
                 username = authentication.getName();
             }
             Collection<KycSubscriptionDTO> subscriptions = kycSubscriptionService.findByOrganisation(arg0, username);
-            this.updateOrganisationsDetails(subscriptions);
             return ResponseEntity.ok(subscriptions);
         } catch (Exception e) {
 

@@ -8,6 +8,7 @@ package bw.co.centralkyc.individual;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.security.SecureRandom;
 import java.util.Collection;
@@ -33,7 +34,7 @@ import bw.co.roguesystems.comm.ContentType;
 import bw.co.roguesystems.comm.MessagingPlatform;
 import bw.co.roguesystems.comm.message.CommMessageDTO;
 
-@org.springframework.web.bind.annotation.RestController
+@RestController
 public class IndividualApiImpl implements IndividualApi {
 
     @Value("${app.organisation.manager-role}")
@@ -355,6 +356,21 @@ public class IndividualApiImpl implements IndividualApi {
 
             return ResponseEntity
                     .ok(null);
+
+        } catch (Exception e) {
+            throw e;
+        }
+    }
+
+    @Override
+    public ResponseEntity<IndividualDTO> loadRequestIndividual(String requestId, String identityConfirmationToken,
+            String identityNo) throws Exception {
+        
+        try {
+            IndividualDTO individual = individualService.loadRequestIndividual(requestId, identityConfirmationToken,
+                    identityNo);
+
+            return ResponseEntity.ok(individual);
 
         } catch (Exception e) {
             throw e;

@@ -13,14 +13,15 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.annotation.RestController;
 
 import bw.co.centralkyc.AuditTracker;
 import bw.co.centralkyc.PropertySearchOrder;
 import bw.co.centralkyc.SearchObject;
+import bw.co.centralkyc.individual.IndividualDTO;
 import bw.co.centralkyc.keycloak.KeycloakOrganisationService;
-import bw.co.centralkyc.organisation.client.ClientRequestDTO;
 
-@org.springframework.web.bind.annotation.RestController
+@RestController
 public class OrganisationApiImpl implements OrganisationApi {
 
     private final KeycloakOrganisationService orgService;
@@ -35,7 +36,16 @@ public class OrganisationApiImpl implements OrganisationApi {
     @Override
     public ResponseEntity<OrganisationDTO> findById(String id) {
         try {
-            return ResponseEntity.ok(orgService.findById(id));
+
+            OrganisationDTO organisation = organisationService.findById(id);
+
+            if (organisation.getIsClient() != null && organisation.getIsClient()) {
+
+                OrganisationDTO keycloakOrg = orgService.findByRegistrationNo(organisation.getRegistrationNo());
+                organisation.setKeycloakId(keycloakOrg.getId());
+            }
+
+            return ResponseEntity.ok(organisation);
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -72,7 +82,7 @@ public class OrganisationApiImpl implements OrganisationApi {
             SearchObject<OrganisationSearchCriteria> criteria) {
         try {
 
-            Page<OrganisationListDTO> results = orgService.search(criteria);
+            Page<OrganisationListDTO> results = organisationService.search(criteria);
 
             updateOrganisationsDetails(results.getContent());
 
@@ -88,7 +98,7 @@ public class OrganisationApiImpl implements OrganisationApi {
     @Override
     public ResponseEntity<Boolean> remove(String id) {
         try {
-            return ResponseEntity.ok(orgService.remove(id));
+            return ResponseEntity.ok(organisationService.remove(id));
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -98,24 +108,48 @@ public class OrganisationApiImpl implements OrganisationApi {
 
     private void updateOrganisationsDetails(Collection<OrganisationListDTO> orgs) {
         for (OrganisationListDTO org : orgs) {
-            
-            OrganisationDTO orgDetails = orgService.findById(org.getId());
-            if(orgDetails != null) {
+
+            OrganisationDTO orgDetails = organisationService.findById(org.getId());
+            if (orgDetails != null) {
                 org.contactEmailAddress = orgDetails.getContactEmailAddress();
                 org.registrationNo = orgDetails.getRegistrationNo();
             }
 
         }
-    }   
+    }
 
     @Override
     public ResponseEntity<OrganisationDTO> save(OrganisationDTO organisation) {
         try {
-            
+
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             AuditTracker.auditTrail(organisation, authentication);
 
-            return ResponseEntity.ok(orgService.createOrganisation(organisation));
+            OrganisationDTO keycloakOrg = null;
+
+            if (organisation.getIsClient() != null && organisation.getIsClient()) {
+
+                OrganisationDTO existingOrg = orgService.findByRegistrationNo(organisation.getRegistrationNo());
+                keycloakOrg = new OrganisationDTO();
+
+                keycloakOrg.copy(organisation);
+
+                if (existingOrg != null) {
+
+                    keycloakOrg.setId(existingOrg.getId());
+                }
+
+                keycloakOrg = orgService.createOrganisation(keycloakOrg);
+            }
+
+            organisation = organisationService.save(organisation);
+
+            if (keycloakOrg != null) {
+
+                organisation.setKeycloakId(keycloakOrg.getId());
+            }
+
+            return ResponseEntity.ok(organisation);
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -133,11 +167,9 @@ public class OrganisationApiImpl implements OrganisationApi {
             if (criteria.getSortings() != null) {
                 sortings.addAll(sortings);
             }
-            
-            Collection<OrganisationListDTO> results = orgService.search(
-                    criteria.getCriteria());
 
-            updateOrganisationsDetails(results);
+            Collection<OrganisationListDTO> results = organisationService.search(criteria.getCriteria(), sortings);
+
             return ResponseEntity.ok(results);
 
         } catch (Exception e) {
@@ -145,5 +177,19 @@ public class OrganisationApiImpl implements OrganisationApi {
             throw e;
         }
 
+    }
+
+    @Override
+    public ResponseEntity<IndividualDTO> loadRequestOrganisation(String requestId, String identityConfirmationToken,
+            String registrationNo) throws Exception {
+        
+        try {
+            IndividualDTO individual = organisationService.loadRequestOrganisation(requestId, identityConfirmationToken,
+                    registrationNo);
+            return ResponseEntity.ok(individual);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw e;
+        }
     }
 }

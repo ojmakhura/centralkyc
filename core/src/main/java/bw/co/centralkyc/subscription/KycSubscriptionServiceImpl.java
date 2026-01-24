@@ -137,7 +137,7 @@ public class KycSubscriptionServiceImpl
             String likeCriteria = "%" + criteria.toLowerCase() + "%";
             return builder.or(
                     builder.like(builder.lower(root.get("ref")), likeCriteria),
-                    builder.like(builder.lower(root.get("organisationId")), likeCriteria));
+                    builder.like(builder.lower(root.get("organisation").get("id")), likeCriteria));
         };
     }
 
@@ -187,7 +187,7 @@ public class KycSubscriptionServiceImpl
             throws Exception {
 
         Specification<KycSubscription> specification = (root, query, cb) -> cb.equal(
-                root.get("organisationId"),
+                root.get("organisation").get("id"),
                 organisationId);
 
         Collection<KycSubscription> subscriptions = this.kycSubscriptionRepository.findAll(specification);

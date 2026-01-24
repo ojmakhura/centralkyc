@@ -151,6 +151,7 @@ export class EditSettingsImplComponent extends EditSettingsComponent {
       selectedIndDocumentFilter: '',
       selectedKycIndDocumentFilter: '',
       salaryRanges: settings.salaryRanges || [],
+      timeToAccountCreation: 0,
     });
 
   }

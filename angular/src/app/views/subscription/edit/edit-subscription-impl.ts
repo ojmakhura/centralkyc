@@ -86,7 +86,8 @@ export class EditSubscriptionImplComponent extends EditSubscriptionComponent {
       status: '',
       contactEmailAddress: '',
       isClient: false,
-      kycStatus: ''
+      kycStatus: '',
+      keycloakId: ''
     }]);
   }
 });

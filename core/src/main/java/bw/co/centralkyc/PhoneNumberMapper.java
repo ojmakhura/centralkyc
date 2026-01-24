@@ -26,14 +26,14 @@ public interface PhoneNumberMapper {
         );
     }
 
-    default Collection<PhoneNumber> toMapCollection(Collection<Map> maps) {
+    default Collection<PhoneNumber> toPhoneNumberCollection(Collection<Map> maps) {
         if (maps == null) return null;
         return maps.stream()
             .map(m -> this.toPhoneNumber(m))
             .toList();
     }
 
-    default Collection<Map> toPhoneNumberCollection(Collection<PhoneNumber> phones) {
+    default Collection<Map> toMapCollection(Collection<PhoneNumber> phones) {
         if (phones == null) return null;
         return phones.stream()
             .map(p -> this.toMap(p))

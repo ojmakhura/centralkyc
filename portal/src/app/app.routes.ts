@@ -22,5 +22,17 @@ export const routes: Routes = [
       import('./views/terms-of-service/terms-of-service').then(
         (m) => m.TermsOfService
       ),
+  },
+  {
+    path: 'register',
+    data: { title: 'Register' },
+    loadComponent: () =>
+      import('./views/register/register').then((m) => m.Register),
+  },
+  {
+    path: 'register/:requestId',
+    data: { title: 'Register' },
+    loadComponent: () =>
+      import('./views/register/register').then((m) => m.Register),
   }
 ];

@@ -54,7 +54,7 @@ public interface IndividualMapper {
      */
     // source.getPhoneNumbers():bw.co.centralkyc.PhoneNumber to java.util.Map
     @InheritInverseConfiguration
-    @Mapping(target = "phoneNumbers", expression = "java(phoneNumberMapper.toPhoneNumberCollection(individualDTO.getPhoneNumbers()))")
+    @Mapping(target = "phoneNumbers", expression = "java(phoneNumberMapper.toMapCollection(individualDTO.getPhoneNumbers()))")
     @Mapping(target = "branch", ignore = true)
     @Mapping(target = "organisationId", source = "organisation.id")
     @Mapping(target = "employmentRecords", ignore = true)

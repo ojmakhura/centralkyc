@@ -17,29 +17,30 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
 
 import bw.co.centralkyc.PropertySearchOrder;
 import bw.co.centralkyc.SearchObject;
-import bw.co.centralkyc.SortOrderFactory;
 import bw.co.centralkyc.kyc.KycComplianceStatus;
+import bw.co.centralkyc.organisation.client.ClientRequest;
+import bw.co.centralkyc.organisation.client.ClientRequestRepository;
 
 /**
  * @see bw.co.centralkyc.individual.IndividualService
  */
 @Service("individualService")
-@Transactional(propagation = Propagation.REQUIRED, readOnly = false)
 public class IndividualServiceImpl
         extends IndividualServiceBase {
 
     private final IndividualMapper individualMapper;
+    private final ClientRequestRepository clientRequestRepository;
+    private final PasswordEncoder passwordEncoder;
 
     public IndividualServiceImpl(
             IndividualDao individualDao, IndividualMapper individualMapper,
-            IndividualRepository individualRepository,
-            MessageSource messageSource) {
+            IndividualRepository individualRepository, ClientRequestRepository clientRequestRepository,
+            PasswordEncoder passwordEncoder, MessageSource messageSource) {
 
         super(
                 individualDao,
@@ -47,6 +48,8 @@ public class IndividualServiceImpl
                 messageSource);
         
         this.individualMapper = individualMapper;
+        this.clientRequestRepository = clientRequestRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     /**
@@ -239,6 +242,30 @@ public class IndividualServiceImpl
     protected Long handleCountBySex(Sex sex) throws Exception {
         
         return this.individualRepository.countBySex(sex);
+    }
+
+    @Override
+    protected IndividualDTO handleLoadRequestIndividual(String requestId, String identityConfirmationToken,
+            String identityNo) throws Exception {
+
+        ClientRequest clientRequest = clientRequestRepository.findById(requestId)
+                .orElseThrow(() -> new IndividualServiceException("ClientRequest not found"));
+
+        String token = clientRequest.getIdentityConfirmationToken();
+        
+        boolean matches = passwordEncoder.matches(identityConfirmationToken, token);
+
+        if (!matches) {
+            throw new IndividualServiceException("Invalid confirmation token");
+        }
+
+        Individual individual = individualRepository.findByIdentityNo(identityNo);
+
+        if (individual == null) {
+            throw new IndividualServiceException("Individual not found with identityNo: " + identityNo);
+        }
+
+        return individualDao.toIndividualDTO(individual);
     }
 
 }

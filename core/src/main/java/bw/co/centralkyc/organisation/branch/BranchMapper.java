@@ -7,11 +7,14 @@ package bw.co.centralkyc.organisation.branch;
 
 import bw.co.centralkyc.document.DocumentMapper;
 import bw.co.centralkyc.individual.IndividualMapper;
+import bw.co.centralkyc.organisation.OrganisationMapper;
+
 import java.util.Collection;
 import java.util.List;
 import org.mapstruct.BeanMapping;
 import org.mapstruct.InheritInverseConfiguration;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 import org.mapstruct.NullValuePropertyMappingStrategy;
 
@@ -19,7 +22,9 @@ import org.mapstruct.NullValuePropertyMappingStrategy;
     componentModel = "spring"
     , uses = {
         DocumentMapper.class,
-        IndividualMapper.class    }
+        IndividualMapper.class,
+        OrganisationMapper.class
+    }
 )
 public interface BranchMapper {
     
@@ -28,6 +33,8 @@ public interface BranchMapper {
      * @param entity
      * @return BranchDTO
      */
+    @Mapping(target = "organisation", source = "organisation.name")
+    @Mapping(target = "organisationId", source = "organisation.id")
     BranchDTO toBranchDTO(Branch entity);
 
      /**
@@ -42,9 +49,11 @@ public interface BranchMapper {
      * @return Branch
      */
     @InheritInverseConfiguration
+    @Mapping(target = "organisation", ignore = true)
     Branch branchDTOToEntity(BranchDTO branchDTO);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+    @Mapping(target = "organisation", ignore = true)
     void updateBranchFromBranchDTO(BranchDTO branchDTO, @MappingTarget Branch entity);
 
 }

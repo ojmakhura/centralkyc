@@ -22,6 +22,9 @@ import bw.co.centralkyc.individual.IndividualIdentityType;
 import bw.co.centralkyc.individual.IndividualRepository;
 import bw.co.centralkyc.individual.Sex;
 import bw.co.centralkyc.kyc.KycComplianceStatus;
+import bw.co.centralkyc.settings.SettingsDao;
+import bw.co.centralkyc.settings.SettingsRepository;
+import bw.co.roguesystems.comm.ContentType;
 import bw.co.roguesystems.comm.MessagingPlatform;
 import bw.co.roguesystems.comm.message.CommMessageDTO;
 import ch.qos.logback.core.net.server.Client;
@@ -75,8 +78,11 @@ public class ClientRequestServiceImpl
     @Value("${app.request-token-length}")
     private int requestTokenLength;
 
+    @Value("${app.registration-url}")
+    private String registrationUrl;
+
     private final String requestEmailTemplate = """
-                <!DOCTYPE html>
+            <!DOCTYPE html>
             <html>
             <head>
               <meta charset="UTF-8">
@@ -136,15 +142,16 @@ public class ClientRequestServiceImpl
             </html>
                 """;
 
-    private final String specialChars = "!@#$%^&*()_-";
-
     private final PasswordEncoder passwordEncoder;
 
     public ClientRequestServiceImpl(ClientRequestDao clientRequestDao, ClientRequestRepository clientRequestRepository,
             IndividualDao individualDao, IndividualRepository individualRepository, DocumentDao documentDao,
-            DocumentRepository documentRepository, MessageSource messageSource, PasswordEncoder passwordEncoder) {
+            DocumentRepository documentRepository, SettingsDao settingsDao, SettingsRepository settingsRepository,
+            MessageSource messageSource, PasswordEncoder passwordEncoder) {
         super(clientRequestDao, clientRequestRepository, individualDao, individualRepository, documentDao,
-                documentRepository, messageSource);
+                documentRepository,
+                settingsDao, settingsRepository, messageSource);
+
         this.passwordEncoder = passwordEncoder;
     }
 
@@ -174,21 +181,13 @@ public class ClientRequestServiceImpl
         String token = null;
 
         if (isNew) {
-
-            // Genetare a random token with requestTokenLength length. It should include all
-            // letters, digits and special characters
-
-            token = RandomStringUtils.random(
-                    requestTokenLength,
-                    0,
-                    0,
-                    true,
-                    true,
-                    specialChars.toCharArray());
+            // Generate a random token with letters, digits and special characters
+            token = RandomStringUtils
+                    .secure()
+                    .next(requestTokenLength, true, true);
 
             // Encode the token
             String encodedToken = passwordEncoder.encode(token);
-
             clientRequestEntity.setAccountRequestToken(encodedToken);
         }
 
@@ -199,7 +198,6 @@ public class ClientRequestServiceImpl
             // For new requests, we might want to send the token via email or other means
             // For this example, we'll just print it to the console (not recommended for
             // production)
-            System.out.println("Client Request Created. ID: " + clientRequestEntity.getId() + ", Token: " + token);
 
             this.queueEmailNotificationsForRequests(
                     Arrays.asList(clientRequestEntity),
@@ -302,7 +300,8 @@ public class ClientRequestServiceImpl
 
         if (StringUtils.isNotBlank(criteria.getOrganisationId())) {
 
-            spec = spec.and((root, query, cb) -> cb.equal(root.get("organisationId"), criteria.getOrganisationId()));
+            spec = spec.and(
+                    (root, query, cb) -> cb.equal(root.get("organisation").get("id"), criteria.getOrganisationId()));
         }
 
         if (criteria.getTarget() != null) {
@@ -424,16 +423,10 @@ public class ClientRequestServiceImpl
 
             if (isNew) {
 
-                // Genetare a random token with requestTokenLength length. It should include all
-                // letters, digits and special characters
-
-                String token = RandomStringUtils.random(
-                        requestTokenLength,
-                        0,
-                        0,
-                        true,
-                        true,
-                        specialChars.toCharArray());
+                // Generate a random token with letters, digits and special characters
+                String token = RandomStringUtils
+                        .secure()
+                        .next(requestTokenLength, true, true);
 
                 // Encode the token
                 String encodedToken = passwordEncoder.encode(token);
@@ -478,10 +471,16 @@ public class ClientRequestServiceImpl
 
             CommMessageDTO message = new CommMessageDTO();
             message.setPlatform(MessagingPlatform.EMAIL);
+            message.setContentType(ContentType.MIME);
             message.setSubject(subject);
 
             tmp = tmp.replace("{{recipientName}}", request.getTargetId())
-                    .replace("{{kycPortalLink}}", "https://centralkyc.co.bw/register?token=" + token); // Placeholder
+                    .replace("{{kycPortalLink}}",
+                            String.format("%s/%s?token=%s", registrationUrl, request.getId(), token)); // Placeholder
+
+            System.out.println(tmp);
+
+            message.setText(tmp);
 
             notifiedRequests.add(message);
         }
@@ -517,7 +516,7 @@ public class ClientRequestServiceImpl
         clientRequest.setTargetId(savedIndividual.getId());
 
         // Set organisation
-        clientRequest.setOrganisationId(organisationId);
+        // clientRequest.setOrganisationId(organisationId);
 
         // Set status and audit fields
         clientRequest.setStatus(ClientRequestStatus.PENDING);
@@ -953,30 +952,47 @@ public class ClientRequestServiceImpl
     }
 
     @Override
-    protected boolean handleConfirmToken(String requestId, String token) throws Exception {
+    protected String handleConfirmToken(String requestId, String token) throws Exception {
 
         ClientRequest clientRequest = clientRequestRepository.findById(requestId)
                 .orElseThrow(() -> new ClientRequestServiceException("ClientRequest not found"));
 
-        return passwordEncoder.matches(token, clientRequest.getAccountRequestToken());
+        boolean matches = passwordEncoder.matches(token, clientRequest.getAccountRequestToken());
+
+        if (!matches) {
+            throw new ClientRequestServiceException("Invalid confirmation token");
+        }
+
+        String confirmationToken = RandomStringUtils
+                    .secure()
+                    .next(requestTokenLength, true, true);
+
+            // Encode the token
+        String encodedToken = passwordEncoder.encode(confirmationToken);
+
+        clientRequest.setIdentityConfirmationToken(encodedToken);
+
+        clientRequestRepository.save(clientRequest);
+
+        return confirmationToken;
     }
 
     @Override
     protected Long handleCountByStatus(ClientRequestStatus status) throws Exception {
-        
+
         return clientRequestRepository.countByStatus(status);
     }
 
     @Override
     protected Long handleCountByStatusAndOrganisationId(ClientRequestStatus status, String organisationId)
             throws Exception {
-        
+
         return clientRequestRepository.countByStatusAndOrganisationId(status, organisationId);
     }
 
     @Override
     protected Long handleCount() throws Exception {
-        
+
         return clientRequestRepository.count();
     }
 

@@ -51,7 +51,7 @@ export class SearchIndividualsImplComponent extends SearchIndividualsComponent {
   }
 
   override beforeSearchIndividualsSearch(form: any): void {
-    // this.doSearch();
+    this.doSearch();
   }
 
   private doSearch(pageNumber: number = 0, pageSize: number = 10): void {

@@ -16,16 +16,16 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.Page;
 
 import bw.co.centralkyc.AuditTracker;
-import bw.co.centralkyc.keycloak.KeycloakOrganisationService;
 import bw.co.centralkyc.organisation.OrganisationDTO;
+import bw.co.centralkyc.organisation.OrganisationService;
 
 @RestController
 public class BranchApiImpl implements BranchApi {
 
-    private final KeycloakOrganisationService orgService;
+    private final OrganisationService orgService;
     private final BranchService branchService;
 
-    public BranchApiImpl(BranchService branchService, KeycloakOrganisationService orgService) {
+    public BranchApiImpl(BranchService branchService, OrganisationService orgService) {
         
         this.orgService = orgService;
         this.branchService = branchService;
@@ -77,7 +77,6 @@ public class BranchApiImpl implements BranchApi {
         
         try {
             OrganisationDTO org = orgService.findById(organisationId);
-            
 
             return ResponseEntity.ok(branchService.findByOrganisation(organisationId, pageNumber, pageSize));
             
@@ -151,8 +150,6 @@ public class BranchApiImpl implements BranchApi {
         try {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             AuditTracker.auditTrail(branch, authentication);
-            OrganisationDTO org = orgService.findById(branch.getOrganisationId());
-            branch.setOrganisation(org.getName());
             return ResponseEntity.ok(branchService.save(branch));
 
         } catch (Exception e) {
