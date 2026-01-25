@@ -12,7 +12,9 @@ import { IndividualDTO } from '@app/models/individual/individual-dto';
 import { IndividualApi } from '@app/services/individual/individual-api';
 import { IndividualSearchCriteria } from '@app/models/individual/individual-search-criteria';
 
-export type IndividualApiState = AppState<IndividualDTO, IndividualListDTO> & {};
+export type IndividualApiState = AppState<IndividualDTO, IndividualListDTO> & {
+  registrationIndividualLoaded: boolean;
+};
 
 const initialState: IndividualApiState = {
   data: new IndividualDTO(),
@@ -23,7 +25,8 @@ const initialState: IndividualApiState = {
   success: false,
   messages: [],
   loaderMessage: '',
-  error: false
+  error: false,
+  registrationIndividualLoaded: false,
 };
 
 export const IndividualApiStore = signalStore(
@@ -35,10 +38,10 @@ export const IndividualApiStore = signalStore(
       reset: () => {
         patchState(store, initialState);
       },
-      findById: rxMethod<{id: string | any }>(
+      findById: rxMethod<{ id: string | any }>(
         switchMap((data: any) => {
           patchState(store, { loading: true, loaderMessage: 'Loading ...' });
-          return individualApi.findById(data.id, ).pipe(
+          return individualApi.findById(data.id,).pipe(
             tapResponse({
               next: (response: IndividualDTO | any) => {
                 patchState(
@@ -55,12 +58,12 @@ export const IndividualApiStore = signalStore(
               error: (error: any) => {
                 patchState(
                   store, {
-                    status: (error?.status || 0),
-                    loading: false,
-                    success: false,
-                    error: true,
-                    messages: [error?.error?.message || 'An error occurred'],
-                  }
+                  status: (error?.status || 0),
+                  loading: false,
+                  success: false,
+                  error: true,
+                  messages: [error?.error?.message || 'An error occurred'],
+                }
                 );
               },
             }),
@@ -87,22 +90,22 @@ export const IndividualApiStore = signalStore(
               error: (error: any) => {
                 patchState(
                   store, {
-                    status: (error?.status || 0),
-                    loading: false,
-                    success: false,
-                    error: true,
-                    messages: [error?.error?.message || 'An error occurred'],
-                  }
+                  status: (error?.status || 0),
+                  loading: false,
+                  success: false,
+                  error: true,
+                  messages: [error?.error?.message || 'An error occurred'],
+                }
                 );
               },
             }),
           );
         }),
       ),
-      getAllPaged: rxMethod<{pageNumber: number | any , pageSize: number | any }>(
+      getAllPaged: rxMethod<{ pageNumber: number | any, pageSize: number | any }>(
         switchMap((data: any) => {
           patchState(store, { loading: true, loaderMessage: 'Loading ...' });
-          return individualApi.getAllPaged(data.pageNumber, data.pageSize, ).pipe(
+          return individualApi.getAllPaged(data.pageNumber, data.pageSize,).pipe(
             tapResponse({
               next: (response: Page<IndividualListDTO> | any) => {
                 patchState(
@@ -119,22 +122,22 @@ export const IndividualApiStore = signalStore(
               error: (error: any) => {
                 patchState(
                   store, {
-                    status: (error?.status || 0),
-                    loading: false,
-                    success: false,
-                    error: true,
-                    messages: [error?.error?.message || 'An error occurred'],
-                  }
+                  status: (error?.status || 0),
+                  loading: false,
+                  success: false,
+                  error: true,
+                  messages: [error?.error?.message || 'An error occurred'],
+                }
                 );
               },
             }),
           );
         }),
       ),
-      getOrganisationClients: rxMethod<{organisationId: string | any }>(
+      getOrganisationClients: rxMethod<{ organisationId: string | any }>(
         switchMap((data: any) => {
           patchState(store, { loading: true, loaderMessage: 'Loading ...' });
-          return individualApi.getOrganisationClients(data.organisationId, ).pipe(
+          return individualApi.getOrganisationClients(data.organisationId,).pipe(
             tapResponse({
               next: (response: IndividualListDTO[] | any[]) => {
                 patchState(
@@ -151,22 +154,22 @@ export const IndividualApiStore = signalStore(
               error: (error: any) => {
                 patchState(
                   store, {
-                    status: (error?.status || 0),
-                    loading: false,
-                    success: false,
-                    error: true,
-                    messages: [error?.error?.message || 'An error occurred'],
-                  }
+                  status: (error?.status || 0),
+                  loading: false,
+                  success: false,
+                  error: true,
+                  messages: [error?.error?.message || 'An error occurred'],
+                }
                 );
               },
             }),
           );
         }),
       ),
-      getOrganisationClientsPaged: rxMethod<{organisationId: string | any , pageNumber: number | any , pageSize: number | any }>(
+      getOrganisationClientsPaged: rxMethod<{ organisationId: string | any, pageNumber: number | any, pageSize: number | any }>(
         switchMap((data: any) => {
           patchState(store, { loading: true, loaderMessage: 'Loading ...' });
-          return individualApi.getOrganisationClientsPaged(data.organisationId, data.pageNumber, data.pageSize, ).pipe(
+          return individualApi.getOrganisationClientsPaged(data.organisationId, data.pageNumber, data.pageSize,).pipe(
             tapResponse({
               next: (response: Page<IndividualListDTO> | any) => {
                 patchState(
@@ -183,22 +186,22 @@ export const IndividualApiStore = signalStore(
               error: (error: any) => {
                 patchState(
                   store, {
-                    status: (error?.status || 0),
-                    loading: false,
-                    success: false,
-                    error: true,
-                    messages: [error?.error?.message || 'An error occurred'],
-                  }
+                  status: (error?.status || 0),
+                  loading: false,
+                  success: false,
+                  error: true,
+                  messages: [error?.error?.message || 'An error occurred'],
+                }
                 );
               },
             }),
           );
         }),
       ),
-      pagedSearch: rxMethod<{criteria: SearchObject<IndividualSearchCriteria> | any }>(
+      pagedSearch: rxMethod<{ criteria: SearchObject<IndividualSearchCriteria> | any }>(
         switchMap((data: any) => {
           patchState(store, { loading: true, loaderMessage: 'Loading ...' });
-          return individualApi.pagedSearch(data.criteria, ).pipe(
+          return individualApi.pagedSearch(data.criteria,).pipe(
             tapResponse({
               next: (response: Page<IndividualListDTO> | any) => {
                 patchState(
@@ -215,22 +218,22 @@ export const IndividualApiStore = signalStore(
               error: (error: any) => {
                 patchState(
                   store, {
-                    status: (error?.status || 0),
-                    loading: false,
-                    success: false,
-                    error: true,
-                    messages: [error?.error?.message || 'An error occurred'],
-                  }
+                  status: (error?.status || 0),
+                  loading: false,
+                  success: false,
+                  error: true,
+                  messages: [error?.error?.message || 'An error occurred'],
+                }
                 );
               },
             }),
           );
         }),
       ),
-      remove: rxMethod<{id: string | any }>(
+      remove: rxMethod<{ id: string | any }>(
         switchMap((data: any) => {
           patchState(store, { loading: true, loaderMessage: 'Loading ...' });
-          return individualApi.remove(data.id, ).pipe(
+          return individualApi.remove(data.id,).pipe(
             tapResponse({
               next: (response: boolean | any) => {
                 patchState(
@@ -247,22 +250,22 @@ export const IndividualApiStore = signalStore(
               error: (error: any) => {
                 patchState(
                   store, {
-                    status: (error?.status || 0),
-                    loading: false,
-                    success: false,
-                    error: true,
-                    messages: [error?.error?.message || 'An error occurred'],
-                  }
+                  status: (error?.status || 0),
+                  loading: false,
+                  success: false,
+                  error: true,
+                  messages: [error?.error?.message || 'An error occurred'],
+                }
                 );
               },
             }),
           );
         }),
       ),
-      save: rxMethod<{individual: IndividualDTO | any }>(
+      save: rxMethod<{ individual: IndividualDTO | any }>(
         switchMap((data: any) => {
           patchState(store, { loading: true, loaderMessage: 'Loading ...' });
-          return individualApi.save(data.individual, ).pipe(
+          return individualApi.save(data.individual,).pipe(
             tapResponse({
               next: (response: IndividualDTO | any) => {
                 patchState(
@@ -279,22 +282,22 @@ export const IndividualApiStore = signalStore(
               error: (error: any) => {
                 patchState(
                   store, {
-                    status: (error?.status || 0),
-                    loading: false,
-                    success: false,
-                    error: true,
-                    messages: [error?.error?.message || 'An error occurred'],
-                  }
+                  status: (error?.status || 0),
+                  loading: false,
+                  success: false,
+                  error: true,
+                  messages: [error?.error?.message || 'An error occurred'],
+                }
                 );
               },
             }),
           );
         }),
       ),
-      search: rxMethod<{criteria: SearchObject<IndividualSearchCriteria> | any }>(
+      search: rxMethod<{ criteria: SearchObject<IndividualSearchCriteria> | any }>(
         switchMap((data: any) => {
           patchState(store, { loading: true, loaderMessage: 'Loading ...' });
-          return individualApi.search(data.criteria, ).pipe(
+          return individualApi.search(data.criteria,).pipe(
             tapResponse({
               next: (response: IndividualListDTO[] | any[]) => {
                 patchState(
@@ -311,12 +314,46 @@ export const IndividualApiStore = signalStore(
               error: (error: any) => {
                 patchState(
                   store, {
-                    status: (error?.status || 0),
+                  status: (error?.status || 0),
+                  loading: false,
+                  success: false,
+                  error: true,
+                  messages: [error?.error?.message || 'An error occurred'],
+                }
+                );
+              },
+            }),
+          );
+        }),
+      ),
+      loadRequestIndividual: rxMethod<{ requestId: string, identityConfirmationToken: string, identityNo: string }>(
+        switchMap((data: any) => {
+          patchState(store, { loading: true, loaderMessage: 'Loading ...', registrationIndividualLoaded: false });
+          return individualApi.loadRequestIndividual(data.requestId, data.identityConfirmationToken, data.identityNo).pipe(
+            tapResponse({
+              next: (response: IndividualDTO | any) => {
+                patchState(
+                  store,
+                  {
+                    data: response,
+                    registrationIndividualLoaded: true,
                     loading: false,
-                    success: false,
-                    error: true,
-                    messages: [error?.error?.message || 'An error occurred'],
+                    success: true,
+                    messages: ['Success!!'],
+                    error: false,
                   }
+                );
+              },
+              error: (error: any) => {
+                patchState(
+                  store, {
+                  status: (error?.status || 0),
+                  registrationIndividualLoaded: false,
+                  loading: false,
+                  success: false,
+                  error: true,
+                  messages: [error?.error?.message || 'An error occurred'],
+                }
                 );
               },
             }),

@@ -1,60 +1,259 @@
 @if (tokenConfirmed()) {
-	<div class="register-stepper" id="id-stepper">
-		<mat-horizontal-stepper #stepper>
-			<mat-step>
-				<ng-template matStepLabel>Enter identification</ng-template>
-				<mat-card>
-					<mat-card-header>
-						<mat-card-title>Confirm identification number</mat-card-title>
-						<mat-card-subtitle>Please enter your identification number to complete verification.</mat-card-subtitle>
-					</mat-card-header>
+<div class="register-stepper" id="id-stepper">
+  <mat-horizontal-stepper #stepper linear>
+    <mat-step>
+      <ng-template matStepLabel>Enter identification</ng-template>
+      <mat-card>
+        <mat-card-header>
+          <mat-card-title>Confirm identification number</mat-card-title>
+          <mat-card-subtitle>Please enter your identification number to complete verification.</mat-card-subtitle>
+        </mat-card-header>
 
-					<mat-card-content>
-						<mat-form-field class="full-width">
-							<mat-label>Entity</mat-label>
-							<mat-select [formField]="registerForm.identificationType">
-								<mat-option value="INDIVIDUAL">Individual</mat-option>
-								<mat-option value="ORGANISATION">Organisation</mat-option>
-							</mat-select>
-						</mat-form-field>
+        <mat-card-content>
+          <mat-form-field class="full-width">
+            <mat-label>Entity</mat-label>
+            <mat-select [formField]="registerForm.identificationType">
+              <mat-option value="INDIVIDUAL">Individual</mat-option>
+              <mat-option value="ORGANISATION">Organisation</mat-option>
+            </mat-select>
+          </mat-form-field>
 
-						<mat-form-field class="full-width">
-							<mat-label>Identification number</mat-label>
-							<input matInput id="identificationNumber" [formField]="registerForm.identificationNumber" placeholder="Enter identification number" />
-						</mat-form-field>
-					</mat-card-content>
+          <mat-form-field class="full-width">
+            <mat-label>Identification number</mat-label>
+            <input matInput id="identificationNumber" [formField]="registerForm.identificationNumber"
+              placeholder="Enter identification number" />
+          </mat-form-field>
+        </mat-card-content>
 
-						<mat-card-actions class="register-stepper__actions">
-							<button mat-button matStepperPrevious>Back</button>
-							<button mat-raised-button color="primary" (click)="confirmIdentification(stepper)">Confirm</button>
-						</mat-card-actions>
-				</mat-card>
-			</mat-step>
+        <mat-card-actions class="register-stepper__actions">
+          <button mat-button matStepperPrevious>Back</button>
+          <button mat-raised-button color="primary" (click)="confirmIdentification(stepper)">Confirm</button>
+        </mat-card-actions>
+      </mat-card>
+    </mat-step>
 
-			<mat-step>
-				<ng-template matStepLabel>Confirmation</ng-template>
-				<p>Identification number submitted.</p>
-				<div class="register-stepper__actions">
-					<button mat-button matStepperPrevious>Back</button>
-					<button mat-raised-button color="primary" (click)="finish()">Finish</button>
-				</div>
-			</mat-step>
-		</mat-horizontal-stepper>
-	</div>
+    <mat-step>
+      <ng-template matStepLabel>Details Confirmation</ng-template>
+      <mat-card>
+        <mat-card-header>
+          <mat-card-title>Confirm Your Details</mat-card-title>
+          <mat-card-subtitle>Please review and confirm the details below</mat-card-subtitle>
+        </mat-card-header>
+
+        <mat-card-content>
+
+          @if (registerSignal().identificationType === 'INDIVIDUAL') {
+          <div class="details-section">
+            <h3>Individual Details</h3>
+            <div class="detail-row">
+              <span class="detail-label">Name:</span>
+              <span class="detail-value">{{individual().firstName}}{{individual().middleName ? ` ${individual().middleName} ` : ' '}}{{individual().surname}}</span>
+            </div>
+            <div class="detail-row">
+              <span class="detail-label">Identity Number:</span>
+              <span class="detail-value">{{individual().identityNo}}</span>
+            </div>
+            <div class="detail-row">
+              <span class="detail-label">Identity Type:</span>
+              <span class="detail-value">{{individual().identityType}}</span>
+            </div>
+            @if (individual().emailAddress) {
+            <div class="detail-row">
+              <span class="detail-label">Email:</span>
+              <span class="detail-value">{{individual().emailAddress}}</span>
+            </div>
+            }
+            @if (individual().physicalAddress) {
+            <div class="detail-row">
+              <span class="detail-label">Physical Address:</span>
+              <span class="detail-value">{{individual().physicalAddress}}</span>
+            </div>
+            }
+            @if (individual().phoneNumbers && individual().phoneNumbers.length > 0) {
+            <div class="detail-row">
+              <span class="detail-label">Phone:</span>
+              @for (phone of individual().phoneNumbers; track $index) {
+              <span class="detail-value">{{phone.type}}: {{phone.phoneNumber}}</span>
+              }
+            </div>
+            }
+            @if (individual().postalAddress) {
+            <div class="detail-row">
+              <span class="detail-label">Postal Address:</span>
+              <span class="detail-value">{{individual().postalAddress}}</span>
+            </div>
+            }
+            @if (individual().sex) {
+            <div class="detail-row">
+              <span class="detail-label">Sex:</span>
+              <span class="detail-value">{{individual().sex}}</span>
+            </div>
+            }
+            @if (individual().nationality) {
+            <div class="detail-row">
+              <span class="detail-label">Nationality:</span>
+              <span class="detail-value">{{individual().nationality}}</span>
+            </div>
+            }
+            @if (individual().maritalStatus) {
+            <div class="detail-row">
+              <span class="detail-label">Marital Status:</span>
+              <span class="detail-value">{{individual().maritalStatus}}</span>
+            </div>
+            }
+            @if (individual().employmentStatus) {
+            <div class="detail-row">
+              <span class="detail-label">Employment Status:</span>
+              <span class="detail-value">{{individual().employmentStatus}}</span>
+            </div>
+            }
+            @if (individual().username) {
+            <div class="detail-row">
+              <span class="detail-label">Username:</span>
+              <span class="detail-value">{{individual().username}}</span>
+            </div>
+            }
+            @if (individual().organisation && individual().organisation.name) {
+            <div class="detail-row">
+              <span class="detail-label">Organisation:</span>
+              <span class="detail-value">{{individual().organisation.name}}</span>
+            </div>
+            }
+            @if (individual().branch && individual().branch.name) {
+            <div class="detail-row">
+              <span class="detail-label">Branch:</span>
+              <span class="detail-value">{{individual().branch.name}}</span>
+            </div>
+            }
+            @if (individual().kycStatus) {
+            <div class="detail-row">
+              <span class="detail-label">KYC Status:</span>
+              <span class="detail-value">{{individual().kycStatus}}</span>
+            </div>
+            }
+            @if (individual().roles && individual().roles.length > 0) {
+            <div class="detail-row">
+              <span class="detail-label">Roles:</span>
+              <span class="detail-value">{{individual().roles.join(', ')}}</span>
+            </div>
+            }
+          </div>
+          } @else if (registerSignal().identificationType === 'ORGANISATION' && organisationApiStore.data()) {
+          <div class="details-section">
+            <h3>Organisation Details</h3>
+            <div class="detail-row">
+              <span class="detail-label">Name:</span>
+              <span class="detail-value">{{organisationApiStore.data()?.name}}</span>
+            </div>
+            <div class="detail-row">
+              <span class="detail-label">Registration Number:</span>
+              <span class="detail-value">{{organisationApiStore.data()?.registrationNo}}</span>
+            </div>
+            @if (organisationApiStore.data()?.code) {
+            <div class="detail-row">
+              <span class="detail-label">Code:</span>
+              <span class="detail-value">{{organisationApiStore.data()?.code}}</span>
+            </div>
+            }
+            @if (organisationApiStore.data()?.contactEmailAddress) {
+            <div class="detail-row">
+              <span class="detail-label">Email:</span>
+              <span class="detail-value">{{organisationApiStore.data()?.contactEmailAddress}}</span>
+            </div>
+            }
+            @if (organisationApiStore.data()?.physicalAddress) {
+            <div class="detail-row">
+              <span class="detail-label">Physical Address:</span>
+              <span class="detail-value">{{organisationApiStore.data()?.physicalAddress}}</span>
+            </div>
+            }
+            @if (organisationApiStore.data()?.phoneNumbers && organisationApiStore.data()?.phoneNumbers.length > 0) {
+            <div class="detail-row">
+              <span class="detail-label">Phone:</span>
+              <span class="detail-value">{{organisationApiStore.data()?.phoneNumbers[0].number}}</span>
+            </div>
+            }
+            @if (organisationApiStore.data()?.countryOfRegistration) {
+            <div class="detail-row">
+              <span class="detail-label">Country of Registration:</span>
+              <span class="detail-value">{{organisationApiStore.data()?.countryOfRegistration}}</span>
+            </div>
+            }
+          </div>
+          }
+        </mat-card-content>
+
+        <mat-card-actions class="register-stepper__actions">
+          <button mat-button matStepperPrevious>Back</button>
+          <button mat-raised-button color="primary" (click)="detailsConfirmed(stepper)">Confirm</button>
+        </mat-card-actions>
+      </mat-card>
+    </mat-step>
+
+    <mat-step>
+      <ng-template matStepLabel>Registration Confirmation</ng-template>
+      <mat-card>
+        <mat-card-header>
+          <mat-card-title>Registration Status</mat-card-title>
+          <mat-card-subtitle>Select the status for this registration request</mat-card-subtitle>
+        </mat-card-header>
+
+        <mat-card-content>
+          {{registerSignal().registrationStatus}}
+          <div class="registration-status-section">
+            <mat-radio-group [formField]="registerForm.registrationStatus" class="status-radio-group">
+              <mat-radio-button [value]="ClientRequestStatus.ACCEPTED" class="status-radio-option">
+                <div class="status-option-content">
+                  <span class="status-option-title">Accept Registration</span>
+                  <span class="status-option-description">Approve and complete this registration request</span>
+                </div>
+              </mat-radio-button>
+
+              <mat-radio-button [value]="ClientRequestStatus.REJECTED" class="status-radio-option">
+                <div class="status-option-content">
+                  <span class="status-option-title">Reject Registration</span>
+                  <span class="status-option-description">Decline this registration request</span>
+                </div>
+              </mat-radio-button>
+            </mat-radio-group>
+
+            @if (registerSignal().registrationStatus) {
+              <div class="status-confirmation">
+                <p>
+                  <strong>Selected Status:</strong>
+                  {{ registerSignal().registrationStatus === ClientRequestStatus.ACCEPTED ? 'Accepted' : 'Rejected' }}
+                </p>
+              </div>
+            }
+          </div>
+        </mat-card-content>
+
+        <mat-card-actions class="register-stepper__actions">
+          <button mat-button matStepperPrevious>Back</button>
+          <button mat-raised-button color="primary" [disabled]="!registerSignal().registrationStatus" (click)="submitRegistration()">Submit</button>
+        </mat-card-actions>
+      </mat-card>
+    </mat-step>
+  </mat-horizontal-stepper>
+</div>
 } @else {
-  <div class="register-stepper__error">
-    <mat-card>
-      <mat-card-header>
-        <mat-card-title>Invalid Token</mat-card-title>
-      </mat-card-header>
+<div class="register-stepper__error">
+  <mat-card>
+    <mat-card-header>
+      <mat-card-title>Invalid Token</mat-card-title>
+    </mat-card-header>
 
-      <mat-card-content>
-        <p>The token provided is invalid or has expired. Please request a new token to proceed with registration.</p>
-      </mat-card-content>
+    <mat-card-content>
+      <p>The token provided is invalid or has expired. Please request a new token to proceed with registration.</p>
 
-      <mat-card-actions>
-        <button mat-raised-button color="primary" routerLink="/request-new-token">Request New Token</button>
-      </mat-card-actions>
-    </mat-card>
-  </div>
+    </mat-card-content>
+
+    <mat-card-actions>
+      <button mat-raised-button color="primary" routerLink="/request-new-token">Request New Token</button>
+    </mat-card-actions>
+  </mat-card>
+</div>
 }
+<div class="loading-container">
+  <app-loader [isLoading]="loading()" [size]="'medium'" [message]="loaderMessage()"></app-loader>
+</div>

@@ -819,11 +819,10 @@ export const ClientRequestApiStore = signalStore(
       ),
       confirmToken: rxMethod<{requestId: string, token: string}>(
         switchMap((data: any) => {
-          patchState(store, { loading: true, loaderMessage: 'Loading ...' });
+          patchState(store, { loading: true, loaderMessage: 'Loading ...', identityConfirmationToken: '' });
           return clientRequestApi.confirmToken(data.requestId, data.token).pipe(
             tapResponse({
               next: (response: string) => {
-                console.log('TOKEN CONFIRMED RESPONSE:', response);
 
                 patchState(
                   store,

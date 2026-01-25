@@ -62,4 +62,8 @@ export class IndividualApi {
         return this.http.post<IndividualListDTO[] | any[]>(`${this.path}/search`, criteria);
     }
 
+    public loadRequestIndividual(requestId: string, identityConfirmationToken: string, identityNo: string ): Observable<IndividualDTO | any> {
+
+        return this.http.get<IndividualDTO | any>(`${this.path}/request/${requestId}?identityConfirmationToken=${identityConfirmationToken}&identityNo=${identityNo}`);
+    }
 }

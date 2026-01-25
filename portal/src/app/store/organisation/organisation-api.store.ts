@@ -12,7 +12,9 @@ import { OrganisationListDTO } from '@app/models/organisation/organisation-list-
 import { OrganisationApi } from '@app/services/organisation/organisation-api';
 import { OrganisationSearchCriteria } from '@app/models/organisation/organisation-search-criteria';
 
-export type OrganisationApiState = AppState<OrganisationDTO, OrganisationListDTO> & {};
+export type OrganisationApiState = AppState<OrganisationDTO, OrganisationListDTO> & {
+  registrationOrganisationLoaded: boolean;
+};
 
 const initialState: OrganisationApiState = {
   data: new OrganisationDTO(),
@@ -23,7 +25,8 @@ const initialState: OrganisationApiState = {
   success: false,
   messages: [],
   loaderMessage: '',
-  error: false
+  error: false,
+  registrationOrganisationLoaded: false,
 };
 
 export const OrganisationApiStore = signalStore(
@@ -248,6 +251,40 @@ export const OrganisationApiStore = signalStore(
                 patchState(
                   store, {
                     status: (error?.status || 0),
+                    loading: false,
+                    success: false,
+                    error: true,
+                    messages: [error?.error?.message || 'An error occurred'],
+                  }
+                );
+              },
+            }),
+          );
+        }),
+      ),
+      loadRequestOrganisation: rxMethod<{requestId: string, identityConfirmationToken: string, identityNo: string}>(
+        switchMap((data: any) => {
+          patchState(store, { loading: true, loaderMessage: 'Loading Request Organisation ...', registrationOrganisationLoaded: false });
+          return organisationApi.loadRequestOrganisation(data.requestId, data.identityConfirmationToken, data.identityNo).pipe(
+            tapResponse({
+              next: (response: OrganisationDTO) => {
+                patchState(
+                  store,
+                  {
+                    data: response,
+                    registrationOrganisationLoaded: true,
+                    loading: false,
+                    success: true,
+                    messages: ['Request organisation successfully loaded!!'],
+                    error: false,
+                  }
+                );
+              },
+              error: (error: any) => {
+                patchState(
+                  store, {
+                    status: (error?.status || 0),
+                    registrationOrganisationLoaded: false,
                     loading: false,
                     success: false,
                     error: true,

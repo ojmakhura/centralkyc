@@ -40,6 +40,8 @@ public class SpringSecurityConfig {
 								"/test/**",
 								"/analytics/**",
 								"/client-request/confirm-token/**",
+								"/individual/request/**",
+								"/organisation/request/**",
 								"/public/**")
 						.permitAll()
 						.anyRequest().authenticated())
