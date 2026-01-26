@@ -153,13 +153,13 @@ export class EditSettingsImplComponent extends EditSettingsComponent {
       selectedIndDocumentFilter: '',
       selectedKycIndDocumentFilter: '',
       salaryRanges: settings.salaryRanges || [],
-      timeToAccountCreation: 0,
-      platformName: '',
-      platformUrl: '',
-      supportContact: '',
-      kycPortalLink: '',
-      organisationAdminRole: '',
-      normalUserRole: '',
+      timeToAccountCreation: settings.timeToAccountCreation || 0,
+      platformName: settings.platformName,
+      platformUrl: settings.platformUrl,
+      supportContact: settings.supportContact,
+      kycPortalLink: settings.kycPortalLink,
+      organisationAdminRole: settings.organisationAdminRole,
+      normalUserRole: settings.normalUserRole,
     });
 
   }
@@ -184,6 +184,13 @@ export class EditSettingsImplComponent extends EditSettingsComponent {
     settings.quotationTemplateType = value.quotationTemplateType;
     settings.quotationTemplate = value.quotationTemplate;
     settings.salaryRanges = value.salaryRanges || [];
+    settings.platformName = value.platformName;
+    settings.platformUrl = value.platformUrl;
+    settings.supportContact = value.supportContact;
+    settings.kycPortalLink = value.kycPortalLink;
+    settings.organisationAdminRole = value.organisationAdminRole;
+    settings.normalUserRole = value.normalUserRole;
+    settings.timeToAccountCreation = value.timeToAccountCreation;
 
     return settings;
   }

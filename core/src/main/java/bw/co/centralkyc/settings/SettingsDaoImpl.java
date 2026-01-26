@@ -161,41 +161,41 @@ public class SettingsDaoImpl
         // TODO verify behavior of settingsDTOToEntity
         super.settingsDTOToEntity(source, target, copyIfNull);
 
-        if (CollectionUtils.isNotEmpty(source.getOrganisationDocuments())) {
+        // if (CollectionUtils.isNotEmpty(source.getOrganisationDocuments())) {
 
-            for (DocumentTypeDTO documentTypeDTO : source.getOrganisationDocuments()) {
+        //     for (DocumentTypeDTO documentTypeDTO : source.getOrganisationDocuments()) {
 
-                DocumentType type = documentTypeDao.documentTypeDTOToEntity(documentTypeDTO);
-                target.getOrganisationDocuments().add(type);
-            }
-        }
+        //         DocumentType type = documentTypeDao.documentTypeDTOToEntity(documentTypeDTO);
+        //         target.getOrganisationDocuments().add(type);
+        //     }
+        // }
 
-        if (CollectionUtils.isNotEmpty(source.getIndividualDocuments())) {
+        // if (CollectionUtils.isNotEmpty(source.getIndividualDocuments())) {
 
-            for (DocumentTypeDTO documentTypeDTO : source.getIndividualDocuments()) {
+        //     for (DocumentTypeDTO documentTypeDTO : source.getIndividualDocuments()) {
 
-                DocumentType type = documentTypeDao.documentTypeDTOToEntity(documentTypeDTO);
-                target.getIndividualDocuments().add(type);
-            }
-        }
+        //         DocumentType type = documentTypeDao.documentTypeDTOToEntity(documentTypeDTO);
+        //         target.getIndividualDocuments().add(type);
+        //     }
+        // }
 
-        if (CollectionUtils.isNotEmpty(source.getOrgKycDocuments())) {
+        // if (CollectionUtils.isNotEmpty(source.getOrgKycDocuments())) {
 
-            for (DocumentTypeDTO documentTypeDTO : source.getOrgKycDocuments()) {
+        //     for (DocumentTypeDTO documentTypeDTO : source.getOrgKycDocuments()) {
 
-                DocumentType type = documentTypeDao.documentTypeDTOToEntity(documentTypeDTO);
-                target.getOrgKycDocuments().add(type);
-            }
-        }
+        //         DocumentType type = documentTypeDao.documentTypeDTOToEntity(documentTypeDTO);
+        //         target.getOrgKycDocuments().add(type);
+        //     }
+        // }
 
-        if (CollectionUtils.isNotEmpty(source.getIndKycDocuments())) {
+        // if (CollectionUtils.isNotEmpty(source.getIndKycDocuments())) {
 
-            for (DocumentTypeDTO documentTypeDTO : source.getIndKycDocuments()) {
+        //     for (DocumentTypeDTO documentTypeDTO : source.getIndKycDocuments()) {
 
-                DocumentType type = documentTypeDao.documentTypeDTOToEntity(documentTypeDTO);
-                target.getIndKycDocuments().add(type);
-            }
-        }
+        //         DocumentType type = documentTypeDao.documentTypeDTOToEntity(documentTypeDTO);
+        //         target.getIndKycDocuments().add(type);
+        //     }
+        // }
 
         if (CollectionUtils.isNotEmpty(source.getSalaryRanges())) {
 
