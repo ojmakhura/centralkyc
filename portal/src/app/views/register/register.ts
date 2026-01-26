@@ -3,7 +3,6 @@ import { AfterViewChecked, AfterViewInit, Component, computed, effect, inject, I
 import { Loader } from '@app/@shared/loader/loader';
 import { form, FormField, required } from '@angular/forms/signals';
 import { TranslateModule } from '@ngx-translate/core';
-import { ClientRequestApiStore } from '@app/store/organisation/client/client-request-api.store';
 import { ActivatedRoute } from '@angular/router';
 import { MatCardModule } from '@angular/material/card';
 import { MatStepperModule, MatStepper } from '@angular/material/stepper';
@@ -11,14 +10,15 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatSelectModule } from '@angular/material/select';
-import { IndividualApiStore } from '@app/store/individual/individual-api.store';
-import { IndividualDTO } from '@app/models/individual/individual-dto';
-import { OrganisationApiStore } from '@app/store/organisation/organisation-api.store';
-import { OrganisationDTO } from '@app/models/organisation/organisation-dto';
 import { ToastrService } from 'ngx-toastr';
-import { ClientRequestStatus } from '@app/models/organisation/client/client-request-status';
 import { MatRadioModule } from '@angular/material/radio';
 import Swal from 'sweetalert2';
+import { IndividualDTO } from '@app/models/bw/co/centralkyc/individual/individual-dto';
+import { OrganisationDTO } from '@app/models/bw/co/centralkyc/organisation/organisation-dto';
+import { ClientRequestStatus } from '@app/models/bw/co/centralkyc/organisation/client/client-request-status';
+import { IndividualApiStore } from '@app/store/bw/co/centralkyc/individual/individual-api.store';
+import { OrganisationApiStore } from '@app/store/bw/co/centralkyc/organisation/organisation-api.store';
+import { ClientRequestApiStore } from '@app/store/bw/co/centralkyc/organisation/client/client-request-api.store';
 
 class RegisterParams {
   identificationType: string = '';

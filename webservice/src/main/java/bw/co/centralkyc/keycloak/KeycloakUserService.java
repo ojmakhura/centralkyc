@@ -231,23 +231,29 @@ public class KeycloakUserService {
             nameBuilder.append(individual.getMiddleName()).append(' ');
         }
 
-        nameBuilder.append(individual.getSurname());      
+        nameBuilder.append(individual.getSurname());
 
-        String messageStr = String.format(newUserTemplate, nameBuilder.toString(), individual.getOrganisation(),
-                adminWebUrl, user.getUsername(),
-                user.getPassword());
-
-        message.setText(messageStr);
         message.setPlatform(MessagingPlatform.EMAIL);
 
         OrganisationDTO org = organisationService.findById(individual.getOrganisation().getId());
 
-        if(org != null) {
+        if (org != null) {
 
-            if(StringUtils.isNotBlank(org.getContactEmailAddress())) {
+            if (StringUtils.isNotBlank(org.getContactEmailAddress())) {
                 message.setCcs(List.of(org.getContactEmailAddress()));
             }
-            
+
+            String messageStr = String.format(newOrgUserTemplate, nameBuilder.toString(), individual.getOrganisation(),
+                    adminWebUrl, user.getUsername(),
+                    user.getPassword());
+
+            message.setText(messageStr);
+
+        } else {
+            String messageStr = String.format(newUserTemplate, nameBuilder.toString(), settings.getKycPortalLink(), user.getUsername(),
+                    user.getPassword());
+
+            message.setText(messageStr);
         }
 
         return message;
@@ -470,6 +476,7 @@ public class KeycloakUserService {
 
     /**
      * Find all users
+     * 
      * @return
      */
     public Collection<UserDTO> findAll() {
@@ -478,6 +485,7 @@ public class KeycloakUserService {
 
     /**
      * Get users belonging to a branch
+     * 
      * @param branchId
      * @return
      */
@@ -507,6 +515,7 @@ public class KeycloakUserService {
 
     /**
      * Get users belonging to an organisation
+     * 
      * @param organisationId
      * @return
      */
@@ -602,9 +611,11 @@ public class KeycloakUserService {
 
         user = createUser(user);
 
-        if(user == null || StringUtils.isBlank(user.getUserId())) {
+        if (user == null || StringUtils.isBlank(user.getUserId())) {
             throw new RuntimeException("Failed to create user for individual: " + individual.getId());
         }
+
+        CommMessageDTO message = newUserMessage(individual, user);
 
         return user;
     }

@@ -8,6 +8,7 @@ export type AppEnvState = {
   loadingMenus: boolean;
   error?: any;
   realmRoles: any[];
+  menus: any[];
   authorisedPaths: string[];
   authorisedPathsLoaded: boolean;
   isLoggedIn: boolean;
@@ -27,6 +28,7 @@ const initialState: AppEnvState = {
   loading: false,
   loadingMenus: false,
   realmRoles: [],
+  menus: [],
   authorisedPaths: [],
   authorisedPathsLoaded: false,
   isLoggedIn: false,

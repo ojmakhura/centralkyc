@@ -58,170 +58,263 @@
               }
             </mat-form-field>
             <mat-form-field appearance="outline" class="field-half">
-              <mat-label>{{ 'client.request.file.type' | translate }}</mat-label>
-              <mat-select id="clientRequestFileType" [formField]="editSettingsSignalForm.clientRequestFileType"
-                [compareWith]="documentCompare">
-                <mat-option>
-                  <ngx-mat-select-search [placeholderLabel]="'Search'"
-                    [formField]="editSettingsSignalForm.clientRequestFileTypeFilter"
-                    [noEntriesFoundLabel]="'No Entries Found'"></ngx-mat-select-search>
-                  <button mat-flat-button color="primary" type="button"
-                    (click)="filterClientRequestFileType()">Search</button>
-                </mat-option>
-                @for (item of clientRequestFileTypeFilteredList(); track item.id) {
-                <mat-option [value]="item">{{ item?.name }}</mat-option>
-                }
-              </mat-select>
-              <mat-icon matSuffix>category</mat-icon>
-            </mat-form-field>
-          </div>
-
-          <!-- Invoice Document Type Selection -->
-          <div class="field-row">
-            <mat-form-field appearance="outline" class="field-half">
-              <mat-label>{{ 'invoice.document.type' | translate }}</mat-label>
-              <mat-select id="invoiceDocumentType" [formField]="editSettingsSignalForm.invoiceDocumentType"
-                [compareWith]="documentCompare">
-                <mat-option>
-                  <ngx-mat-select-search [placeholderLabel]="'Search'"
-                    [formField]="editSettingsSignalForm.invoiceDocumentTypeFilter"
-                    [noEntriesFoundLabel]="'No Entries Found'"></ngx-mat-select-search>
-                  <button mat-flat-button color="primary" type="button"
-                    (click)="filterInvoiceDocumentType()">Search</button>
-                </mat-option>
-                @for (item of invoiceDocumentTypeFilteredList(); track item.id) {
-                <mat-option [value]="item">{{ item?.name }}</mat-option>
-                }
-              </mat-select>
-              <mat-icon matSuffix>category</mat-icon>
-            </mat-form-field>
-
-            <mat-form-field appearance="outline" class="field-half">
-              <mat-label>{{ 'invoice.template.type' | translate }}</mat-label>
-              <mat-select id="invoiceTemplateType" [formField]="editSettingsSignalForm.invoiceTemplateType"
-                [compareWith]="documentCompare">
-                <mat-option>
-                  <ngx-mat-select-search [placeholderLabel]="'Search'"
-                    [formField]="editSettingsSignalForm.invoiceTemplateTypeFilter"
-                    [noEntriesFoundLabel]="'No Entries Found'"></ngx-mat-select-search>
-                  <button mat-flat-button color="primary" type="button"
-                    (click)="filterInvoiceTemplateType()">Search</button>
-                </mat-option>
-                @for (item of invoiceTemplateTypeFilteredList(); track item.id) {
-                <mat-option [value]="item">{{ item?.name }}</mat-option>
-                }
-              </mat-select>
-              <mat-icon matSuffix>description</mat-icon>
-            </mat-form-field>
-          </div>
-
-          <div class="field-row">
-            <button mat-raised-button color="primary" type="button" (click)="attachInvoiceTemplate()"
-              class="action-button">
-              <mat-icon>attach_file</mat-icon>
-              <span>{{ 'attach.template' | translate }}</span>
-            </button>
-          </div>
-
-          @if (editSettingsSignal().invoiceTemplate) {
-          <div class="field-row">
-            <div class="document-info">
-              <mat-icon>insert_drive_file</mat-icon>
-              <div class="document-details">
-                <span class="document-name">{{
-                  editSettingsSignal().invoiceTemplate.fileName || 'N/A'
-                  }}</span>
-                <!-- <span class="document-type">{{ editSettingsForm.get('invoiceTemplate.documentType')?.value || 'N/A' }}</span> -->
-              </div>
-              @if (editSettingsSignal().invoiceTemplate.url) {
-              <a (click)="downloadTemplate(TargetEntityT.INVOICE)" target="_blank" mat-icon-button color="primary">
-                <mat-icon>download</mat-icon>
-              </a>
+              <mat-label>{{ 'time.to.account.creation' | translate }}</mat-label>
+              <input matInput type="number" id="timeToAccountCreation"
+                [formField]="editSettingsSignalForm.timeToAccountCreation"
+                placeholder="{{ 'enter.time.to.account.creation' | translate }}" />
+              <mat-icon matSuffix>timer</mat-icon>
+              @for (error of editSettingsSignalForm.timeToAccountCreation.errors; track error) {
+              <mat-error translate>{{error.message}}</mat-error>
               }
-            </div>
-          </div>
-          } @else {
-          <div class="field-row">
-            <div class="empty-state">
-              <mat-icon>cloud_upload</mat-icon>
-              <p>{{ 'no.invoice.template.attached' | translate }}</p>
-            </div>
-          </div>
-          }
-
-          <!-- Quotation Document Type Selection -->
-          <div class="field-row">
-            <mat-form-field appearance="outline" class="field-half">
-              <mat-label>{{ 'quotation.document.type' | translate }}</mat-label>
-              <mat-select id="quotationDocumentType" [formField]="editSettingsSignalForm.quotationDocumentType"
-                [compareWith]="documentCompare">
-                <mat-option>
-                  <ngx-mat-select-search [placeholderLabel]="'Search'"
-                    [formField]="editSettingsSignalForm.quotationDocumentTypeFilter"
-                    [noEntriesFoundLabel]="'No Entries Found'"></ngx-mat-select-search>
-                  <button mat-flat-button color="primary" type="button"
-                    (click)="filterQuotationDocumentType()">Search</button>
-                </mat-option>
-                @for (item of quotationDocumentTypeFilteredList(); track item.id) {
-                <mat-option [value]="item">{{ item?.name }}</mat-option>
-                }
-              </mat-select>
-              <mat-icon matSuffix>category</mat-icon>
-            </mat-form-field>
-
-            <mat-form-field appearance="outline" class="field-half">
-              <mat-label>{{ 'quotation.template.type' | translate }}</mat-label>
-              <mat-select id="quotationTemplateType" [formField]="editSettingsSignalForm.quotationTemplateType"
-                [compareWith]="documentCompare">
-                <mat-option>
-                  <ngx-mat-select-search [placeholderLabel]="'Search'"
-                    [formField]="editSettingsSignalForm.quotationTemplateTypeFilter"
-                    [noEntriesFoundLabel]="'No Entries Found'"></ngx-mat-select-search>
-                  <button mat-flat-button color="primary" type="button"
-                    (click)="filterQuotationTemplateType()">Search</button>
-                </mat-option>
-                @for (item of quotationTemplateTypeFilteredList(); track item.id) {
-                <mat-option [value]="item">{{ item?.name }}</mat-option>
-                }
-              </mat-select>
-              <mat-icon matSuffix>description</mat-icon>
             </mat-form-field>
           </div>
 
           <div class="field-row">
-            <button mat-raised-button color="primary" type="button" (click)="attachQuotationTemplate()"
-              class="action-button">
-              <mat-icon>attach_file</mat-icon>
-              <span>{{ 'attach.template' | translate }}</span>
-            </button>
-          </div>
-
-          @if (editSettingsSignalForm.quotationTemplate) {
-          <div class="field-row">
-            <div class="document-info">
-              <mat-icon>insert_drive_file</mat-icon>
-              <div class="document-details">
-                <span class="document-name">{{
-                  editSettingsSignalForm.quotationTemplate.fileName || 'N/A'
-                  }}</span>
-                <!-- <span class="document-type">{{ editSettingsForm.get('quotationTemplate.documentType')?.value || 'N/A' }}</span> -->
-              </div>
-              @if (editSettingsSignalForm.quotationTemplate.url) {
-              <a (click)="downloadTemplate(TargetEntityT.QUOTATION)" target="_blank" mat-icon-button color="primary">
-                <mat-icon>download</mat-icon>
-              </a>
+            <mat-form-field appearance="outline" class="field-half">
+              <mat-label>{{ 'platform.name' | translate }}</mat-label>
+              <input matInput type="text" id="platformName" [formField]="editSettingsSignalForm.platformName"
+                placeholder="{{ 'enter.platform.name' | translate }}" />
+              <mat-icon matSuffix>business</mat-icon>
+              @for (error of editSettingsSignalForm.platformName.errors; track error) {
+              <mat-error translate>{{error.message}}</mat-error>
               }
-            </div>
+            </mat-form-field>
+            <mat-form-field appearance="outline" class="field-half">
+              <mat-label>{{ 'platform.url' | translate }}</mat-label>
+              <input matInput type="text" id="platformUrl" [formField]="editSettingsSignalForm.platformUrl"
+                placeholder="{{ 'enter.platform.url' | translate }}" />
+              <mat-icon matSuffix>link</mat-icon>
+              @for (error of editSettingsSignalForm.platformUrl.errors; track error) {
+              <mat-error translate>{{error.message}}</mat-error>
+              }
+            </mat-form-field>
           </div>
-          } @else {
+
           <div class="field-row">
-            <div class="empty-state">
-              <mat-icon>cloud_upload</mat-icon>
-              <p>{{ 'no.quotation.template.attached' | translate }}</p>
-            </div>
+            <mat-form-field appearance="outline" class="field-half">
+              <mat-label>{{ 'kyc.portal.link' | translate }}</mat-label>
+              <input matInput type="text" id="kycPortalLink" [formField]="editSettingsSignalForm.kycPortalLink"
+                placeholder="{{ 'enter.kyc.portal.link' | translate }}" />
+              <mat-icon matSuffix>link</mat-icon>
+              @for (error of editSettingsSignalForm.kycPortalLink.errors; track error) {
+              <mat-error translate>{{error.message}}</mat-error>
+              }
+            </mat-form-field>
+            <mat-form-field appearance="outline" class="field-half">
+              <mat-label>{{ 'support.contact' | translate }}</mat-label>
+              <input matInput type="text" id="supportContact" [formField]="editSettingsSignalForm.supportContact"
+                placeholder="{{ 'enter.support.contact' | translate }}" />
+              <mat-icon matSuffix>support_agent</mat-icon>
+              @for (error of editSettingsSignalForm.supportContact.errors; track error) {
+              <mat-error translate>{{error.message}}</mat-error>
+              }
+            </mat-form-field>
           </div>
-          }
+
+          <div class="field-row">
+            <mat-form-field appearance="outline" class="field-half">
+              <mat-label>{{ 'organisation.admin.role' | translate }}</mat-label>
+              <mat-select id="organisationAdminRole" [formField]="editSettingsSignalForm.organisationAdminRole">
+                <mat-option value="">{{ 'select.role' | translate }}</mat-option>
+                @for (role of availableRoles(); track role) {
+                <mat-option [value]="role">{{ role }}</mat-option>
+                }
+              </mat-select>
+              <mat-icon matSuffix>admin_panel_settings</mat-icon>
+              @for (error of editSettingsSignalForm.organisationAdminRole.errors; track error) {
+              <mat-error translate>{{error.message}}</mat-error>
+              }
+            </mat-form-field>
+            <mat-form-field appearance="outline" class="field-half">
+              <mat-label>{{ 'normal.user.role' | translate }}</mat-label>
+              <mat-select id="normalUserRole" [formField]="editSettingsSignalForm.normalUserRole">
+                <mat-option value="">{{ 'select.role' | translate }}</mat-option>
+                @for (role of availableRoles(); track role) {
+                <mat-option [value]="role">{{ role }}</mat-option>
+                }
+              </mat-select>
+              <mat-icon matSuffix>person</mat-icon>
+              @for (error of editSettingsSignalForm.normalUserRole.errors; track error) {
+              <mat-error translate>{{error.message}}</mat-error>
+              }
+            </mat-form-field>
+          </div>
         </mat-card-content>
+      </mat-card>
+
+      <mat-card class="form-section">
+        <mat-card-header>
+          <mat-card-title>
+            <mat-icon>tune</mat-icon>
+            {{ 'document.settings' | translate }}
+          </mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+      <div class="field-row">
+        <mat-form-field appearance="outline" class="field-half">
+          <mat-label>{{ 'client.request.file.type' | translate }}</mat-label>
+          <mat-select id="clientRequestFileType" [formField]="editSettingsSignalForm.clientRequestFileType"
+            [compareWith]="documentCompare">
+            <mat-option>
+              <ngx-mat-select-search [placeholderLabel]="'Search'"
+                [formField]="editSettingsSignalForm.clientRequestFileTypeFilter"
+                [noEntriesFoundLabel]="'No Entries Found'"></ngx-mat-select-search>
+              <button mat-flat-button color="primary" type="button"
+                (click)="filterClientRequestFileType()">Search</button>
+            </mat-option>
+            @for (item of clientRequestFileTypeFilteredList(); track item.id) {
+            <mat-option [value]="item">{{ item?.name }}</mat-option>
+            }
+          </mat-select>
+          <mat-icon matSuffix>category</mat-icon>
+        </mat-form-field>
+      </div>
+
+      <!-- Invoice Document Type Selection -->
+      <div class="field-row">
+        <mat-form-field appearance="outline" class="field-half">
+          <mat-label>{{ 'invoice.document.type' | translate }}</mat-label>
+          <mat-select id="invoiceDocumentType" [formField]="editSettingsSignalForm.invoiceDocumentType"
+            [compareWith]="documentCompare">
+            <mat-option>
+              <ngx-mat-select-search [placeholderLabel]="'Search'"
+                [formField]="editSettingsSignalForm.invoiceDocumentTypeFilter"
+                [noEntriesFoundLabel]="'No Entries Found'"></ngx-mat-select-search>
+              <button mat-flat-button color="primary" type="button"
+                (click)="filterInvoiceDocumentType()">Search</button>
+            </mat-option>
+            @for (item of invoiceDocumentTypeFilteredList(); track item.id) {
+            <mat-option [value]="item">{{ item?.name }}</mat-option>
+            }
+          </mat-select>
+          <mat-icon matSuffix>category</mat-icon>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="field-half">
+          <mat-label>{{ 'invoice.template.type' | translate }}</mat-label>
+          <mat-select id="invoiceTemplateType" [formField]="editSettingsSignalForm.invoiceTemplateType"
+            [compareWith]="documentCompare">
+            <mat-option>
+              <ngx-mat-select-search [placeholderLabel]="'Search'"
+                [formField]="editSettingsSignalForm.invoiceTemplateTypeFilter"
+                [noEntriesFoundLabel]="'No Entries Found'"></ngx-mat-select-search>
+              <button mat-flat-button color="primary" type="button"
+                (click)="filterInvoiceTemplateType()">Search</button>
+            </mat-option>
+            @for (item of invoiceTemplateTypeFilteredList(); track item.id) {
+            <mat-option [value]="item">{{ item?.name }}</mat-option>
+            }
+          </mat-select>
+          <mat-icon matSuffix>description</mat-icon>
+        </mat-form-field>
+      </div>
+
+      <div class="field-row">
+        <button mat-raised-button color="primary" type="button" (click)="attachInvoiceTemplate()" class="action-button">
+          <mat-icon>attach_file</mat-icon>
+          <span>{{ 'attach.template' | translate }}</span>
+        </button>
+      </div>
+
+      @if (editSettingsSignal().invoiceTemplate) {
+      <div class="field-row">
+        <div class="document-info">
+          <mat-icon>insert_drive_file</mat-icon>
+          <div class="document-details">
+            <span class="document-name">{{
+              editSettingsSignal().invoiceTemplate.fileName || 'N/A'
+              }}</span>
+            <!-- <span class="document-type">{{ editSettingsForm.get('invoiceTemplate.documentType')?.value || 'N/A' }}</span> -->
+          </div>
+          @if (editSettingsSignal().invoiceTemplate.url) {
+          <a (click)="downloadTemplate(TargetEntityT.INVOICE)" target="_blank" mat-icon-button color="primary">
+            <mat-icon>download</mat-icon>
+          </a>
+          }
+        </div>
+      </div>
+      } @else {
+      <div class="field-row">
+        <div class="empty-state">
+          <mat-icon>cloud_upload</mat-icon>
+          <p>{{ 'no.invoice.template.attached' | translate }}</p>
+        </div>
+      </div>
+      }
+
+      <!-- Quotation Document Type Selection -->
+      <div class="field-row">
+        <mat-form-field appearance="outline" class="field-half">
+          <mat-label>{{ 'quotation.document.type' | translate }}</mat-label>
+          <mat-select id="quotationDocumentType" [formField]="editSettingsSignalForm.quotationDocumentType"
+            [compareWith]="documentCompare">
+            <mat-option>
+              <ngx-mat-select-search [placeholderLabel]="'Search'"
+                [formField]="editSettingsSignalForm.quotationDocumentTypeFilter"
+                [noEntriesFoundLabel]="'No Entries Found'"></ngx-mat-select-search>
+              <button mat-flat-button color="primary" type="button"
+                (click)="filterQuotationDocumentType()">Search</button>
+            </mat-option>
+            @for (item of quotationDocumentTypeFilteredList(); track item.id) {
+            <mat-option [value]="item">{{ item?.name }}</mat-option>
+            }
+          </mat-select>
+          <mat-icon matSuffix>category</mat-icon>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="field-half">
+          <mat-label>{{ 'quotation.template.type' | translate }}</mat-label>
+          <mat-select id="quotationTemplateType" [formField]="editSettingsSignalForm.quotationTemplateType"
+            [compareWith]="documentCompare">
+            <mat-option>
+              <ngx-mat-select-search [placeholderLabel]="'Search'"
+                [formField]="editSettingsSignalForm.quotationTemplateTypeFilter"
+                [noEntriesFoundLabel]="'No Entries Found'"></ngx-mat-select-search>
+              <button mat-flat-button color="primary" type="button"
+                (click)="filterQuotationTemplateType()">Search</button>
+            </mat-option>
+            @for (item of quotationTemplateTypeFilteredList(); track item.id) {
+            <mat-option [value]="item">{{ item?.name }}</mat-option>
+            }
+          </mat-select>
+          <mat-icon matSuffix>description</mat-icon>
+        </mat-form-field>
+      </div>
+
+      <div class="field-row">
+        <button mat-raised-button color="primary" type="button" (click)="attachQuotationTemplate()"
+          class="action-button">
+          <mat-icon>attach_file</mat-icon>
+          <span>{{ 'attach.template' | translate }}</span>
+        </button>
+      </div>
+
+      @if (editSettingsSignalForm.quotationTemplate) {
+      <div class="field-row">
+        <div class="document-info">
+          <mat-icon>insert_drive_file</mat-icon>
+          <div class="document-details">
+            <span class="document-name">{{
+              editSettingsSignalForm.quotationTemplate.fileName || 'N/A'
+              }}</span>
+            <!-- <span class="document-type">{{ editSettingsForm.get('quotationTemplate.documentType')?.value || 'N/A' }}</span> -->
+          </div>
+          @if (editSettingsSignalForm.quotationTemplate.url) {
+          <a (click)="downloadTemplate(TargetEntityT.QUOTATION)" target="_blank" mat-icon-button color="primary">
+            <mat-icon>download</mat-icon>
+          </a>
+          }
+        </div>
+      </div>
+      } @else {
+      <div class="field-row">
+        <div class="empty-state">
+          <mat-icon>cloud_upload</mat-icon>
+          <p>{{ 'no.quotation.template.attached' | translate }}</p>
+        </div>
+      </div>
+      }
+      </mat-card-content>
       </mat-card>
 
       <!-- Salary Ranges Section -->
@@ -308,7 +401,8 @@
                     <ngx-mat-select-search [placeholderLabel]="'Search'"
                       [formField]="editSettingsSignalForm.selectedOrgDocumentFilter"
                       [noEntriesFoundLabel]="'No Entries Found'"></ngx-mat-select-search>
-                    <button mat-flat-button type="button" color="primary" (click)="filterSelectedOrgDocument()">Search</button>
+                    <button mat-flat-button type="button" color="primary"
+                      (click)="filterSelectedOrgDocument()">Search</button>
                   </mat-option>
                   @for (item of selectedOrgDocumentFilteredList(); track item.id) {
                   <mat-option [value]="item">{{ item.name
@@ -353,7 +447,8 @@
                       [formField]="editSettingsSignalForm.selectedKycOrgDocumentFilter"
                       (keyup.enter)="filterSelectedKycOrgDocument()"
                       [noEntriesFoundLabel]="'No Entries Found'"></ngx-mat-select-search>
-                    <button mat-flat-button type="button" color="primary" (click)="filterSelectedKycOrgDocument()">Search</button>
+                    <button mat-flat-button type="button" color="primary"
+                      (click)="filterSelectedKycOrgDocument()">Search</button>
                   </mat-option>
                   @for (item of selectedKycOrgDocumentFilteredList(); track item.id) {
                   <mat-option [value]="item">{{ item.name
@@ -397,7 +492,8 @@
                       [formField]="editSettingsSignalForm.selectedIndDocumentFilter"
                       (keyup.enter)="filterSelectedIndDocument()"
                       [noEntriesFoundLabel]="'No Entries Found'"></ngx-mat-select-search>
-                    <button mat-flat-button type="button" color="primary" (click)="filterSelectedIndDocument()">Search</button>
+                    <button mat-flat-button type="button" color="primary"
+                      (click)="filterSelectedIndDocument()">Search</button>
                   </mat-option>
                   @for (item of selectedIndDocumentFilteredList(); track item.id) {
                   <mat-option [value]="item">{{ item.name
@@ -442,7 +538,8 @@
                       [formField]="editSettingsSignalForm.selectedKycIndDocumentFilter"
                       (keyup.enter)="filterSelectedKycIndDocument()"
                       [noEntriesFoundLabel]="'No Entries Found'"></ngx-mat-select-search>
-                    <button mat-flat-button type="button" color="primary" (click)="filterSelectedKycIndDocument()">Search</button>
+                    <button mat-flat-button type="button" color="primary"
+                      (click)="filterSelectedKycIndDocument()">Search</button>
                   </mat-option>
                   @for (item of selectedKycIndDocumentFilteredList(); track item.id) {
                   <mat-option [value]="item">{{ item.name

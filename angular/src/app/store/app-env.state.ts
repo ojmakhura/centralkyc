@@ -1,5 +1,3 @@
-import { Menu } from '@models/menu/menu';
-import { SelectItem } from '@app/utils/select-item';
 import { of, switchMap } from 'rxjs';
 import { patchState, signalStore, withMethods, withState } from '@ngrx/signals';
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
@@ -9,8 +7,8 @@ export type AppEnvState = {
   loading: boolean;
   loadingMenus: boolean;
   error?: any;
-  realmRoles: SelectItem[];
-  menus: Menu[];
+  realmRoles: any[];
+  menus: any[];
   authorisedPaths: string[];
   authorisedPathsLoaded: boolean;
   isLoggedIn: boolean;
@@ -60,7 +58,7 @@ export const AppEnvStore = signalStore(
             });
         }),
       ),
-      addRealmRole: rxMethod<SelectItem>(
+      addRealmRole: rxMethod<any>(
         switchMap((role) => {
           patchState(store, { realmRoles: [...store.realmRoles(), role] });
           return of(store.realmRoles());
