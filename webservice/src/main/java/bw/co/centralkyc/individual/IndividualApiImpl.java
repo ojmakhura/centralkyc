@@ -169,28 +169,6 @@ public class IndividualApiImpl implements IndividualApi {
 
     }
 
-    private String generatePassword() {
-        if (minPasswordLength < 8) {
-            throw new IllegalArgumentException("Password length must be at least 8");
-        }
-
-        List<String> groups = List.of(UPPER, LOWER, DIGITS, SYMBOLS);
-        String all = UPPER + LOWER + DIGITS + SYMBOLS;
-
-        StringBuilder password = new StringBuilder();
-
-        // Ensure at least one char from each group
-        for (String group : groups) {
-            password.append(group.charAt(RANDOM.nextInt(group.length())));
-        }
-
-        // Fill remaining chars
-        for (int i = password.length(); i < minPasswordLength; i++) {
-            password.append(all.charAt(RANDOM.nextInt(all.length())));
-        }
-
-        return password.toString();
-    }
 
     private CommMessageDTO newUserMessage(IndividualDTO individual, UserDTO user) {
 
@@ -262,32 +240,7 @@ public class IndividualApiImpl implements IndividualApi {
                         }
                     }
 
-                    user = new UserDTO();
-                    user.setFirstName(individual.getFirstName());
-                    user.setLastName(individual.getSurname());
-                    user.setEmail(individual.getEmailAddress());
-                    user.setUsername(individual.getEmailAddress());
-                    user.setIdentityNo(individual.getIdentityNo());
-                    user.setPassword(generatePassword());
-                    user.setEnabled(true);
-
-                    if (individual.getBranch() != null && !StringUtils.isBlank(individual.getBranch().getId())) {
-
-                        user.setBranchId(individual.getBranch().getId());
-                        user.setBranch(individual.getBranch().getName());
-                    }
-
-                    if (individual.getOrganisation() == null
-                            || StringUtils.isBlank(individual.getOrganisation().getId())) {
-                        throw new IndividualServiceException(
-                                "Organisation information is required to create user for individual.");
-                    }
-
-                    user.setOrganisation(individual.getOrganisation().getName());
-                    user.setOrganisationId(individual.getOrganisation().getId());
-                    user.setRoles(Set.of(organisationManagerRole));
-
-                    keycloakUserService.createUser(user);
+                    keycloakUserService.registerUser(individual);
                 }
 
             }

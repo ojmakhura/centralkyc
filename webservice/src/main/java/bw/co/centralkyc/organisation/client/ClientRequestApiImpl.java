@@ -11,8 +11,11 @@ import bw.co.centralkyc.SearchObject;
 import bw.co.centralkyc.TargetEntity;
 import bw.co.centralkyc.document.DocumentApi;
 import bw.co.centralkyc.document.DocumentDTO;
+import bw.co.centralkyc.individual.IndividualDTO;
+import bw.co.centralkyc.individual.IndividualService;
 import bw.co.centralkyc.invoice.KycInvoiceDTO;
 import bw.co.centralkyc.keycloak.KeycloakOrganisationService;
+import bw.co.centralkyc.keycloak.KeycloakUserService;
 import bw.co.centralkyc.organisation.OrganisationDTO;
 import bw.co.centralkyc.settings.SettingsDTO;
 import bw.co.centralkyc.settings.SettingsService;
@@ -41,16 +44,22 @@ public class ClientRequestApiImpl implements ClientRequestApi {
     private final SettingsService settingsService;
     private final DocumentApi documentApi;
     private final ClientRequestService clientRequestService;
+    private final KeycloakUserService keycloakUserService;
+    private final IndividualService individualService;
     // private final KeycloakOrganisationService keycloakOrganisationService;
 
     public ClientRequestApiImpl(
             ClientRequestService clientRequestService,
             SettingsService settingsService,
-            DocumentApi documentApi) {
+            DocumentApi documentApi,
+            KeycloakUserService keycloakUserService,
+            IndividualService individualService) {
 
         this.settingsService = settingsService;
         this.documentApi = documentApi;
         this.clientRequestService = clientRequestService;
+        this.keycloakUserService = keycloakUserService;
+        this.individualService = individualService;
     }
 
     @Override
@@ -428,6 +437,26 @@ public class ClientRequestApiImpl implements ClientRequestApi {
         try {
 
             ClientRequestDTO request = clientRequestService.updateStatus(id, status);
+
+            if(request.getStatus() == ClientRequestStatus.ACCEPTED) {
+                // Additional actions on approval can be handled here
+
+                switch (request.getTarget()) {
+                    case INDIVIDUAL:
+                    
+                        IndividualDTO individual = individualService.findById(request.getTargetId());
+
+                        break;
+                
+                    case ORGANISATION:
+                        throw new Exception("Organisation client request approval not yet implemented");
+                        
+                    default:
+                        throw new Exception("Unsupported target entity for client request approval: " + request.getTarget());
+                }
+
+            }
+
             return ResponseEntity.ok(request);
 
         } catch (Exception e) {

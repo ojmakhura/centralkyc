@@ -26,12 +26,14 @@ export const routes: Routes = [
   {
     path: 'register',
     data: { title: 'Register' },
+    canActivate: [authGuard],
     loadComponent: () =>
       import('./views/register/register').then((m) => m.Register),
   },
   {
     path: 'register/:requestId',
     data: { title: 'Register' },
+    canActivate: [authGuard],
     loadComponent: () =>
       import('./views/register/register').then((m) => m.Register),
   }

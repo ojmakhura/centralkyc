@@ -948,6 +948,10 @@ public class ClientRequestServiceImpl
         clientRequest.setStatus(status);
         clientRequest = clientRequestRepository.save(clientRequest);
 
+        if(status == ClientRequestStatus.ACCEPTED) {
+            // Additional actions on approval can be handled here
+        }
+
         return clientRequestDao.toClientRequestDTO(clientRequest);
     }
 

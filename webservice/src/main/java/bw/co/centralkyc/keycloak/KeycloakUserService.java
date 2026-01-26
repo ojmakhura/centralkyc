@@ -1,6 +1,7 @@
 package bw.co.centralkyc.keycloak;
 
 import java.net.URI;
+import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -23,12 +24,25 @@ import org.keycloak.admin.client.resource.RoleScopeResource;
 import org.keycloak.admin.client.resource.RolesResource;
 import org.keycloak.admin.client.resource.UserResource;
 import org.keycloak.representations.idm.*;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 
+import bw.co.centralkyc.individual.IndividualDTO;
+import bw.co.centralkyc.individual.IndividualService;
+import bw.co.centralkyc.individual.IndividualServiceException;
+import bw.co.centralkyc.organisation.OrganisationDTO;
+import bw.co.centralkyc.organisation.OrganisationService;
 import bw.co.centralkyc.organisation.branch.BranchDTO;
 import bw.co.centralkyc.organisation.branch.BranchService;
+import bw.co.centralkyc.organisation.client.ClientRequestDTO;
+import bw.co.centralkyc.organisation.client.ClientRequestService;
+import bw.co.centralkyc.settings.SettingsDTO;
+import bw.co.centralkyc.settings.SettingsService;
 import bw.co.centralkyc.user.UserDTO;
+import bw.co.roguesystems.comm.ContentType;
+import bw.co.roguesystems.comm.MessagingPlatform;
+import bw.co.roguesystems.comm.message.CommMessageDTO;
 
 @Component
 @RequiredArgsConstructor
@@ -37,8 +51,65 @@ public class KeycloakUserService {
     private static final String[] EXCLUDED_ROLES = { "offline_access", "uma_authorization",
             "default-roles-bocraportal" };
 
+    private static final SecureRandom RANDOM = new SecureRandom();
+
+    private static final String UPPER = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    private static final String LOWER = "abcdefghijklmnopqrstuvwxyz";
+    private static final String DIGITS = "0123456789";
+    private static final String SYMBOLS = "@#$%!";
+
+    @Value("${app.organisation.manager-role}")
+    private String organisationManagerRole;
+
+    @Value("${app.security.password.min-length}")
+    private int minPasswordLength;
+
+    @Value("${app.admin-web}")
+    private String adminWebUrl;
+
+    @Value("${app.comm.source-email}")
+    private String sourceEmail;
+
+    private SettingsDTO settings;
+
     private final KeycloakService keycloakService;
     private final BranchService branchService;
+    private final IndividualService individualService;
+    private final ClientRequestService clientRequestService;
+    private final OrganisationService organisationService;
+    private final SettingsService settingsService;
+
+    private static final String newOrgUserTemplate = """
+            Dear %s,
+
+            Welcome to Central KYC platform. Your organisation, %s, has selected you to manage
+            their account. This message alerts you that a user has been created for you on the
+            platform. Please find the login details below:
+
+            URL: %s
+            Username: %s
+            Password: %s
+
+            Regards
+
+            CentralKYC Team
+            """;
+
+    private static final String newUserTemplate = """
+            Dear %s,
+
+            Welcome to Central KYC platform. Your new account is ready for use. Please find the login details below:
+
+            URL: %s
+            Username: %s
+            Password: %s
+
+            Kindly change your password upon first login.
+
+            Regards
+
+            CentralKYC Team
+            """;
 
     // -------------------- UTILS --------------------
 
@@ -145,11 +216,56 @@ public class KeycloakUserService {
         return reps.stream().map(this::toUserDTO).collect(Collectors.toList());
     }
 
+    private CommMessageDTO newUserMessage(IndividualDTO individual, UserDTO user) {
+
+        CommMessageDTO message = new CommMessageDTO();
+
+        message.setContentType(ContentType.PLAIN_TEXT);
+        message.setDestinations(List.of(individual.getEmailAddress()));
+        message.setSource(sourceEmail);
+
+        StringBuilder nameBuilder = new StringBuilder();
+        nameBuilder.append(individual.getFirstName()).append(' ');
+        if (StringUtils.isNotBlank(individual.getMiddleName())) {
+
+            nameBuilder.append(individual.getMiddleName()).append(' ');
+        }
+
+        nameBuilder.append(individual.getSurname());      
+
+        String messageStr = String.format(newUserTemplate, nameBuilder.toString(), individual.getOrganisation(),
+                adminWebUrl, user.getUsername(),
+                user.getPassword());
+
+        message.setText(messageStr);
+        message.setPlatform(MessagingPlatform.EMAIL);
+
+        OrganisationDTO org = organisationService.findById(individual.getOrganisation().getId());
+
+        if(org != null) {
+
+            if(StringUtils.isNotBlank(org.getContactEmailAddress())) {
+                message.setCcs(List.of(org.getContactEmailAddress()));
+            }
+            
+        }
+
+        return message;
+
+    }
+
     // -------------------- CRUD OPERATIONS --------------------
 
     public UserDTO findByUsername(String username) {
         return keycloakService.withRealm(realm -> {
             List<UserRepresentation> users = realm.users().search(username, true);
+            return CollectionUtils.isEmpty(users) ? null : toUserDTO(users.get(0));
+        });
+    }
+
+    public UserDTO findByEmail(String email) {
+        return keycloakService.withRealm(realm -> {
+            List<UserRepresentation> users = realm.users().searchByEmail(email, true);
             return CollectionUtils.isEmpty(users) ? null : toUserDTO(users.get(0));
         });
     }
@@ -352,10 +468,19 @@ public class KeycloakUserService {
         });
     }
 
+    /**
+     * Find all users
+     * @return
+     */
     public Collection<UserDTO> findAll() {
         return keycloakService.withRealm(realm -> toUserDTOs(realm.users().list()));
     }
 
+    /**
+     * Get users belonging to a branch
+     * @param branchId
+     * @return
+     */
     public Collection<UserDTO> getBranchUsers(String branchId) {
 
         if (StringUtils.isBlank(branchId))
@@ -380,6 +505,11 @@ public class KeycloakUserService {
 
     }
 
+    /**
+     * Get users belonging to an organisation
+     * @param organisationId
+     * @return
+     */
     public Collection<UserDTO> getOrganisationUsers(String organisationId) {
 
         if (StringUtils.isBlank(organisationId))
@@ -387,7 +517,7 @@ public class KeycloakUserService {
 
         return keycloakService.withRealm(realm -> {
             List<UserRepresentation> users = realm.users()
-                    .searchByAttributes("organisationId:" + organisationId);    
+                    .searchByAttributes("organisationId:" + organisationId);
             List<UserRepresentation> orgUsers = users.stream()
                     .filter(rep -> {
                         Map<String, List<String>> attrs = rep.getAttributes();
@@ -400,5 +530,125 @@ public class KeycloakUserService {
 
             return toUserDTOs(orgUsers);
         });
+    }
+
+    /**
+     * 
+     * Register user for individual
+     * 
+     * @param individual
+     * @return
+     */
+    public UserDTO registerUser(IndividualDTO individual) {
+
+        if (individual.getHasUser() == null || !individual.getHasUser()) {
+
+            throw new RuntimeException("Individual is not set to have a user account.");
+        }
+
+        Collection<ClientRequestDTO> clientRequests = clientRequestService.findByIndividual(individual.getId());
+
+        if (CollectionUtils.isEmpty(clientRequests)) {
+            throw new RuntimeException("No client requests found for individual: " + individual.getId());
+        }
+
+        Collection<UserDTO> usersByIdentityNo = searchByAttributes("identityNo:" + individual.getIdentityNo());
+
+        boolean userExists = usersByIdentityNo.stream()
+                .anyMatch(user -> individual.getEmailAddress().equalsIgnoreCase(user.getEmail()));
+
+        if (userExists) {
+            throw new RuntimeException("User with identity number " + individual.getIdentityNo() +
+                    " and email " + individual.getEmailAddress() + " already exists. Contact support.");
+        }
+
+        boolean registrationCompleted = false;
+        for (ClientRequestDTO clientRequest : clientRequests) {
+
+            if (clientRequest.getStatus() == bw.co.centralkyc.organisation.client.ClientRequestStatus.ACCEPTED) {
+
+                registrationCompleted = true;
+            }
+        }
+
+        if (!registrationCompleted) {
+            throw new RuntimeException("No approved client requests found for individual: " + individual.getId());
+        }
+
+        UserDTO user = new UserDTO();
+        user.setFirstName(individual.getFirstName());
+        user.setLastName(individual.getSurname());
+        user.setEmail(individual.getEmailAddress());
+        user.setUsername(individual.getEmailAddress());
+        user.setIdentityNo(individual.getIdentityNo());
+        user.setPassword(generatePassword());
+        user.setEnabled(true);
+
+        if (individual.getBranch() != null && !StringUtils.isBlank(individual.getBranch().getId())) {
+
+            user.setBranchId(individual.getBranch().getId());
+            user.setBranch(individual.getBranch().getName());
+        }
+
+        if (individual.getOrganisation() == null
+                || StringUtils.isBlank(individual.getOrganisation().getId())) {
+            throw new IndividualServiceException(
+                    "Organisation information is required to create user for individual.");
+        }
+
+        user.setOrganisation(individual.getOrganisation().getName());
+        user.setOrganisationId(individual.getOrganisation().getId());
+        user.setRoles(Set.of(organisationManagerRole));
+
+        user = createUser(user);
+
+        if(user == null || StringUtils.isBlank(user.getUserId())) {
+            throw new RuntimeException("Failed to create user for individual: " + individual.getId());
+        }
+
+        return user;
+    }
+
+    /**
+     * 
+     * Generate random password
+     * 
+     * @return
+     */
+    private String generatePassword() {
+        if (minPasswordLength < 8) {
+            throw new IllegalArgumentException("Password length must be at least 8");
+        }
+
+        List<String> groups = List.of(UPPER, LOWER, DIGITS, SYMBOLS);
+        String all = UPPER + LOWER + DIGITS + SYMBOLS;
+
+        StringBuilder password = new StringBuilder();
+
+        // Ensure at least one char from each group
+        for (String group : groups) {
+            password.append(group.charAt(RANDOM.nextInt(group.length())));
+        }
+
+        // Fill remaining chars
+        for (int i = password.length(); i < minPasswordLength; i++) {
+            password.append(all.charAt(RANDOM.nextInt(all.length())));
+        }
+
+        return password.toString();
+    }
+
+    /**
+     * 
+     * Register user for individual by id
+     * 
+     * @param individualId
+     * @return
+     */
+    public UserDTO registerUser(String individualId) {
+
+        IndividualDTO individual = individualService.findById(individualId);
+
+        return registerUser(individual);
     }
 }
