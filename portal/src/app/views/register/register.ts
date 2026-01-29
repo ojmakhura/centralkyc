@@ -19,6 +19,7 @@ import { ClientRequestStatus } from '@app/models/bw/co/centralkyc/organisation/c
 import { IndividualApiStore } from '@app/store/bw/co/centralkyc/individual/individual-api.store';
 import { OrganisationApiStore } from '@app/store/bw/co/centralkyc/organisation/organisation-api.store';
 import { ClientRequestApiStore } from '@app/store/bw/co/centralkyc/organisation/client/client-request-api.store';
+import { ClientRequestApi } from '@app/services/bw/co/centralkyc/organisation/client/client-request-api';
 
 class RegisterParams {
   identificationType: string = '';
@@ -61,11 +62,14 @@ export class Register implements OnInit, OnDestroy, AfterViewInit {
 
   organisationApiStore = inject(OrganisationApiStore);
 
+  clientRequestApi = inject(ClientRequestApi);
   clientRequestApiStore = inject(ClientRequestApiStore);
   route = inject(ActivatedRoute)
 
   tokenConfirmed = computed(() => this.clientRequestApiStore.tokenConfirmed());
   identityConfirmationToken = computed(() => this.clientRequestApiStore.identityConfirmationToken());
+
+  confirmingRegistration = false;
 
   requestEntityLoaded = computed(() => {
     const individualLoaded = this.individualApiStore.registrationIndividualLoaded();
@@ -136,11 +140,13 @@ export class Register implements OnInit, OnDestroy, AfterViewInit {
     });
 
     effect(() => {
-      if (this.requestEntityLoaded()) {
-
-        console.log('REQUEST ENTITY LOADED, ADVANCING STEPPER');
-        // this.stepper.next();
+      let clientRequest = this.clientRequestApiStore.data();
+      if (clientRequest.id && !this.confirmingRegistration) {
+        this.toastr.success(`Client request has been ${clientRequest.status.toLowerCase()} successfully`, 'Success');
       }
+
+      this.confirmingRegistration = false;
+
     });
 
   }
@@ -200,11 +206,20 @@ export class Register implements OnInit, OnDestroy, AfterViewInit {
       cancelButtonText: 'No',
     }).then((result) => {
       if (result.isConfirmed) {
-        this.clientRequestApiStore.updateStatus({
-          id: this.requestId,
-          status: this.registerSignal().registrationStatus!
+        this.confirmingRegistration = true;
+        this.clientRequestApi.confirmRegistration(
+          this.requestId,
+          this.registerSignal().registrationStatus == ClientRequestStatus.ACCEPTED
+        ).subscribe({
+          next: (res) => {
+            this.toastr.success('Registration status confirmed successfully', 'Success');
+            // this.clientRequestApiStore.loadClientRequest(this.requestId);
+          },
+          error: (err) => {
+            this.toastr.error('An error occurred while confirming registration status', 'Error');
+          }
         });
-        Swal.fire('Detached!', 'The document type has been detached from organisation documents.', 'success');
+
       }
     })
   }

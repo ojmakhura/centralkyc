@@ -159,4 +159,9 @@ export class ClientRequestApi {
 
     return this.http.get<string>(`${this.path}/confirm-token/${requestId}?token=${token}`, {responseType: 'text' as 'json' });
   }
+
+  public confirmRegistration(id: string, confirm: boolean): Observable<boolean> {
+
+    return this.http.get<boolean>(`${this.path}/${id}/confirm?confirm=${confirm}`);
+  }
 }

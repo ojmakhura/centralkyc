@@ -40,6 +40,7 @@ import bw.co.centralkyc.organisation.client.ClientRequestService;
 import bw.co.centralkyc.settings.SettingsDTO;
 import bw.co.centralkyc.settings.SettingsService;
 import bw.co.centralkyc.user.UserDTO;
+import bw.co.centralkyc.utils.KycUtils;
 import bw.co.roguesystems.comm.ContentType;
 import bw.co.roguesystems.comm.MessagingPlatform;
 import bw.co.roguesystems.comm.message.CommMessageDTO;
@@ -50,13 +51,6 @@ public class KeycloakUserService {
 
     private static final String[] EXCLUDED_ROLES = { "offline_access", "uma_authorization",
             "default-roles-bocraportal" };
-
-    private static final SecureRandom RANDOM = new SecureRandom();
-
-    private static final String UPPER = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-    private static final String LOWER = "abcdefghijklmnopqrstuvwxyz";
-    private static final String DIGITS = "0123456789";
-    private static final String SYMBOLS = "@#$%!";
 
     @Value("${app.organisation.manager-role}")
     private String organisationManagerRole;
@@ -78,6 +72,8 @@ public class KeycloakUserService {
     private final ClientRequestService clientRequestService;
     private final OrganisationService organisationService;
     private final SettingsService settingsService;
+
+    private final KycUtils kycUtils;
 
     private static final String newOrgUserTemplate = """
             Dear %s,
@@ -590,7 +586,7 @@ public class KeycloakUserService {
         user.setEmail(individual.getEmailAddress());
         user.setUsername(individual.getEmailAddress());
         user.setIdentityNo(individual.getIdentityNo());
-        user.setPassword(generatePassword());
+        user.setPassword(kycUtils.generatePassword());
         user.setEnabled(true);
 
         if (individual.getBranch() != null && !StringUtils.isBlank(individual.getBranch().getId())) {
@@ -617,37 +613,14 @@ public class KeycloakUserService {
 
         CommMessageDTO message = newUserMessage(individual, user);
 
+        // Call messaging service to send the email
+        // For now, just print to console (not recommended for production)
+        System.out.println("Queue new user notification for Individual ID: " + individual.getId());
+        System.out.println(message.getText());
+
         return user;
     }
 
-    /**
-     * 
-     * Generate random password
-     * 
-     * @return
-     */
-    private String generatePassword() {
-        if (minPasswordLength < 8) {
-            throw new IllegalArgumentException("Password length must be at least 8");
-        }
-
-        List<String> groups = List.of(UPPER, LOWER, DIGITS, SYMBOLS);
-        String all = UPPER + LOWER + DIGITS + SYMBOLS;
-
-        StringBuilder password = new StringBuilder();
-
-        // Ensure at least one char from each group
-        for (String group : groups) {
-            password.append(group.charAt(RANDOM.nextInt(group.length())));
-        }
-
-        // Fill remaining chars
-        for (int i = password.length(); i < minPasswordLength; i++) {
-            password.append(all.charAt(RANDOM.nextInt(all.length())));
-        }
-
-        return password.toString();
-    }
 
     /**
      * 

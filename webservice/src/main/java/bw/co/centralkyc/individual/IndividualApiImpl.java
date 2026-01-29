@@ -110,14 +110,12 @@ public class IndividualApiImpl implements IndividualApi {
 
                     data.setOrganisation(o);
                 }
-
             }
 
             return ResponseEntity.ok(data);
         } catch (Exception e) {
             throw e;
         }
-
     }
 
     @Override

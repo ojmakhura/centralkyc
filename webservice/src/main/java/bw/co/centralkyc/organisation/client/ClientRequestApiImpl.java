@@ -13,16 +13,14 @@ import bw.co.centralkyc.document.DocumentApi;
 import bw.co.centralkyc.document.DocumentDTO;
 import bw.co.centralkyc.individual.IndividualDTO;
 import bw.co.centralkyc.individual.IndividualService;
-import bw.co.centralkyc.invoice.KycInvoiceDTO;
-import bw.co.centralkyc.keycloak.KeycloakOrganisationService;
 import bw.co.centralkyc.keycloak.KeycloakUserService;
-import bw.co.centralkyc.organisation.OrganisationDTO;
+import bw.co.centralkyc.messaging.ClientRequestNotification;
 import bw.co.centralkyc.settings.SettingsDTO;
 import bw.co.centralkyc.settings.SettingsService;
+import bw.co.centralkyc.user.UserDTO;
 
 import java.io.InputStream;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -46,20 +44,22 @@ public class ClientRequestApiImpl implements ClientRequestApi {
     private final ClientRequestService clientRequestService;
     private final KeycloakUserService keycloakUserService;
     private final IndividualService individualService;
-    // private final KeycloakOrganisationService keycloakOrganisationService;
+    private final ClientRequestNotification clientRequestNotification;
 
     public ClientRequestApiImpl(
             ClientRequestService clientRequestService,
             SettingsService settingsService,
             DocumentApi documentApi,
             KeycloakUserService keycloakUserService,
-            IndividualService individualService) {
+            IndividualService individualService,
+            ClientRequestNotification clientRequestNotification) {
 
         this.settingsService = settingsService;
         this.documentApi = documentApi;
         this.clientRequestService = clientRequestService;
         this.keycloakUserService = keycloakUserService;
         this.individualService = individualService;
+        this.clientRequestNotification = clientRequestNotification;
     }
 
     @Override
@@ -477,6 +477,41 @@ public class ClientRequestApiImpl implements ClientRequestApi {
 
         } catch (Exception e) {
 
+            e.printStackTrace();
+            throw e;
+        }
+    }
+
+    @Override
+    public ResponseEntity<Boolean> confirmRegistration(String id, Boolean confirm) throws Exception {
+        
+        try {
+
+            Boolean result = clientRequestService.confirmRegistration(id, confirm);
+
+            if(result) {
+
+                // Additional actions on confirmation can be handled here
+
+                ClientRequestDTO request = clientRequestService.findById(id);
+
+                switch (request.getTarget()) {
+                    case INDIVIDUAL:
+                    
+                        IndividualDTO individual = individualService.findById(request.getTargetId());   
+                        // Activate individual account or send welcome email
+                        UserDTO user = keycloakUserService.registerUser(individual);
+                        break;
+                    case ORGANISATION:
+                        throw new Exception("Organisation client request confirmation not yet implemented");
+                    default:
+                        throw new Exception("Unsupported target entity for client request confirmation: " + request.getTarget());
+                }
+            }
+
+            return ResponseEntity.ok(result);
+
+        } catch (Exception e) {
             e.printStackTrace();
             throw e;
         }
