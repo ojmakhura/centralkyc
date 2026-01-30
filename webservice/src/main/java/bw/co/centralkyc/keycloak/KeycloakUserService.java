@@ -314,6 +314,39 @@ public class KeycloakUserService {
         });
     }
 
+    public UserDTO createRegistrationUser(UserDTO user) {
+
+        if(StringUtils.isNotBlank(user.getUserId())) {
+
+            throw new RuntimeException("User ID must be blank when creating a new registration user.");
+        }
+
+        return keycloakService.withRegistrationRealm(realm -> {
+            UserRepresentation rep = toUserRepresentation(user);
+            Response response = realm.users().create(rep);
+            String userId = getCreatedId(response);
+            user.setUserId(userId);
+
+            // Assign organization safely
+            if (StringUtils.isNotBlank(user.getOrganisationId())) {
+                keycloakService.runWithOrganization(user.getOrganisationId(),
+                        org -> org.members().addMember(userId));
+            }
+
+            // Assign roles
+            if (CollectionUtils.isNotEmpty(user.getRoles())) {
+                List<RoleRepresentation> roleReps = user.getRoles().stream()
+                        .map(roleName -> realm.roles().get(roleName).toRepresentation())
+                        .filter(r -> StringUtils.isNotBlank(r.getId()))
+                        .collect(Collectors.toList());
+                if (!roleReps.isEmpty())
+                    realm.users().get(userId).roles().realmLevel().add(roleReps);
+            }
+
+            return user;
+        });
+    }
+
     public void updateUser(UserDTO user) {
         keycloakService.runWithRealm(realm -> {
             UserResource userResource = realm.users().get(user.getUserId());
@@ -605,7 +638,7 @@ public class KeycloakUserService {
         user.setOrganisationId(individual.getOrganisation().getId());
         user.setRoles(Set.of(organisationManagerRole));
 
-        user = createUser(user);
+        user = createRegistrationUser(user);
 
         if (user == null || StringUtils.isBlank(user.getUserId())) {
             throw new RuntimeException("Failed to create user for individual: " + individual.getId());

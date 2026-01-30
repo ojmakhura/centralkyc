@@ -5,6 +5,8 @@ import org.keycloak.admin.client.KeycloakBuilder;
 import org.keycloak.admin.client.resource.OrganizationResource;
 import org.keycloak.admin.client.resource.OrganizationsResource;
 import org.keycloak.admin.client.resource.RealmResource;
+import org.keycloak.representations.AccessTokenResponse;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.jwt.Jwt;
@@ -15,6 +17,15 @@ import java.util.function.Function;
 
 @Component
 public class KeycloakService {
+
+    @Value("${spring.security.oauth2.resourceserver.jwt.issuer-uri}")
+    private String issuerUri;
+
+    @Value("${app.registration.client}")
+    private String registrationClient;
+
+    @Value("${app.registration.client-secret}")
+    private String registrationClientSecret;
 
     /**
      * Returns the JWT of the currently authenticated user
@@ -54,6 +65,30 @@ public class KeycloakService {
                 .build();
     }
 
+    private Keycloak createRegistrationKeycloak() {
+        String realm = issuerUri.substring(issuerUri.lastIndexOf('/') + 1);
+        String serverUrl = issuerUri.substring(0, issuerUri.indexOf("/realms"));
+
+        return KeycloakBuilder.builder()
+                .serverUrl(serverUrl)
+                .realm(realm)
+                .clientId(registrationClient)
+                .clientSecret(registrationClientSecret)
+                .build();
+    }
+
+    public AccessTokenResponse getAccessToken() {
+
+        try (Keycloak kc = createRegistrationKeycloak()) {
+
+            if(kc == null) {
+                return null;
+            }
+
+            return kc.tokenManager().getAccessToken();
+        }
+    }
+
     /**
      * Returns the Keycloak realm name for the current JWT
      */
@@ -77,6 +112,18 @@ public class KeycloakService {
      */
     public <T> T withRealm(Function<RealmResource, T> fn) {
         try (Keycloak kc = createKeycloak()) {
+
+            if(kc == null) {
+                return null;
+            }
+
+            RealmResource realm = kc.realm(getRealm());
+            return fn.apply(realm);
+        }
+    }
+
+    public <T> T withRegistrationRealm(Function<RealmResource, T> fn) {
+        try (Keycloak kc = createRegistrationKeycloak()) {
 
             if(kc == null) {
                 return null;

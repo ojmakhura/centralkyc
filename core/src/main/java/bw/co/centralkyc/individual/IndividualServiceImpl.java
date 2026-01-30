@@ -265,6 +265,11 @@ public class IndividualServiceImpl
             throw new IndividualServiceException("Individual not found with identityNo: " + identityNo);
         }
 
+        if(!individual.getId().equals(clientRequest.getTargetId())) {
+
+            throw new IndividualServiceException("Individual does not match ClientRequest target");
+        }
+
         return individualDao.toIndividualDTO(individual);
     }
 

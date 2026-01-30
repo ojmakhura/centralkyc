@@ -68,6 +68,7 @@ export class Register implements OnInit, OnDestroy, AfterViewInit {
 
   tokenConfirmed = computed(() => this.clientRequestApiStore.tokenConfirmed());
   identityConfirmationToken = computed(() => this.clientRequestApiStore.identityConfirmationToken());
+  registrationToken = computed(() => this.clientRequestApiStore.registrationToken());
 
   confirmingRegistration = false;
 
@@ -209,7 +210,8 @@ export class Register implements OnInit, OnDestroy, AfterViewInit {
         this.confirmingRegistration = true;
         this.clientRequestApi.confirmRegistration(
           this.requestId,
-          this.registerSignal().registrationStatus == ClientRequestStatus.ACCEPTED
+          this.registerSignal().registrationStatus == ClientRequestStatus.ACCEPTED,
+          this.registrationToken()
         ).subscribe({
           next: (res) => {
             this.toastr.success('Registration status confirmed successfully', 'Success');

@@ -915,9 +915,18 @@ public class ClientRequestServiceImpl
 
         clientRequest.setIdentityConfirmationToken(encodedToken);
 
+        String registrationToken = RandomStringUtils
+                    .secure()
+                    .next(requestTokenLength, true, true);
+
+            // Encode the token
+        String encodedRegistrationToken = passwordEncoder.encode(registrationToken);
+
+        clientRequest.setRegistrationToken(encodedRegistrationToken);
+
         clientRequestRepository.save(clientRequest);
 
-        return confirmationToken;
+        return String.format("%s|%s", confirmationToken, registrationToken);
     }
 
     @Override
@@ -940,10 +949,16 @@ public class ClientRequestServiceImpl
     }
 
     @Override
-    protected boolean handleConfirmRegistration(String id, Boolean confirm) throws Exception {
+    protected boolean handleConfirmRegistration(String id, Boolean confirm, String registrationToken) throws Exception {
 
         ClientRequest request = clientRequestRepository.findById(id)
                 .orElseThrow(() -> new ClientRequestServiceException("ClientRequest not found"));
+
+        boolean matches = passwordEncoder.matches(registrationToken, request.getRegistrationToken());
+
+        if (!matches) {
+            throw new ClientRequestServiceException("Invalid registration token");
+        }
 
         if(request.getStatus() == ClientRequestStatus.ACCEPTED) {
 

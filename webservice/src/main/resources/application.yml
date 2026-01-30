@@ -107,3 +107,6 @@ app:
       min-length: ${MIN_PASSWORD_LENGTH:8}
   organisation:
     manager-role: ${ORGANISATION_MANAGER_ROLE:ORG_MANAGER}
+  registration:
+    client: ${REGISTRATION_CLIENT:centralkyc-registration}
+    client-secret: ${REGISTRATION_CLIENT_SECRET:secret}

@@ -20,6 +20,7 @@ export type ClientRequestApiState = AppState<ClientRequestDTO, ClientRequestDTO>
   organisationsRequestsPage: Page<ClientRequestDTO>;
   tokenConfirmed: boolean;
   identityConfirmationToken: string;
+  registrationToken: string;
 };
 
 const initialState: ClientRequestApiState = {
@@ -38,6 +39,7 @@ const initialState: ClientRequestApiState = {
   error: false,
   tokenConfirmed: false,
   identityConfirmationToken: '',
+  registrationToken: '',
 };
 
 export const ClientRequestApiStore = signalStore(
@@ -825,10 +827,13 @@ export const ClientRequestApiStore = signalStore(
               next: (response: string) => {
                 console.log('TOKEN CONFIRMED RESPONSE:', response);
 
+                let split = response.split('|');
+
                 patchState(
                   store,
                   {
-                    identityConfirmationToken: response,
+                    identityConfirmationToken: split[0],
+                    registrationToken: split[1],
                     tokenConfirmed: true,
                     loading: false,
                     success: true,
@@ -842,6 +847,7 @@ export const ClientRequestApiStore = signalStore(
                   store, {
                     status: (error?.status || 0),
                     identityConfirmationToken: '',
+                    registrationToken: '',
                     tokenConfirmed: false,
                     loading: false,
                     success: false,

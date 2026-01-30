@@ -483,12 +483,11 @@ public class ClientRequestApiImpl implements ClientRequestApi {
     }
 
     @Override
-    public ResponseEntity<Boolean> confirmRegistration(String id, Boolean confirm) throws Exception {
+    public ResponseEntity<Boolean> confirmRegistration(String id, Boolean confirm, String registrationToken) throws Exception {
         
         try {
 
-            Boolean result = clientRequestService.confirmRegistration(id, confirm);
-
+            Boolean result = clientRequestService.confirmRegistration(id, confirm, registrationToken);
             if(result) {
 
                 // Additional actions on confirmation can be handled here

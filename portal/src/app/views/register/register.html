@@ -41,8 +41,7 @@
         </mat-card-header>
 
         <mat-card-content>
-
-          @if (registerSignal().identificationType === 'INDIVIDUAL') {
+          @if (registerSignal().identificationType === 'INDIVIDUAL' && individual().id) {
           <div class="details-section">
             <h3>Individual Details</h3>
             <div class="detail-row">
@@ -138,48 +137,56 @@
             </div>
             }
           </div>
-          } @else if (registerSignal().identificationType === 'ORGANISATION' && organisationApiStore.data()) {
+          } @else if (registerSignal().identificationType === 'ORGANISATION' && organisationApiStore.data().id) {
           <div class="details-section">
             <h3>Organisation Details</h3>
             <div class="detail-row">
               <span class="detail-label">Name:</span>
-              <span class="detail-value">{{organisationApiStore.data()?.name}}</span>
+              <span class="detail-value">{{organisationApiStore.data().name}}</span>
             </div>
             <div class="detail-row">
               <span class="detail-label">Registration Number:</span>
-              <span class="detail-value">{{organisationApiStore.data()?.registrationNo}}</span>
+              <span class="detail-value">{{organisationApiStore.data().registrationNo}}</span>
             </div>
-            @if (organisationApiStore.data()?.code) {
+            @if (organisationApiStore.data().code) {
             <div class="detail-row">
               <span class="detail-label">Code:</span>
-              <span class="detail-value">{{organisationApiStore.data()?.code}}</span>
+              <span class="detail-value">{{organisationApiStore.data().code}}</span>
             </div>
             }
-            @if (organisationApiStore.data()?.contactEmailAddress) {
+            @if (organisationApiStore.data().contactEmailAddress) {
             <div class="detail-row">
               <span class="detail-label">Email:</span>
-              <span class="detail-value">{{organisationApiStore.data()?.contactEmailAddress}}</span>
+              <span class="detail-value">{{organisationApiStore.data().contactEmailAddress}}</span>
             </div>
             }
-            @if (organisationApiStore.data()?.physicalAddress) {
+            @if (organisationApiStore.data().physicalAddress) {
             <div class="detail-row">
               <span class="detail-label">Physical Address:</span>
-              <span class="detail-value">{{organisationApiStore.data()?.physicalAddress}}</span>
+              <span class="detail-value">{{organisationApiStore.data().physicalAddress}}</span>
             </div>
             }
-            @if (organisationApiStore.data()?.phoneNumbers && organisationApiStore.data()?.phoneNumbers.length > 0) {
+            @if (organisationApiStore.data().phoneNumbers && organisationApiStore.data().phoneNumbers.length > 0) {
             <div class="detail-row">
               <span class="detail-label">Phone:</span>
-              <span class="detail-value">{{organisationApiStore.data()?.phoneNumbers[0].number}}</span>
+              <span class="detail-value">{{organisationApiStore.data().phoneNumbers[0].number}}</span>
             </div>
             }
-            @if (organisationApiStore.data()?.countryOfRegistration) {
+            @if (organisationApiStore.data().countryOfRegistration) {
             <div class="detail-row">
               <span class="detail-label">Country of Registration:</span>
-              <span class="detail-value">{{organisationApiStore.data()?.countryOfRegistration}}</span>
+              <span class="detail-value">{{organisationApiStore.data().countryOfRegistration}}</span>
             </div>
             }
           </div>
+          } @else {
+            @if(individualApiStore.error()) {
+              <p class="error-message">Error fetching individual details.</p>
+            } @else if(organisationApiStore.error()) {
+              <p class="error-message">Error fetching organisation details.</p>
+            } @else {
+              <p class="info-message">No details available to display.</p>
+            }
           }
         </mat-card-content>
 
