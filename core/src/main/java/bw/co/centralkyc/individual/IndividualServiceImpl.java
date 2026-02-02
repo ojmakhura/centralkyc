@@ -10,6 +10,7 @@ package bw.co.centralkyc.individual;
 
 import java.util.Collection;
 import java.util.Set;
+import java.util.UUID;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.MessageSource;
@@ -59,7 +60,7 @@ public class IndividualServiceImpl
     protected IndividualDTO handleFindById(String id)
             throws Exception {
 
-        Individual individual = individualRepository.getReferenceById(id);
+        Individual individual = individualRepository.getReferenceById(UUID.fromString(id));
 
         System.out.println("Fetched Individual: " + individual);
         return individualMapper.toIndividualDTO(individual);
@@ -95,7 +96,7 @@ public class IndividualServiceImpl
     protected boolean handleRemove(String id)
             throws Exception {
 
-        Individual individual = individualRepository.findById(id)
+        Individual individual = individualRepository.findById(UUID.fromString(id))
                 .orElseThrow(() -> new IndividualServiceException("Individual not found with id: " + id));
 
         individualRepository.delete(individual);
@@ -248,7 +249,7 @@ public class IndividualServiceImpl
     protected IndividualDTO handleLoadRequestIndividual(String requestId, String identityConfirmationToken,
             String identityNo) throws Exception {
 
-        ClientRequest clientRequest = clientRequestRepository.findById(requestId)
+        ClientRequest clientRequest = clientRequestRepository.findById(UUID.fromString(requestId))
                 .orElseThrow(() -> new IndividualServiceException("ClientRequest not found"));
 
         String token = clientRequest.getIdentityConfirmationToken();
@@ -265,7 +266,7 @@ public class IndividualServiceImpl
             throw new IndividualServiceException("Individual not found with identityNo: " + identityNo);
         }
 
-        if(!individual.getId().equals(clientRequest.getTargetId())) {
+        if(!individual.getId().equals(UUID.fromString(clientRequest.getTargetId()))) {
 
             throw new IndividualServiceException("Individual does not match ClientRequest target");
         }

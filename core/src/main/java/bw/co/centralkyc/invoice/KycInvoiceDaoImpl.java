@@ -11,6 +11,8 @@ import bw.co.centralkyc.organisation.OrganisationRepository;
 import bw.co.centralkyc.subscription.KycSubscriptionRepository;
 import jakarta.persistence.EntityNotFoundException;
 
+import java.util.UUID;
+
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Repository;
 
@@ -44,7 +46,7 @@ public class KycInvoiceDaoImpl
 
         if(source.getOrganisation() != null) {
 
-            target.setOrganisationId(source.getOrganisation().getId());
+            target.setOrganisationId(source.getOrganisation().getId().toString());
             target.setOrganisationCode(source.getOrganisation().getCode());
             target.setOrganisationName(source.getOrganisation().getName());
             target.setOrganisationRegistrationNo(source.getOrganisation().getRegistrationNo());
@@ -52,7 +54,7 @@ public class KycInvoiceDaoImpl
 
         if(source.getKycSubscription() != null) {
 
-            target.setSubscriptionId(source.getKycSubscription().getId());
+            target.setSubscriptionId(source.getKycSubscription().getId().toString());
             target.setSubscriptionRef(source.getKycSubscription().getRef());
             target.setSubscriptionPeriod(source.getKycSubscription().getPeriod());
         }
@@ -81,7 +83,7 @@ public class KycInvoiceDaoImpl
         }
         else
         {
-            return this.kycInvoiceRepository.findById(kycInvoiceDTO.getId())
+            return this.kycInvoiceRepository.findById(UUID.fromString(kycInvoiceDTO.getId()))
                 .orElseThrow(() -> new EntityNotFoundException("Entity not found for id: " + kycInvoiceDTO.getId()));
         }
     }
@@ -112,7 +114,7 @@ public class KycInvoiceDaoImpl
         target.setIssueDate(source.getIssueDate());
 
         if(StringUtils.isNotBlank(source.getOrganisationId())) {
-            target.setOrganisation(this.organisationRepository.findById(source.getOrganisationId())
+            target.setOrganisation(this.organisationRepository.findById(UUID.fromString(source.getOrganisationId()))
                 .orElseThrow(() -> new EntityNotFoundException("Organisation not found for id: " + source.getOrganisationId())));
         } else if (copyIfNull) {
             target.setOrganisation(null);

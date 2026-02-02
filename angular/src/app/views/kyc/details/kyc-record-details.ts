@@ -164,7 +164,8 @@ export class KycRecordDetails implements OnInit, OnDestroy, AfterViewInit {
             emailAddress: individual.emailAddress,
             kycStatus: individual.kycStatus,
             sex: individual.sex,
-            pepStatus: individual.pepStatus
+            pepStatus: individual.pepStatus,
+            userCreated: individual.userCreated
           });
         },
         error: (err) => {

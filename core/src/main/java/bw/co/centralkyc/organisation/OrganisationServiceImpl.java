@@ -10,6 +10,7 @@ package bw.co.centralkyc.organisation;
 
 import java.util.Collection;
 import java.util.Set;
+import java.util.UUID;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.MessageSource;
@@ -59,7 +60,7 @@ public class OrganisationServiceImpl
     protected OrganisationDTO handleFindById(String id)
             throws Exception {
 
-        Organisation org = organisationRepository.getReferenceById(id);
+        Organisation org = organisationRepository.getReferenceById(UUID.fromString(id));
         org = organisationRepository.save(org);
 
         return organisationDao.toOrganisationDTO(org);
@@ -95,8 +96,8 @@ public class OrganisationServiceImpl
     protected boolean handleRemove(String id)
             throws Exception {
 
-        if(organisationRepository.existsById(id)) {
-            organisationRepository.deleteById(id);
+        if(organisationRepository.existsById(UUID.fromString(id))) {
+            organisationRepository.deleteById(UUID.fromString(id));
             return true;
         }   
 

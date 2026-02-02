@@ -9,6 +9,8 @@
 package bw.co.centralkyc.individual.employment;
 
 import java.util.Collection;
+import java.util.UUID;
+
 import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -46,7 +48,7 @@ public class EmploymentRecordServiceImpl
         throws Exception
     {
 
-        EmploymentRecord employmentRecord = this.employmentRecordRepository.findById(id)
+        EmploymentRecord employmentRecord = this.employmentRecordRepository.findById(UUID.fromString(id))
             .orElseThrow(() -> new Exception("EmploymentRecord not found for id: " + id));
         
         return this.employmentRecordDao.toEmploymentRecordDTO(employmentRecord);
@@ -73,11 +75,11 @@ public class EmploymentRecordServiceImpl
         throws Exception
     {
 
-        if(!this.employmentRecordRepository.existsById(id)) {
+        if(!this.employmentRecordRepository.existsById(UUID.fromString(id))) {
             throw new EmploymentRecordServiceException("EmploymentRecord not found for id: " + id);
         }
 
-        this.employmentRecordRepository.deleteById(id);
+        this.employmentRecordRepository.deleteById(UUID.fromString(id));
         return true;
     }
 

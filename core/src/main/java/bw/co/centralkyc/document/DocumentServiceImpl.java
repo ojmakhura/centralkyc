@@ -11,6 +11,8 @@ package bw.co.centralkyc.document;
 import bw.co.centralkyc.TargetEntity;
 import java.io.File;
 import java.util.Collection;
+import java.util.UUID;
+
 import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -50,7 +52,7 @@ public class DocumentServiceImpl
         throws Exception
     {
 
-        Document doc = documentRepository.getReferenceById(id);
+        Document doc = documentRepository.getReferenceById(UUID.fromString(id));
         return documentDao.toDocumentDTO(doc);
     }
 
@@ -76,7 +78,7 @@ public class DocumentServiceImpl
         throws Exception
     {
 
-        Document doc = documentRepository.getReferenceById(id);
+        Document doc = documentRepository.getReferenceById(UUID.fromString(id));
         documentRepository.delete(doc);
         return true;
     }

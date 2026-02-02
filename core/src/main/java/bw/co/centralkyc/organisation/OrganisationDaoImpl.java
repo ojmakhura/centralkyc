@@ -10,6 +10,7 @@ import bw.co.centralkyc.GeneralStatus;
 import bw.co.centralkyc.PhoneNumberMapper;
 import bw.co.centralkyc.document.DocumentRepository;
 import bw.co.centralkyc.document.type.DocumentTypeRepository;
+import bw.co.centralkyc.individual.IndividualRepository;
 import bw.co.centralkyc.invoice.KycInvoiceRepository;
 import bw.co.centralkyc.kyc.KycComplianceStatus;
 import bw.co.centralkyc.organisation.branch.BranchRepository;
@@ -18,6 +19,7 @@ import bw.co.centralkyc.subscription.KycSubscriptionRepository;
 import jakarta.persistence.EntityNotFoundException;
 
 import java.util.Collection;
+import java.util.UUID;
 
 import org.springframework.stereotype.Repository;
 
@@ -32,16 +34,29 @@ public class OrganisationDaoImpl
     private final PhoneNumberMapper phoneNumberMapper;
     private final OrganisationDomainMapper organisationDomainMapper;
     
+    // public OrganisationDaoImpl(DocumentRepository documentRepository, DocumentTypeRepository documentTypeRepository,
+    //         BranchRepository branchRepository, KycSubscriptionRepository kycSubscriptionRepository,
+    //         KycInvoiceRepository kycInvoiceRepository, ClientRequestRepository clientRequestRepository,
+    //         OrganisationRepository organisationRepository, PhoneNumberMapper phoneNumberMapper,
+    //         OrganisationDomainMapper organisationDomainMapper) {
+    //     super(documentRepository, documentTypeRepository, branchRepository, kycSubscriptionRepository, kycInvoiceRepository,
+    //             clientRequestRepository, organisationRepository);
+    //     this.phoneNumberMapper = phoneNumberMapper;
+    //     this.organisationDomainMapper = organisationDomainMapper;
+    //     //TODO Auto-generated constructor stub
+    // }
+
     public OrganisationDaoImpl(DocumentRepository documentRepository, DocumentTypeRepository documentTypeRepository,
             BranchRepository branchRepository, KycSubscriptionRepository kycSubscriptionRepository,
             KycInvoiceRepository kycInvoiceRepository, ClientRequestRepository clientRequestRepository,
-            OrganisationRepository organisationRepository, PhoneNumberMapper phoneNumberMapper,
-            OrganisationDomainMapper organisationDomainMapper) {
+            IndividualRepository individualRepository, OrganisationRepository organisationRepository,
+            PhoneNumberMapper phoneNumberMapper, OrganisationDomainMapper organisationDomainMapper) {
         super(documentRepository, documentTypeRepository, branchRepository, kycSubscriptionRepository, kycInvoiceRepository,
-                clientRequestRepository, organisationRepository);
+                clientRequestRepository, individualRepository, organisationRepository);
+        //TODO Auto-generated constructor stub
+
         this.phoneNumberMapper = phoneNumberMapper;
         this.organisationDomainMapper = organisationDomainMapper;
-        //TODO Auto-generated constructor stub
     }
 
     /**
@@ -86,7 +101,7 @@ public class OrganisationDaoImpl
         }
         else
         {
-            return this.organisationRepository.findById(organisationDTO.getId())
+            return this.organisationRepository.findById(UUID.fromString(organisationDTO.getId()))
                 .orElseThrow(() -> new EntityNotFoundException("Entity not found for id: " + organisationDTO.getId()));
         }
     }
@@ -153,7 +168,7 @@ public class OrganisationDaoImpl
         }
         else
         {
-            return this.organisationRepository.findById(organisationListDTO.getId())
+            return this.organisationRepository.findById(UUID.fromString(organisationListDTO.getId()))
                 .orElseThrow(() -> new EntityNotFoundException("Entity not found for id: " + organisationListDTO.getId()));
         }
     }

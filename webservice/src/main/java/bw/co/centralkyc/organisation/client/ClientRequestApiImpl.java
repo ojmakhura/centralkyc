@@ -515,4 +515,30 @@ public class ClientRequestApiImpl implements ClientRequestApi {
             throw e;
         }
     }
+
+    @Override
+    public ResponseEntity<ClientRequestDTO> findUserReadyRequests() throws Exception {
+        
+        try {
+            
+            return ResponseEntity.ok(clientRequestService.findUserReadyRequests());
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw e;
+        }
+
+    }
+
+    @Override
+    public ResponseEntity<ClientRequestDTO> findUserReadyRequestsPaged(Integer pageNumber, Integer pageSize)
+            throws Exception {
+        
+        try {
+            return ResponseEntity.ok(clientRequestService.findUserReadyRequests(pageNumber, pageSize));
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw e;
+        }
+    }
 }

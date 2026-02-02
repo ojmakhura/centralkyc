@@ -16,6 +16,7 @@ import jakarta.persistence.EntityNotFoundException;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Repository;
@@ -51,7 +52,7 @@ public class ClientRequestDaoImpl
 
         if (source.getOrganisation() != null) {
 
-            target.setOrganisationId(source.getOrganisation().getId());
+            target.setOrganisationId(source.getOrganisation().getId().toString());
             target.setOrganisation(source.getOrganisation().getName());
             target.setOrganisationRegistrationNo(source.getOrganisation().getRegistrationNo());
         }
@@ -62,7 +63,7 @@ public class ClientRequestDaoImpl
 
             if (individual == null) {
 
-                individual = individualRepository.getReferenceById(source.getTargetId());
+                individual = individualRepository.getReferenceById(UUID.fromString(source.getTargetId()));
                 individualCache.put(source.getTargetId(), individual);
             }
 
@@ -91,9 +92,9 @@ public class ClientRequestDaoImpl
 
         if (source.getDocument() != null) {
 
-            target.setDocumentId(source.getDocument().getId());
+            target.setDocumentId(source.getDocument().getId().toString());
             target.setDocumentType(source.getDocument().getDocumentType().getName());
-            target.setDocumentTypeId(source.getDocument().getDocumentType().getId());
+            target.setDocumentTypeId(source.getDocument().getDocumentType().getId().toString());
             target.setFileName(source.getDocument().getFileName());
             target.setFileUrl(source.getDocument().getUrl());
         }
@@ -120,7 +121,7 @@ public class ClientRequestDaoImpl
         if (StringUtils.isEmpty(clientRequestDTO.getId())) {
             return ClientRequest.Factory.newInstance();
         } else {
-            return this.clientRequestRepository.findById(clientRequestDTO.getId())
+            return this.clientRequestRepository.findById(UUID.fromString(clientRequestDTO.getId()))
                     .orElseThrow(
                             () -> new EntityNotFoundException("Entity not found for id: " + clientRequestDTO.getId()));
         }
@@ -149,12 +150,12 @@ public class ClientRequestDaoImpl
 
         if (StringUtils.isNotBlank(source.getDocumentId())) {
 
-            target.setDocument(documentRepository.getReferenceById(source.getDocumentId()));
+            target.setDocument(documentRepository.getReferenceById(UUID.fromString(source.getDocumentId())));
         }
 
         if (source.getTarget() == TargetEntity.INDIVIDUAL && StringUtils.isNotBlank(source.getTargetId())) {
 
-            if (individualRepository.existsById(source.getTargetId())) {
+            if (individualRepository.existsById(UUID.fromString(source.getTargetId()))) {
 
                 target.setTargetId(source.getTargetId());
             } else {
@@ -164,14 +165,14 @@ public class ClientRequestDaoImpl
         }
 
         if (StringUtils.isNotBlank(source.getOrganisationId())) {
-            target.setOrganisation(organisationRepository.getReferenceById(source.getOrganisationId()));
+            target.setOrganisation(organisationRepository.getReferenceById(UUID.fromString(source.getOrganisationId())));
         }
     }
 
     @Override
     public Long countByStatus(ClientRequestStatus status) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'countByStatus'");
+        
+        return clientRequestRepository.countByStatus(status);
     }
 
     @Override
@@ -192,4 +193,5 @@ public class ClientRequestDaoImpl
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'countByStatusAndOrganisationId'");
     }
+
 }

@@ -56,7 +56,6 @@ public interface IndividualMapper {
     @InheritInverseConfiguration
     @Mapping(target = "phoneNumbers", expression = "java(phoneNumberMapper.toMapCollection(individualDTO.getPhoneNumbers()))")
     @Mapping(target = "branch", ignore = true)
-    @Mapping(target = "organisationId", source = "organisation.id")
     @Mapping(target = "employmentRecords", ignore = true)
     @Mapping(target = "documents", ignore = true)
     Individual individualDTOToEntity(IndividualDTO individualDTO);

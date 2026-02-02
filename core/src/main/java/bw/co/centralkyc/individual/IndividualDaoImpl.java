@@ -12,6 +12,7 @@ import bw.co.centralkyc.individual.employment.EmploymentRecordRepository;
 import bw.co.centralkyc.kyc.KycComplianceStatus;
 import bw.co.centralkyc.kyc.KycRecordRepository;
 import bw.co.centralkyc.organisation.OrganisationListDTO;
+import bw.co.centralkyc.organisation.OrganisationRepository;
 import bw.co.centralkyc.organisation.branch.BranchDTO;
 import bw.co.centralkyc.organisation.branch.BranchRepository;
 import bw.co.centralkyc.organisation.client.ClientRequestRepository;
@@ -22,6 +23,7 @@ import tools.jackson.databind.json.JsonMapper;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Repository;
@@ -36,13 +38,14 @@ public class IndividualDaoImpl
 
     private final JsonMapper jsonMapper;
 
-    public IndividualDaoImpl(DocumentRepository documentRepository, JsonMapper jsonMapper,
+    public IndividualDaoImpl(DocumentRepository documentRepository,
             EmploymentRecordRepository employmentRecordRepository, BranchRepository branchRepository,
-            IndividualRepository individualRepository) {
-        super(documentRepository, employmentRecordRepository, branchRepository, individualRepository);
-        
+            OrganisationRepository organisationRepository, IndividualRepository individualRepository,
+            JsonMapper jsonMapper) {
+        super(documentRepository, employmentRecordRepository, branchRepository, organisationRepository,
+                individualRepository);
+        // TODO Auto-generated constructor stub
         this.jsonMapper = jsonMapper;
-
     }
 
     /**
@@ -59,15 +62,19 @@ public class IndividualDaoImpl
 
             target.setBranch(new BranchDTO());
             branchDao.toBranchDTO(source.getBranch(), target.getBranch());
-            target.getBranch().setId(source.getBranch().getId());
+            target.getBranch().setId(source.getBranch().getId().toString());
 
             target.setOrganisation(new OrganisationListDTO());
-            target.getOrganisation().setId(source.getBranch().getOrganisation().getId());
+            target.getOrganisation().setId(source.getBranch().getOrganisation().getId().toString());
             target.getOrganisation().setName(source.getBranch().getOrganisation().getName());
         } else {
 
-            target.setOrganisation(new OrganisationListDTO());
-            target.getOrganisation().setId(source.getOrganisationId());
+            if (source.getOrganisation() != null) {
+
+                target.setOrganisation(new OrganisationListDTO());
+                target.getOrganisation().setId(source.getOrganisation().toString());
+
+            }
         }
 
         if (!CollectionUtils.isEmpty(source.getPhoneNumbers())) {
@@ -97,7 +104,7 @@ public class IndividualDaoImpl
         if (individualDTO.getId() == null) {
             return Individual.Factory.newInstance();
         } else {
-            return this.individualRepository.findById(individualDTO.getId())
+            return this.individualRepository.findById(UUID.fromString(individualDTO.getId()))
                     .orElseThrow(
                             () -> new EntityNotFoundException("Entity not found for id: " + individualDTO.getId()));
         }
@@ -126,13 +133,15 @@ public class IndividualDaoImpl
 
         if (source.getBranch() != null && source.getBranch().getId() != null) {
 
-            target.setBranch(this.branchRepository.findById(source.getBranch().getId())
+            target.setBranch(this.branchRepository.findById(UUID.fromString(source.getBranch().getId()))
                     .orElseThrow(() -> new EntityNotFoundException(
                             "Entity not found for id: " + source.getBranch().getId())));
 
         } else if (source.getOrganisation() != null && source.getOrganisation().getId() != null) {
 
-            target.setOrganisationId(source.getOrganisation().getId());
+            target.setOrganisation(organisationRepository.findById(UUID.fromString(source.getOrganisation().getId()))
+                    .orElseThrow(() -> new EntityNotFoundException(
+                            "Entity not found for id: " + source.getOrganisation().getId())));
         }
 
         if (!CollectionUtils.isEmpty(source.getPhoneNumbers())) {
@@ -142,7 +151,7 @@ public class IndividualDaoImpl
             }));
         }
 
-        if(target.getHasUser() == null) {
+        if (target.getHasUser() == null) {
 
             target.setHasUser(Boolean.FALSE);
         }
@@ -199,7 +208,7 @@ public class IndividualDaoImpl
         if (individualListDTO.getId() == null) {
             return Individual.Factory.newInstance();
         } else {
-            return this.individualRepository.findById(individualListDTO.getId())
+            return this.individualRepository.findById(UUID.fromString(individualListDTO.getId()))
                     .orElseThrow(
                             () -> new EntityNotFoundException("Entity not found for id: " + individualListDTO.getId()));
         }

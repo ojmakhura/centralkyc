@@ -15,6 +15,8 @@ import bw.co.centralkyc.individual.IndividualRepository;
 import bw.co.centralkyc.individual.employment.EmploymentRecordRepository;
 import jakarta.persistence.EntityNotFoundException;
 
+import java.util.UUID;
+
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Repository;
@@ -57,7 +59,7 @@ public class KycRecordDaoImpl
 
         if (source.getTarget() == TargetEntity.INDIVIDUAL && StringUtils.isNotBlank(source.getTargetId())) {
 
-            Individual individual = individualRepository.findById(source.getTargetId())
+            Individual individual = individualRepository.findById(UUID.fromString(source.getTargetId()))
                     .orElseThrow(() -> new KycRecordServiceException(
                             "Individual not found for id: " + source.getTargetId()));
 
@@ -95,7 +97,7 @@ public class KycRecordDaoImpl
         if (kycRecordDTO.getId() == null) {
             return KycRecord.Factory.newInstance();
         } else {
-            return this.kycRecordRepository.findById(kycRecordDTO.getId())
+            return this.kycRecordRepository.findById(UUID.fromString(kycRecordDTO.getId()))
                     .orElseThrow(() -> new EntityNotFoundException("Entity not found for id: " + kycRecordDTO.getId()));
         }
     }
@@ -130,7 +132,7 @@ public class KycRecordDaoImpl
 
         if (source.getTarget() == TargetEntity.INDIVIDUAL && StringUtils.isNotBlank(source.getTargetId())) {
 
-            this.individualRepository.findById(source.getTargetId())
+            this.individualRepository.findById(UUID.fromString(source.getTargetId()))
                     .orElseThrow(() -> new KycRecordServiceException(
                             "Individual not found for id: " + source.getTargetId()));
         } else if (copyIfNull) {

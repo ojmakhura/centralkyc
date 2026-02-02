@@ -7,6 +7,8 @@
 package bw.co.centralkyc.document.type;
 
 import java.util.Collection;
+import java.util.UUID;
+
 import org.springframework.stereotype.Repository;
 
 import jakarta.persistence.EntityNotFoundException;
@@ -73,7 +75,7 @@ public class DocumentTypeDaoImpl
         }
         else
         {
-            return this.documentTypeRepository.findById(documentTypeDTO.getId())
+            return this.documentTypeRepository.findById(UUID.fromString(documentTypeDTO.getId()))
                 .orElseThrow(() -> new EntityNotFoundException("Entity not found for id: " + documentTypeDTO.getId()));
         }
     }

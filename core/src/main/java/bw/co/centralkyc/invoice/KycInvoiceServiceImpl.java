@@ -14,6 +14,7 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.UUID;
 import java.util.concurrent.Flow.Subscription;
 
 import org.apache.commons.collections4.CollectionUtils;
@@ -66,7 +67,7 @@ public class KycInvoiceServiceImpl
     protected KycInvoiceDTO handleFindById(String id)
             throws Exception {
 
-        KycInvoice kycInvoice = this.kycInvoiceRepository.findById(id).orElse(null);
+        KycInvoice kycInvoice = this.kycInvoiceRepository.findById(UUID.fromString(id)).orElse(null);
 
         return this.kycInvoiceDao.toKycInvoiceDTO(kycInvoice);
     }
@@ -97,7 +98,7 @@ public class KycInvoiceServiceImpl
     protected boolean handleRemove(String id)
             throws Exception {
 
-        this.kycInvoiceRepository.deleteById(id);
+        this.kycInvoiceRepository.deleteById(UUID.fromString(id));
         return true;
     }
 
@@ -280,7 +281,7 @@ public class KycInvoiceServiceImpl
     @Override
     protected Collection<KycInvoiceDTO> handleGenerateInvoice(String subscriptionId, String user) throws Exception {
 
-        KycSubscription subscription = this.kycSubscriptionRepository.findById(subscriptionId).orElseThrow(
+        KycSubscription subscription = this.kycSubscriptionRepository.findById(UUID.fromString(subscriptionId)).orElseThrow(
                 () -> new KycRecordServiceException(
                         String.format("Subscription with id %s not found", subscriptionId)));
 
@@ -326,7 +327,7 @@ public class KycInvoiceServiceImpl
 
         invoice = this.kycInvoiceRepository.save(invoice);
 
-        return kycInvoiceRepository.findInvoicesBySubscriptionId(subscriptionId);
+        return kycInvoiceRepository.findInvoicesBySubscriptionId(UUID.fromString(subscriptionId));
     }
 
     @Override
@@ -358,20 +359,20 @@ public class KycInvoiceServiceImpl
     protected Page<KycInvoiceDTO> handleFindByOrganisation(String organisationId, Integer pageNumber,
             Integer pageSize) throws Exception {
 
-        return kycInvoiceRepository.findInvoicesByOrganisationId(organisationId, PageRequest.of(pageNumber, pageSize));
+        return kycInvoiceRepository.findInvoicesByOrganisationId(UUID.fromString(organisationId), PageRequest.of(pageNumber, pageSize));
     }
 
     @Override
     protected Page<KycInvoiceDTO> handleFindBySubscription(String subscriptionId, Integer pageNumber,
             Integer pageSize) throws Exception {
         
-        return kycInvoiceRepository.findInvoicesBySubscriptionId(subscriptionId, PageRequest.of(pageNumber, pageSize));
+        return kycInvoiceRepository.findInvoicesBySubscriptionId(UUID.fromString(subscriptionId), PageRequest.of(pageNumber, pageSize));
     }
 
     @Override
     protected Long handleCountInvoicesByOrganisationId(String organisationId) throws Exception {
         
-        return kycInvoiceRepository.countInvoicesByOrganisationId(organisationId);
+        return kycInvoiceRepository.countInvoicesByOrganisationId(UUID.fromString(organisationId));
     }
 
     @Override
@@ -383,7 +384,7 @@ public class KycInvoiceServiceImpl
     @Override
     protected Long handleCountOrganisationInvoices(Boolean paid, String organisationId) throws Exception {
         
-        return kycInvoiceRepository.countOrganisationInvoices(paid, organisationId);
+        return kycInvoiceRepository.countOrganisationInvoices(paid, UUID.fromString(organisationId));
     }
 
     @Override

@@ -10,6 +10,7 @@ package bw.co.centralkyc.settings;
 
 import java.time.LocalDateTime;
 import java.util.Collection;
+import java.util.UUID;
 
 import org.springframework.cglib.core.Local;
 import org.springframework.context.MessageSource;
@@ -139,7 +140,7 @@ public class SettingsServiceImpl
         document.setCreatedBy(user);
         document.setUrl(invoiceTemplate);
         document.setTarget(target);
-        document.setTargetId(settings.getId());
+        document.setTargetId(settings.getId().toString());
         
         document = documentRepository.save(document);
 
@@ -165,18 +166,20 @@ public class SettingsServiceImpl
         // TODO Auto-generated method stub
         Settings settings = settingsRepository.findAll().stream().findFirst().orElseThrow(() -> new Exception("Settings not found"));
 
+        UUID docTypeUUID = UUID.fromString(documentTypeId);
+
         switch(purpose) {
             case ORGANISATION_KYC:
-                settings.getOrgKycDocuments().add(this.documentTypeRepository.findById(documentTypeId).orElseThrow(() -> new Exception("Document Type not found")));
+                settings.getOrgKycDocuments().add(this.documentTypeRepository.findById(docTypeUUID).orElseThrow(() -> new Exception("Document Type not found")));
                 break;
             case INDIVIDUAL_KYC:
-                settings.getIndKycDocuments().add(this.documentTypeRepository.findById(documentTypeId).orElseThrow(() -> new Exception("Document Type not found")));
+                settings.getIndKycDocuments().add(this.documentTypeRepository.findById(docTypeUUID).orElseThrow(() -> new Exception("Document Type not found")));
                 break;
             case ORGANISATION:
-                settings.getOrganisationDocuments().add(this.documentTypeRepository.findById(documentTypeId).orElseThrow(() -> new Exception("Document Type not found")));
+                settings.getOrganisationDocuments().add(this.documentTypeRepository.findById(docTypeUUID).orElseThrow(() -> new Exception("Document Type not found")));
                 break;
             case INDIVIDUAL:
-                settings.getIndividualDocuments().add(this.documentTypeRepository.findById(documentTypeId).orElseThrow(() -> new Exception("Document Type not found")));
+                settings.getIndividualDocuments().add(this.documentTypeRepository.findById(docTypeUUID).orElseThrow(() -> new Exception("Document Type not found")));
                 break;
         }
 

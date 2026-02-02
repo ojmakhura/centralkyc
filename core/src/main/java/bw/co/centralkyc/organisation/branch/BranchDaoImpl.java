@@ -11,6 +11,8 @@ import bw.co.centralkyc.individual.IndividualRepository;
 import bw.co.centralkyc.organisation.OrganisationRepository;
 import jakarta.persistence.EntityNotFoundException;
 
+import java.util.UUID;
+
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Repository;
 
@@ -41,7 +43,7 @@ public class BranchDaoImpl
         super.toBranchDTO(source, target);
 
         if(source.getOrganisation() != null) {
-            target.setOrganisationId(source.getOrganisation().getId());
+            target.setOrganisationId(source.getOrganisation().getId().toString());
             target.setOrganisation(source.getOrganisation().getName());
         }
         
@@ -70,7 +72,7 @@ public class BranchDaoImpl
         }
         else
         {
-            return this.branchRepository.findById(branchDTO.getId())
+            return this.branchRepository.findById(UUID.fromString(branchDTO.getId()))
                 .orElseThrow(() -> new EntityNotFoundException("Entity not found for id: " + branchDTO.getId()));
         }
     }
@@ -99,7 +101,7 @@ public class BranchDaoImpl
         super.branchDTOToEntity(source, target, copyIfNull);
 
         if(StringUtils.isNotBlank(source.getOrganisationId())) {
-            target.setOrganisation(organisationRepository.getReferenceById(source.getOrganisationId()));
+            target.setOrganisation(organisationRepository.getReferenceById(UUID.fromString(source.getOrganisationId())));
 
         }
     }

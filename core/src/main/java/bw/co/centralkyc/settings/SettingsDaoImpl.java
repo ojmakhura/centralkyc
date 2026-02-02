@@ -13,6 +13,7 @@ import bw.co.centralkyc.document.type.DocumentTypeRepository;
 import jakarta.persistence.EntityNotFoundException;
 
 import java.util.Collection;
+import java.util.UUID;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.checkerframework.checker.units.qual.s;
@@ -135,7 +136,7 @@ public class SettingsDaoImpl
         if (settingsDTO.getId() == null) {
             return Settings.Factory.newInstance();
         } else {
-            return this.settingsRepository.findById(settingsDTO.getId())
+            return this.settingsRepository.findById(UUID.fromString(settingsDTO.getId()))
                     .orElseThrow(() -> new EntityNotFoundException("Entity not found for id: " + settingsDTO.getId()));
         }
     }
@@ -228,13 +229,13 @@ public class SettingsDaoImpl
         if (source.getInvoiceDocumentType() != null && source.getInvoiceDocumentType().getId() != null) {
 
             target.setInvoiceDocumentType(
-                    documentTypeRepository.getReferenceById(source.getInvoiceDocumentType().getId()));
+                    documentTypeRepository.getReferenceById(UUID.fromString(source.getInvoiceDocumentType().getId())));
         }
 
         if (source.getInvoiceTemplateType() != null && source.getInvoiceTemplateType().getId() != null) {
 
             target.setInvoiceTemplateType(
-                    documentTypeRepository.getReferenceById(source.getInvoiceTemplateType().getId()));
+                    documentTypeRepository.getReferenceById(UUID.fromString(source.getInvoiceTemplateType().getId())));
         }
 
         if (source.getInvoiceTemplate() != null && source.getInvoiceTemplate().getId() != null) {
@@ -246,13 +247,13 @@ public class SettingsDaoImpl
         if (source.getQuotationDocumentType() != null && source.getQuotationDocumentType().getId() != null) {
 
             target.setQuotationDocumentType(
-                    documentTypeRepository.getReferenceById(source.getQuotationDocumentType().getId()));
+                    documentTypeRepository.getReferenceById(UUID.fromString(source.getQuotationDocumentType().getId())));
         }
 
         if (source.getQuotationTemplateType() != null && source.getQuotationTemplateType().getId() != null) {
 
             target.setQuotationTemplateType(
-                    documentTypeRepository.getReferenceById(source.getQuotationTemplateType().getId()));
+                    documentTypeRepository.getReferenceById(UUID.fromString(source.getQuotationTemplateType().getId())));
         }
 
         if (source.getQuotationTemplate() != null && source.getQuotationTemplate().getId() != null) {
@@ -263,7 +264,7 @@ public class SettingsDaoImpl
         if (source.getClientRequestFileType() != null && source.getClientRequestFileType().getId() != null) {
 
             target.setClientRequestFileType(
-                    documentTypeRepository.getReferenceById(source.getClientRequestFileType().getId()));
+                    documentTypeRepository.getReferenceById(UUID.fromString(source.getClientRequestFileType().getId())));
         }
 
     }

@@ -16,6 +16,8 @@ import bw.co.centralkyc.individual.IndividualDao;
 import bw.co.centralkyc.individual.IndividualRepository;
 import java.util.Collection;
 import java.util.Set;
+import java.util.UUID;
+
 import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -61,7 +63,7 @@ public class OrganisationDocumentServiceImpl
         throws Exception
     {
 
-        OrganisationDocument entity = organisationDocumentRepository.getReferenceById(id);
+        OrganisationDocument entity = organisationDocumentRepository.getReferenceById(UUID.fromString(id));
         return organisationDocumentDao.toOrganisationDocumentDTO(entity);
     }
 
@@ -86,7 +88,7 @@ public class OrganisationDocumentServiceImpl
         throws Exception
     {
 
-        organisationDocumentRepository.deleteById(id);
+        organisationDocumentRepository.deleteById(UUID.fromString(id));
         return true;
 
     }

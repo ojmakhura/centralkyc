@@ -9,6 +9,7 @@
 package bw.co.centralkyc.document.type;
 
 import java.util.Collection;
+import java.util.UUID;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.MessageSource;
@@ -54,7 +55,7 @@ public class DocumentTypeServiceImpl
     protected DocumentTypeDTO handleFindById(String id)
             throws Exception {
 
-        DocumentType entity = documentTypeRepository.findById(id).orElseThrow(() -> new Exception("DocumentType not found for id: " + id));
+        DocumentType entity = documentTypeRepository.findById(UUID.fromString(id)).orElseThrow(() -> new Exception("DocumentType not found for id: " + id));
         
         return documentTypeMapper.toDocumentTypeDTO(entity);
     }
@@ -79,7 +80,7 @@ public class DocumentTypeServiceImpl
     protected boolean handleRemove(String id)
             throws Exception {
 
-        documentTypeRepository.deleteById(id);
+        documentTypeRepository.deleteById(UUID.fromString(id));
 
         return true;
     }

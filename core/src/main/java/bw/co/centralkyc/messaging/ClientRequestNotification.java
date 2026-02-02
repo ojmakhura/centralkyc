@@ -3,6 +3,7 @@ package bw.co.centralkyc.messaging;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
@@ -196,7 +197,7 @@ public class ClientRequestNotification {
 
             if(request.getTarget() == TargetEntity.INDIVIDUAL) {
 
-                Individual individual = individualRepository.findById(request.getTargetId()).orElseThrow();
+                Individual individual = individualRepository.findById(UUID.fromString(request.getTargetId())).orElseThrow();
 
                 name.append(individual.getFirstName());
                 if(individual.getMiddleName() != null && !individual.getMiddleName().isBlank()) {

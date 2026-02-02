@@ -579,15 +579,15 @@ public class KeycloakUserService {
      */
     public UserDTO registerUser(IndividualDTO individual) {
 
-        if (individual.getHasUser() == null || !individual.getHasUser()) {
-
-            throw new RuntimeException("Individual is not set to have a user account.");
-        }
-
         Collection<ClientRequestDTO> clientRequests = clientRequestService.findByIndividual(individual.getId());
 
         if (CollectionUtils.isEmpty(clientRequests)) {
             throw new RuntimeException("No client requests found for individual: " + individual.getId());
+        }
+
+        if (individual.getHasUser() == null || !individual.getHasUser()) {
+
+            throw new RuntimeException("Individual is not set to have a user account.");
         }
 
         Collection<UserDTO> usersByIdentityNo = searchByAttributes("identityNo:" + individual.getIdentityNo());

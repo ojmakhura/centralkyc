@@ -10,6 +10,7 @@ package bw.co.centralkyc.subscription;
 
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.UUID;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.MessageSource;
@@ -56,7 +57,7 @@ public class KycSubscriptionServiceImpl
     protected KycSubscriptionDTO handleFindById(String id)
             throws Exception {
 
-        KycSubscription subscription = kycSubscriptionRepository.findById(id).orElse(null);
+        KycSubscription subscription = kycSubscriptionRepository.findById(UUID.fromString(id)).orElse(null);
 
         return this.getKycSubscriptionDao().toKycSubscriptionDTO(subscription);
     }
@@ -117,7 +118,7 @@ public class KycSubscriptionServiceImpl
     protected boolean handleRemove(String id)
             throws Exception {
 
-        kycSubscriptionRepository.deleteById(id);
+        kycSubscriptionRepository.deleteById(UUID.fromString(id));
         return true;
     }
 
@@ -137,7 +138,7 @@ public class KycSubscriptionServiceImpl
             String likeCriteria = "%" + criteria.toLowerCase() + "%";
             return builder.or(
                     builder.like(builder.lower(root.get("ref")), likeCriteria),
-                    builder.like(builder.lower(root.get("organisation").get("id")), likeCriteria));
+                    builder.like(builder.lower(root.get("organisation").get("name")), likeCriteria));
         };
     }
 

@@ -11,6 +11,7 @@ package bw.co.centralkyc.sequence;
 import java.time.LocalDate;
 import java.util.Collection;
 import java.util.Comparator;
+import java.util.UUID;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.context.MessageSource;
@@ -48,7 +49,7 @@ public class SequenceGeneratorServiceImpl
         throws Exception
     {
 
-        return this.sequenceGeneratorRepository.findById(id).orElse(null);
+        return this.sequenceGeneratorRepository.findById(UUID.fromString(id)).orElse(null);
     }
 
     /**
@@ -69,7 +70,7 @@ public class SequenceGeneratorServiceImpl
         throws Exception
     {
 
-        this.sequenceGeneratorRepository.deleteById(id);
+        this.sequenceGeneratorRepository.deleteById(UUID.fromString(id));
         return true;
     }
 

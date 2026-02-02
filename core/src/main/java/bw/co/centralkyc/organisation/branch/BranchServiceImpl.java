@@ -9,6 +9,8 @@
 package bw.co.centralkyc.organisation.branch;
 
 import java.util.Collection;
+import java.util.UUID;
+
 import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -48,7 +50,7 @@ public class BranchServiceImpl
     protected BranchDTO handleFindById(String id)
         throws Exception
     {
-        Branch branch = branchRepository.getReferenceById(id);
+        Branch branch = branchRepository.getReferenceById(UUID.fromString(id));
         return this.getBranchDao().toBranchDTO(branch);
     }
 
@@ -72,7 +74,7 @@ public class BranchServiceImpl
     protected boolean handleRemove(String id)
         throws Exception
     {
-        branchRepository.deleteById(id);
+        branchRepository.deleteById(UUID.fromString(id));
         return true;
     }
 

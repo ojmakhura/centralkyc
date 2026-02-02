@@ -15,6 +15,8 @@ import bw.co.centralkyc.kyc.KycRecordRepository;
 import bw.co.centralkyc.settings.SalaryRangeRepository;
 import jakarta.persistence.EntityNotFoundException;
 
+import java.util.UUID;
+
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Repository;
@@ -99,7 +101,7 @@ public class EmploymentRecordDaoImpl
         }
         else
         {
-            return this.employmentRecordRepository.findById(employmentRecordDTO.getId())
+            return this.employmentRecordRepository.findById(UUID.fromString(employmentRecordDTO.getId()))
                 .orElseThrow(() -> new EntityNotFoundException("Entity not found for id: " + employmentRecordDTO.getId()));
         }
     }

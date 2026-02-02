@@ -11,6 +11,7 @@ package bw.co.centralkyc.kyc;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Collection;
+import java.util.UUID;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.MessageSource;
@@ -66,7 +67,7 @@ public class KycRecordServiceImpl
         throws Exception
     {
 
-        KycRecord kycRecord = this.kycRecordRepository.findById(id)
+        KycRecord kycRecord = this.kycRecordRepository.findById(UUID.fromString(id))
             .orElseThrow(() -> new Exception("KycRecord not found for id: " + id));
         
         return this.kycRecordDao.toKycRecordDTO(kycRecord);
@@ -105,13 +106,13 @@ public class KycRecordServiceImpl
         throws Exception
     {
 
-        if(!kycRecordRepository.existsById(id)) {
+        if(!kycRecordRepository.existsById(UUID.fromString(id))) {
 
             throw new KycRecordServiceException("KycRecord not found for id: " + id);
 
         }
 
-        kycRecordRepository.deleteById(id);
+        kycRecordRepository.deleteById(UUID.fromString(id));
         return true;
 
     }
@@ -233,7 +234,7 @@ public class KycRecordServiceImpl
 
         Individual individual = this.individualRepository.findByIdentityNo(identityNo);
 
-        return this.findByIndividual(individual.getId());
+        return this.findByIndividual(individual.getId().toString());
     }
 
     @Override
@@ -269,7 +270,7 @@ public class KycRecordServiceImpl
 
         Individual individual = this.individualRepository.findByIdentityNo(identityNo);
 
-        return this.handleFindByIndividual(individual.getId(), pageNumber, pageSize);
+        return this.handleFindByIndividual(individual.getId().toString(), pageNumber, pageSize);
     }
 
     @Override

@@ -44,6 +44,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -101,7 +102,7 @@ public class ClientRequestServiceImpl
     protected ClientRequestDTO handleFindById(String id)
             throws Exception {
 
-        ClientRequest clientRequest = clientRequestRepository.findById(id)
+        ClientRequest clientRequest = clientRequestRepository.findById(UUID.fromString(id))
                 .orElseThrow(() -> new ClientRequestServiceException("ClientRequest not found"));
 
         return clientRequestDao.toClientRequestDTO(clientRequest);
@@ -155,8 +156,8 @@ public class ClientRequestServiceImpl
     protected boolean handleRemove(String id)
             throws Exception {
 
-        if (clientRequestRepository.existsById(id)) {
-            clientRequestRepository.deleteById(id);
+        if (clientRequestRepository.existsById(UUID.fromString(id))) {
+            clientRequestRepository.deleteById(UUID.fromString(id));
             return true;
         }
 
@@ -358,7 +359,7 @@ public class ClientRequestServiceImpl
         }
 
         clientRequests.forEach(c -> {
-            boolean isNew = StringUtils.isBlank(c.getId());
+            boolean isNew = StringUtils.isBlank(c.getId().toString());
 
             if (isNew) {
 
@@ -452,7 +453,7 @@ public class ClientRequestServiceImpl
         // Create client request
         ClientRequest clientRequest = new ClientRequest();
         clientRequest.setTarget(target);
-        clientRequest.setTargetId(savedIndividual.getId());
+        clientRequest.setTargetId(savedIndividual.getId().toString());
 
         // Set organisation
         // clientRequest.setOrganisationId(organisationId);
@@ -881,7 +882,7 @@ public class ClientRequestServiceImpl
     @Override
     protected ClientRequestDTO handleUpdateStatus(String id, ClientRequestStatus status) throws Exception {
 
-        ClientRequest clientRequest = clientRequestRepository.findById(id)
+        ClientRequest clientRequest = clientRequestRepository.findById(UUID.fromString(id))
                 .orElseThrow(() -> new ClientRequestServiceException("ClientRequest not found"));
 
         clientRequest.setStatus(status);
@@ -897,7 +898,7 @@ public class ClientRequestServiceImpl
     @Override
     protected String handleConfirmToken(String requestId, String token) throws Exception {
 
-        ClientRequest clientRequest = clientRequestRepository.findById(requestId)
+        ClientRequest clientRequest = clientRequestRepository.findById(UUID.fromString(requestId))
                 .orElseThrow(() -> new ClientRequestServiceException("ClientRequest not found"));
 
         boolean matches = passwordEncoder.matches(token, clientRequest.getAccountRequestToken());
@@ -951,7 +952,7 @@ public class ClientRequestServiceImpl
     @Override
     protected boolean handleConfirmRegistration(String id, Boolean confirm, String registrationToken) throws Exception {
 
-        ClientRequest request = clientRequestRepository.findById(id)
+        ClientRequest request = clientRequestRepository.findById(UUID.fromString(id))
                 .orElseThrow(() -> new ClientRequestServiceException("ClientRequest not found"));
 
         boolean matches = passwordEncoder.matches(registrationToken, request.getRegistrationToken());
@@ -974,6 +975,18 @@ public class ClientRequestServiceImpl
         request = clientRequestRepository.save(request);
 
         return request.getStatus() == ClientRequestStatus.ACCEPTED;
+    }
+
+    @Override
+    protected ClientRequestDTO handleFindUserReadyRequests() throws Exception {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'handleFindUserReadyRequests'");
+    }
+
+    @Override
+    protected ClientRequestDTO handleFindUserReadyRequests(Integer pageNumber, Integer pageSize) throws Exception {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'handleFindUserReadyRequests'");
     }
 
 }
