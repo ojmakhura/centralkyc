@@ -1,5 +1,6 @@
 package bw.co.centralkyc.keycloak;
 
+import org.keycloak.OAuth2Constants;
 import org.keycloak.admin.client.Keycloak;
 import org.keycloak.admin.client.KeycloakBuilder;
 import org.keycloak.admin.client.resource.OrganizationResource;
@@ -74,6 +75,7 @@ public class KeycloakService {
                 .realm(realm)
                 .clientId(registrationClient)
                 .clientSecret(registrationClientSecret)
+                .grantType(OAuth2Constants.CLIENT_CREDENTIALS)
                 .build();
     }
 
@@ -129,7 +131,8 @@ public class KeycloakService {
                 return null;
             }
 
-            RealmResource realm = kc.realm(getRealm());
+            String r = issuerUri.substring(issuerUri.lastIndexOf('/') + 1);
+            RealmResource realm = kc.realm(r);
             return fn.apply(realm);
         }
     }

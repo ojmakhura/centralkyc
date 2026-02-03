@@ -282,8 +282,9 @@ public class ClientRequestApiImpl implements ClientRequestApi {
                     .getBody();
 
             // OrganisationDTO org = keycloakOrganisationService.findById(organisationId);
-            // Page<ClientRequestDTO> requests = clientRequestService.uploadRequests(inputStream, organisationId,
-            //         organisationId, doc, target, org.getName());
+            // Page<ClientRequestDTO> requests =
+            // clientRequestService.uploadRequests(inputStream, organisationId,
+            // organisationId, doc, target, org.getName());
             // updateOrganisationsDetails(requests.getContent());
 
             return ResponseEntity.ok(null);
@@ -438,21 +439,22 @@ public class ClientRequestApiImpl implements ClientRequestApi {
 
             ClientRequestDTO request = clientRequestService.updateStatus(id, status);
 
-            if(request.getStatus() == ClientRequestStatus.ACCEPTED) {
+            if (request.getStatus() == ClientRequestStatus.ACCEPTED) {
                 // Additional actions on approval can be handled here
 
                 switch (request.getTarget()) {
                     case INDIVIDUAL:
-                    
+
                         IndividualDTO individual = individualService.findById(request.getTargetId());
 
                         break;
-                
+
                     case ORGANISATION:
                         throw new Exception("Organisation client request approval not yet implemented");
-                        
+
                     default:
-                        throw new Exception("Unsupported target entity for client request approval: " + request.getTarget());
+                        throw new Exception(
+                                "Unsupported target entity for client request approval: " + request.getTarget());
                 }
 
             }
@@ -472,6 +474,32 @@ public class ClientRequestApiImpl implements ClientRequestApi {
 
         try {
 
+            ClientRequestDTO request = clientRequestService.findById(requestId);
+            if (request.getStatus() == ClientRequestStatus.ACCEPTED
+                    || request.getStatus() == ClientRequestStatus.REJECTED) {
+
+                throw new ClientRequestServiceException("This client request has already been responded to.");
+            }
+
+            switch (request.getTarget()) {
+                case INDIVIDUAL:
+
+                    IndividualDTO individual = individualService.findById(request.getTargetId());
+                    UserDTO existing = keycloakUserService.getUserByIdentityNo(individual.getIdentityNo());
+
+                    if (existing != null) {
+
+                        throw new ClientRequestServiceException("The individual already has a user.");
+                    }
+
+                    break;
+                case ORGANISATION:
+                    throw new Exception("Organisation client request confirmation not yet implemented");
+                default:
+                    throw new Exception(
+                            "Unsupported target entity for client request confirmation: " + request.getTarget());
+            }
+
             String confirmationToken = clientRequestService.confirmToken(requestId, token);
             return ResponseEntity.ok(confirmationToken);
 
@@ -483,30 +511,62 @@ public class ClientRequestApiImpl implements ClientRequestApi {
     }
 
     @Override
-    public ResponseEntity<Boolean> confirmRegistration(String id, Boolean confirm, String registrationToken) throws Exception {
-        
+    public ResponseEntity<Boolean> confirmRegistration(String id, Boolean confirm, String registrationToken)
+            throws Exception {
+
         try {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
-            Boolean result = clientRequestService.confirmRegistration(id, confirm, registrationToken);
-            if(result) {
-
-                // Additional actions on confirmation can be handled here
-
+            if (confirm) {
                 ClientRequestDTO request = clientRequestService.findById(id);
+
+                if (request.getStatus() == ClientRequestStatus.ACCEPTED
+                        || request.getStatus() == ClientRequestStatus.REJECTED) {
+
+                    throw new ClientRequestServiceException("This client request has already been responded to.");
+                }
 
                 switch (request.getTarget()) {
                     case INDIVIDUAL:
-                    
-                        IndividualDTO individual = individualService.findById(request.getTargetId());   
+
+                        IndividualDTO individual = individualService.findById(request.getTargetId());
+                        AuditTracker.auditTrail(request, authentication);
+                        individual.setHasUser(true);
+
+                        UserDTO existing = keycloakUserService.getUserByIdentityNo(individual.getIdentityNo());
+
+                        if (existing != null) {
+
+                            individual.setHasUser(true);
+                            individual.setUserCreated(true);
+
+                            individualService.save(individual);
+
+                            throw new ClientRequestServiceException("The individual already has a user.");
+                        }
+
+                        individual = individualService.save(individual);
+
                         // Activate individual account or send welcome email
                         UserDTO user = keycloakUserService.registerUser(individual);
+
+                        if (user != null) {
+
+                            individual.setUserCreated(true);
+                        } else {
+                        }
+
                         break;
                     case ORGANISATION:
                         throw new Exception("Organisation client request confirmation not yet implemented");
                     default:
-                        throw new Exception("Unsupported target entity for client request confirmation: " + request.getTarget());
+                        throw new Exception(
+                                "Unsupported target entity for client request confirmation: " + request.getTarget());
                 }
+
             }
+
+            Boolean result = clientRequestService.confirmRegistration(id, confirm, registrationToken);
 
             return ResponseEntity.ok(result);
 
@@ -518,9 +578,9 @@ public class ClientRequestApiImpl implements ClientRequestApi {
 
     @Override
     public ResponseEntity<ClientRequestDTO> findUserReadyRequests() throws Exception {
-        
+
         try {
-            
+
             return ResponseEntity.ok(clientRequestService.findUserReadyRequests());
 
         } catch (Exception e) {
@@ -533,7 +593,7 @@ public class ClientRequestApiImpl implements ClientRequestApi {
     @Override
     public ResponseEntity<ClientRequestDTO> findUserReadyRequestsPaged(Integer pageNumber, Integer pageSize)
             throws Exception {
-        
+
         try {
             return ResponseEntity.ok(clientRequestService.findUserReadyRequests(pageNumber, pageSize));
         } catch (Exception e) {

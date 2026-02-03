@@ -246,7 +246,8 @@ public class KeycloakUserService {
             message.setText(messageStr);
 
         } else {
-            String messageStr = String.format(newUserTemplate, nameBuilder.toString(), settings.getKycPortalLink(), user.getUsername(),
+            String messageStr = String.format(newUserTemplate, nameBuilder.toString(), settings.getKycPortalLink(),
+                    user.getUsername(),
                     user.getPassword());
 
             message.setText(messageStr);
@@ -316,7 +317,7 @@ public class KeycloakUserService {
 
     public UserDTO createRegistrationUser(UserDTO user) {
 
-        if(StringUtils.isNotBlank(user.getUserId())) {
+        if (StringUtils.isNotBlank(user.getUserId())) {
 
             throw new RuntimeException("User ID must be blank when creating a new registration user.");
         }
@@ -592,26 +593,18 @@ public class KeycloakUserService {
 
         Collection<UserDTO> usersByIdentityNo = searchByAttributes("identityNo:" + individual.getIdentityNo());
 
-        boolean userExists = usersByIdentityNo.stream()
-                .anyMatch(user -> individual.getEmailAddress().equalsIgnoreCase(user.getEmail()));
+        if (CollectionUtils.isNotEmpty(usersByIdentityNo)) {
 
-        if (userExists) {
-            throw new RuntimeException("User with identity number " + individual.getIdentityNo() +
-                    " and email " + individual.getEmailAddress() + " already exists. Contact support.");
-        }
+            boolean userExists = usersByIdentityNo.stream()
+                    .anyMatch(user -> individual.getEmailAddress().equalsIgnoreCase(user.getEmail()));
 
-        boolean registrationCompleted = false;
-        for (ClientRequestDTO clientRequest : clientRequests) {
-
-            if (clientRequest.getStatus() == bw.co.centralkyc.organisation.client.ClientRequestStatus.ACCEPTED) {
-
-                registrationCompleted = true;
+            if (userExists) {
+                throw new RuntimeException("User with identity number " + individual.getIdentityNo() +
+                        " and email " + individual.getEmailAddress() + " already exists. Contact support.");
             }
         }
 
-        if (!registrationCompleted) {
-            throw new RuntimeException("No approved client requests found for individual: " + individual.getId());
-        }
+        System.out.println(individual);
 
         UserDTO user = new UserDTO();
         user.setFirstName(individual.getFirstName());
@@ -628,15 +621,12 @@ public class KeycloakUserService {
             user.setBranch(individual.getBranch().getName());
         }
 
-        if (individual.getOrganisation() == null
-                || StringUtils.isBlank(individual.getOrganisation().getId())) {
-            throw new IndividualServiceException(
-                    "Organisation information is required to create user for individual.");
+        if (individual.getOrganisation() != null
+                && StringUtils.isNotBlank(individual.getOrganisation().getId())) {
+            user.setOrganisation(individual.getOrganisation().getName());
+            user.setOrganisationId(individual.getOrganisation().getId());
+            user.setRoles(Set.of(organisationManagerRole));
         }
-
-        user.setOrganisation(individual.getOrganisation().getName());
-        user.setOrganisationId(individual.getOrganisation().getId());
-        user.setRoles(Set.of(organisationManagerRole));
 
         user = createRegistrationUser(user);
 
@@ -653,7 +643,6 @@ public class KeycloakUserService {
 
         return user;
     }
-
 
     /**
      * 
