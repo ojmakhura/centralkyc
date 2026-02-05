@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { AfterViewChecked, AfterViewInit, Component, computed, effect, inject, Input, linkedSignal, OnDestroy, OnInit, signal, ViewChild } from '@angular/core';
 import { Loader } from '@app/@shared/loader/loader';
-import { form, FormField, required } from '@angular/forms/signals';
+import { form, FormField, minLength, required } from '@angular/forms/signals';
 import { TranslateModule } from '@ngx-translate/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MatCardModule } from '@angular/material/card';
@@ -22,7 +22,7 @@ import { ClientRequestApiStore } from '@app/store/bw/co/centralkyc/organisation/
 import { ClientRequestApi } from '@app/services/bw/co/centralkyc/organisation/client/client-request-api';
 
 class RegisterParams {
-  identificationType: string = '';
+  // identificationType: string = '';
   identificationNumber: string = '';
   individual: IndividualDTO | null = null;
   organisation: OrganisationDTO | null = null;
@@ -79,10 +79,12 @@ export class Register implements OnInit, OnDestroy, AfterViewInit {
   });
 
   registerSignal = signal<RegisterParams>(new RegisterParams());
+  individualDetailsConfirmed = signal(false);
 
   registerForm = form(this.registerSignal, (path) => {
-    required(path.identificationType, { message: 'Please select organisation or individual' });
+    // required(path.identificationType, { message: 'Please select organisation or individual' });
     required(path.identificationNumber, { message: 'Identification number is required' });
+    minLength(path.identificationNumber, 3, { message: 'Identification number must be at least 3 characters long' });
     required(path.registrationStatus, { message: 'Please select registration status' });
   });
 
@@ -181,9 +183,6 @@ export class Register implements OnInit, OnDestroy, AfterViewInit {
   finish() { }
 
   confirmIdentification(stepper: MatStepper) {
-    const params = this.registerSignal();
-    const type = params.identificationType?.toString().trim();
-    const id = (params.identificationNumber || '').toString().trim();
 
     this.individualApiStore.loadRequestIndividual({
       requestId: this.requestId,
@@ -195,6 +194,7 @@ export class Register implements OnInit, OnDestroy, AfterViewInit {
   }
 
   detailsConfirmed(stepper: MatStepper) {
+    this.individualDetailsConfirmed.set(true);
     stepper.next();
   }
 

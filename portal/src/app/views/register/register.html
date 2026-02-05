@@ -1,7 +1,7 @@
 @if (tokenConfirmed()) {
 <div class="register-stepper" id="id-stepper">
-  <mat-horizontal-stepper #stepper linear>
-    <mat-step>
+  <mat-horizontal-stepper #stepper [linear]="true">
+    <mat-step [completed]="registerSignal().identificationNumber" >
       <ng-template matStepLabel>Enter identification</ng-template>
       <mat-card>
         <mat-card-header>
@@ -10,16 +10,9 @@
         </mat-card-header>
 
         <mat-card-content>
-          <mat-form-field class="full-width">
-            <mat-label>Entity</mat-label>
-            <mat-select [formField]="registerForm.identificationType">
-              <mat-option value="INDIVIDUAL">Individual</mat-option>
-              <mat-option value="ORGANISATION">Organisation</mat-option>
-            </mat-select>
-          </mat-form-field>
 
           <mat-form-field class="full-width">
-            <mat-label>Identification number</mat-label>
+            <mat-label>Identification Number</mat-label>
             <input matInput id="identificationNumber" [formField]="registerForm.identificationNumber"
               placeholder="Enter identification number" />
           </mat-form-field>
@@ -27,7 +20,9 @@
 
         <mat-card-actions class="register-stepper__actions">
           <button mat-button matStepperPrevious>Back</button>
+          @if(registerForm.identificationNumber().valid()) {
           <button mat-raised-button color="primary" (click)="confirmIdentification(stepper)">Confirm</button>
+          }
         </mat-card-actions>
       </mat-card>
     </mat-step>
@@ -35,13 +30,15 @@
     <mat-step>
       <ng-template matStepLabel>Details Confirmation</ng-template>
       <mat-card>
+          @if (individual().id) {
         <mat-card-header>
           <mat-card-title>Confirm Your Details</mat-card-title>
           <mat-card-subtitle>Please review and confirm the details below</mat-card-subtitle>
         </mat-card-header>
+      }
 
         <mat-card-content>
-          @if (registerSignal().identificationType === 'INDIVIDUAL' && individual().id) {
+          @if (individual().id) {
           <div class="details-section">
             <h3>Individual Details</h3>
             <div class="detail-row">
@@ -137,53 +134,10 @@
             </div>
             }
           </div>
-          } @else if (registerSignal().identificationType === 'ORGANISATION' && organisationApiStore.data().id) {
-          <div class="details-section">
-            <h3>Organisation Details</h3>
-            <div class="detail-row">
-              <span class="detail-label">Name:</span>
-              <span class="detail-value">{{organisationApiStore.data().name}}</span>
-            </div>
-            <div class="detail-row">
-              <span class="detail-label">Registration Number:</span>
-              <span class="detail-value">{{organisationApiStore.data().registrationNo}}</span>
-            </div>
-            @if (organisationApiStore.data().code) {
-            <div class="detail-row">
-              <span class="detail-label">Code:</span>
-              <span class="detail-value">{{organisationApiStore.data().code}}</span>
-            </div>
-            }
-            @if (organisationApiStore.data().contactEmailAddress) {
-            <div class="detail-row">
-              <span class="detail-label">Email:</span>
-              <span class="detail-value">{{organisationApiStore.data().contactEmailAddress}}</span>
-            </div>
-            }
-            @if (organisationApiStore.data().physicalAddress) {
-            <div class="detail-row">
-              <span class="detail-label">Physical Address:</span>
-              <span class="detail-value">{{organisationApiStore.data().physicalAddress}}</span>
-            </div>
-            }
-            @if (organisationApiStore.data().phoneNumbers && organisationApiStore.data().phoneNumbers.length > 0) {
-            <div class="detail-row">
-              <span class="detail-label">Phone:</span>
-              <span class="detail-value">{{organisationApiStore.data().phoneNumbers[0].number}}</span>
-            </div>
-            }
-            @if (organisationApiStore.data().countryOfRegistration) {
-            <div class="detail-row">
-              <span class="detail-label">Country of Registration:</span>
-              <span class="detail-value">{{organisationApiStore.data().countryOfRegistration}}</span>
-            </div>
-            }
-          </div>
+
           } @else {
             @if(individualApiStore.error()) {
               <p class="error-message">Error fetching individual details.</p>
-            } @else if(organisationApiStore.error()) {
-              <p class="error-message">Error fetching organisation details.</p>
             } @else {
               <p class="info-message">No details available to display.</p>
             }
@@ -192,21 +146,23 @@
 
         <mat-card-actions class="register-stepper__actions">
           <button mat-button matStepperPrevious>Back</button>
+          @if (individual().id) {
           <button mat-raised-button color="primary" (click)="detailsConfirmed(stepper)">Confirm</button>
+          }
         </mat-card-actions>
       </mat-card>
     </mat-step>
 
     <mat-step>
       <ng-template matStepLabel>Registration Confirmation</ng-template>
+
       <mat-card>
+        @if(individualDetailsConfirmed() && individual().id){
         <mat-card-header>
           <mat-card-title>Registration Status</mat-card-title>
           <mat-card-subtitle>Select the status for this registration request</mat-card-subtitle>
         </mat-card-header>
-
         <mat-card-content>
-          {{registerSignal().registrationStatus}}
           <div class="registration-status-section">
             <mat-radio-group [formField]="registerForm.registrationStatus" class="status-radio-group">
               <mat-radio-button [value]="ClientRequestStatus.ACCEPTED" class="status-radio-option">
@@ -234,30 +190,30 @@
             }
           </div>
         </mat-card-content>
+        }
 
         <mat-card-actions class="register-stepper__actions">
           <button mat-button matStepperPrevious>Back</button>
+          @if(individualDetailsConfirmed() && individual().id) {
           <button mat-raised-button color="primary" [disabled]="!registerSignal().registrationStatus" (click)="submitRegistration()">Submit</button>
+          }
         </mat-card-actions>
       </mat-card>
     </mat-step>
+    <!-- } -->
   </mat-horizontal-stepper>
 </div>
 } @else {
 <div class="register-stepper__error">
   <mat-card>
     <mat-card-header>
-      <mat-card-title>Invalid Token</mat-card-title>
+      <mat-card-title>No Registration Request</mat-card-title>
     </mat-card-header>
 
     <mat-card-content>
-      <p>The token provided is invalid or has expired. Please request a new token to proceed with registration.</p>
+      <p>No registration request provided. Please wait for a request email with the required token to proceed with registration.</p>
 
     </mat-card-content>
-
-    <mat-card-actions>
-      <button mat-raised-button color="primary" routerLink="/request-new-token">Request New Token</button>
-    </mat-card-actions>
   </mat-card>
 </div>
 }

@@ -539,18 +539,20 @@ public class ClientRequestApiImpl implements ClientRequestApi {
                         individual.setHasUser(true);
 
                         UserDTO existing = keycloakUserService.getUserByIdentityNo(individual.getIdentityNo());
+                            individual.setHasUser(true);
 
                         if (existing != null) {
 
-                            individual.setHasUser(true);
                             individual.setUserCreated(true);
 
                             individualService.save(individual);
 
                             throw new ClientRequestServiceException("The individual already has a user.");
+                        } else {
+
+                            individual.setUserCreated(false);
                         }
 
-                        individual = individualService.save(individual);
 
                         // Activate individual account or send welcome email
                         OrganisationDTO org = organisationService.findById(request.getOrganisationId());
@@ -561,6 +563,7 @@ public class ClientRequestApiImpl implements ClientRequestApi {
                             individual.setUserCreated(true);
                         } else {
                         }
+                        individual = individualService.save(individual);
 
                         break;
                     case ORGANISATION:

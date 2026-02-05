@@ -315,6 +315,7 @@ export const IndividualApiStore = signalStore(
                 patchState(
                   store, {
                     status: (error?.status || 0),
+                    dataList: [],
                     loading: false,
                     success: false,
                     error: true,
@@ -348,6 +349,7 @@ export const IndividualApiStore = signalStore(
                 patchState(
                   store, {
                     status: (error?.status || 0),
+                    data: new IndividualDTO(),
                     loading: false,
                     success: false,
                     error: true,
