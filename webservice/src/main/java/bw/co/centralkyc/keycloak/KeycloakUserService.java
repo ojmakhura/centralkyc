@@ -212,7 +212,7 @@ public class KeycloakUserService {
         return reps.stream().map(this::toUserDTO).collect(Collectors.toList());
     }
 
-    private CommMessageDTO newUserMessage(IndividualDTO individual, UserDTO user) {
+    private CommMessageDTO newUserMessage(IndividualDTO individual, UserDTO user, OrganisationDTO organisation) {
 
         CommMessageDTO message = new CommMessageDTO();
 
@@ -231,21 +231,31 @@ public class KeycloakUserService {
 
         message.setPlatform(MessagingPlatform.EMAIL);
 
-        OrganisationDTO org = organisationService.findById(individual.getOrganisation().getId());
+        if(organisation != null && !StringUtils.isNotBlank(organisation.getId())) {
 
-        if (org != null) {
+            OrganisationDTO org = organisationService.findById(individual.getOrganisation().getId());
 
-            if (StringUtils.isNotBlank(org.getContactEmailAddress())) {
-                message.setCcs(List.of(org.getContactEmailAddress()));
+            if (org != null) {
+
+                if (StringUtils.isNotBlank(org.getContactEmailAddress())) {
+                    message.setCcs(List.of(org.getContactEmailAddress()));
+                }
+
+                String messageStr = String.format(newOrgUserTemplate, nameBuilder.toString(), individual.getOrganisation(),
+                        adminWebUrl, user.getUsername(),
+                        user.getPassword());
+
+                message.setText(messageStr);
+
+            } else {
+                String messageStr = String.format(newUserTemplate, nameBuilder.toString(), settings.getKycPortalLink(),
+                        user.getUsername(),
+                        user.getPassword());
+
+                message.setText(messageStr);
             }
-
-            String messageStr = String.format(newOrgUserTemplate, nameBuilder.toString(), individual.getOrganisation(),
-                    adminWebUrl, user.getUsername(),
-                    user.getPassword());
-
-            message.setText(messageStr);
-
         } else {
+
             String messageStr = String.format(newUserTemplate, nameBuilder.toString(), settings.getKycPortalLink(),
                     user.getUsername(),
                     user.getPassword());
@@ -578,9 +588,11 @@ public class KeycloakUserService {
      * @param individual
      * @return
      */
-    public UserDTO registerUser(IndividualDTO individual) {
+    public UserDTO registerUser(IndividualDTO individual, OrganisationDTO organisation) {
 
         Collection<ClientRequestDTO> clientRequests = clientRequestService.findByIndividual(individual.getId());
+
+        settings = settingsService.getAll().stream().findFirst().orElse(null);
 
         if (CollectionUtils.isEmpty(clientRequests)) {
             throw new RuntimeException("No client requests found for individual: " + individual.getId());
@@ -604,15 +616,14 @@ public class KeycloakUserService {
             }
         }
 
-        System.out.println(individual);
-
         UserDTO user = new UserDTO();
         user.setFirstName(individual.getFirstName());
         user.setLastName(individual.getSurname());
         user.setEmail(individual.getEmailAddress());
         user.setUsername(individual.getEmailAddress());
         user.setIdentityNo(individual.getIdentityNo());
-        user.setPassword(kycUtils.generatePassword());
+        String password = kycUtils.generatePassword();
+        user.setPassword(password);
         user.setEnabled(true);
 
         if (individual.getBranch() != null && !StringUtils.isBlank(individual.getBranch().getId())) {
@@ -634,12 +645,15 @@ public class KeycloakUserService {
             throw new RuntimeException("Failed to create user for individual: " + individual.getId());
         }
 
-        CommMessageDTO message = newUserMessage(individual, user);
+        CommMessageDTO message = newUserMessage(individual, user, organisation);
 
         // Call messaging service to send the email
         // For now, just print to console (not recommended for production)
         System.out.println("Queue new user notification for Individual ID: " + individual.getId());
-        System.out.println(message.getText());
+        System.out.println("=====================================================================");
+        System.out.println(user);
+        System.out.println("=====================================================================");
+        System.out.println(message);
 
         return user;
     }
@@ -655,6 +669,12 @@ public class KeycloakUserService {
 
         IndividualDTO individual = individualService.findById(individualId);
 
-        return registerUser(individual);
+        OrganisationDTO org = new OrganisationDTO();
+        org.setId(individual.getOrganisation().getId());
+        org.setName(individual.getOrganisation().getName());
+        org.setCode(individual.getOrganisation().getCode());
+        org.setRegistrationNo(individual.getOrganisation().getRegistrationNo());
+
+        return registerUser(individual, org);
     }
 }

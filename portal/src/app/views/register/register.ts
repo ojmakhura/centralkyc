@@ -3,7 +3,7 @@ import { AfterViewChecked, AfterViewInit, Component, computed, effect, inject, I
 import { Loader } from '@app/@shared/loader/loader';
 import { form, FormField, required } from '@angular/forms/signals';
 import { TranslateModule } from '@ngx-translate/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { MatCardModule } from '@angular/material/card';
 import { MatStepperModule, MatStepper } from '@angular/material/stepper';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -100,6 +100,8 @@ export class Register implements OnInit, OnDestroy, AfterViewInit {
   });
 
   @ViewChild('stepper') stepper!: MatStepper;
+
+  protected router: Router = inject(Router);
 
   constructor() {
 
@@ -215,7 +217,7 @@ export class Register implements OnInit, OnDestroy, AfterViewInit {
         ).subscribe({
           next: (res) => {
             this.toastr.success('Registration status confirmed successfully', 'Success');
-            // this.clientRequestApiStore.loadClientRequest(this.requestId);
+            this.router.navigate(['/']);
           },
           error: (err) => {
             this.toastr.error('An error occurred while confirming registration status', 'Error');

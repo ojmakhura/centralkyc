@@ -15,6 +15,8 @@ import bw.co.centralkyc.individual.IndividualDTO;
 import bw.co.centralkyc.individual.IndividualService;
 import bw.co.centralkyc.keycloak.KeycloakUserService;
 import bw.co.centralkyc.messaging.ClientRequestNotification;
+import bw.co.centralkyc.organisation.OrganisationDTO;
+import bw.co.centralkyc.organisation.OrganisationService;
 import bw.co.centralkyc.settings.SettingsDTO;
 import bw.co.centralkyc.settings.SettingsService;
 import bw.co.centralkyc.user.UserDTO;
@@ -45,6 +47,7 @@ public class ClientRequestApiImpl implements ClientRequestApi {
     private final KeycloakUserService keycloakUserService;
     private final IndividualService individualService;
     private final ClientRequestNotification clientRequestNotification;
+    private final OrganisationService organisationService;
 
     public ClientRequestApiImpl(
             ClientRequestService clientRequestService,
@@ -52,6 +55,7 @@ public class ClientRequestApiImpl implements ClientRequestApi {
             DocumentApi documentApi,
             KeycloakUserService keycloakUserService,
             IndividualService individualService,
+            OrganisationService organisationService,
             ClientRequestNotification clientRequestNotification) {
 
         this.settingsService = settingsService;
@@ -60,6 +64,7 @@ public class ClientRequestApiImpl implements ClientRequestApi {
         this.keycloakUserService = keycloakUserService;
         this.individualService = individualService;
         this.clientRequestNotification = clientRequestNotification;
+        this.organisationService = organisationService;
     }
 
     @Override
@@ -548,7 +553,8 @@ public class ClientRequestApiImpl implements ClientRequestApi {
                         individual = individualService.save(individual);
 
                         // Activate individual account or send welcome email
-                        UserDTO user = keycloakUserService.registerUser(individual);
+                        OrganisationDTO org = organisationService.findById(request.getOrganisationId());
+                        UserDTO user = keycloakUserService.registerUser(individual, org);
 
                         if (user != null) {
 

@@ -238,7 +238,18 @@ public class IndividualApiImpl implements IndividualApi {
                         }
                     }
 
-                    keycloakUserService.registerUser(individual);
+                    OrganisationDTO org = null;
+
+                    if(individual.getOrganisation() != null) {
+                        org = new OrganisationDTO();
+                        org.setId(individual.getOrganisation().getId());
+                        org.setName(individual.getOrganisation().getName());
+                        org.setContactEmailAddress(individual.getOrganisation().getContactEmailAddress());
+                        org.setRegistrationNo(individual.getOrganisation().getRegistrationNo());
+                        org.setCode(individual.getOrganisation().getCode());
+                    }
+
+                    keycloakUserService.registerUser(individual, org);
                 }
 
             }
