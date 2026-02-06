@@ -8,6 +8,7 @@ package bw.co.centralkyc.kyc;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.annotation.RestController;
 
 import bw.co.centralkyc.AuditTracker;
 import bw.co.centralkyc.SearchObject;
@@ -20,7 +21,7 @@ import java.util.List;
 
 import org.springframework.data.domain.Page;
 
-@org.springframework.web.bind.annotation.RestController
+@RestController
 public class KycRecordApiImpl implements KycRecordApi {
 
     private final KycRecordService kycRecordService;
@@ -326,5 +327,17 @@ public class KycRecordApiImpl implements KycRecordApi {
             e.printStackTrace();
             throw e;
         }
+    }
+
+    @Override
+    public ResponseEntity<KycRecordDTO> findMyCurrentRecord() throws Exception {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'findMyCurrentRecord'");
+    }
+
+    @Override
+    public ResponseEntity<KycRecordDTO> findMyRecords() throws Exception {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'findMyRecords'");
     }
 }

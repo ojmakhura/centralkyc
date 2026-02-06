@@ -169,29 +169,4 @@ public class ClientRequestDaoImpl
         }
     }
 
-    @Override
-    public Long countByStatus(ClientRequestStatus status) {
-        
-        return clientRequestRepository.countByStatus(status);
-    }
-
-    @Override
-    public Collection<?> countByStatus(int transform, ClientRequestStatus status) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'countByStatus'");
-    }
-
-    @Override
-    public Long countByStatusAndOrganisationId(ClientRequestStatus status, String organisationId) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'countByStatusAndOrganisationId'");
-    }
-
-    @Override
-    public Collection<?> countByStatusAndOrganisationId(int transform, ClientRequestStatus status,
-            String organisationId) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'countByStatusAndOrganisationId'");
-    }
-
 }

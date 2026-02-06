@@ -10,6 +10,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 import org.springframework.security.web.SecurityFilterChain;
 
 import jakarta.annotation.PostConstruct;
@@ -23,6 +24,12 @@ import java.util.Arrays;
 @EnableWebSecurity
 @EnableMethodSecurity(prePostEnabled = true)
 public class SpringSecurityConfig {
+
+	// private final JwtAuthenticationConverter jwtAuthenticationConverter;
+
+    // public SpringSecurityConfig(JwtAuthenticationConverter jwtAuthenticationConverter) {
+    //     this.jwtAuthenticationConverter = jwtAuthenticationConverter;
+    // }
 
 	@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -76,4 +83,18 @@ public class SpringSecurityConfig {
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
+
+	// @Bean
+    // JwtAuthenticationConverter jwtAuthenticationConverter() {
+    //     JwtAuthenticationConverter converter = new JwtAuthenticationConverter();
+
+    //     converter.setJwtGrantedAuthoritiesConverter(
+    //         new KeycloakFlattenedRoleConverter()
+    //     );
+
+    //     // Optional: use email / preferred_username as principal
+    //     // converter.setPrincipalClaimName("preferred_username");
+
+    //     return converter;
+    // }
 }

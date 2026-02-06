@@ -116,16 +116,4 @@ public class KycSubscriptionDaoImpl
             target.setOrganisation(organisation);
         }
     }
-
-    @Override
-    public Long countByStatus(KycSubsciptionStatus status) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'countByStatus'");
-    }
-
-    @Override
-    public Collection<?> countByStatus(int transform, KycSubsciptionStatus status) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'countByStatus'");
-    }
 }
