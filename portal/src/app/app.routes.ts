@@ -36,5 +36,23 @@ export const routes: Routes = [
     canActivate: [authGuard],
     loadComponent: () =>
       import('./views/register/register').then((m) => m.Register),
-  }
+  },
+  {
+    path: 'dashboard',
+    data: { title: 'Dashboard' },
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import('./views/dashboard/dashboard').then((m) => m.Dashboard),
+  },
+  {
+    path: 'kyc-record',
+    data: { title: 'KYC Record' },
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import('./views/kyc-record/kyc-record').then((m) => m.KycRecord),
+  },
+  // Fallback when no prior route is matched
+  {
+    path: '**', redirectTo: '', pathMatch: 'full'
+  },
 ];
