@@ -25,12 +25,6 @@ import java.util.Arrays;
 @EnableMethodSecurity(prePostEnabled = true)
 public class SpringSecurityConfig {
 
-	// private final JwtAuthenticationConverter jwtAuthenticationConverter;
-
-    // public SpringSecurityConfig(JwtAuthenticationConverter jwtAuthenticationConverter) {
-    //     this.jwtAuthenticationConverter = jwtAuthenticationConverter;
-    // }
-
 	@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
@@ -55,7 +49,8 @@ public class SpringSecurityConfig {
 						.anyRequest().authenticated())
 				.sessionManagement(management -> management
 						.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-				.oauth2ResourceServer(oauth2 -> oauth2.jwt(Customizer.withDefaults()));
+				.oauth2ResourceServer(oauth2 -> oauth2.jwt(jwt ->
+                    jwt.jwtAuthenticationConverter(jwtAuthenticationConverter())));
 
 		return http.build();
 	}
@@ -84,17 +79,17 @@ public class SpringSecurityConfig {
         return new BCryptPasswordEncoder();
     }
 
-	// @Bean
-    // JwtAuthenticationConverter jwtAuthenticationConverter() {
-    //     JwtAuthenticationConverter converter = new JwtAuthenticationConverter();
+	@Bean
+    JwtAuthenticationConverter jwtAuthenticationConverter() {
+        JwtAuthenticationConverter converter = new JwtAuthenticationConverter();
 
-    //     converter.setJwtGrantedAuthoritiesConverter(
-    //         new KeycloakFlattenedRoleConverter()
-    //     );
+        converter.setJwtGrantedAuthoritiesConverter(
+            new KeycloakRoleConverter()
+        );
 
-    //     // Optional: use email / preferred_username as principal
-    //     // converter.setPrincipalClaimName("preferred_username");
+        // Optional: use email / preferred_username as principal
+        converter.setPrincipalClaimName("preferred_username");
 
-    //     return converter;
-    // }
+        return converter;
+    }
 }

@@ -625,6 +625,7 @@ public class KeycloakUserService {
         String password = kycUtils.generatePassword();
         user.setPassword(password);
         user.setEnabled(true);
+        user.setRoles(List.of("KYC_USER"));
 
         if (individual.getBranch() != null && !StringUtils.isBlank(individual.getBranch().getId())) {
 

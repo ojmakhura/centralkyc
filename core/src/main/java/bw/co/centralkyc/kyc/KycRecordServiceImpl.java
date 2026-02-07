@@ -14,6 +14,7 @@ import java.util.Collection;
 import java.util.UUID;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -28,8 +29,11 @@ import bw.co.centralkyc.SearchObject;
 import bw.co.centralkyc.TargetEntity;
 import bw.co.centralkyc.individual.Individual;
 import bw.co.centralkyc.individual.IndividualRepository;
+import bw.co.centralkyc.organisation.Organisation;
+import bw.co.centralkyc.organisation.OrganisationRepository;
 import bw.co.centralkyc.settings.Settings;
 import bw.co.centralkyc.settings.SettingsRepository;
+import bw.co.centralkyc.user.UserDTO;
 
 /**
  * @see bw.co.centralkyc.kyc.KycRecordService
@@ -40,13 +44,16 @@ public class KycRecordServiceImpl
     extends KycRecordServiceBase
 {
     private final IndividualRepository individualRepository;
+    private final OrganisationRepository organisationRepository;
     private final SettingsRepository settingsRepository;
+
     public KycRecordServiceImpl(
         KycRecordDao kycRecordDao,
         KycRecordRepository kycRecordRepository,
         MessageSource messageSource,
         SettingsRepository settingsRepository,
-        IndividualRepository individualRepository
+        IndividualRepository individualRepository,
+        OrganisationRepository organisationRepository
     ) {
         
         super(
@@ -57,6 +64,7 @@ public class KycRecordServiceImpl
 
         this.individualRepository = individualRepository;
         this.settingsRepository = settingsRepository;
+        this.organisationRepository = organisationRepository;
     }
 
     /**
@@ -309,6 +317,44 @@ public class KycRecordServiceImpl
         record = this.kycRecordRepository.save(record);
 
         return this.kycRecordDao.toKycRecordDTO(record);
+    }
+
+    @Override
+    protected boolean handleConfirmOwnership(String kycRecordId, UserDTO user) throws Exception {
+
+        if(StringUtils.isBlank(user.getUserId())) {
+            return false;
+        }
+
+        KycRecord kycRecord = this.kycRecordRepository.findById(UUID.fromString(kycRecordId))
+            .orElseThrow(() -> new Exception("KycRecord not found for id: " + kycRecordId));    
+
+        if(StringUtils.isBlank(kycRecord.getTargetId()) || kycRecord.getTarget() == null) {
+            return false;
+        }
+
+        if(kycRecord.getTarget() == TargetEntity.INDIVIDUAL) {
+
+            Individual individual = this.individualRepository.findById(UUID.fromString(kycRecord.getTargetId()))
+                .orElseThrow(() -> new Exception("Individual not found for id: " + kycRecord.getTargetId()));
+
+            return Strings.CS.equals(individual.getUserId(), user.getUserId());
+
+        } else if(kycRecord.getTarget() == TargetEntity.ORGANISATION) {
+
+            if(StringUtils.isBlank(user.getOrganisationId())) {
+
+                return false;
+            }
+
+            Organisation organisation = this.organisationRepository.findById(UUID.fromString(kycRecord.getTargetId()))
+                .orElseThrow(() -> new Exception("Organisation not found for id: " + kycRecord.getTargetId()));
+
+            return Strings.CS.equals(organisation.getId().toString(), user.getOrganisationId());
+
+        }
+
+        return false;
     }
 
 }

@@ -561,6 +561,7 @@ public class ClientRequestApiImpl implements ClientRequestApi {
                         if (user != null) {
 
                             individual.setUserCreated(true);
+                            individual.setUserId(user.getUserId());
                         } else {
                         }
                         individual = individualService.save(individual);
