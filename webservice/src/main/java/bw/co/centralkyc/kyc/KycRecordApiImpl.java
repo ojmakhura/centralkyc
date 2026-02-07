@@ -13,12 +13,18 @@ import org.springframework.web.bind.annotation.RestController;
 import bw.co.centralkyc.AuditTracker;
 import bw.co.centralkyc.SearchObject;
 import bw.co.centralkyc.TargetEntity;
+import bw.co.centralkyc.individual.IndividualDTO;
+import bw.co.centralkyc.individual.IndividualService;
 import bw.co.centralkyc.keycloak.KeycloakOrganisationService;
+import bw.co.centralkyc.keycloak.KeycloakUserService;
 import bw.co.centralkyc.organisation.OrganisationDTO;
+import bw.co.centralkyc.user.UserDTO;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.Page;
 
 @RestController
@@ -26,12 +32,18 @@ public class KycRecordApiImpl implements KycRecordApi {
 
     private final KycRecordService kycRecordService;
     private final KeycloakOrganisationService keycloakOrganisationService;
+    private final KeycloakUserService keycloakUserService;
+    private final IndividualService individualService;
 
     public KycRecordApiImpl(KycRecordService kycRecordService,
-            KeycloakOrganisationService keycloakOrganisationService) {
+            KeycloakOrganisationService keycloakOrganisationService,
+            KeycloakUserService keycloakUserService,
+            IndividualService individualService) {
 
         this.kycRecordService = kycRecordService;
         this.keycloakOrganisationService = keycloakOrganisationService;
+        this.keycloakUserService = keycloakUserService;
+        this.individualService = individualService;
     }
 
     private void updateOrganisations(Collection<KycRecordDTO> records) {
@@ -331,13 +343,48 @@ public class KycRecordApiImpl implements KycRecordApi {
 
     @Override
     public ResponseEntity<KycRecordDTO> findMyCurrentRecord() throws Exception {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'findMyCurrentRecord'");
+        
+        try {
+            return ResponseEntity.ok(kycRecordService.findLatestValidForOwner(null, null, null));
+        } catch(Exception e) {
+
+            e.printStackTrace();
+            throw e;
+        }
     }
 
     @Override
     public ResponseEntity<KycRecordDTO> findMyRecords() throws Exception {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'findMyRecords'");
+        
+        try {
+            
+            String username = "anonymousUser";
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            if (authentication != null) {
+
+                username = authentication.getName();
+            }
+
+            UserDTO user = keycloakUserService.findByUsername(username);
+
+            List<String> targetIds = new ArrayList<>();
+
+            if(StringUtils.isNotBlank(user.getOrganisationId())) {
+
+                targetIds.add(user.getOrganisationId());
+            }
+
+            // IndividualDTO individual = individualService.find
+
+            KycRecordSearchCriteria criteria = new KycRecordSearchCriteria();
+
+
+            return null;
+
+        } catch (Exception e) {
+
+            e.printStackTrace();
+            throw e;
+        }
     }
 }

@@ -1,35 +1,49 @@
 import { CommonModule } from "@angular/common";
 import { AfterViewInit, Component, computed, effect, inject, linkedSignal, OnDestroy, OnInit, signal } from "@angular/core";
-import { MatCardModule } from "@angular/material/card";
-import { MatChipsModule } from "@angular/material/chips";
-import { MatIconModule } from "@angular/material/icon";
-import { MatTooltipModule } from "@angular/material/tooltip";
 import { ActivatedRoute, Router, RouterModule } from "@angular/router";
 import { Loader } from "@app/@shared/loader/loader";
 import { DocumentDTO } from "@app/models/bw/co/centralkyc/document/document-dto";
-import { DocumentTypeDTO } from "@app/models/bw/co/centralkyc/document/type/document-type-dto";
-import { IndividualIdentityType } from "@app/models/bw/co/centralkyc/individual/individual-identity-type";
-import { Sex } from "@app/models/bw/co/centralkyc/individual/sex";
 import { KycComplianceStatus } from "@app/models/bw/co/centralkyc/kyc/kyc-compliance-status";
-import { PhoneType } from "@app/models/bw/co/centralkyc/phone-type";
-import { SettingsDTO } from "@app/models/bw/co/centralkyc/settings/settings-dto";
 import { TargetEntity } from "@app/models/bw/co/centralkyc/target-entity";
-import { DocumentApi } from "@app/services/bw/co/centralkyc/document/document-api";
 import { KycRecordApiStore } from "@app/store/bw/co/centralkyc/kyc/kyc-record-api.store";
-import { SettingsApiStore } from "@app/store/bw/co/centralkyc/settings/settings-api.store";
 import { TranslateModule } from "@ngx-translate/core";
 import { ToastrService } from "ngx-toastr";
 import { IndividualApi } from "@app/services/bw/co/centralkyc/individual/individual-api";
 import { OrganisationApi } from "@app/services/bw/co/centralkyc/organisation/organisation-api";
 import { IndividualListDTO } from "@app/models/bw/co/centralkyc/individual/individual-list-dto";
 import { OrganisationListDTO } from "@app/models/bw/co/centralkyc/organisation/organisation-list-dto";
-import { MatButtonModule } from "@angular/material/button";
+import { DeclarationDTO } from "@app/models/bw/co/centralkyc/kyc/declaration-dto";
+import { SourceOfFunds } from "@app/models/bw/co/centralkyc/source-of-funds";
+import { FormControl } from "@angular/forms";
+import { applyEach, form, FormField, minLength, required } from "@angular/forms/signals";
+import { MaterialModule } from "@app/material.module";
+import { NgxMatSelectSearchModule } from "ngx-mat-select-search";
+import { PepStatus } from "@app/models/bw/co/centralkyc/individual/pep-status";
+import { KycRecordDTO } from "@app/models/bw/co/centralkyc/kyc/kyc-record-dto";
+import { KycRecordApi } from "@app/services/bw/co/centralkyc/kyc/kyc-record-api";
 
-interface UploadProgress {
-  [documentTypeId: string]: {
-    isUploading: boolean;
-    progress: number;
+class KycRecordForm {
+
+  id: string | any = null; // not displayed
+  createdBy: string | any = null; // not displayed
+  createdAt: Date | any = null; // not displayed
+  modifiedBy: string | any = null; // not displayed
+  modifiedAt: Date | any = null; // not displayed
+  expiryDate: Date | any = null;
+  uploadDate: Date | any = null;
+  documents: Array<DocumentDTO> | any = null;
+  kycStatus: KycComplianceStatus = KycComplianceStatus.INCOMPLETE;
+  owner: OrganisationListDTO | IndividualListDTO | any = null;
+  ownerType: TargetEntity | any = null;
+  declaration: DeclarationDTO | any = {
+    pepStatus: null,
+    pepDetails: null,
+    sanctionsMatch: null,
+    sanctionsDetails: null
   };
+  sourceOfFunds: Array<SourceOfFunds> | any = [];
+  sourceOfFundsDetails: string | any = null;
+  ownerFilter = '';
 }
 
 @Component({
@@ -38,18 +52,17 @@ interface UploadProgress {
   styleUrls: ['./edit-kyc-record.scss'],
   imports: [
     CommonModule,
-    MatCardModule,
-    MatIconModule,
+    MaterialModule,
     TranslateModule,
-    MatTooltipModule,
-    MatChipsModule,
-    MatButtonModule,
+    FormField,
     Loader,
-    RouterModule
+    RouterModule,
+    NgxMatSelectSearchModule
   ]
 })
 export class EditKycRecord implements OnInit, OnDestroy, AfterViewInit {
 
+  kycRecordApi = inject(KycRecordApi);
   kycRecordApiStore = inject(KycRecordApiStore);
   loading = linkedSignal(() => this.kycRecordApiStore.loading());
   loaderMessage = linkedSignal(() => this.kycRecordApiStore.loaderMessage());
@@ -59,52 +72,36 @@ export class EditKycRecord implements OnInit, OnDestroy, AfterViewInit {
   KycComplianceStatusT: any = KycComplianceStatus;
   KycComplianceStatusOptions = Object.keys(this.KycComplianceStatusT);
   TargetEntityT: any = TargetEntity;
-  SexT: any = Sex;
-  SexOptions = Object.keys(this.SexT);
-  IndividualIdentityTypeT: any = IndividualIdentityType;
-  IndividualIdentityTypeOptions = Object.keys(this.IndividualIdentityTypeT);
-  PhoneTypeT: any = PhoneType;
-  PhoneTypeOptions = Object.keys(this.PhoneTypeT);
+  TargetEntityOptions = [TargetEntity.ORGANISATION, TargetEntity.INDIVIDUAL];
 
-  // Settings and document types
-  settingsApiStore = inject(SettingsApiStore);
-  settings = linkedSignal<SettingsDTO | null>(() => this.settingsApiStore.data());
-  documentApi = inject(DocumentApi);
-  document = linkedSignal(() => new DocumentDTO());
+  PepStatusT: any = PepStatus;
+  PepStatusOptions = Object.keys(this.PepStatusT);
+
+  SourceOfFundsT: any = SourceOfFunds;
+  SourceOfFundsOptions = Object.keys(this.SourceOfFundsT);
 
   // Individual and Organisation APIs
   individualApi = inject(IndividualApi);
   organisationApi = inject(OrganisationApi);
-  individual = signal<IndividualListDTO | null>(null);
-  organisation = signal<OrganisationListDTO | null>(null);
-
-  // Document upload state
-  uploadedDocuments = linkedSignal<DocumentDTO[]>(() => []);
-  uploadProgress = signal<UploadProgress>({});
-
-  // Computed property to get individual document types from settings
-  individualDocumentTypes = computed(() => {
-    const settings = this.settings();
-    return settings?.individualDocuments || [];
-  });
-  kycIndDocumentTypes = computed(() => {
-    const settings = this.settings();
-    return settings?.indKycDocuments || [];
-  });
 
   toaster: ToastrService = inject(ToastrService);
   protected router: Router = inject(Router);
   protected route: ActivatedRoute = inject(ActivatedRoute);
 
+  ownerFilterControl = new FormControl('');
+
+  kycRecordSignal = signal(new KycRecordForm());
+  kycRecordSignalForm = form(this.kycRecordSignal, (path) => {
+    required(path.owner, { message: 'Select KYC Record owner' });
+    required(path.kycStatus, { message: 'Select KYC Record status' });
+    required(path.ownerType, { message: 'Select KYC Record owner type' });
+    minLength(path.sourceOfFunds, 1, { message: 'Add at least one source of funds' });
+  });
+
+  ownerList = signal<Array<OrganisationListDTO | IndividualListDTO>>([]);
+
   constructor() {
-    // Watch for kycRecord changes and load target entity
 
-  }
-
-  ngOnInit(): void {
-  }
-
-  ngOnDestroy(): void {
   }
 
   ngAfterViewInit(): void {
@@ -117,7 +114,119 @@ export class EditKycRecord implements OnInit, OnDestroy, AfterViewInit {
     });
 
     // Load settings
-    this.settingsApiStore.getAll();
+    // this.settingsApiStore.getAll();
   }
 
+  // Local editable copy of the record to bind the form to
+  // Sync store data into local formData
+  ngOnInit(): void {
+  }
+
+  ngOnDestroy(): void {
+  }
+
+  save(): void {
+
+    this.kycRecordSignalForm().valid
+
+    let form: KycRecordForm = this.kycRecordSignal();
+
+    let kycRecord = new KycRecordDTO();
+    kycRecord.id = form.id;
+    kycRecord.createdBy = form.createdBy;
+    kycRecord.createdAt = form.createdAt;
+    kycRecord.modifiedBy = form.modifiedBy;
+    kycRecord.modifiedAt = form.modifiedAt;
+    kycRecord.expiryDate = form.expiryDate;
+    kycRecord.uploadDate = form.uploadDate;
+    kycRecord.documents = form.documents;
+    kycRecord.kycStatus = form.kycStatus;
+    kycRecord.target = form.ownerType;
+    kycRecord.declaration = form.declaration;
+    kycRecord.sourceOfFunds = form.sourceOfFunds;
+    kycRecord.sourceOfFundsDetails = form.sourceOfFundsDetails;
+
+    kycRecord.targetId = form.owner?.id;
+
+    this.kycRecordApi.save(kycRecord).subscribe({
+      next: (response) => {
+        this.toaster.success('KYC Record saved successfully');
+        this.router.navigate(['/kyc', 'details', response.id]);
+      },
+      error: (error) => {
+        this.toaster.error('Failed to save KYC Record');
+      }
+    });
+
+  }
+
+  cancel(): void {
+    this.router.navigate(['/kyc']);
+  }
+
+  ownerCompare(o1: OrganisationListDTO | IndividualListDTO, o2: OrganisationListDTO | IndividualListDTO): boolean {
+    return o1 && o2 ? o1.id === o2.id : o1 === o2;
+  }
+
+  filterOwner() {
+
+    const filterValue = this.ownerFilterControl.value || '';
+
+    this.loading.set(true);
+
+    if (this.kycRecordSignal().ownerType === TargetEntity.ORGANISATION) {
+
+      this.organisationApi.search({ criteria: { name: filterValue } }).subscribe((response: OrganisationListDTO[]) => {
+        this.ownerList.set(response);
+        this.loading.set(false);
+      }, error => {
+        this.toaster.error('Failed to load organisations');
+        this.ownerList.set([]);
+        this.loading.set(false);
+      });
+
+    } else if (this.kycRecordSignal().ownerType === TargetEntity.INDIVIDUAL) {
+
+      this.individualApi.search({ criteria: { name: filterValue } }).subscribe((response: IndividualListDTO[]) => {
+        this.ownerList.set(response);
+        this.loading.set(false);
+      }, error => {
+        this.toaster.error('Failed to load individuals');
+        this.ownerList.set([]);
+        this.loading.set(false);
+      });
+
+    } else {
+
+      this.ownerList.set([]);
+      this.loading.set(false);
+    }
+  }
+
+  kycRecordFormReset() {
+
+    this.kycRecordSignal.set(new KycRecordForm());
+  }
+
+  sourceOfFundsAdd() {
+
+    this.kycRecordSignal.update((value) => ({
+      ...value,
+      sourceOfFunds: [
+        ...value.sourceOfFunds,
+        ''
+      ]
+    }))
+  }
+
+  sourceOfFundsRemove(i: number, item: SourceOfFunds) {
+    this.kycRecordSignal.update((value) => {
+      const sourceOfFunds = value.sourceOfFunds.filter((_: any, index: number) => index !== i);
+
+      return {
+        ...value,
+        sourceOfFunds: sourceOfFunds
+      }
+    });
+  }
 }

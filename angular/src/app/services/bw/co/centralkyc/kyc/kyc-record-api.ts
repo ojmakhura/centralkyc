@@ -92,4 +92,13 @@ export class KycRecordApi {
         return this.http.post<KycRecordDTO[]>(`${this.path}/search`, criteria);
     }
 
+    public findMyCurrentRecord(): Observable<KycRecordDTO> {
+
+      return this.http.get<KycRecordDTO>(`${this.path}/my_current`);
+    }
+
+    public findMyRecords(): Observable<KycRecordDTO> {
+
+      return this.http.get<KycRecordDTO>(`${this.path}/mine`);
+    }
 }

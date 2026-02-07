@@ -33,7 +33,7 @@ export const kycRecordRoutes: Routes = [
     ],
   },
   {
-    path: 'kyc/details/{id}',
+    path: 'kyc/details/:id',
     component: KycRecordDetails,
     canActivate: [AuthenticationGuard],
     data: { title: 'Kyc Record Details' },
@@ -57,7 +57,7 @@ export const kycRecordRoutes: Routes = [
     ],
   },
   {
-    path: 'kyc/edit/{id}',
+    path: 'kyc/edit/:id',
     component: EditKycRecord,
     canActivate: [AuthenticationGuard],
     data: { title: 'Edit Kyc Record' },

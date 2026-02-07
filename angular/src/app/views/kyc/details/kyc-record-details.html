@@ -71,46 +71,7 @@
   <!-- Main Content -->
   <div class="item-display">
     <!-- Basic Information Section -->
-    <mat-card class="section-card basic-info-section" appearance="outlined">
-      <mat-card-header>
-        <mat-card-title>
-          <mat-icon class="section-icon">info</mat-icon>
-          {{ 'basic.information' | translate }}
-        </mat-card-title>
-      </mat-card-header>
-      <mat-card-content>
-        <div class="display-grid">
-          <div class="display-item">
-            <div class="display-label">
-              <mat-icon class="field-icon">event</mat-icon>
-              <span>{{ 'upload.date' | translate }}</span>
-            </div>
-            <div class="display-value">
-              @if (kycRecord().uploadDate) {
-              {{ kycRecord().uploadDate | date:'MMM dd, yyyy' }}
-              } @else {
-              N/A
-              }
-            </div>
-          </div>
 
-          <div class="display-item">
-            <div class="display-label">
-              <mat-icon class="field-icon">schedule</mat-icon>
-              <span>{{ 'expiry.date' | translate }}</span>
-            </div>
-            <div class="display-value">
-              @if (kycRecord().expiryDate) {
-              {{ kycRecord().expiryDate | date:'MMM dd, yyyy' }}
-              } @else {
-              N/A
-              }
-            </div>
-          </div>
-
-        </div>
-      </mat-card-content>
-    </mat-card>
 
     <!-- Target Entity Details Section -->
     @if (kycRecord().target === TargetEntityT.INDIVIDUAL && individual()) {
@@ -250,6 +211,92 @@
       </mat-card-content>
     </mat-card>
     }
+    <!--  -->
+    <mat-card class="section-card basic-info-section" appearance="outlined">
+      <mat-card-header>
+        <mat-card-title>
+          <mat-icon class="section-icon">info</mat-icon>
+          {{ 'kyc.record.information' | translate }}
+        </mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="display-grid">
+          <div class="display-item">
+            <div class="display-label">
+              <mat-icon class="field-icon">event</mat-icon>
+              <span>{{ 'upload.date' | translate }}</span>
+            </div>
+            <div class="display-value">
+              @if (kycRecord().uploadDate) {
+              {{ kycRecord().uploadDate | date:'MMM dd, yyyy' }}
+              } @else {
+              N/A
+              }
+            </div>
+          </div>
+
+          <div class="display-item">
+            <div class="display-label">
+              <mat-icon class="field-icon">schedule</mat-icon>
+              <span>{{ 'expiry.date' | translate }}</span>
+            </div>
+            <div class="display-value">
+              @if (kycRecord().expiryDate) {
+              {{ kycRecord().expiryDate | date:'MMM dd, yyyy' }}
+              } @else {
+              N/A
+              }
+            </div>
+          </div>
+          @if (kycRecord().declaration) {
+          <div class="display-item">
+            <div class="display-label">
+              <mat-icon class="field-icon">assignment_ind</mat-icon>
+              <span>{{ 'declaration.pep.status' | translate }}</span>
+            </div>
+            <div class="display-value">
+              {{ kycRecord().declaration.pepStatus || 'N/A' }}
+            </div>
+          </div>
+
+          <div class="display-item">
+            <div class="display-label">
+              <mat-icon class="field-icon">notes</mat-icon>
+              <span>{{ 'declaration.pep.details' | translate }}</span>
+            </div>
+            <div class="display-value">
+              {{ kycRecord().declaration.pepDetails || 'N/A' }}
+            </div>
+          </div>
+
+          <div class="display-item">
+            <div class="display-label">
+              <mat-icon class="field-icon">report_problem</mat-icon>
+              <span>{{ 'declaration.sanctions.match' | translate }}</span>
+            </div>
+            <div class="display-value">
+              @if (kycRecord().declaration.sanctionsMatch) {
+              {{ 'yes' | translate }}
+              } @else {
+              {{ 'no' | translate }}
+              }
+            </div>
+          </div>
+
+          <div class="display-item">
+            <div class="display-label">
+              <mat-icon class="field-icon">description</mat-icon>
+              <span>{{ 'declaration.sanctions.details' | translate }}</span>
+            </div>
+            <div class="display-value">
+              {{ kycRecord().declaration.sanctionsDetails || 'N/A' }}
+            </div>
+          </div>
+          }
+
+        </div>
+      </mat-card-content>
+    </mat-card>
 
     <!-- Add Documents Section -->
     @if (kycIndDocumentTypes() && kycIndDocumentTypes().length > 0) {

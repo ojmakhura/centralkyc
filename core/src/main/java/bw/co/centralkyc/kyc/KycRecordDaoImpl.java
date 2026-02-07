@@ -13,6 +13,8 @@ import bw.co.centralkyc.document.DocumentRepository;
 import bw.co.centralkyc.individual.Individual;
 import bw.co.centralkyc.individual.IndividualRepository;
 import bw.co.centralkyc.individual.employment.EmploymentRecordRepository;
+import bw.co.centralkyc.organisation.Organisation;
+import bw.co.centralkyc.organisation.OrganisationRepository;
 import jakarta.persistence.EntityNotFoundException;
 
 import java.util.UUID;
@@ -29,12 +31,14 @@ public class KycRecordDaoImpl
         extends KycRecordDaoBase {
 
     private final IndividualRepository individualRepository;
+    private final OrganisationRepository organisationRepository;
 
     public KycRecordDaoImpl(DocumentRepository documentRepository, IndividualRepository individualRepository,
-            EmploymentRecordRepository employmentRecordRepository, KycRecordRepository kycRecordRepository) {
+            EmploymentRecordRepository employmentRecordRepository, KycRecordRepository kycRecordRepository, OrganisationRepository organisationRepository) {
         super(documentRepository, employmentRecordRepository, kycRecordRepository);
 
         this.individualRepository = individualRepository;
+        this.organisationRepository = organisationRepository;
     }
 
     /**
@@ -76,6 +80,13 @@ public class KycRecordDaoImpl
             target.setName(builder.toString());
 
         }
+
+        DeclarationDTO declaration = new DeclarationDTO();
+        declaration.setPepDetails(source.getPepDetails());
+        declaration.setPepStatus(source.getPepStatus());
+        declaration.setSanctionsMatch(source.getSanctionsMatch());
+        declaration.setSanctionsDetails(source.getSanctionsDetails());
+        target.setDeclaration(declaration);
     }
 
     /**
@@ -123,6 +134,14 @@ public class KycRecordDaoImpl
         // TODO verify behavior of kycRecordDTOToEntity
         super.kycRecordDTOToEntity(source, target, copyIfNull);
 
+        if(source.getDeclaration() != null) {
+
+            target.setPepDetails(source.getDeclaration().getPepDetails());
+            target.setPepStatus(source.getDeclaration().getPepStatus());
+            target.setSanctionsMatch(source.getDeclaration().getSanctionsMatch());
+            target.setSanctionsDetails(source.getDeclaration().getSanctionsDetails());
+        }
+
         if (CollectionUtils.isNotEmpty(source.getDocuments())) {
             for (DocumentDTO docDTO : source.getDocuments()) {
                 Document doc = this.documentDao.documentDTOToEntity(docDTO);
@@ -132,11 +151,12 @@ public class KycRecordDaoImpl
 
         if (source.getTarget() == TargetEntity.INDIVIDUAL && StringUtils.isNotBlank(source.getTargetId())) {
 
-            this.individualRepository.findById(UUID.fromString(source.getTargetId()))
-                    .orElseThrow(() -> new KycRecordServiceException(
-                            "Individual not found for id: " + source.getTargetId()));
+            Individual individual = individualRepository.getReferenceById(UUID.fromString(source.getTargetId()));
+            target.setTargetId(individual.getId().toString());
         } else if (copyIfNull) {
             // target.setIndividual(null);
+            Organisation organisation = organisationRepository.getReferenceById(UUID.fromString(source.getTargetId()));
+            target.setTargetId(organisation.getId().toString());
         }
     }
 }

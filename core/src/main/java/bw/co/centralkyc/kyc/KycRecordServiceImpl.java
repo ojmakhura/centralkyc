@@ -88,6 +88,10 @@ public class KycRecordServiceImpl
     protected KycRecordDTO handleSave(KycRecordDTO kycRecord)
         throws Exception
     {
+        Settings settings = this.settingsRepository.findAll().stream().findFirst()
+            .orElseThrow(() -> new Exception("Settings not found"));
+
+        int kycDuration = settings.getKycDuration() != null ? settings.getKycDuration() : 2; // Default to 2 years if not set
 
         KycRecord kycRecordEntity = this.kycRecordDao.kycRecordDTOToEntity(kycRecord);
 
@@ -95,10 +99,10 @@ public class KycRecordServiceImpl
             kycRecordEntity.setUploadDate(LocalDate.now());
         }
 
-        // if(kycRecordEntity.getExpiryDate() == null) {
+        if(kycRecordEntity.getExpiryDate() == null) {
 
-        //     kycRecordEntity.setExpiryDate(kycRecordEntity.getUploadDate().plusYears(2));
-        // }
+            kycRecordEntity.setExpiryDate(kycRecordEntity.getUploadDate().plusYears(kycDuration));
+        }
 
             // System.out.println("************************************************************ " + kycRecordEntity.getExpiryDate());
         kycRecordEntity = this.kycRecordRepository.save(kycRecordEntity);
@@ -147,10 +151,10 @@ public class KycRecordServiceImpl
                 cb.equal(root.get("target"), criteria.getTarget());
         }
 
-        if(criteria.getTargetId() != null) {
+        if(criteria.getTargetIds() != null && criteria.getTargetIds().size() > 0) {
 
             Specification<KycRecord> targetIdSpec = (root, query, cb) -> 
-                cb.equal(root.get("targetId"), criteria.getTargetId());
+                root.get("targetId").in(criteria.getTargetIds());
 
             spec = spec == null ? targetIdSpec : spec.and(targetIdSpec);
         }
@@ -355,6 +359,15 @@ public class KycRecordServiceImpl
         }
 
         return false;
+    }
+
+    @Override
+    protected KycRecordDTO handleFindLatestValidForOwner(String ownerId, TargetEntity ownerType, LocalDate today)
+            throws Exception {
+        
+        KycRecord record = kycRecordRepository.findLatestValidForOwner(ownerId, ownerType, today);
+
+        return kycRecordDao.toKycRecordDTO(record);
     }
 
 }

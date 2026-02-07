@@ -5,10 +5,8 @@ import { CommonModule } from '@angular/common';
 import { TranslateModule } from '@ngx-translate/core';
 import { MaterialModule } from '@app/material.module';
 import { Loader } from "@shared/loader/loader";
-import { FormField } from '@angular/forms/signals';
-import { RouterLink, RouterModule } from "@angular/router";
-import { PhoneNumber } from '@app/models/bw/co/centralkyc/phone-number';
-import { OrganisationDomain } from '@app/models/bw/co/centralkyc/organisation/organisation-domain';
+import { applyEach, form, FormField, required } from '@angular/forms/signals';
+import { RouterModule } from "@angular/router";
 import { OrganisationDTO } from '@app/models/bw/co/centralkyc/organisation/organisation-dto';
 
 @Component({
@@ -32,6 +30,24 @@ export class EditOrganisationImplComponent extends EditOrganisationComponent {
   override success = linkedSignal(() => this.organisationApiStore.success());
   override loading = linkedSignal(() => this.organisationApiStore.loading());
   override loaderMessage = linkedSignal(() => this.organisationApiStore.loaderMessage());
+
+  override editOrganisationSignalForm = form(this.editOrganisationSignal, (path) => {
+      required(path.isClient, { message: 'is.client.required' })
+      required(path.status, { message: 'status.required' })
+      required(path.kycStatus, { message: 'kyc.status.required' })
+      required(path.registrationNo, { message: 'registration.no.required' })
+      required(path.code, { message: 'code.required' })
+      required(path.name, { message: 'name.required' })
+      required(path.countryOfRegistration, { message: 'country.of.registration.required' })
+      required(path.description, { message: 'description.required' })
+      required(path.postalAddress, { message: 'postal.address.required' })
+      required(path.physicalAddress, { message: 'physical.address.required' })
+      required(path.domains, { message: 'domains.required' });
+      applyEach(path.phoneNumbers, (phonePath) => {
+        required(phonePath.type, { message: 'phone.type.required' });
+        required(phonePath.phoneNumber, { message: 'phone.number.required' });
+      });
+    });
 
   countries: string[] = [
     'Unknown', 'Afghanistan', 'Albania', 'Algeria', 'Andorra', 'Angola', 'Antigua and Barbuda', 'Argentina', 'Armenia', 'Australia', 'Austria',

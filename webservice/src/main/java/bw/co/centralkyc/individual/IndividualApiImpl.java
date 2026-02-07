@@ -27,7 +27,6 @@ import bw.co.centralkyc.keycloak.KeycloakOrganisationService;
 import bw.co.centralkyc.keycloak.KeycloakUserService;
 import bw.co.centralkyc.organisation.OrganisationDTO;
 import bw.co.centralkyc.organisation.OrganisationListDTO;
-import bw.co.centralkyc.organisation.branch.BranchDTO;
 import bw.co.centralkyc.organisation.branch.BranchService;
 import bw.co.centralkyc.user.UserDTO;
 import bw.co.roguesystems.comm.ContentType;
@@ -54,13 +53,6 @@ public class IndividualApiImpl implements IndividualApi {
     private final BranchService branchService;
     private final EmailService emailService;
     private final IndividualService individualService;
-
-    private static final SecureRandom RANDOM = new SecureRandom();
-
-    private static final String UPPER = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-    private static final String LOWER = "abcdefghijklmnopqrstuvwxyz";
-    private static final String DIGITS = "0123456789";
-    private static final String SYMBOLS = "@#$%!";
 
     private static final String newUserTemplate = """
             Dear %s,
@@ -249,9 +241,13 @@ public class IndividualApiImpl implements IndividualApi {
                         org.setCode(individual.getOrganisation().getCode());
                     }
 
-                    keycloakUserService.registerUser(individual, org);
+                    user = keycloakUserService.registerUser(individual, org);
                 }
+            }
 
+            if(user != null && StringUtils.isNotBlank(user.getUserId())) {
+                individual.setHasUser(true);
+                individual.setUserId(user.getUserId());
             }
 
             individual = individualService.save(individual);
