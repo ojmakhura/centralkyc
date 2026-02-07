@@ -44,9 +44,9 @@ export class KycRecordSearchForm {
 }
 
 @Component({
-  selector: 'app-kyc-record',
-  templateUrl: './kyc-record.html',
-  styleUrls: ['./kyc-record.scss'],
+  selector: 'app-kyc-records',
+  templateUrl: './kyc-records.html',
+  styleUrls: ['./kyc-records.scss'],
   standalone: true,
   imports: [
     CommonModule,
@@ -58,7 +58,7 @@ export class KycRecordSearchForm {
     RouterModule,
   ],
 })
-export class KycRecordComponent implements OnInit, AfterViewInit, OnDestroy {
+export class KycRecordsComponent implements OnInit, AfterViewInit, OnDestroy {
 
     protected route: ActivatedRoute = inject(ActivatedRoute);
     protected router: Router = inject(Router);

@@ -45,8 +45,11 @@ import { firstValueFrom, Observable, map, of, startWith, Subscription } from "rx
 import { CommonModule } from '@angular/common';
 import { TranslateModule } from '@ngx-translate/core';
 import { MaterialModule } from '@app/material.module';
+import { Page } from "@app/models/page.model";
+
 import { OrganisationListDTO } from '@models/bw/co/centralkyc/organisation/organisation-list-dto';
 import { GeneralStatus } from '@models/bw/co/centralkyc/general-status';
+import { KycComplianceStatus } from '@models/bw/co/centralkyc/kyc/kyc-compliance-status';
 import { BranchDTO } from '@models/bw/co/centralkyc/organisation/branch/branch-dto';
 import { SearchObject } from '@models/search-object';
 import { GenericComponent } from "@views/generic.component";
@@ -74,9 +77,9 @@ export abstract class UserEditorComponent extends GenericComponent<UserEditorFor
 
     separatorKeysCodes: number[] = [ENTER, COMMA];
     userEditorComponentSignalForm = this.formObject;
-
-
-    abstract createNewRoles(): String;
+    createNewRoles(): String {
+        return '';
+    }
 
     organisationCompare(o1: OrganisationListDTO | any, o2: OrganisationListDTO | any) {
         return false;
@@ -90,6 +93,7 @@ export abstract class UserEditorComponent extends GenericComponent<UserEditorFor
     organisationDisplays: string[] = [
         'name',
     ];
+    organisationFilterControl = new FormControl('');
 
     branchCompare(o1: BranchDTO | any, o2: BranchDTO | any) {
         return false;
@@ -103,8 +107,11 @@ export abstract class UserEditorComponent extends GenericComponent<UserEditorFor
     branchDisplays: string[] = [
         'name',
     ];
+    branchFilterControl = new FormControl('');
     GeneralStatusT: any = GeneralStatus;
     GeneralStatusOptions = Object.keys(this.GeneralStatusT);
+    KycComplianceStatusT: any = KycComplianceStatus;
+    KycComplianceStatusOptions = Object.keys(this.KycComplianceStatusT);
 
     constructor(
     ) {
@@ -137,6 +144,7 @@ export abstract class UserEditorComponent extends GenericComponent<UserEditorFor
       }));
     }
 
+
     rolesSelected(event: MatAutocompleteSelectedEvent): void {
      //   let item: Array<string> = event.option.value;
 
@@ -158,6 +166,7 @@ export abstract class UserEditorComponent extends GenericComponent<UserEditorFor
     organisationSearch(){}
 
     addSelectedOrganisation(){}
+
 
     branchAddDialog(){}
 

@@ -2,7 +2,7 @@
 import { importProvidersFrom } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 
-import { KycRecordComponent } from '@views/kyc/kyc-record';
+import { KycRecordsComponent } from '@app/views/kyc/kyc-records';
 
 import { AuthenticationGuard } from '@app/auth/authentication.guard';
 
@@ -10,13 +10,14 @@ import { KycRecordControllerImpl } from '@controllers/kyc/kyc-record-controller-
 import { KycRecordApi } from '@services/bw/co/centralkyc/kyc/kyc-record-api';
 import { KycRecordDetails } from './details/kyc-record-details';
 import { UseCaseScope } from '@app/utils/use-case-scope';
+import { EditKycRecord } from './edit/edit-kyc-record';
 
 export const kycRecordRoutes: Routes = [
   {
     path: 'kyc',
-    component: KycRecordComponent,
+    component: KycRecordsComponent,
     canActivate: [AuthenticationGuard],
-    data: { title: 'Kyc Record' },
+    data: { title: 'Kyc Records' },
     providers: [KycRecordControllerImpl, KycRecordApi, UseCaseScope],
   },
   {
@@ -43,4 +44,28 @@ export const kycRecordRoutes: Routes = [
       UseCaseScope,
     ],
   },
-];
+  {
+    path: 'kyc/edit',
+    component: EditKycRecord,
+    canActivate: [AuthenticationGuard],
+    data: { title: 'Edit Kyc Record' },
+    providers: [
+      importProvidersFrom(RouterModule),
+      KycRecordControllerImpl,
+      KycRecordApi,
+      UseCaseScope,
+    ],
+  },
+  {
+    path: 'kyc/edit/{id}',
+    component: EditKycRecord,
+    canActivate: [AuthenticationGuard],
+    data: { title: 'Edit Kyc Record' },
+    providers: [
+      importProvidersFrom(RouterModule),
+      KycRecordControllerImpl,
+      KycRecordApi,
+      UseCaseScope,
+    ],
+  }
+]
