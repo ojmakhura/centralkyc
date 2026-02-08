@@ -1,8 +1,9 @@
 import { SettingsApiStore } from './../../store/bw/co/centralkyc/settings/settings-api.store';
-import { AfterViewInit, Component, OnDestroy, OnInit, signal, inject } from '@angular/core';
+import { AfterViewInit, Component, OnDestroy, OnInit, signal, inject, linkedSignal } from '@angular/core';
 import { KycRecordDTO } from '@app/models/bw/co/centralkyc/kyc/kyc-record-dto';
 import { ClientRequestDTO } from '@app/models/bw/co/centralkyc/organisation/client/client-request-dto';
 import { OrganisationListDTO } from '@app/models/bw/co/centralkyc/organisation/organisation-list-dto';
+import { TargetEntity } from '@app/models/bw/co/centralkyc/target-entity';
 import { KycRecordApi } from '@app/services/bw/co/centralkyc/kyc/kyc-record-api';
 import { KycRecordApiStore } from '@app/store/bw/co/centralkyc/kyc/kyc-record-api.store';
 
@@ -27,22 +28,79 @@ export class Dashboard implements OnInit, OnDestroy, AfterViewInit {
 
   dashbboardSignal = signal(new DashboardForm());
 
-  constructor() {}
+  currentIndividualRecord = linkedSignal(() => this.kycRecordApiStore.currentIndividualRecord());
+  currentOrganisationRecord = linkedSignal(() => this.kycRecordApiStore.currentOrganisationRecord());
+  myRecords = linkedSignal(() => this.kycRecordApiStore.dataList());
+
+  constructor() { }
 
   ngOnInit(): void {
     this.settingsApiStore.getAll();
 
-    this.kycRecordApi.findMyRecords().subscribe({
-      next: record => {
-        console.log(record);
-      }
-    })
+    this.kycRecordApiStore.findMyCurrentIndividualRecord();
+    setTimeout(() => {
+        this.kycRecordApiStore.findMyCurrentOrganisationRecord();
+    }, 1000);
+    // this.kycRecordApiStore.findMyCurrentRecord({ ownerType: TargetEntity.ORGANISATION });
+    this.kycRecordApiStore.findMyRecords();
   }
 
   ngOnDestroy(): void {
   }
 
   ngAfterViewInit(): void {
+  }
+
+  formatDate(date: Date | any): string {
+    if (!date) return 'N/A';
+
+    try {
+      const dateObj = date instanceof Date ? date : new Date(date);
+      return dateObj.toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric'
+      });
+    } catch {
+      return 'N/A';
+    }
+  }
+
+  getStatusClass(status: string): string {
+    if (!status) return 'unknown';
+
+    const statusLower = status.toLowerCase();
+    if (statusLower.includes('approved') || statusLower.includes('verified') || statusLower.includes('active')) {
+      return 'success';
+    }
+    if (statusLower.includes('pending') || statusLower.includes('review')) {
+      return 'warning';
+    }
+    if (statusLower.includes('rejected') || statusLower.includes('expired') || statusLower.includes('failed')) {
+      return 'danger';
+    }
+    return 'info';
+  }
+
+  viewRecord(record: KycRecordDTO): void {
+    console.log('Viewing record:', record);
+    // Navigate to record details page
+  }
+
+  editRecord(record: KycRecordDTO): void {
+    console.log('Editing record:', record);
+    // Navigate to record edit page
+  }
+
+  createRecord(type: string): void {
+    console.log('Creating record of type:', type);
+    // Navigate to record creation page
+  }
+
+  refreshRecords(): void {
+    this.kycRecordApiStore.findMyCurrentIndividualRecord();
+    this.kycRecordApiStore.findMyCurrentOrganisationRecord();
+    this.kycRecordApiStore.findMyRecords();
   }
 
 }

@@ -149,7 +149,7 @@ export class KycRecordsComponent implements OnInit, AfterViewInit, OnDestroy {
         searchCriteria.name = value.name;
         searchCriteria.registration = value.registration;
         searchCriteria.target = value.target;
-        searchCriteria.targetId = value.targetId;
+        searchCriteria.targetIds = [value.targetId];
         searchCriteria.statuses = value.statuses;
 
         let criteria = new SearchObject<KycRecordSearchCriteria>();

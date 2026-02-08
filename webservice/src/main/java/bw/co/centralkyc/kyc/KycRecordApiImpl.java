@@ -20,6 +20,7 @@ import bw.co.centralkyc.keycloak.KeycloakUserService;
 import bw.co.centralkyc.organisation.OrganisationDTO;
 import bw.co.centralkyc.user.UserDTO;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -342,10 +343,25 @@ public class KycRecordApiImpl implements KycRecordApi {
     }
 
     @Override
-    public ResponseEntity<KycRecordDTO> findMyCurrentRecord() throws Exception {
+    public ResponseEntity<KycRecordDTO> findMyCurrentRecord(TargetEntity ownerType) throws Exception {
         
         try {
-            return ResponseEntity.ok(kycRecordService.findLatestValidForOwner(null, null, null));
+            String username = "anonymousUser";
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            if (authentication != null) {
+
+                username = authentication.getName();
+            }
+
+            UserDTO user = keycloakUserService.findByUsername(username);
+            IndividualDTO individual = individualService.findByUserId(user.getUserId());
+
+            if(individual == null || StringUtils.isBlank(individual.getId())) {
+
+                throw new Exception("No individual or organisation associated with user: " + username);
+            }
+
+            return ResponseEntity.ok(kycRecordService.findLatestValidForOwner(individual.getId(), ownerType, LocalDate.now()));
         } catch(Exception e) {
 
             e.printStackTrace();
@@ -354,7 +370,7 @@ public class KycRecordApiImpl implements KycRecordApi {
     }
 
     @Override
-    public ResponseEntity<KycRecordDTO> findMyRecords() throws Exception {
+    public ResponseEntity<Collection<KycRecordDTO>> findMyRecords() throws Exception {
         
         try {
             
@@ -374,12 +390,20 @@ public class KycRecordApiImpl implements KycRecordApi {
                 targetIds.add(user.getOrganisationId());
             }
 
-            // IndividualDTO individual = individualService.find
+            IndividualDTO individual = individualService.findByUserId(user.getUserId());
+
+            if(individual != null && StringUtils.isNotBlank(individual.getId())) {
+
+                targetIds.add(individual.getId());
+            }
 
             KycRecordSearchCriteria criteria = new KycRecordSearchCriteria();
+            criteria.setTargetIds(targetIds);
 
+            Collection<KycRecordDTO> records = kycRecordService.search(criteria);
+            updateOrganisations(records);
 
-            return null;
+            return ResponseEntity.ok(records);
 
         } catch (Exception e) {
 

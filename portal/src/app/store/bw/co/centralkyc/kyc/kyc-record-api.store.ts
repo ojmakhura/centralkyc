@@ -1,3 +1,4 @@
+import { TargetEntity } from '@models/bw/co/centralkyc/target-entity';
 
 import { inject } from '@angular/core';
 import { patchState, signalStore, withMethods, withState } from '@ngrx/signals';
@@ -11,7 +12,10 @@ import { KycRecordDTO } from '@app/models/bw/co/centralkyc/kyc/kyc-record-dto';
 import { KycRecordApi } from '@app/services/bw/co/centralkyc/kyc/kyc-record-api';
 import { KycRecordSearchCriteria } from '@app/models/bw/co/centralkyc/kyc/kyc-record-search-criteria';
 
-export type KycRecordApiState = AppState<KycRecordDTO, KycRecordDTO> & {};
+export type KycRecordApiState = AppState<KycRecordDTO, KycRecordDTO> & {
+  currentIndividualRecord: KycRecordDTO | null;
+  currentOrganisationRecord: KycRecordDTO | null;
+};
 
 const initialState: KycRecordApiState = {
   data: new KycRecordDTO(),
@@ -22,7 +26,9 @@ const initialState: KycRecordApiState = {
   success: false,
   messages: [],
   loaderMessage: '',
-  error: false
+  error: false,
+  currentIndividualRecord: null,
+  currentOrganisationRecord: null,
 };
 
 export const KycRecordApiStore = signalStore(
@@ -518,6 +524,104 @@ export const KycRecordApiStore = signalStore(
         switchMap((data: any) => {
           patchState(store, { loading: true, loaderMessage: 'Loading ...' });
           return kycRecordApi.search(data.criteria, ).pipe(
+            tapResponse({
+              next: (response: KycRecordDTO[]) => {
+                patchState(
+                  store,
+                  {
+                    dataList: response,
+                    loading: false,
+                    success: true,
+                    messages: ['Success!!'],
+                    error: false,
+                  }
+                );
+              },
+              error: (error: any) => {
+                patchState(
+                  store, {
+                    status: (error?.status || 0),
+                    loading: false,
+                    success: false,
+                    error: true,
+                    messages: [error?.error?.message || 'An error occurred'],
+                  }
+                );
+              },
+            }),
+          );
+        }),
+      ),
+      findMyCurrentOrganisationRecord: rxMethod<void>(
+        switchMap(() => {
+          patchState(store, { loading: true, loaderMessage: 'Loading ...' });
+          return kycRecordApi.findMyCurrentRecord(TargetEntity.ORGANISATION).pipe(
+            tapResponse({
+              next: (response: KycRecordDTO) => {
+
+                patchState(
+                  store,
+                  {
+                    currentOrganisationRecord: response,
+                    loading: false,
+                    success: true,
+                    messages: ['Success!!'],
+                    error: false,
+                  }
+                );
+              },
+              error: (error: any) => {
+                patchState(
+                  store, {
+                    status: (error?.status || 0),
+                    loading: false,
+                    success: false,
+                    error: true,
+                    messages: [error?.error?.message || 'An error occurred'],
+                  }
+                );
+              },
+            }),
+          );
+        }),
+      ),
+      findMyCurrentIndividualRecord: rxMethod<void>(
+        switchMap(() => {
+          patchState(store, { loading: true, loaderMessage: 'Loading ...' });
+          return kycRecordApi.findMyCurrentRecord(TargetEntity.INDIVIDUAL).pipe(
+            tapResponse({
+              next: (response: KycRecordDTO) => {
+
+                patchState(
+                  store,
+                  {
+                    currentIndividualRecord: response,
+                    loading: false,
+                    success: true,
+                    messages: ['Success!!'],
+                    error: false,
+                  }
+                );
+              },
+              error: (error: any) => {
+                patchState(
+                  store, {
+                    status: (error?.status || 0),
+                    loading: false,
+                    success: false,
+                    error: true,
+                    messages: [error?.error?.message || 'An error occurred'],
+                  }
+                );
+              },
+            }),
+          );
+        }),
+      ),
+      findMyRecords: rxMethod<void>(
+        switchMap(() => {
+          patchState(store, { loading: true, loaderMessage: 'Loading ...' });
+          return kycRecordApi.findMyRecords().pipe(
             tapResponse({
               next: (response: KycRecordDTO[]) => {
                 patchState(

@@ -274,4 +274,11 @@ public class IndividualServiceImpl
         return individualDao.toIndividualDTO(individual);
     }
 
+    @Override
+    protected IndividualDTO handleFindByUserId(String userId) throws Exception {
+        
+        Individual individual = individualRepository.findByUserId(userId);
+        return individualDao.toIndividualDTO(individual);
+    }
+
 }
