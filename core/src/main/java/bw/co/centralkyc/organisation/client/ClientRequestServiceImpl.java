@@ -241,7 +241,7 @@ public class ClientRequestServiceImpl
         if (StringUtils.isNotBlank(criteria.getOrganisationId())) {
 
             spec = spec.and(
-                    (root, query, cb) -> cb.equal(root.get("organisation").get("id"), criteria.getOrganisationId()));
+                    (root, query, cb) -> cb.equal(root.get("organisation").get("id"), UUID.fromString(criteria.getOrganisationId())));
         }
 
         if (criteria.getTarget() != null) {

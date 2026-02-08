@@ -140,7 +140,7 @@ public class EmploymentRecordServiceImpl
     {
 
         Specification<EmploymentRecord> specification = (root, query, criteriaBuilder) -> 
-            criteriaBuilder.equal(root.get("individual").get("id"), individualId);
+            criteriaBuilder.equal(root.get("individual").get("id"), UUID.fromString(individualId));
 
         Collection<EmploymentRecord> employmentRecords = this.employmentRecordRepository.findAll(specification);
         return this.employmentRecordDao.toEmploymentRecordDTOCollection(employmentRecords);

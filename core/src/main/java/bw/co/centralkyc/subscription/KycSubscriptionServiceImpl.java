@@ -189,7 +189,7 @@ public class KycSubscriptionServiceImpl
 
         Specification<KycSubscription> specification = (root, query, cb) -> cb.equal(
                 root.get("organisation").get("id"),
-                organisationId);
+                UUID.fromString(organisationId));
 
         Collection<KycSubscription> subscriptions = this.kycSubscriptionRepository.findAll(specification);
         return this.kycSubscriptionDao.toKycSubscriptionDTOCollection(subscriptions);

@@ -69,7 +69,7 @@ export class DocumentApi {
   }
 
   public downloadFile(id: string | any): Observable<any> {
-    return this.http.get(`${this.path}/download/${id}`, {
+    return this.http.get(`${this.path}/${id}/download`, {
       responseType: 'blob',
     });
   }

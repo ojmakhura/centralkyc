@@ -148,7 +148,7 @@ public class BranchServiceImpl
     {
 
         Specification<Branch> spec = (root, query, builder) -> 
-            builder.equal(root.get("organisation").get("id"), organisationId);
+            builder.equal(root.get("organisation").get("id"), UUID.fromString(organisationId));
         Collection<Branch> branches = branchRepository.findAll(spec, Sort.by(Direction.ASC, "name"));
         return this.getBranchDao().toBranchDTOCollection(branches);
     }
@@ -163,7 +163,7 @@ public class BranchServiceImpl
 
         Pageable pageable = PageRequest.of(pageNumber, pageSize, Sort.by(Direction.ASC, "name"));
         Specification<Branch> spec = (root, query, builder) -> 
-            builder.equal(root.get("organisation").get("id"), organisationId);
+            builder.equal(root.get("organisation").get("id"), UUID.fromString(organisationId));
         Page<Branch> branchPage = branchRepository.findAll(spec, pageable);
         return this.getBranchDao().toBranchDTOCollection(branchPage.getContent());
     }

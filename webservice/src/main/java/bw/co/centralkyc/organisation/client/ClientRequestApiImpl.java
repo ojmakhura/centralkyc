@@ -8,6 +8,7 @@ package bw.co.centralkyc.organisation.client;
 import bw.co.centralkyc.AuditTracker;
 import bw.co.centralkyc.PropertySearchOrder;
 import bw.co.centralkyc.SearchObject;
+import bw.co.centralkyc.SortOrder;
 import bw.co.centralkyc.TargetEntity;
 import bw.co.centralkyc.document.DocumentApi;
 import bw.co.centralkyc.document.DocumentDTO;
@@ -26,6 +27,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
@@ -539,7 +541,7 @@ public class ClientRequestApiImpl implements ClientRequestApi {
                         individual.setHasUser(true);
 
                         UserDTO existing = keycloakUserService.getUserByIdentityNo(individual.getIdentityNo());
-                            individual.setHasUser(true);
+                        individual.setHasUser(true);
 
                         if (existing != null) {
 
@@ -552,7 +554,6 @@ public class ClientRequestApiImpl implements ClientRequestApi {
 
                             individual.setUserCreated(false);
                         }
-
 
                         // Activate individual account or send welcome email
                         OrganisationDTO org = organisationService.findById(request.getOrganisationId());
@@ -610,5 +611,63 @@ public class ClientRequestApiImpl implements ClientRequestApi {
             e.printStackTrace();
             throw e;
         }
+    }
+
+    @Override
+    public ResponseEntity<Collection<ClientRequestDTO>> findMyOrganisationRequests() throws Exception {
+
+        String username = "anonymousUser";
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null) {
+
+            username = authentication.getName();
+        }
+
+        UserDTO user = keycloakUserService.findByUsername(username);
+        IndividualDTO individual = individualService.findByUserId(user.getUserId());
+
+        if (individual == null || StringUtils.isBlank(individual.getId())) {
+
+            throw new Exception("No individual associated with user: " + username);
+        }
+
+        if(individual.getOrganisation() != null &&StringUtils.isNotBlank(individual.getOrganisation().getId())) {
+
+            return null;
+        }
+
+        Collection<ClientRequestDTO> requests = clientRequestService.findByOrganisation(individual.getOrganisation().getId());
+
+        return ResponseEntity.ok(requests);
+    }
+
+    @Override
+    public ResponseEntity<Collection<ClientRequestDTO>> findMyRequests() throws Exception {
+
+        String username = "anonymousUser";
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null) {
+
+            username = authentication.getName();
+        }
+
+        UserDTO user = keycloakUserService.findByUsername(username);
+        IndividualDTO individual = individualService.findByUserId(user.getUserId());
+
+        if (individual == null || StringUtils.isBlank(individual.getId())) {
+
+            throw new Exception("No individual associated with user: " + username);
+        }
+
+        ClientRequestSearchCriteria criteria = new ClientRequestSearchCriteria();
+        criteria.setTarget(TargetEntity.INDIVIDUAL);
+        criteria.setTargetId(individual.getId());
+
+        Set<PropertySearchOrder> sortProperties = new HashSet<>();
+        sortProperties.add(new PropertySearchOrder("createdAt", SortOrder.DESC));
+
+        Collection<ClientRequestDTO> requests = clientRequestService.search(criteria, sortProperties);
+
+        return ResponseEntity.ok(requests);
     }
 }

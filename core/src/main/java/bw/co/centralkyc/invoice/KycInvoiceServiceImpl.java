@@ -154,7 +154,7 @@ public class KycInvoiceServiceImpl
         if (StringUtils.isNotBlank(criteria.getOrganisatonId())) {
 
             Specification<KycInvoice> orgIdSpec = (root, query, cb) -> cb.equal(root.get("organisationId"),
-                    criteria.getOrganisatonId());
+                    UUID.fromString(criteria.getOrganisatonId())) ;
             specification = specification == null ? orgIdSpec : specification.and(orgIdSpec);
         }
 
@@ -334,8 +334,8 @@ public class KycInvoiceServiceImpl
     protected Collection<KycInvoiceDTO> handleFindByOrganisation(String organisationId) throws Exception {
 
         Specification<KycInvoice> specification = (root, query, cb) -> cb.equal(
-                root.get("organisationId"),
-                organisationId);
+                root.get("organisation").get("id"),
+                UUID.fromString(organisationId));
 
         Collection<KycInvoice> invoices = this.kycInvoiceRepository.findAll(specification);
 
@@ -347,7 +347,7 @@ public class KycInvoiceServiceImpl
 
         Specification<KycInvoice> specification = (root, query, cb) -> cb.equal(
                 root.get("kycSubscription").get("id"),
-                subscriptionId);
+                UUID.fromString(subscriptionId));
 
         Collection<KycInvoice> invoices = this.kycInvoiceRepository.findAll(specification);
 

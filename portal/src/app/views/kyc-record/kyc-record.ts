@@ -1,6 +1,7 @@
 import { CommonModule, JsonPipe } from '@angular/common';
 import { AfterViewInit, Component, inject, linkedSignal, OnDestroy, OnInit } from '@angular/core';
 import { TargetEntity } from '@app/models/bw/co/centralkyc/target-entity';
+import { KycRecordApi } from '@app/services/bw/co/centralkyc/kyc/kyc-record-api';
 import { KycRecordApiStore } from '@app/store/bw/co/centralkyc/kyc/kyc-record-api.store';
 import { SettingsApiStore } from '@app/store/bw/co/centralkyc/settings/settings-api.store';
 
@@ -17,6 +18,7 @@ export class KycRecord implements OnInit, OnDestroy, AfterViewInit {
 
   settingsApiStore = inject(SettingsApiStore);
   kycRecordApiStore = inject(KycRecordApiStore);
+  kycRecordApi = inject(KycRecordApi);
 
   kycDocuments = linkedSignal(() => this.settingsApiStore.data().indKycDocuments);
 
@@ -28,9 +30,15 @@ export class KycRecord implements OnInit, OnDestroy, AfterViewInit {
 
   ngOnInit(): void {
     this.settingsApiStore.getAll();
-    this.kycRecordApiStore.findMyCurrentIndividualRecord();
-    this.kycRecordApiStore.findMyCurrentOrganisationRecord();
+    // this.kycRecordApiStore.findMyCurrentIndividualRecord();
+    // this.kycRecordApiStore.findMyCurrentOrganisationRecord();
     this.kycRecordApiStore.findMyRecords();
+
+    // this.kycRecordApi.findMyCurrentRecord(TargetEntity.INDIVIDUAL).subscribe({
+    //   next: (record) => {
+    //     console.log(record)
+    //   }
+    // })
   }
 
   ngOnDestroy(): void {

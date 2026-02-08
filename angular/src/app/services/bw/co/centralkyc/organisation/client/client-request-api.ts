@@ -160,8 +160,28 @@ export class ClientRequestApi {
     return this.http.get<string>(`${this.path}/confirm-token/${requestId}?token=${token}`, {responseType: 'text' as 'json' });
   }
 
-  public confirmRegistration(id: string, confirm: boolean): Observable<boolean> {
+  public confirmRegistration(id: string, confirm: boolean, registrationToken: string): Observable<string> {
 
-    return this.http.get<boolean>(`${this.path}/${id}/confirm?confirm=${confirm}`);
+    return this.http.get<string>(`${this.path}/${id}/confirm?confirm=${confirm}&registrationToken=${registrationToken}`);
+  }
+
+  public findMyRequests(): Observable<ClientRequestDTO[]> {
+
+    return this.http.get<ClientRequestDTO[]>(`${this.path}/mine`);
+  }
+
+  public findMyRequestsPaged(pageNumber: number, pageSize: number): Observable<Page<ClientRequestDTO>> {
+
+    return this.http.get<Page<ClientRequestDTO>>(`${this.path}/mine/paged?pageNumber=${pageNumber}&pageSize=${pageSize}`);
+  }
+
+  public findMyOrganisationRequests(): Observable<ClientRequestDTO[]> {
+
+    return this.http.get<ClientRequestDTO[]>(`${this.path}/my-organisation`);
+  }
+
+  public findMyOrganisationRequestsPaged(pageNumber: number, pageSize: number): Observable<Page<ClientRequestDTO>> {
+
+    return this.http.get<Page<ClientRequestDTO>>(`${this.path}/my-organisation/paged?pageNumber=${pageNumber}&pageSize=${pageSize}`);
   }
 }
