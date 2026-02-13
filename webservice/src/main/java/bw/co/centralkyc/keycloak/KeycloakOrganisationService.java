@@ -171,6 +171,14 @@ public class KeycloakOrganisationService {
 
     public OrganisationDTO createOrganisation(OrganisationDTO organisation) {
         return keycloakService.withOrganizations(orgsResource -> {
+
+            OrganisationDTO existing = findByName(organisation.getRegistrationNo());
+
+            if(existing != null) {
+                System.out.println(existing);
+                return existing;
+            }
+
             Response res;
             if (StringUtils.isBlank(organisation.getId())) {
                 res = orgsResource.create(fromOrganisationDTO(organisation));
@@ -188,6 +196,16 @@ public class KeycloakOrganisationService {
 
     public OrganisationDTO findById(String id) {
         return keycloakService.withOrganization(id, orgResource -> toOrganisationDTO(orgResource.toRepresentation()));
+    }
+
+    public OrganisationDTO findByName(String name) {
+        return keycloakService.withOrganizations(resource -> {
+            List<OrganizationRepresentation> t = resource.search("name:" + name);
+            if (t == null || t.size() == 0) {
+                return null;
+            }
+            return toOrganisationDTO(t.get(0));
+        });
     }
 
     public List<OrganisationListDTO> getAll() {

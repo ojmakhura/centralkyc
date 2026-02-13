@@ -231,7 +231,7 @@ public class KeycloakUserService {
 
         message.setPlatform(MessagingPlatform.EMAIL);
 
-        if(organisation != null && !StringUtils.isNotBlank(organisation.getId())) {
+        if (organisation != null && !StringUtils.isNotBlank(organisation.getId())) {
 
             OrganisationDTO org = organisationService.findById(individual.getOrganisation().getId());
 
@@ -241,7 +241,8 @@ public class KeycloakUserService {
                     message.setCcs(List.of(org.getContactEmailAddress()));
                 }
 
-                String messageStr = String.format(newOrgUserTemplate, nameBuilder.toString(), individual.getOrganisation(),
+                String messageStr = String.format(newOrgUserTemplate, nameBuilder.toString(),
+                        individual.getOrganisation(),
                         adminWebUrl, user.getUsername(),
                         user.getPassword());
 
@@ -590,13 +591,15 @@ public class KeycloakUserService {
      */
     public UserDTO registerUser(IndividualDTO individual, OrganisationDTO organisation) {
 
-        Collection<ClientRequestDTO> clientRequests = clientRequestService.findByIndividual(individual.getId());
+        if (StringUtils.isNotBlank(individual.getId())) {
+            Collection<ClientRequestDTO> clientRequests = clientRequestService.findByIndividual(individual.getId());
+
+            if (CollectionUtils.isEmpty(clientRequests)) {
+                throw new RuntimeException("No client requests found for individual: " + individual.getId());
+            }
+        }
 
         settings = settingsService.getAll().stream().findFirst().orElse(null);
-
-        if (CollectionUtils.isEmpty(clientRequests)) {
-            throw new RuntimeException("No client requests found for individual: " + individual.getId());
-        }
 
         if (individual.getHasUser() == null || !individual.getHasUser()) {
 
