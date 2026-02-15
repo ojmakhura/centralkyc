@@ -29,6 +29,7 @@ import org.springframework.http.MediaType;
 
 import bw.co.centralkyc.AuditTracker;
 import bw.co.centralkyc.TargetEntity;
+import bw.co.centralkyc.document.processor.DocumentProcessorService;
 import bw.co.centralkyc.minio.MinioService;
 
 @RestController
@@ -36,11 +37,13 @@ public class DocumentApiImpl implements DocumentApi {
 
     private final MinioService minioService;
     private final DocumentService documentService;
+    private final DocumentProcessorService documentProcessor;
 
-    public DocumentApiImpl(DocumentService documentService, MinioService minioService) {
+    public DocumentApiImpl(DocumentService documentService, MinioService minioService, DocumentProcessorService documentProcessor) {
 
         this.documentService = documentService;
         this.minioService = minioService;
+        this.documentProcessor = documentProcessor;
     }
 
     @Override
@@ -203,6 +206,16 @@ public class DocumentApiImpl implements DocumentApi {
             document.setTarget(target);
             document.setTargetId(targetId);
             document.setFileName(file.getOriginalFilename());
+
+            try {
+
+                String text = documentProcessor.extractText(file.getBytes());
+                document.setFileContent(text);
+            } catch (Exception e) {
+                e.printStackTrace();
+                // Handle the exception as needed
+                throw new DocumentServiceException("Error extracting text from PDF: " + file.getOriginalFilename());
+            }
 
             Map<String, Object> metadata = new HashMap<>();
             metadata.put("fileSize", file.getSize());

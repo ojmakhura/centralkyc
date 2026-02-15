@@ -1,15 +1,23 @@
-package bw.co.centralkyc.pdf;
+package bw.co.centralkyc.document.processor;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 
 import org.apache.pdfbox.Loader;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.rendering.PDFRenderer;
 import org.apache.pdfbox.text.PDFTextStripper;
+import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
+import bw.co.centralkyc.document.DocumentDTO;
+import bw.co.centralkyc.document.DocumentService;
+import bw.co.centralkyc.minio.MinioService;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import net.sourceforge.tess4j.ITesseract;
 import net.sourceforge.tess4j.Tesseract;
 import net.sourceforge.tess4j.TesseractException;
@@ -17,7 +25,9 @@ import net.sourceforge.tess4j.TesseractException;
 import java.awt.image.BufferedImage;
 
 @Service
-public class PdfExtractionService {
+@Slf4j
+@RequiredArgsConstructor
+public class DocumentProcessorService {
 
     @Value("${app.tessdata-prefix}")
     private String tessdataPrefix;
@@ -61,6 +71,7 @@ public class PdfExtractionService {
         return text.toString();
     }
 
+    @Async
     public String extractText(byte[] pdfBytes) throws IOException, TesseractException {
         String extractedText = extractTextFromPdf(pdfBytes);
 

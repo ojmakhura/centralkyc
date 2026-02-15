@@ -141,7 +141,7 @@ public class DocumentServiceImpl
      * @see bw.co.centralkyc.document.DocumentService#upload(TargetEntity, String, String, File)
      */
     @Override
-    protected DocumentDTO handleUpload(TargetEntity target, String targetId, String documentTypeId, File url)
+    protected DocumentDTO handleUpload(TargetEntity target, String targetId, String documentTypeId, String url)
         throws Exception
     {
         // TODO implement protected  DocumentDTO handleUpload(TargetEntity target, String targetId, String documentTypeId, File url)

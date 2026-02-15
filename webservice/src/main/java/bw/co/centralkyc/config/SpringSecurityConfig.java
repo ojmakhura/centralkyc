@@ -33,10 +33,10 @@ public class SpringSecurityConfig {
 				.authorizeHttpRequests((authz) -> authz
 						.requestMatchers(
 								"/swagger-ui/*",
-								"/swagger-ui.html",
-								"/webjars/**",
+								// "/swagger-ui.html",
+								// "/webjars/**",
 								"/v3/**",
-								"/swagger-resources/**",
+								// "/swagger-resources/**",
 								"/actuator/**",
 								"/test/**",
 								"/analytics/**",
