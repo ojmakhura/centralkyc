@@ -37,6 +37,10 @@ import { OrganisationApiStore } from '@app/store/bw/co/knowvera/organisation/org
 import { KycSubscriptionApiStore } from '@app/store/bw/co/knowvera/subscription/kyc-subscription-api.store';
 import { SettingsApiStore } from '@app/store/bw/co/knowvera/settings/settings-api.store';
 import { BranchFormDialogComponent } from './add-branch-dialog';
+import {
+  KycFieldGroupSelectorDialogComponent,
+  KycFieldGroupSelectorDialogResult,
+} from './kyc-field-group-selector-dialog';
 import { swalFire } from '@app/@shared/swal';
 import { Loader } from '@app/@shared/loader/loader';
 // import { ToastrService } from 'ngx-toastr';
@@ -44,6 +48,7 @@ import { finalize } from 'rxjs';
 import { DocumentApiStore } from '@app/store/bw/co/knowvera/document/document-api.store';
 import { CreateClientRequestDialogComponent } from './create-client-request-dialog';
 import { LoaderState } from '@app/@shared/loader/loader.state';
+import { KycFieldGroupDTO } from '@app/models/bw/co/knowvera/settings/kyc/kyc-field-group-dto';
 
 @Component({
   selector: 'app-organisation-details',
@@ -161,8 +166,98 @@ export class OrganisationDetails implements OnInit, AfterViewInit, OnDestroy {
   organisationReportSections = computed<KycReportSectionDTO[]>(() =>
     [...(this.organisation()?.organisationReportSections || [])].sort((a: KycReportSectionDTO, b: KycReportSectionDTO) => (a.position ?? 0) - (b.position ?? 0))
   );
+  selectedOrganisationReportSections = computed<KycReportSectionDTO[]>(() => {
+    const selectedGroupIds = this.selectedOrganisationKycGroupIds();
+    const selectedFieldIds = this.selectedOrganisationKycFieldIds();
+
+    if (!selectedGroupIds.length && !selectedFieldIds.length) {
+      return this.organisationReportSections();
+    }
+
+    return this.organisationReportSections()
+      .map((section) => ({
+        ...section,
+        fieldValues: (section.fieldValues || []).filter((fieldValue: any) => {
+          const matchesGroup = selectedGroupIds.length
+            ? selectedGroupIds.includes(fieldValue.fieldGroupId)
+            : true;
+          const matchesField = selectedFieldIds.length
+            ? selectedFieldIds.includes(fieldValue.fieldId)
+            : true;
+
+          return matchesGroup && matchesField;
+        }),
+      }))
+      .filter((section) => section.fieldValues.length);
+  });
   individualKycDocuments = computed<DocumentTypeDTO[]>(() => this.organisation()?.individualKycDocuments || []);
   organisationKycDocuments = computed<DocumentTypeDTO[]>(() => this.organisation()?.organisationKycDocuments || []);
+  organisationKycGroupSelectorOpen = signal(false);
+  selectedOrganisationKycGroupIds = signal<string[]>([]);
+  selectedOrganisationKycFieldIds = signal<string[]>([]);
+
+  toggleOrganisationKycGroupSelector(): void {
+    this.organisationKycGroupSelectorOpen.update((open) => !open);
+  }
+
+  isOrganisationKycGroupSelected(groupId: string): boolean {
+    return this.selectedOrganisationKycGroupIds().includes(groupId);
+  }
+
+  toggleOrganisationKycGroup(groupId: string): void {
+    this.selectedOrganisationKycGroupIds.update((selectedIds) =>
+      selectedIds.includes(groupId)
+        ? selectedIds.filter((id) => id !== groupId)
+        : [...selectedIds, groupId]
+    );
+  }
+
+  selectAllOrganisationKycGroups(): void {
+    this.selectedOrganisationKycGroupIds.set(
+      (this.settings()?.organisationKycFieldGroups || [])
+        .map((group: any) => group.id)
+        .filter((id: string | null | undefined): id is string => !!id)
+    );
+  }
+
+  clearOrganisationKycFieldGroupFilter(): void {
+    this.selectedOrganisationKycGroupIds.set([]);
+    this.selectedOrganisationKycFieldIds.set([]);
+  }
+
+  openOrganisationKycFieldGroupDialog(): void {
+    const groups = this.settings()?.organisationKycFieldGroups || [];
+    const selectedGroupIds = this.selectedOrganisationKycGroupIds();
+
+    const ref = this.dialog.open(KycFieldGroupSelectorDialogComponent, {
+      data: {
+        groups,
+        selectedGroupId: selectedGroupIds[0] || null,
+        selectedFieldIds: this.selectedOrganisationKycFieldIds(),
+      },
+      width: '480px',
+    });
+
+    ref.afterClosed().subscribe((result: KycFieldGroupSelectorDialogResult | undefined) => {
+      if (!result) return;
+      
+      console.log(result);
+      // this.selectedOrganisationKycGroupIds.set([result.groupId]);
+      // this.selectedOrganisationKycFieldIds.set(result.fieldIds);
+    });
+  }
+
+  organisationFieldValue(group: any, field: any): any {
+    const fieldValues = this.organisationReportSections().flatMap((section) => section.fieldValues || []);
+
+    return fieldValues.find(
+      (fieldValue: any) =>
+        (fieldValue.fieldGroupId
+          ? fieldValue.fieldGroupId === group.id
+          : fieldValue.fieldId === (field.id || field.fieldId)) &&
+        fieldValue.fieldId === (field.id || field.fieldId)
+    );
+  }
 
   // toaster: ToastrService = inject(ToastrService);
 

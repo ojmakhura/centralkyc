@@ -580,6 +580,45 @@
 	}
 }
 
+.ops-subtab-wrap {
+	display: flex;
+	flex: 1;
+	min-height: 0;
+	padding: 12px 0 0;
+}
+
+.ops-subtab-group {
+	display: flex;
+	flex: 1;
+	min-height: 0;
+
+	::ng-deep .mat-mdc-tab-header {
+		border-bottom: 1px solid rgba(197, 198, 207, 0.22);
+		background: transparent;
+		padding: 0 0 8px;
+	}
+
+	::ng-deep .mat-mdc-tab-labels {
+		flex-wrap: wrap;
+		row-gap: 4px;
+	}
+
+	::ng-deep .mat-mdc-tab {
+		height: 40px;
+		padding: 0 12px;
+	}
+
+	::ng-deep .mat-mdc-tab-body-wrapper {
+		flex: 1;
+		min-height: 0;
+	}
+
+	::ng-deep .mat-mdc-tab-body-content {
+		overflow-y: auto;
+		background: var(--surface-bright);
+	}
+}
+
 .tab-content {
 	padding: 24px;
 }
